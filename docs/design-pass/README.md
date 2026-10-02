@@ -1,5 +1,10 @@
 # World of Words — architecture & design pass (v1, 2026-10-01)
 
+> **Read-only snapshot (T-0001).** This folder is the design pass as accepted on 2026-10-01 and is not
+> edited any more. On any conflict, `docs/PRODUCT.md`, `docs/DESIGN.md`, `tasks/ROADMAP.md` and
+> `docs/decisions/` win. Changes to the plan go into those files or into a new decision, never here.
+> The `seed/` files are adopted into the repo root by T-0002; until then they are templates only.
+
 Pełna rekomendacja architektury produktu, gry i procesu AI. Materiały wejściowe (cztery pliki researchu) potraktowane jako kontekst do krytyki, nie jako specyfikacja.
 
 ## Najważniejsze decyzje w skrócie
