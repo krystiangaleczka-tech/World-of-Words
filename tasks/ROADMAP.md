@@ -152,7 +152,7 @@ Chris after one Opus second opinion.
 
 | ID | Title | Type | Area | Depends | Lane | Exec | Think | UI | Risk | Refs |
 |---|---|---|---|---|---|---|---|---|---|---|
-| T-0001 | Create private repo; import PRODUCT.md, DESIGN.md, ROADMAP.md, decisions 0004–0006 and the design pass as read-only `docs/design-pass/` | docs | docs | — | DOC | HUMAN | — | none | low | dp04 §1, dp04 §2 |
+| T-0001 | Repo (public until P2 content production, Chris 2026-10-02: free Actions and branch protection on GitHub Free); import PRODUCT.md, DESIGN.md, ROADMAP.md, decisions 0004–0006 and the design pass as read-only `docs/design-pass/` | docs | docs | — | DOC | HUMAN | — | none | low | dp04 §1, dp04 §2 |
 | T-0002 | Adopt seed: AGENTS.md (+ CLAUDE.md / GEMINI.md one-liners), tasks/TEMPLATE.md, tasks/EPIC_TEMPLATE.md, PR template; epic files E00–E04 | docs | docs | T-0001 | DOC | SOL | med | none | low | seed/AGENTS.md, dp06 §2, dp07 §6 |
 | T-0003 | Decision 0001 engine, status proposed: Godot 4.x.y conditional on S1, failure criteria, plan B Unity 6 LTS | docs | docs | T-0002 | DOC | SOL | med | none | med | dp02 §3 |
 | T-0004 | Decision 0002 content in packs: no runtime dictionary, complete bonus lists, packs + manifest | docs | docs | T-0002 | DOC | SOL | low | none | low | dp03 §1, FR-CORE-02, FR-CONT-01 |
@@ -511,7 +511,7 @@ hand-made, first ~100 played by Chris, region 1 mapped.
 
 | ID | Title | Type | Area | Depends | Lane | Exec | Think | UI | Risk | Refs |
 |---|---|---|---|---|---|---|---|---|---|---|
-| T-0296 | Classify: batch AI classification, committed cache keyed (word, prompt version, model), two passes, disagreement CSV; Chris adds the API key as a CI / agent secret and sets a spend cap from the T-0031 cost-per-1k figure | feat | pipeline.classify | T-0127, T-0031, T-0143 | PIPE | CHEAP+HUMAN | med | none | med | dp09 §3, FR-CONT-05 |
+| T-0296 | Classify: batch AI classification (before this first production content run Chris switches the repo to private, with GitHub Pro if branch protection must stay), committed cache keyed (word, prompt version, model), two passes, disagreement CSV; Chris adds the API key as a CI / agent secret and sets a spend cap from the T-0031 cost-per-1k figure | feat | pipeline.classify | T-0127, T-0031, T-0143 | PIPE | CHEAP+HUMAN | med | none | med | dp09 §3, FR-CONT-05 |
 | T-0297 | Tiers v1: rules + classification suggestion + overrides; tier-distribution diff alarm | feat | pipeline.tiers | T-0296 | PIPE | CHEAP | high | none | high | FR-CONT-05, decision 0004 |
 | T-0298 | Scoring: difficulty features × weights (`scoring.yaml`) | feat | pipeline.scoring | T-0297 | PIPE | CHEAP | med | none | med | dp03 §6.1, dp09 §2 |
 | T-0299 | Dedupe + diversity: multiset, Jaccard, seed-word spacing K | feat | pipeline.dedupe | T-0298 | PIPE | CHEAP | med | none | med | dp09 §2, PRODUCT.md#content-requirements |
@@ -840,7 +840,7 @@ Chris but listed in the Opus table above.
 
 | Phase | Task | Exec | Chris's part |
 |---|---|---|---|
-| P0 | T-0001 | HUMAN | Create private repo; import PRODUCT.md, DESIGN.md, ROADMAP.md, decisions 0004–0006 and the design pass as read-only `docs/design-pass/` |
+| P0 | T-0001 | HUMAN | Repo (public until P2 content production, Chris 2026-10-02: free Actions and branch protection on GitHub Free); import PRODUCT.md, DESIGN.md, ROADMAP.md, decisions 0004–0006 and the design pass as read-only `docs/design-pass/` |
 | P0 | T-0011 | SOL+HUMAN | Apply accepted Opus findings to the docs; Chris approves docs v1 |
 | P0 | T-0012 | HUMAN | Store accounts: Google Play Console (personal vs organization; closed-test rule applies to new personal accounts, verify) + Apple Developer; identity verification; pick and provision reference devices (Q13); Play payments profile (needed for IAP tests in S1); EU trader status (DSA) and the public contact address decision |
 | P0 | T-0023 | HUMAN | Branch protection: squash only, required checks, up-to-date branches, no force push, auto-delete; labels risk / type / test-count-exception |
@@ -883,7 +883,7 @@ Chris but listed in the Opus table above.
 | P2 | T-0282 | CHEAP+HUMAN | Game-feel tuning on device: Chris plays, CHEAP edits Motion/Ease values in `tokens.gd` |
 | P2 | T-0283 | CHEAP+HUMAN | Performance pass: 60 fps Level on low-end Android, no idle redraw, level load ≤ 100 ms timer in debug, cold start measured |
 | P2 | T-0289 | SOL+HUMAN | UI strings PL + EN for all P2 screens (no plural-dependent sentences; Chris approves PL); location names and facts |
-| P2 | T-0296 | CHEAP+HUMAN | Classify: batch AI classification, committed cache keyed (word, prompt version, model), two passes, disagreement CSV; Chris adds the API key as a CI / agent secret and sets a spend cap from the T-0031 cost-per-1k figure |
+| P2 | T-0296 | CHEAP+HUMAN | Classify: batch AI classification (before this first production content run Chris switches the repo to private, with GitHub Pro if branch protection must stay), committed cache keyed (word, prompt version, model), two passes, disagreement CSV; Chris adds the API key as a CI / agent secret and sets a spend cap from the T-0031 cost-per-1k figure |
 | P2 | T-0304 | HUMAN | Chris reviews the disagreement queue and flagged candidates → `overrides/pl.csv` (batch 1) |
 | P2 | T-0305 | HUMAN | Chris hand-makes onboarding levels 1–15 (YAML) per GAME_DESIGN.md#onboarding |
 | P2 | T-0307 | HUMAN | Chris plays 100 % of the first ~100 levels in debug; flags → overrides; rebuild |
