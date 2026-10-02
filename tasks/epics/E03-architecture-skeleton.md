@@ -37,7 +37,7 @@ None. Boot reaches an empty level screen in debug builds.
 Signatures are written in `ARCHITECTURE.md` (T-0007) and as `## @api` stubs in T-0034; they are not
 repeated here.
 - Config files: `unlocks.json` with the `unlocks.*_slot` keys and defaults from
-  `PRODUCT.md#first-10-minutes-timeline`; `level.json` with the keys `GAME_DESIGN.md` (T-0006) defines.
+  `PRODUCT.md#first-10-minutes-timeline`; `hint.json` (`hint.offer_*`); defaults, types and ranges from `GAME_DESIGN.md#config-key-registry`.
 - Level data: `CONTENT.md#level-schema`, `CONTENT.md#manifest`, `schema_version` field.
 - Signals: `Events.save_corrupted`.
 - Analytics events: none in this epic; T-0038 builds the registry and its validation only.
