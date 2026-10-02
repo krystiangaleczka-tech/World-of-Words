@@ -211,9 +211,9 @@ traceability and QA (NFR-14).
 
 ## Slot policy
 
-- A slot is **released** when a build containing it reaches anyone other than Chris: a Play closed or
-  open track, production, or TestFlight external testing. Internal-track and debug builds do not release
-  slots.
+- A slot is **released** when a build containing it reaches a Play open-testing or production track, or
+  the App Store. Internal, closed-testing and TestFlight builds do not release slots: their testers keep
+  progress by slot number only and may meet changed levels (T-0010 F1, Chris 2026-10-02).
 - The **lock file** `pipeline/locks/<lang>.lock.json` maps each released slot to a hash of its
   `letters`, `words` (with coordinates) and `grid`. The export command updates it when a release is cut
   (T-0302).

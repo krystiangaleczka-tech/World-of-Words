@@ -69,6 +69,7 @@ Shuffle rules (FR-WHEEL-08, design pass 06 §4):
   one: retry the permutation up to 10 times, then rotate by one position.
 - If all letters are equal, the order may stay the same.
 - Changes nothing but tile positions: board, economy and progress are untouched.
+- The shuffled order is not saved; a resumed level shows the initial order (T-0010 F9).
 
 Placement on screen (one power-up per wheel corner) is owned by `DESIGN.md`.
 
@@ -86,7 +87,9 @@ level data); the word counts as found.
 
 **Paying** (P2, FR-HINT-03, FR-HINT-05):
 - An owned item is used first; otherwise coins are spent. The cost is charged exactly once per use,
-  through `Economy.spend`, before the cell is revealed. A failed spend reveals nothing.
+  through `Economy.spend`, before the cell is revealed. A failed spend reveals nothing. Spend and reveal
+  are one state change followed by one synchronous `Save.flush()`, so a kill never loses a paid hint
+  (T-0010 F3).
 - Cannot pay: the button opens the hint options (rewarded ad for `economy.reward.rewarded_hint` Hint
   items if available, or the Shop); never a dead button (`DESIGN.md#flow-stuck-player`).
 - In P1, Hint is free and unlimited, and Reveal does not exist yet.
@@ -181,6 +184,8 @@ an Opus second opinion; the numbers below are starting values that `econ_sim` ch
 
 **Rules** (FR-ECON-01 … 05):
 - One currency, coins (`int`). Inventory items: Hint, Reveal. Stars are not currency.
+- Coins, items and the bonus meter are global across content languages; slots, stars and postcards are
+  per language (T-0010 F8).
 - Every change goes through `grant(source, items)` or `spend(sink, items) -> bool` with a reason.
   Balances never go negative.
 - Every transaction goes to the save journal (bounded by `economy.journal.max_entries`) and to analytics.
@@ -286,7 +291,7 @@ of these hold:
 6. At least `ads.interstitial.session_grace_seconds` seconds (starting value 120) have passed since the
    session started.
 7. At least `ads.interstitial.purchase_grace_levels` levels (starting value 10) have been completed since
-   the last purchase.
+   the last purchase. Before the first purchase this rule passes (T-0010 F6).
 
 - Never during a level or a daily puzzle, never on app open (FR-ADS-03).
 - Not loaded or failed: skip silently and go to the next level.
@@ -356,6 +361,8 @@ into `game/data/config/*.json` (FR-CFG-01).
 Ranges protect against typos and bad remote values (FR-CFG-02): a value outside its range is rejected
 and the default stays. Remote config may override only keys marked remote-tunable in the registry
 file; which ones is decided when FR-CFG-02 is built (P2), starting with `ads.interstitial.*` (FR-ADS-09).
+`unlocks.*` and `consent.*` are never remote-tunable in v1. The [Unlocks](#unlocks) constraint is checked
+on the merged config; if it fails, the whole remote payload is rejected and defaults stay (T-0010 F5).
 
 ## Open questions
 

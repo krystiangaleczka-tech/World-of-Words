@@ -177,8 +177,9 @@ One JSON file, `user://save.json` (FR-SAVE-01 … 09).
 - **Atomic write** (FR-SAVE-02): write to `save.json.tmp` → flush → rename the current `save.json` to
   `save.json.bak` → rename the temp file to `save.json`.
 - **Load** (FR-SAVE-03):
-  1. Read `save.json`. If it is unreadable, invalid JSON, or `schema_version` is missing or newer
-     than the build knows, try `save.json.bak`.
+  1. Read `save.json`. If it is missing, unreadable, invalid JSON, or `schema_version` is missing or
+     newer than the build knows, try `save.json.tmp` (a crash between the two renames leaves the newest
+     data there; T-0010 F2), then `save.json.bak`. Each write step has an interruption test.
   2. If the backup fails too, start a clean save and emit `Events.save_corrupted` (analytics from P2).
   3. A save restored from backup shows the "Progress restored from backup" Toast once.
 - **Migrations** (FR-SAVE-04) are a chain of pure functions `migrate_vN_to_vN1(data: Dictionary) ->
@@ -188,7 +189,9 @@ One JSON file, `user://save.json` (FR-SAVE-01 … 09).
   transaction, settings change and going to background. Never per frame. The IAP flow uses a synchronous
   `Save.flush()`.
 - **Where** (FR-SAVE-06): the user data directory, which is covered by Android Auto Backup and the iOS
-  backed-up directory. Cache files (`config_cache.json`, `analytics_queue.json`) are excluded from
+  backed-up directory. `monetization.processed_transactions` is never trimmed (a few hundred keys at
+  most; T-0010 F7). `daily.level_state` holds an unfinished daily for its day key and is cleared when
+  the day key changes (F4). Cache files (`config_cache.json`, `analytics_queue.json`) are excluded from
   backup.
 - **Ownership**: each section is read and written only by its owner (table in [Autoloads](#autoloads)).
   Other code asks the owner, never reads raw save data.
@@ -205,7 +208,7 @@ Save v1 shape (T-0036 fixes exact field names; this is the contract it starts fr
                 "level_state": null, "location_pieces": {} } },
                 "unlocked": [], "coach_marks_seen": [], "bonus_meter": 0 },
   "economy": { "coins": 0, "items": { "hint": 0, "reveal": 0 }, "journal": [] },
-  "daily": { "completed_days": [], "last_seen_day": null, "freezes": 0, "last_freeze_week": null,
+  "daily": { "completed_days": [], "last_seen_day": null, "level_state": null, "freezes": 0, "last_freeze_week": null,
              "streak": 0, "streak_broken_at": null },
   "monetization": { "remove_forced_ads": false, "processed_transactions": [], "last_interstitial": null,
                     "levels_since_interstitial": 0, "levels_since_purchase": null, "shop_coins_ads": {} }
