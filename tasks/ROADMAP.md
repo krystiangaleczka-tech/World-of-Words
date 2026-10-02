@@ -1,7 +1,7 @@
 # ROADMAP.md — Project WORD task breakdown
 
-- Status: v2 (2026-10-02): aligned to PRODUCT.md v1 and DESIGN.md v1, review findings applied; Phase 0 not
-  started. Owner: Sol (planner). Chris approves each wave.
+- Status: v2 (2026-10-02): aligned to PRODUCT.md v1 and DESIGN.md v1, review findings applied. Task
+  status lives in task files, not here. Owner: Sol (planner). Chris approves each wave.
 - Planner-owned: **executors never edit this file.** Status lives in task files `tasks/T-NNNN-*.md`
   (front-matter `status`); `tools/tasks.py board` renders the board. This file changes only in
   `plan/*` or `docs/*` PRs by Sol or Chris.
@@ -66,9 +66,10 @@ contracts live there, not in this file.
 1. Check the row's deps are `done` on `main` and the epic's open questions for this wave are empty.
 2. Run `make context` (`tools/context_pack.py`) for the row's area and refs; read the cited doc anchors.
 3. Copy `tasks/TEMPLATE.md` to `tasks/T-NNNN-<slug>.md`. Front-matter: `id`, `title`, `epic`, `type`,
-   `area`, `risk` from the row (`med` → `medium`); `executor` = `sol` / `cheap` / `human` (OPUS rows use `human` + a note,
-   because Opus sessions are started by Chris); `depends_on` from the row; `touch` = the smallest glob
-   allowlist inside the area (plus exact registry/locale files); `status: ready`; `revision: 1`.
+   `area`, `risk` from the row (`med` → `medium`); `think` and `ui` from the row (Think `—` → `none`);
+   `executor` = `sol` / `cheap` / `human` (OPUS rows use `human` + a note, because Opus sessions are
+   started by Chris); `depends_on` from the row; `touch` = the smallest glob allowlist inside the area
+   (plus exact registry/locale files); `status: ready`; `revision: 1`.
 4. Body: Goal, Context (quote the 1–3 rules that matter from the Refs anchors), Current state (from the
    context pack; preflight list), Specification (Behavior, Interface for contracts, States, Edge cases,
    UX with components and tokens for `UI ≥ med`, Analytics with registry entries), Out of scope, Tests
@@ -98,7 +99,7 @@ build.
 ```
 T-0001 repo ─► T-0002 seed ─► T-0003 decision 0001 (proposed) ─► T-0026 S1 plan ─┐
 T-0012 store accounts + devices ──────────────────────────────────────────────────┴─► T-0027 S1 Android ─► T-0028 S1 iOS ─┐
-T-0013 repo ─► T-0014 image ─► T-0029 S2 swipe ──────────────────────────────────────────────────────────────────────────────┴─► T-0033 ENGINE GATE
+T-0003 ─► T-0013 layout ─► T-0014 image ─► T-0029 S2 swipe ──────────────────────────────────────────────────────────────────┴─► T-0033 ENGINE GATE
 
 T-0033 ─► T-0034 autoloads ─► T-0036 Save v1 ─► T-0043 Nav (boot → level) ─► T-0044 boot smoke ─► T-0045 dry-run wave ─► T-0046..T-0049 ─► T-0050 retro ─► T-0051 P0 exit
 T-0051 ─► T-0100 BoardState ─► T-0101 ─► T-0115 LevelController ─► T-0116 level scene ─► T-0117 HUD ─► T-0118 complete ─┐
@@ -171,7 +172,7 @@ Exit: CI green on `main`, branch protection on, tools usable by executors.
 | ID | Title | Type | Area | Depends | Lane | Exec | Think | UI | Risk | Refs |
 |---|---|---|---|---|---|---|---|---|---|---|
 | T-0012 | Store accounts: Google Play Console (personal vs organization; closed-test rule applies to new personal accounts, verify) + Apple Developer; identity verification; pick and provision reference devices (Q13); Play payments profile (needed for IAP tests in S1); EU trader status (DSA) and the public contact address decision | docs | store | T-0001 | ADM | HUMAN | — | none | med | PRODUCT.md#compliance-and-store-requirements, DESIGN.md#reference-devices |
-| T-0013 | Repo layout per dp04 + `game/project.godot`: pinned Godot 4.x.y, portrait, 1080×1920 canvas_items/expand, typed warnings as errors; .gitignore; README [HS] | infra | infra | T-0002 | H | SOL | med | low | high | dp04 §1, dp02 §4, DESIGN.md#layout |
+| T-0013 | Repo layout per dp04 + `game/project.godot`: Godot 4.x.y pinned to the version decision 0001 names, portrait, 1080×1920 canvas_items/expand, typed warnings as errors; .gitignore; README [HS] | infra | infra | T-0003 | H | SOL | med | low | high | dp04 §1, dp02 §4, DESIGN.md#layout |
 | T-0014 | Docker image + devcontainer: pinned Godot headless + Android export templates, Android SDK + JDK 17 + Gradle cache, gdtoolkit, Python + uv, make; publish workflow to GHCR; the CI image build is the test loop [HS] | infra | infra | T-0013 | H | SOL | med | none | high | dp02 §4, dp07 §8, decision 0006 |
 | T-0015 | GUT pinned in `game/addons/gut` + one sample unit test running headless [HS] | infra | infra | T-0014 | H | CHEAP | low | none | high | dp02 §4, dp08 §3 |
 | T-0016 | Python toolchain: uv workspace, pyproject for `pipeline/` and `tools/`, ruff, pytest, hypothesis, pinned gdtoolkit; sample tests | infra | tools | T-0014 | H | CHEAP | low | none | low | dp02 §4 |
