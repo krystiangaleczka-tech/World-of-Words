@@ -8,7 +8,7 @@ risk: medium
 executor: human       # done in a Claude Code session Chris started
 think: med
 ui: low
-status: review        # done when Chris approves docs v1
+status: done          # Chris approved docs v1, 2026-10-02 ("Ta")
 depends_on: [T-0009, T-0010, T-0004, T-0005]
 touch:
   - docs/**
