@@ -87,8 +87,8 @@ table, made by the planner.
 | `locale` | `game/locale/` | one CSV per area |
 | `assets.art` | `game/assets/art/`, `game/assets/icons/` | |
 | `assets.audio` | `game/assets/audio/` | |
-| `content.pl`, `content.en`, `content.de` | `game/content/<lang>/`, `pipeline/overrides/<lang>.csv`, `pipeline/config/<lang>.yaml`, `pipeline/handmade/<lang>/`, `pipeline/cache/<lang>/` | generated output changes only through the pipeline |
-| `pipeline.ingest`, `pipeline.annotate`, `pipeline.classify`, `pipeline.tiers`, `pipeline.candidates`, `pipeline.grid`, `pipeline.scoring`, `pipeline.validate`, `pipeline.dedupe`, `pipeline.sequence`, `pipeline.qa`, `pipeline.export` | `pipeline/src/wordgame_pipeline/<stage>/`, `pipeline/tests/<stage>/` | one area per stage (`CONTENT.md`); `pipeline.validate` and `pipeline.export` are high risk |
+| `content.pl`, `content.en`, `content.de` | `game/content/<lang>/`, `pipeline/overrides/<lang>.csv`, `pipeline/config/<lang>.yaml`, `pipeline/handmade/<lang>/`, `pipeline/cache/<lang>/`, `pipeline/locks/<lang>.lock.json` | generated output changes only through the pipeline |
+| `pipeline.ingest`, `pipeline.annotate`, `pipeline.classify`, `pipeline.tiers`, `pipeline.candidates`, `pipeline.grid`, `pipeline.scoring`, `pipeline.validate`, `pipeline.dedupe`, `pipeline.sequence`, `pipeline.qa`, `pipeline.export` | `pipeline/src/wordgame_pipeline/<stage>/`, `pipeline/tests/<stage>/` | one area per stage (`CONTENT.md`); also `pipeline/sources/` (ingest), `pipeline/config/scoring.yaml` (scoring), `pipeline/config/curve.yaml` (sequence); `pipeline.validate` and `pipeline.export` are high risk |
 | `tools` | `tools/` | |
 | `infra` | `game/project.godot`, `game/export_presets.cfg`, `game/addons/`, `game/platform/platform.gd`, `game/services/events.gd`, `game/services/clock.gd`, `Makefile`, `pyproject.toml`, `docker/`, `.devcontainer/`, `.gitignore`, `README.md` | hotspots |
 | `ci` | `.github/workflows/`, `.github/pull_request_template.md` | hotspot |
