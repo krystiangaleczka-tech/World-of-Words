@@ -6,8 +6,8 @@ with a task file, STOP and escalate (rule S4).
 ## Project in 12 lines
 - Mobile word-connect puzzle game (swipe letters on a wheel → fill a crossword grid). Working title
   "World of Words"; the store name is not decided.
-- Engine: Godot 4.x.y (pinned in `game/project.godot`), typed GDScript, conditional on the engine gate
-  (T-0033, decision 0001). Android + iOS, portrait only.
+- Engine: Godot 4.7 (one exact 4.7.y build in the Docker image, CI and exports), typed GDScript,
+  conditional on the engine gate (T-0033, decision 0001). Android + iOS, portrait only.
 - Offline-first. No backend. No LLM at runtime.
 - Levels are generated offline by the Python pipeline in `pipeline/` and shipped as JSON packs in
   `game/content/`. The game has NO dictionary: each level contains its words and all bonus words.
