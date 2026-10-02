@@ -1,0 +1,19 @@
+# Godot
+game/.godot/
+game/android/build/
+*.translation
+export/
+builds/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+pipeline/build/
+
+# OS / editors
+.DS_Store
+.vscode/
+.idea/
