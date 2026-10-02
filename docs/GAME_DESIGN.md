@@ -351,6 +351,7 @@ into `game/data/config/*.json` (FR-CFG-01).
 | `streak.repair.window_hours` | 24 | 1–168 | Sol | P3 |
 | `review.prompt_after_slot` | 30 | 15–500 | Chris | P3 |
 | `config.remote.timeout_ms` | 3000 | 500–10000 | Sol | P2 |
+| `analytics.queue.max_events` | 500 | 50–5000 | Sol | P2 |
 
 Ranges protect against typos and bad remote values (FR-CFG-02): a value outside its range is rejected
 and the default stays. Remote config may override only keys marked remote-tunable in the registry
