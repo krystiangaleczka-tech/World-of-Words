@@ -67,14 +67,16 @@ that touches platform, ads, IAP or save.
 
 ## Reference devices
 
-Chosen by Chris in T-0012 (Q13); the exact models are written here when bought.
+Chosen by Chris in T-0012 (Q13). Store accounts are still to be created.
 
 | Device | Layout class | Purpose | Model |
 |---|---|---|---|
-| Low-end Android, ~5.5" 720×1280, 2–3 GB RAM, Android 10+ | COMPACT | performance, smallest layout, swipe latency (NFR-01) | TBD (T-0012) |
-| iPhone with Dynamic Island | REGULAR | safe areas, iOS haptics, ATT, StoreKit | TBD (T-0012) |
-| iPad (10th gen or Air) | TABLET | content column, wheel cap | TBD (T-0012) |
-| Optional: mid Android 20:9 | REGULAR | gesture navigation inset | — |
+| Low-end Android (Q13) | REGULAR (20:9) | performance, swipe latency (NFR-01) | Samsung Galaxy A15 (Chris, 2026-10-02) |
+| High-end Android, 120 Hz | REGULAR | high refresh rate, gesture inset | Samsung Galaxy S26 Ultra |
+| iPhone with notch | REGULAR | safe areas, iOS haptics, ATT, StoreKit | iPhone 13 Pro Max |
+| iPad | TABLET | content column, wheel cap | none yet: simulator until bought (before P2 device checklist) |
+| COMPACT (16:9, 720p) | COMPACT | smallest layout | none: Android emulator profile; buy a cheap 16:9 phone only if P2 layout tests show problems |
+| Mac for iOS builds | — | Xcode, signing | MacBook Air M3 |
 
 Layout classes: `DESIGN.md#reference-devices`.
 
