@@ -21,3 +21,12 @@ Layout: `game/` (Godot project), `pipeline/` (Python content pipeline), `tools/`
 
 `docker/Dockerfile` is the pinned toolchain (Godot, Android SDK, JDK 17, uv, gdtoolkit). CI publishes it
 to `ghcr.io/krystiangaleczka-tech/world-of-words-toolchain`; `.devcontainer/` opens the repo inside it.
+
+## Tests
+
+GUT 9.7.1 lives in `game/addons/gut`. Run all GUT tests headless:
+
+```
+godot --headless --path game --import --quit
+godot --headless --path game -s addons/gut/gut_cmdln.gd -gconfig=res://.gutconfig.json
+```
