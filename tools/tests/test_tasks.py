@@ -4,7 +4,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-SCRIPT = Path(__file__).resolve().parents[1] / "tasks.py"\nREPO_ROOT = SCRIPT.parents[1]
+SCRIPT = Path(__file__).resolve().parents[1] / "tasks.py"
+REPO_ROOT = SCRIPT.parents[1]
 
 
 def _arch(root: Path, *areas: str) -> None:
