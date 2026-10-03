@@ -7,74 +7,39 @@ from pathlib import Path
 SCRIPT = Path(__file__).resolve().parents[1] / "context_pack.py"
 
 
-def _task(root: Path, task_id: str, status: str) -> None:
-    path = root / "tasks" / f"{task_id}-fixture.md"
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        f"""---
-id: {task_id}
-title: Fixture {task_id}
-epic: E01
-type: infra
-area: tools
-risk: low
-executor: sol
-think: med
-ui: none
-status: {status}
-depends_on: []
-touch:
-  - tools/**
-revision: 1
----
-""",
-        encoding="utf-8",
-    )
-
-
 def _fixture(root: Path) -> None:
-    arch = root / "docs" / "ARCHITECTURE.md"
-    arch.parent.mkdir(parents=True)
-    arch.write_text(
-        """# Architecture
-
-## Areas
-
-| Area | Paths | Notes |
-|---|---|---|
-| `tools` | `tools/` | tooling |
-
-## Next
-""",
-        encoding="utf-8",
-    )
-    (root / "docs" / "GUIDE.md").write_text(
-        """# Guide
-
-## Target Section
-keep this
-### Nested
-keep nested
-## Other
-do not include
-""",
-        encoding="utf-8",
-    )
+    docs = root / "docs"
     tools = root / "tools"
+    tasks = root / "tasks"
+    docs.mkdir()
     tools.mkdir()
+    tasks.mkdir()
+    (docs / "ARCHITECTURE.md").write_text(
+        "# Architecture\n\n## Areas\n\n| Area | Paths | Notes |\n|---|---|---|\n"
+        "| `tools` | `tools/` | tooling |\n\n## Next\n",
+        encoding="utf-8",
+    )
+    (docs / "GUIDE.md").write_text(
+        "# Guide\n\n## Target Section\nkeep this\n### Nested\nkeep nested\n"
+        "## Other\ndo not include\n",
+        encoding="utf-8",
+    )
     (tools / "api.gd").write_text(
-        """## @api
-func build_pack(area: String) -> String:
-    return area
-""",
+        "## @api\nfunc build_pack(area: String) -> String:\n    return area\n",
         encoding="utf-8",
     )
     (tools / "z.py").write_text("VALUE = 1\n", encoding="utf-8")
     cache = tools / "__pycache__"
     cache.mkdir()
     (cache / "junk.pyc").write_bytes(b"x")
-    _task(root, "T-0001", "done")
-    _task(root, "T-0002", "ready")
+    for number, status in ((1, "done"), (2, "ready")):
+        task_id = f"T-{number:04d}"
+        (tasks / f"{task_id}-fixture.md").write_text(
+            f"---\nid: {task_id}\ntitle: Fixture {task_id}\nepic: E01\ntype: infra\n"
+            f"area: tools\nrisk: low\nexecutor: sol\nthink: med\nui: none\nstatus: {status}\n"
+            "depends_on: []\ntouch:\n  - tools/**\nrevision: 1\n---\n",
+            encoding="utf-8",
+        )
 
 
 def _run(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
@@ -86,15 +51,10 @@ def _run(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
     )
 
 
-def test_context_pack_emits_area_map_api_docs_and_open_tasks(tmp_path: Path) -> None:
+def test_context_pack_emits_area_api_docs_and_open_tasks(tmp_path: Path) -> None:
     _fixture(tmp_path)
-
     result = _run(
-        tmp_path,
-        "--area",
-        "tools",
-        "--ref",
-        "docs/GUIDE.md#target-section",
+        tmp_path, "--area", "tools", "--ref", "docs/GUIDE.md#target-section"
     )
 
     assert result.returncode == 0, result.stderr
@@ -109,17 +69,13 @@ def test_context_pack_emits_area_map_api_docs_and_open_tasks(tmp_path: Path) -> 
 
 def test_context_pack_rejects_unknown_area(tmp_path: Path) -> None:
     _fixture(tmp_path)
-
     result = _run(tmp_path, "--area", "missing")
-
     assert result.returncode == 1
     assert "ERROR: unknown area 'missing'" in result.stderr
 
 
 def test_context_pack_rejects_missing_anchor(tmp_path: Path) -> None:
     _fixture(tmp_path)
-
     result = _run(tmp_path, "--ref", "docs/GUIDE.md#missing")
-
     assert result.returncode == 1
     assert "ERROR: anchor not found: docs/GUIDE.md#missing" in result.stderr
