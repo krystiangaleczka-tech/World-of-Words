@@ -1,0 +1,12 @@
+{
+  "name": "World of Words",
+  "image": "ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest",
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+  "mounts": ["source=wow-gradle-cache,target=/opt/gradle-cache,type=volume"],
+  "customizations": {
+    "vscode": {
+      "extensions": ["geequlim.godot-tools", "charliermarsh.ruff", "ms-python.python"]
+    }
+  }
+}

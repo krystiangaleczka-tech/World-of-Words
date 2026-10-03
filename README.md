@@ -16,3 +16,8 @@ Where to read:
 
 Layout: `game/` (Godot project), `pipeline/` (Python content pipeline), `tools/` (task and CI tools),
 `docs/`, `tasks/`. Details in `docs/ARCHITECTURE.md#areas`.
+
+## Toolchain image
+
+`docker/Dockerfile` is the pinned toolchain (Godot, Android SDK, JDK 17, uv, gdtoolkit). CI publishes it
+to `ghcr.io/krystiangaleczka-tech/world-of-words-toolchain`; `.devcontainer/` opens the repo inside it.
