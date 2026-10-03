@@ -14,12 +14,12 @@ touch:
   - docs/spikes/S1-plan.md
   - docs/decisions/0007-app-identifiers.md
   - tasks/T-0026-*.md
-revision: 2
+revision: 3
 ---
 
 ## Goal
 Turn decision 0001's fixed S1 pass/fail criteria into an executable Android/iOS test plan, survey the
-current Godot 4.7.2 plugin options, and propose neutral production and freeze throwaway spike identifiers
+current Godot 4.7.2 plugin options, and freeze neutral production and throwaway spike identifiers
 before either store receives an upload.
 
 ## Context
@@ -45,9 +45,8 @@ before either store receives an upload.
 3. Define an ordered test matrix that preserves P1-P11 and tells T-0027/T-0028 exactly what evidence
    counts as pass/fail.
 4. Distinguish engine-gate failures from provider/plugin failures exactly as decision 0001 does.
-5. Propose one neutral Android applicationId / iOS bundle ID shared across production platforms,
-   explicitly requiring Chris's acceptance before the first production store record/upload; also record
-   a separate `.spike` identifier that must never become the production app.
+5. Record the Chris-approved neutral Android applicationId / iOS bundle ID shared across production
+   platforms, plus a separate `.spike` identifier that must never become the production app.
 6. The production identifier must not contain the working title "World of Words".
 
 ### Edge cases
@@ -69,8 +68,8 @@ before either store receives an upload.
 Documentation review:
 - every P1-P11 row appears in `docs/spikes/S1-plan.md` with pass evidence.
 - every candidate recommendation has a dated public source.
-- decision 0007 is `proposed` until Chris explicitly accepts the permanent namespace; the throwaway
-  identifier differs only by `.spike`.
+- decision 0007 records Chris's accepted permanent namespace; the throwaway identifier differs only
+  by `.spike`.
 
 ## Acceptance
 - `tools/tasks.py lint` and repository CI pass.
@@ -78,6 +77,8 @@ Documentation review:
 - T-0027 can execute Android S1 without making an additional provider-selection decision.
 
 ## Escalation log
+- Revision 3: Chris explicitly selected `com.mazen.worldofwordgame`; decision 0007 is accepted and
+  S1 uses `com.mazen.worldofwordgame.spike`.
 - Review revision 2: fresh-session review requested StoreKit 2 first-choice correction, Sentry comparison,
   consent/P7 evidence tightening, proposed-not-accepted identifiers, current store-toolchain constraints,
   account prerequisites and named devices. All were incorporated before merge.
