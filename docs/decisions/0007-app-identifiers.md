@@ -1,11 +1,12 @@
 # 0007 — Permanent application identifiers
 
-- Status: accepted (T-0026, 2026-10-03).
+- Status: proposed (T-0026, 2026-10-03). Requires Chris's explicit acceptance before the first
+  production Play Console or App Store Connect app record/upload.
 - Scope: store/application identity only. This does not choose the final store-facing product name.
 
-## Decision
+## Proposal
 
-Use one neutral reverse-DNS identifier for the production app on both platforms:
+Candidate neutral production identifier on both platforms:
 
 - Android `applicationId`: `com.krystiangaleczka.wordgame`
 - iOS bundle ID: `com.krystiangaleczka.wordgame`
@@ -15,27 +16,27 @@ Throwaway S1 apps use:
 - Android `applicationId`: `com.krystiangaleczka.wordgame.spike`
 - iOS bundle ID: `com.krystiangaleczka.wordgame.spike`
 
-The `.spike` ID is never uploaded as the production app and never reused for production signing,
-billing products, AdMob production units or Firebase production app registrations.
+The `.spike` ID is disposable and never becomes the production app. It may be used by T-0027/T-0028
+while this production identifier remains proposed.
 
 ## Rationale
 
-- The identifier is independent of the working title "World of Words", so a later trademark/store-name
-  change does not force a package identity change.
-- Android and iOS share the same base identifier to reduce configuration mistakes across SDK consoles.
-- A dedicated `.spike` namespace prevents S1 test resources, receipts, analytics and ad configuration
-  from contaminating the production app identity.
-- Package/bundle identifiers are treated as permanent once the first store upload is made.
+- The candidate is independent of the working title "World of Words", so a later trademark/store-name
+  change would not force a package identity change.
+- Android and iOS would share the same base identifier to reduce cross-provider configuration mistakes.
+- A dedicated `.spike` namespace keeps S1 receipts, analytics, ads and test signing separate.
+- The production namespace contains the developer surname and becomes effectively permanent after the
+  first store record/upload, so Sol must not mark it accepted without Chris's explicit approval.
 
-## Consequences
+## Consequences if accepted
 
-- T-0027 and T-0028 must use the `.spike` ID.
-- The first real Play Console/App Store Connect app records must use `com.krystiangaleczka.wordgame`.
+- The first production Play Console and App Store Connect records use
+  `com.krystiangaleczka.wordgame`.
 - Later store-facing name changes do not change these identifiers.
-- Any provider config file committed later must correspond to the correct production or spike ID.
+- Provider config files must match the production or spike ID exactly.
 
-## Revisit if
+## Before acceptance
 
-Only before the first production store record/upload, and only if Chris explicitly changes the
-developer namespace. After the first production upload, superseding this decision must not rename the
-existing store app identifier.
+Chris may accept this candidate or choose a different neutral reverse-DNS namespace. That decision
+must happen before the first production store record/upload. Changing the throwaway `.spike` ID
+does not migrate or reserve the production app.
