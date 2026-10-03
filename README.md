@@ -30,3 +30,13 @@ GUT 9.7.1 lives in `game/addons/gut`. Run all GUT tests headless:
 godot --headless --path game --import --quit
 godot --headless --path game -s addons/gut/gut_cmdln.gd -gconfig=res://.gutconfig.json
 ```
+
+## Python (pipeline and tools)
+
+uv workspace at the repo root (`pipeline/`, `tools/`); versions pinned in `pyproject.toml` and `uv.lock`.
+
+```
+uv sync
+uv run ruff check . && uv run ruff format --check .
+uv run pytest
+```
