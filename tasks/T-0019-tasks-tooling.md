@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: high
 ui: none
-status: in_progress
+status: review
 depends_on: [T-0016, T-0007]
 touch:
   - tools/tasks.py
