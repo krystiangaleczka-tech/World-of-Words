@@ -65,9 +65,8 @@ def _python_test_count(source: str, path: str) -> int:
 
     count = 0
     for node in tree.body:
-        if (
-            isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-            and node.name.startswith("test_")
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith(
+            "test_"
         ):
             count += 1
         elif isinstance(node, ast.ClassDef) and node.name.startswith("Test"):
