@@ -10,6 +10,63 @@ permissions:
   packages: read
 
 jobs:
+  scope:
+    name: scope
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce task scope
+        if: github.event_name == 'pull_request'
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          uv run python tools/check_scope.py
+      - name: Skip scope on main push
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "SKIP scope: task scope is enforced on pull requests only"
+
+  tasks-lint:
+    name: tasks-lint
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate task metadata
+        run: uv run python tools/tasks.py lint
+
+  test-count:
+    name: test-count
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Prevent test-count regression
+        if: github.event_name == 'pull_request'
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          uv run python tools/count_tests.py
+      - name: Skip test count on main push
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "SKIP test-count: regression comparison is enforced on pull requests only"
+
   format:
     name: format
     runs-on: ubuntu-24.04
