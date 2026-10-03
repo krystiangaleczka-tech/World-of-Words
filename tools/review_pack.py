@@ -79,7 +79,9 @@ def _base_ref(root: Path) -> str:
 
 def _diff(root: Path, base: str | None) -> str:
     resolved = base or _base_ref(root)
-    return _git(\n        root, "diff", "--no-ext-diff", "--find-renames", f"{resolved}...HEAD", "--"\n    ).rstrip()
+    return _git(
+        root, "diff", "--no-ext-diff", "--find-renames", f"{resolved}...HEAD", "--"
+    ).rstrip()
 
 
 def build(root: Path, task_id: str, base: str | None = None) -> str:
