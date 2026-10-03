@@ -27,7 +27,8 @@ jobs:
         run: uv run python tools/check_scope.py
       - name: Skip scope on main push
         if: github.event_name != 'pull_request'
-        run: echo "SKIP scope: task scope is enforced on pull requests only"
+        run: |
+          echo "SKIP scope: task scope is enforced on pull requests only"
 
   tasks-lint:
     name: tasks-lint
@@ -59,7 +60,8 @@ jobs:
         run: uv run python tools/count_tests.py
       - name: Skip test count on main push
         if: github.event_name != 'pull_request'
-        run: echo "SKIP test-count: regression comparison is enforced on pull requests only"
+        run: |
+          echo "SKIP test-count: regression comparison is enforced on pull requests only"
 
   format:
     name: format
