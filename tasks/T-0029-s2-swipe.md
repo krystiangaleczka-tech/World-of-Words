@@ -18,54 +18,38 @@ revision: 1
 ---
 
 ## Goal
-Build a disposable Godot 4.7.2 letter-wheel prototype for the Galaxy A15 so Chris can judge
-swipe latency and haptic feel before the production wheel is designed.
+Build a disposable Godot 4.7.2 letter wheel for the Galaxy A15 so Chris can judge swipe latency
+and haptic feel before production wheel code exists.
 
 ## Context
-- PRODUCT.md FR-WHEEL-02: the connecting line follows the finger every frame with no per-frame allocations.
-- PRODUCT.md NFR-01: line and tile selection update on the next rendered frame after touch; Chris judges
-  perceivable lag on the low-end Android.
-- TESTING.md names Samsung Galaxy A15 as the low-end Android for swipe-latency review.
-- Roadmap T-0029; design-pass 11 section 4 defines S2 as a throwaway wheel rated on device.
+- PRODUCT.md FR-WHEEL-02 / NFR-01: line and selection update on the next rendered frame with no
+  per-frame allocations and no perceivable lag on the low-end Android.
+- DESIGN.md#letterwheelview: raw touch/drag, enlarged hit radius, previous-tile backtrack, second
+  finger ignored, per-letter haptic, preallocated Line2D points.
+- TESTING.md: Samsung Galaxy A15 is the low-end Android for swipe-latency review.
+- Roadmap T-0029; design-pass 11 section 4 defines S2 as a throwaway device-rated wheel.
 
 ## Current state
-- Godot 4.7.2 and Android export templates are pinned by T-0014.
-- T-0012 has no task file, but its accepted device decision is recorded in TESTING.md.
-- No S2 project or S2 report exists.
+Godot 4.7.2 and Android export templates are pinned by T-0014. T-0012 has no task file, but its
+accepted Galaxy A15 decision is recorded in TESTING.md. No S2 project/report exists.
 
 ## Specification
-### Behavior
-1. Keep the spike isolated under `spikes/s2-swipe/`; production `game/` stays untouched.
-2. Use raw screen-touch/drag events. Ignore a second finger while a chain is active.
-3. Keep the finger endpoint in a two-or-more-point `Line2D`; the frame path only mutates the cached
-   endpoint and numeric counters, with no GDScript container/string allocation in `_process`.
-4. Append a tile once, support one-step backtrack, and vibrate briefly only when entering a new tile.
-5. Show a throttled event-to-frame estimate and FPS for diagnostic use only.
-6. Export as the approved throwaway package `com.mazen.worldofwordgame.spike` with VIBRATE permission.
+1. Keep the spike under `spikes/s2-swipe/`; do not touch production `game/`.
+2. Use raw screen touch/drag and one active finger.
+3. Cache the finger position; `_process` only mutates the existing Line2D endpoint and numeric
+   diagnostic counters. Chain/string changes happen only on input events.
+4. Append each tile once, backtrack onto the previous tile, and vibrate only on newly entered tiles.
+5. Show throttled event-to-frame and FPS diagnostics.
+6. Export with VIBRATE permission as `com.mazen.worldofwordgame.spike`.
 
-### Edge cases
-- Touch starts outside a tile: ignore it.
-- Second finger during a chain: ignore it.
-- Re-enter selected non-previous tile: ignore it.
-- Backtrack onto the previous tile: remove the last tile without adding a duplicate.
-
-## Out of scope
-Production wheel API/scenes, final visuals, gameplay word validation, analytics, audio, save, economy.
-
-## Tests
-- Repository CI: scope, task lint, test-count, format, lint, production Godot import/GUT, pytest.
-- Toolchain/device: import the disposable project and export Android debug APK.
-- Galaxy A15: perform repeated slow and fast swipes; record Chris's latency rating, haptic rating,
-  FPS/latency estimate and any missed/backtracked letters in `docs/spikes/S2-swipe.md`.
-
-## Acceptance
-- Disposable wheel and Android export preset are ready.
-- Repository CI is green.
-- Chris's Galaxy A15 observations are recorded before status changes to `done`.
-- Report contains the recommended production input approach.
+## Tests / acceptance
+- Repository CI green: scope, tasks-lint, test-count, format, lint, production Godot/GUT, pytest.
+- Disposable project imports and Android debug export succeeds in the T-0014 toolchain.
+- Chris performs repeated slow/fast swipes on the Galaxy A15 and records latency, haptic feel,
+  misses/backtracks and diagnostics in `docs/spikes/S2-swipe.md`.
+- The report recommends the production input path. Keep status `review` until device evidence exists.
 
 ## Escalation log
-- S1-style preflight: ROADMAP has T-0029 but no T-0029 task file on main. Chris explicitly requested
-  execution, so this revision records the fixed roadmap scope without editing ROADMAP.
-- T-0012 cannot be listed in machine-readable `depends_on` because no T-0012 task file exists;
-  TESTING.md contains the accepted Galaxy A15 device decision.
+ROADMAP has T-0029 but no task file on main; Chris explicitly requested execution, so this revision
+records that fixed scope. T-0012 is omitted from machine-readable `depends_on` because its task file
+does not exist; TESTING.md contains the accepted device decision.
