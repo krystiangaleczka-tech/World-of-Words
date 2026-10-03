@@ -1,6 +1,6 @@
 # S1 iOS execution report — T-0028
 
-Date: 2026-10-04. **Task: BLOCKED; device/store matrix: NOT EXECUTED.**
+Date: 2026-10-04. **Task: DONE by Chris scope acceptance; device/store matrix: DEFERRED / NOT EXECUTED.**
 
 The repository-side diagnostic harness is prepared on `t/0028-s1-ios`. This execution path has no
 access to Chris's iPhone, Xcode signing identity, App Store Connect, AdMob/UMP, analytics or crash
@@ -47,5 +47,12 @@ provider resources. No P1-P11 row is promoted from a static/plugin preflight to 
 3. Prepare non-production analytics/crash resources and install/build the native haptics plugin.
 4. Execute P1-P11 and replace only rows backed by real evidence with PASS/FAIL.
 
-No F1/F2/F3 determination can be made from the repository preflight. T-0033 must treat T-0028 as
-blocked until device evidence exists or Chris explicitly changes the accepted scope.
+No F1/F2/F3 determination can be made from the repository preflight. Task completion does not mean
+the S1 iOS matrix passed; T-0033 must preserve that distinction.
+
+## Completion decision — 2026-10-04
+
+Chris explicitly accepts the repository-side diagnostic preparation as the current completion scope
+for T-0028 and marks the task done. All P1-P11 device/store rows remain DEFERRED / NOT EXECUTED and
+require follow-up validation before release. The accepted risk is later discovery of iOS SDK/store
+integration problems and possible rework; no change to decision 0001's S1 pass criteria is implied.
