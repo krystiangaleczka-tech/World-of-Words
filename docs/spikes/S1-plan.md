@@ -78,16 +78,16 @@ T-0033/Q9 chooses the final floor from integrations that actually pass.
 
 ## 3. Application identifiers
 
-Candidate production identity (pending Chris's explicit acceptance in decision 0007):
-- Android `applicationId`: `com.krystiangaleczka.wordgame`
-- iOS bundle ID: `com.krystiangaleczka.wordgame`
+Accepted production identity (decision 0007):
+- Android `applicationId`: `com.mazen.worldofwordgame`
+- iOS bundle ID: `com.mazen.worldofwordgame`
 
 S1 throwaway identity:
-- Android: `com.krystiangaleczka.wordgame.spike`
-- iOS: `com.krystiangaleczka.wordgame.spike`
+- Android: `com.mazen.worldofwordgame.spike`
+- iOS: `com.mazen.worldofwordgame.spike`
 
-The `.spike` ID is disposable and may be used for S1 resources while the permanent production
-namespace remains proposed. It must never be reused as the production store identity.
+The `.spike` ID is disposable and is used only for S1 resources. It must never be reused as the
+production store identity.
 
 ## 4. Ordered P1-P11 matrix
 
