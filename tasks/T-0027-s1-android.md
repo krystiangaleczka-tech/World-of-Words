@@ -8,13 +8,13 @@ risk: high
 executor: human
 think: xhigh
 ui: none
-status: blocked
+status: done
 depends_on: [T-0026]
 touch:
   - spikes/s1-android/**
   - docs/spikes/S1-android.md
   - tasks/T-0027-*.md
-revision: 1
+revision: 2
 ---
 
 ## Goal
@@ -41,11 +41,11 @@ record reproducible evidence for the engine gate. Never promote a smoke test to 
 3. Export/install a debug APK and record native singleton availability and Billing connection.
 4. Keep ads uninitialized and do not request ads without configured/resolved UMP.
 5. Execute P1-P8/P10-P11 only with the plan's real prerequisites; P9 is iOS-only.
-6. Record blocked items and exact prerequisites; keep this task blocked until all Android rows pass
-   or a documented engine-gate failure is reviewed.
+6. Record unexecuted matrix items and prerequisites as deferred. Chris accepted this diagnostic
+   round as completion of T-0027; task completion does not mean the full S1 matrix passed.
 
 ### Edge cases
-- Missing provider resources: BLOCKED, never PASS or an engine failure.
+- Missing provider resources: DEFERRED / NOT EXECUTED, never PASS or an engine failure.
 - Missing native singleton/export failure: record exact error before the bounded fallback.
 - Sideloaded Billing connection: smoke evidence only, never P4/P5/P10 evidence.
 
@@ -57,10 +57,11 @@ Production game code, iOS execution, native ads/IAP rewrites, paid purchases and
 - `tools/tasks.py lint` and scope check against origin/main.
 - Headless import and Android debug export of the disposable project.
 - Device launch: actual Godot version, native singleton presence and Billing connection in logcat.
-- Full device matrix P1-P11 exactly as S1-plan when resources are ready.
+- Deferred: full device matrix P1-P11 exactly as S1-plan when resources are ready, before release.
 
 ## Acceptance
-All Android matrix rows have genuine evidence; blocked rows prevent completion.
+Diagnostic export/install/startup and Billing connection have genuine device evidence.
+Chris explicitly accepts this task as done with the full matrix deferred; no S1 gate PASS is claimed.
 
 ## Rollback
 Revert this task's files and uninstall the disposable app. No production save or store ID changes.
@@ -68,5 +69,18 @@ Revert this task's files and uninstall the disposable app. No production save or
 ## Escalation log
 - Chris requested execution from T-0026 despite missing T-0027 file; this records its scope.
 - T-0026 is merged, accepted as the dependency despite stale review status; no unrelated task edited.
-- S1: T-0012 has no task file; its roadmap/account prerequisites remain blocking.
+- S1: T-0012 has no task file; its roadmap/account prerequisites remain unmet for the deferred store tests.
 - Chris confirmed missing account/provider resources; runtime smoke work can proceed, full S1 cannot.
+
+## Decision log
+- 2026-10-03 — Chris explicitly declared T-0027 complete and requested this decision be logged.
+  Revision 2 supersedes the earlier requirement to keep this task blocked until all rows pass.
+- Chris will create the Play developer account closer to release, not during the current prototype
+  stage. Real Play purchases/restore and AAB internal-track acceptance (P4/P5/P10) are deferred
+  until that account, products and testers are configured, with time reserved before publication.
+- Remaining unexecuted ads/UMP, analytics/crash, haptics and integrated stability matrix rows
+  remain deferred evidence, not passed tests. Continue gameplay, input, save, performance and
+  haptics testing on device during development; those checks need not wait for a Play account.
+- Accepted tradeoff: Godot/SDK purchase and store compatibility will be confirmed later, so later
+  findings may require integration changes in a more developed application. T-0028/T-0033 must
+  distinguish this accepted task closure from full S1 validation and preserve the outstanding tests.

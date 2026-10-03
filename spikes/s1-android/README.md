@@ -1,6 +1,6 @@
 # S1 Android diagnostic project
 
-This is the initial, blocked T-0027 device probe, not a completed SDK integration.
+This is the T-0027 device probe accepted as done by Chris, with full SDK validation deferred.
 Use Godot **4.7.2 standard** with matching Android export/build templates, Android SDK 36
 and Java 17. The package is always `com.mazen.worldofwordgame.spike`.
 
@@ -19,7 +19,7 @@ The app lists native SDK singletons and connects to Billing; it never starts an 
 initializes MobileAds, purchases a product, emits analytics or crashes deliberately.
 Its diagnostic strings are developer evidence, not production player-facing UI.
 
-## Required before the full matrix
+## Required for deferred full validation before release
 
 - Play Console `.spike` app/internal track, dedicated signing, license tester and active products
   `c.coins_s.v1` (consumable) and `nc.remove_forced_ads.v1` (non-consumable).

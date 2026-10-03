@@ -1,8 +1,9 @@
 # S1 Android execution report — T-0027
 
-Date: 2026-10-03. **Overall: BLOCKED, not an S1 pass and not an engine-gate failure.**
+Date: 2026-10-03. **Task: DONE by Chris acceptance; full S1 matrix: DEFERRED / NOT EXECUTED.**
 Chris confirmed provider/store resources are not prepared. This round performs the available
-export/device preflight only. T-0027 remains unfinished; T-0028/T-0033 must not treat it as passed.
+export/device preflight only. Chris closed T-0027 on 2026-10-03 with the remaining tests deferred.
+T-0028/T-0033 must not interpret task completion as an S1 matrix pass.
 
 ## Trace to T-0026
 
@@ -10,7 +11,7 @@ PR #8 merged at 9749479 after review fixes F1-F9. Its task file still says `revi
 plan and accepted decision 0007 are the inputs, with no modification of those documents.
 Roadmap dependency T-0012 has no task file yet and store/account readiness is unconfirmed.
 The local T-0027 file records T-0026 as its machine-readable dependency; the missing T-0012
-and plan section 2 entry checklist remain explicit blocking prerequisites, not waived tests.
+and plan section 2 entry checklist remain prerequisites for the deferred tests, not evidence that those tests passed.
 
 ## Environment and pins
 
@@ -53,31 +54,41 @@ Sources: [Godot release](https://github.com/godotengine/godot/releases/tag/4.7.2
 
 ## P1-P11 results
 
-BLOCKED means not executed, never a pass/fail inference from mocks or a sideloaded smoke run.
+DEFERRED means not executed, never a pass/fail inference from mocks or a sideloaded smoke run.
 
 | ID | Result | Evidence still required |
 |---|---|---|
-| P1 Consent | BLOCKED | Real `.spike` AdMob app/published UMP; form after slot 1, GDScript state, init ordering |
-| P2 Rewarded | BLOCKED | Consent-compliant Google test unit; full-watch callback exactly once, early close zero |
-| P3 Interstitial | BLOCKED | Consent-compliant test unit and exact pre-ad state restoration |
-| P4 Consumable | BLOCKED | Internal-track/tester/product, verify/grant/durable token/consume and both kill points |
-| P5 Restore | BLOCKED | Non-consumable purchase, reinstall and entitlement recovery through Play |
-| P6 Analytics | BLOCKED | Firebase config/dashboard, denied defaults, queue send/drop and named event params |
-| P7 Crash | BLOCKED | Sentry project/DSN, version tags, readable GDScript stack and symbolication evidence |
-| P8 Haptics | BLOCKED | First-choice haptics plugin installed; Chris feels enabled light/tick and no disabled tick |
+| P1 Consent | DEFERRED | Real `.spike` AdMob app/published UMP; form after slot 1, GDScript state, init ordering |
+| P2 Rewarded | DEFERRED | Consent-compliant Google test unit; full-watch callback exactly once, early close zero |
+| P3 Interstitial | DEFERRED | Consent-compliant test unit and exact pre-ad state restoration |
+| P4 Consumable | DEFERRED | Internal-track/tester/product, verify/grant/durable token/consume and both kill points |
+| P5 Restore | DEFERRED | Non-consumable purchase, reinstall and entitlement recovery through Play |
+| P6 Analytics | DEFERRED | Firebase config/dashboard, denied defaults, queue send/drop and named event params |
+| P7 Crash | DEFERRED | Sentry project/DSN, version tags, readable GDScript stack and symbolication evidence |
+| P8 Haptics | DEFERRED | First-choice haptics plugin installed; Chris feels enabled light/tick and no disabled tick |
 | P9 Silent switch | N/A | iOS-only; T-0028 owns this row |
-| P10 Store upload | BLOCKED | Signed AAB accepted on internal track plus AAB SDK/16 KB evidence |
-| P11 Stability | BLOCKED | Real 10-minute ads/purchase/query/restore cycle; no crash, ANR, hang or lost entitlement |
+| P10 Store upload | DEFERRED | Signed AAB accepted on internal track plus AAB SDK/16 KB evidence |
+| P11 Stability | DEFERRED | Real 10-minute ads/purchase/query/restore cycle; no crash, ANR, hang or lost entitlement |
 
-## Resume checklist
+## Deferred validation checklist
 
 1. Complete T-0012 account/payment/tester prerequisites and S1-plan section 2 provider resources.
 2. Keep configs/signing secrets local, never in this report or Git; preserve the `.spike` identity.
 3. Extend this diagnostic project to the actual plan matrix, including durable receipt verification
    and the two interruption points, consent queue, crash tagging and haptics.
-4. Run P1-P8/P10/P11 with device/store/dashboard evidence; only then update results and task status.
+4. Run P1-P8/P10/P11 with device/store/dashboard evidence before release; update matrix results
+   in follow-up validation work. T-0027 remains done under Chris's accepted scope.
 
 ## Classification
 
 No F1/F2/F3 determination is possible from this round. Missing accounts are an entry prerequisite
-block, not evidence against Godot. No production code, production resources or original docs changed.
+dependency for deferred validation, not evidence against Godot. No production code, production resources or original docs changed.
+
+## Completion decision — 2026-10-03
+
+Chris accepts the available diagnostic/device results and closes T-0027. Play account registration
+and real purchase/restore/store-upload validation move closer to release. The other unexecuted
+matrix rows remain visible above and must be covered in follow-up validation before publication.
+Gameplay, input, save, performance and haptics checks continue during development without waiting
+for Play. The accepted risk is later discovery of SDK/store incompatibility and possible rework;
+no change to decision 0001's pass criteria or an accepted engine-gate outcome is implied.
