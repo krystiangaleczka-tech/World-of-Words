@@ -9,15 +9,12 @@ permissions:
   contents: read
   packages: read
 
-env:
-  TOOLCHAIN_IMAGE: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
-
 jobs:
   format:
     name: format
     runs-on: ubuntu-24.04
     container:
-      image: ${{ env.TOOLCHAIN_IMAGE }}
+      image: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -30,7 +27,7 @@ jobs:
     name: lint
     runs-on: ubuntu-24.04
     container:
-      image: ${{ env.TOOLCHAIN_IMAGE }}
+      image: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -43,7 +40,7 @@ jobs:
     name: godot-import + test
     runs-on: ubuntu-24.04
     container:
-      image: ${{ env.TOOLCHAIN_IMAGE }}
+      image: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -67,7 +64,7 @@ jobs:
     name: pipeline pytest
     runs-on: ubuntu-24.04
     container:
-      image: ${{ env.TOOLCHAIN_IMAGE }}
+      image: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -109,7 +106,7 @@ jobs:
     name: tools pytest
     runs-on: ubuntu-24.04
     container:
-      image: ${{ env.TOOLCHAIN_IMAGE }}
+      image: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
