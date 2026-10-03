@@ -128,7 +128,7 @@ def _validate(
     if unknown:
         errors.append(f"unknown fields: {', '.join(unknown)}")
 
-    string_fields = ("id", "title", "epic", "type", "area", "risk", "executor", "think", "ui", "status")
+    string_fields = (\n        "id",\n        "title",\n        "epic",\n        "type",\n        "area",\n        "risk",\n        "executor",\n        "think",\n        "ui",\n        "status",\n    )
     for field in string_fields:
         if field in data and (not isinstance(data[field], str) or not data[field]):
             errors.append(f"{field} must be a non-empty string")
@@ -258,8 +258,8 @@ def _segment_overlap(left: str, right: str) -> bool:
     if not right_magic:
         return fnmatch.fnmatchcase(right, left)
 
-    left_prefix = re.split(r"[*?[]", left, 1)[0]
-    right_prefix = re.split(r"[*?[]", right, 1)[0]
+    left_prefix = re.split(r"[*?[]", left, maxsplit=1)[0]
+    right_prefix = re.split(r"[*?[]", right, maxsplit=1)[0]
     if left_prefix and right_prefix and not (
         left_prefix.startswith(right_prefix) or right_prefix.startswith(left_prefix)
     ):
