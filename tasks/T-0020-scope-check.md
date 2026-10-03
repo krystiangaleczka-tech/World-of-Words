@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: med
 ui: none
-status: ready
+status: review
 depends_on: [T-0019]
 touch:
   - tools/check_scope.py
