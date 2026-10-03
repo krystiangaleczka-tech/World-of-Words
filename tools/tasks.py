@@ -128,7 +128,18 @@ def _validate(
     if unknown:
         errors.append(f"unknown fields: {', '.join(unknown)}")
 
-    string_fields = (\n        "id",\n        "title",\n        "epic",\n        "type",\n        "area",\n        "risk",\n        "executor",\n        "think",\n        "ui",\n        "status",\n    )
+    string_fields = (
+        "id",
+        "title",
+        "epic",
+        "type",
+        "area",
+        "risk",
+        "executor",
+        "think",
+        "ui",
+        "status",
+    )
     for field in string_fields:
         if field in data and (not isinstance(data[field], str) or not data[field]):
             errors.append(f"{field} must be a non-empty string")
