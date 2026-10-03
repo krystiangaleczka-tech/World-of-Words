@@ -4,9 +4,9 @@ import argparse
 import fnmatch
 import re
 import sys
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Sequence
 
 TASK_RE = re.compile(r"^T-\d{4}-.+\.md$")
 ID_RE = re.compile(r"^T-\d{4}$")
@@ -45,7 +45,6 @@ class Task:
     status: str
     depends_on: tuple[str, ...]
     touch: tuple[str, ...]
-    path: Path
 
 
 def _value(raw: str) -> object:
@@ -116,7 +115,11 @@ def _areas(path: Path) -> set[str]:
     return areas
 
 
-def _validate(path: Path, data: dict[str, object], areas: set[str]) -> tuple[Task | None, list[str]]:
+def _validate(
+    path: Path,
+    data: dict[str, object],
+    areas: set[str],
+) -> tuple[Task | None, list[str]]:
     errors: list[str] = []
     missing = sorted(set(REQUIRED) - data.keys())
     unknown = sorted(data.keys() - set(REQUIRED))
@@ -125,7 +128,8 @@ def _validate(path: Path, data: dict[str, object], areas: set[str]) -> tuple[Tas
     if unknown:
         errors.append(f"unknown fields: {', '.join(unknown)}")
 
-    for field in ("id", "title", "epic", "type", "area", "risk", "executor", "think", "ui", "status"):
+    string_fields = ("id", "title", "epic", "type", "area", "risk", "executor", "think", "ui", "status")
+    for field in string_fields:
         if field in data and (not isinstance(data[field], str) or not data[field]):
             errors.append(f"{field} must be a non-empty string")
     for field, allowed in ENUMS.items():
@@ -150,7 +154,10 @@ def _validate(path: Path, data: dict[str, object], areas: set[str]) -> tuple[Tas
     if isinstance(area, str) and area not in areas:
         errors.append(f"unknown area {area!r}")
     for field, value in (("depends_on", depends), ("touch", touch)):
-        if not isinstance(value, list) or any(not isinstance(item, str) or not item for item in value):
+        invalid_item = isinstance(value, list) and any(
+            not isinstance(item, str) or not item for item in value
+        )
+        if not isinstance(value, list) or invalid_item:
             errors.append(f"{field} must be a list of strings")
     if isinstance(touch, list) and not touch:
         errors.append("touch must contain at least one path/glob")
@@ -175,7 +182,6 @@ def _validate(path: Path, data: dict[str, object], areas: set[str]) -> tuple[Tas
             status=data["status"],
             depends_on=tuple(depends),
             touch=tuple(touch),
-            path=path,
         ),
         [],
     )
@@ -251,10 +257,21 @@ def _segment_overlap(left: str, right: str) -> bool:
         return fnmatch.fnmatchcase(left, right)
     if not right_magic:
         return fnmatch.fnmatchcase(right, left)
+
     left_prefix = re.split(r"[*?[]", left, 1)[0]
     right_prefix = re.split(r"[*?[]", right, 1)[0]
-    return not left_prefix or not right_prefix or (
+    if left_prefix and right_prefix and not (
         left_prefix.startswith(right_prefix) or right_prefix.startswith(left_prefix)
+    ):
+        return False
+
+    suffix_re = re.compile(r"([^*?\[\]]+)$")
+    left_match = suffix_re.search(left)
+    right_match = suffix_re.search(right)
+    left_suffix = left_match.group(1) if left_match else ""
+    right_suffix = right_match.group(1) if right_match else ""
+    return not left_suffix or not right_suffix or (
+        left_suffix.endswith(right_suffix) or right_suffix.endswith(left_suffix)
     )
 
 
@@ -313,6 +330,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("command", choices=("lint", "board", "plan"))
     parser.add_argument("--root", type=Path, default=Path.cwd(), help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
+
     tasks, errors = collect(args.root.resolve())
     if errors:
         _errors(errors)
