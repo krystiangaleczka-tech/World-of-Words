@@ -4,7 +4,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-SCRIPT = Path(__file__).resolve().parents[1] / "tasks.py"
+SCRIPT = Path(__file__).resolve().parents[1] / "tasks.py"\nREPO_ROOT = SCRIPT.parents[1]
 
 
 def _arch(root: Path, *areas: str) -> None:
@@ -63,6 +63,12 @@ def _run(root: Path, command: str) -> subprocess.CompletedProcess[str]:
         capture_output=True,
         check=False,
     )
+
+
+def test_current_repository_lints() -> None:
+    result = _run(REPO_ROOT, "lint")
+
+    assert result.returncode == 0, result.stderr
 
 
 def test_lint_accepts_valid_tasks_and_ignores_non_task_files(tmp_path: Path) -> None:
