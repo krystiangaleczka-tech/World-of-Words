@@ -271,8 +271,10 @@ def _segment_overlap(left: str, right: str) -> bool:
 
     left_prefix = re.split(r"[*?[]", left, maxsplit=1)[0]
     right_prefix = re.split(r"[*?[]", right, maxsplit=1)[0]
-    if left_prefix and right_prefix and not (
-        left_prefix.startswith(right_prefix) or right_prefix.startswith(left_prefix)
+    if (
+        left_prefix
+        and right_prefix
+        and not (left_prefix.startswith(right_prefix) or right_prefix.startswith(left_prefix))
     ):
         return False
 
@@ -281,8 +283,10 @@ def _segment_overlap(left: str, right: str) -> bool:
     right_match = suffix_re.search(right)
     left_suffix = left_match.group(1) if left_match else ""
     right_suffix = right_match.group(1) if right_match else ""
-    return not left_suffix or not right_suffix or (
-        left_suffix.endswith(right_suffix) or right_suffix.endswith(left_suffix)
+    return (
+        not left_suffix
+        or not right_suffix
+        or (left_suffix.endswith(right_suffix) or right_suffix.endswith(left_suffix))
     )
 
 
