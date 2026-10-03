@@ -1,23 +1,22 @@
 # 0007 — Permanent application identifiers
 
-- Status: proposed (T-0026, 2026-10-03). Requires Chris's explicit acceptance before the first
-  production Play Console or App Store Connect app record/upload.
+- Status: accepted (T-0026, 2026-10-03). Chris explicitly selected `com.mazen.worldofwordgame`.
 - Scope: store/application identity only. This does not choose the final store-facing product name.
 
-## Proposal
+## Decision
 
-Candidate neutral production identifier on both platforms:
+Neutral production identifier on both platforms:
 
-- Android `applicationId`: `com.krystiangaleczka.wordgame`
-- iOS bundle ID: `com.krystiangaleczka.wordgame`
+- Android `applicationId`: `com.mazen.worldofwordgame`
+- iOS bundle ID: `com.mazen.worldofwordgame`
 
 Throwaway S1 apps use:
 
-- Android `applicationId`: `com.krystiangaleczka.wordgame.spike`
-- iOS bundle ID: `com.krystiangaleczka.wordgame.spike`
+- Android `applicationId`: `com.mazen.worldofwordgame.spike`
+- iOS bundle ID: `com.mazen.worldofwordgame.spike`
 
-The `.spike` ID is disposable and never becomes the production app. It may be used by T-0027/T-0028
-while this production identifier remains proposed.
+The `.spike` ID is disposable and never becomes the production app. T-0027/T-0028 use it for all
+throwaway S1 provider and store resources.
 
 ## Rationale
 
@@ -25,18 +24,17 @@ while this production identifier remains proposed.
   change would not force a package identity change.
 - Android and iOS would share the same base identifier to reduce cross-provider configuration mistakes.
 - A dedicated `.spike` namespace keeps S1 receipts, analytics, ads and test signing separate.
-- The production namespace contains the developer surname and becomes effectively permanent after the
-  first store record/upload, so Sol must not mark it accepted without Chris's explicit approval.
+- The chosen `com.mazen` namespace is independent of the developer surname and was explicitly approved
+  by Chris before the first production store record/upload.
 
-## Consequences if accepted
+## Consequences
 
 - The first production Play Console and App Store Connect records use
-  `com.krystiangaleczka.wordgame`.
+  `com.mazen.worldofwordgame`.
 - Later store-facing name changes do not change these identifiers.
 - Provider config files must match the production or spike ID exactly.
 
-## Before acceptance
+## Revisit if
 
-Chris may accept this candidate or choose a different neutral reverse-DNS namespace. That decision
-must happen before the first production store record/upload. Changing the throwaway `.spike` ID
-does not migrate or reserve the production app.
+Only before the first production store record/upload, and only by explicit Chris decision. After the
+first production upload, superseding this decision must not rename the existing store app identifier.
