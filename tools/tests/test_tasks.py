@@ -11,10 +11,12 @@ def _arch(root: Path, *areas: str) -> None:
     body = "\n".join(f"| \x60{area}\x60 | \x60x/\x60 | |" for area in areas)
     path = root / "docs" / "ARCHITECTURE.md"
     path.parent.mkdir(parents=True)
-    path.write_text(
-        f"# Architecture\n\n## Areas\n\n| Area | Paths | Notes |\n|---|---|---|\n{body}\n\n## Next\n",
-        encoding="utf-8",
+    architecture = (
+        "# Architecture\n\n## Areas\n\n"
+        "| Area | Paths | Notes |\n|---|---|---|\n"
+        f"{body}\n\n## Next\n"
     )
+    path.write_text(architecture, encoding="utf-8")
 
 
 def _task(
