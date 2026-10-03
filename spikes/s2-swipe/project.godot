@@ -1,15 +1,12 @@
-; Disposable T-0029 S2 swipe project. Godot 4.7.2.
 config_version=5
 
 [application]
-
 config/name="S2 Swipe Spike"
 config/version="0.1.0"
 run/main_scene="res://main.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [display]
-
 window/size/viewport_width=1080
 window/size/viewport_height=1920
 window/stretch/mode="canvas_items"
@@ -17,10 +14,8 @@ window/stretch/aspect="expand"
 window/handheld/orientation=1
 
 [input_devices]
-
 pointing/emulate_touch_from_mouse=true
 
 [rendering]
-
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
