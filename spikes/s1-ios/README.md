@@ -11,7 +11,7 @@ successful editor/import smoke check is not a P1-P11 pass.
   `75cf71c6b0ea0db6a7023009240391dadd2c3710`. It has no tagged binary release, so build/install it
   locally for Godot 4.7 before P8; do not treat `Input.vibrate_handheld` fallback as P8 evidence.
 
-Run `./setup.sh`, open this folder in Godot 4.7.2 and confirm both editor plugins are enabled.
+Run `sh ./setup.sh`, open this folder in Godot 4.7.2 and confirm both editor plugins are enabled.
 Create an iOS export preset locally with bundle ID `com.mazen.worldofwordgame.spike`, deployment
 target at least iOS 17 and the local signing team. Never commit signing/provider files.
 
