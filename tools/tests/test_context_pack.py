@@ -53,9 +53,7 @@ def _run(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
 
 def test_context_pack_emits_area_api_docs_and_open_tasks(tmp_path: Path) -> None:
     _fixture(tmp_path)
-    result = _run(
-        tmp_path, "--area", "tools", "--ref", "docs/GUIDE.md#target-section"
-    )
+    result = _run(tmp_path, "--area", "tools", "--ref", "docs/GUIDE.md#target-section")
 
     assert result.returncode == 0, result.stderr
     assert result.stdout.index("`tools/api.gd`") < result.stdout.index("`tools/z.py`")
