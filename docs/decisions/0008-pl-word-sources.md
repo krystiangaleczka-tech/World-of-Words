@@ -1,7 +1,8 @@
 # 0008 — Polish word, morphology and frequency sources
 
-- Status: proposed — awaiting Chris
+- Status: accepted (Chris, 2026-10-04)
 - Date proposed: 2026-10-04
+- Date accepted: 2026-10-04
 - Context: T-0030 / Q11; decision 0004 already fixes Polish language rules.
 
 ## Decision
