@@ -8,7 +8,7 @@ risk: medium
 executor: cheap
 think: med
 ui: none
-status: blocked
+status: done
 depends_on: [T-0030, T-0016]
 touch:
   - docs/spikes/S3b-classification-trial.md
