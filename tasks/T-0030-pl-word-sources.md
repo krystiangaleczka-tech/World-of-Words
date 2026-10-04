@@ -5,7 +5,7 @@ epic: E02
 type: spike
 area: pipeline.ingest
 risk: high
-executor: human
+executor: sol
 think: high
 ui: none
 status: review
@@ -40,7 +40,8 @@ frequency so the Phase 1 content pipeline can ingest real data without licensing
 1. Compare the current SJP.PL game/inflection downloads and their licence choices.
 2. Compare Morfeusz 2 SGJP/PoliMorf for morphological annotation and commercial redistribution.
 3. Compare wordfreq with a Polish corpus frequency source, including downstream/derived-data burden.
-4. Record a current 3–7-letter vocabulary-size sanity check.
+4. Record a current 3–7-letter vocabulary-size sanity check that distinguishes inflected-form capacity
+   from lemma/level-candidate scale.
 5. Recommend one deterministic source stack and exact attribution obligations.
 6. Create decision 0008 as proposed; only Chris may change it to accepted.
 
@@ -48,9 +49,10 @@ frequency so the Phase 1 content pipeline can ingest real data without licensing
 | Case | Expected |
 |---|---|
 | validity source contains rare/objectionable words | source membership means valid input only; tiers/overrides still enforce decision 0004 |
+| SJP-valid word has no usable Morfeusz lemma | word stays valid input but is at most `bonus_ok`; it cannot become `level_ok` without lemma evidence |
 | morphology disagrees with SJP validity | SJP validity wins; morphology may be missing/ambiguous |
 | frequency row is missing | keep word valid; frequency is nullable and cannot create validity |
-| upstream archive changes | ingest pins filename/version + SHA-256; source update is an explicit reviewed change |
+| upstream archive changes | ingest pins source-specific version identifiers + SHA-256; source update is an explicit reviewed change |
 | share-alike source complicates exported artifacts | do not select it when a CC BY/BSD alternative meets the need |
 
 ## Out of scope
@@ -61,7 +63,8 @@ frequency so the Phase 1 content pipeline can ingest real data without licensing
 Documentation review:
 - each selected source has an upstream URL, licence and attribution rule;
 - validity, morphology and frequency have separate authority/fallback rules;
-- the report includes 3–7-letter counts and their provenance;
+- the report distinguishes 3–7-letter inflected-form counts from lemma/level-candidate estimates;
+- version pinning covers SJP, KWJP100 and Morfeusz/SGJP;
 - decision 0008 does not silently claim Chris approval.
 
 ## Acceptance
