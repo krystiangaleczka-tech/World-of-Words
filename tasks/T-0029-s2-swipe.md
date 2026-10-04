@@ -35,7 +35,7 @@ its accepted Galaxy A15 decision. No S2 project/report exists.
 2. Use raw screen touch/drag and one active finger.
 3. Cache the finger; `_process` mutates only the existing Line2D endpoint and numeric diagnostics.
 4. Append each tile once, backtrack to the previous tile, and vibrate only on newly entered tiles.
-5. Throttle event-to-frame/FPS diagnostics; export VIBRATE as `com.mazen.worldofwordgame.spike`.
+5. Throttle event-to-frame/FPS diagnostics; export VIBRATE as `com.mazen.worldofwordgame`. Play Console setup is out of scope for T-0029.
 
 ## Tests / acceptance
 - Repository CI green; disposable project imports and exports an Android debug APK in the T-0014 toolchain.
