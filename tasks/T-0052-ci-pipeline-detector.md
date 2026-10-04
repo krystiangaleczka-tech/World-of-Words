@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: med
 ui: none
-status: in_progress
+status: done
 depends_on: [T-0018]
 touch:
   - .github/workflows/ci.yml
@@ -68,3 +68,5 @@ CI evidence:
 ## Escalation log
 - S1: T-0052 is an unplanned Phase 0 hotfix created at Chris's explicit request to unblock T-0032.
   The planner-owned ROADMAP is intentionally unchanged.
+- Evidence: CI run 58 on T-0052 completed the detector without a Git repository error; CI run 60 on
+  T-0032 detected pipeline changes, executed `make pipeline-test`, and passed.
