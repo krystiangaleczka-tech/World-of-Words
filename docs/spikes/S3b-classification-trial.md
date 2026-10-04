@@ -21,14 +21,14 @@ decision 0008; the model output is advisory metadata only.
 
 ## Sample
 
-File: docs/spikes/S3b-classification-sample.csv
+File: docs/spikes/S3b-classification-sample.json
 
 Exactly 200 unique Polish tokens, all 3-7 characters:
 - 120 common words;
 - 40 obscure/legacy words;
 - 40 sensitive or ambiguity-probing words.
 
-The sample_stratum column exists only to audit sample composition. A model run receives only the word
+The sample_stratum field exists only to audit sample composition. A model run receives only the word
 column, so the stratum cannot leak the expected answer.
 
 ## Candidate models
@@ -96,7 +96,7 @@ must be identical.
 
 - Five logical batches of 200 words are the production planning unit; this spike itself is one batch
   of 200 words per model.
-- Pass only the word values from the CSV.
+- Pass only the word values from the JSON.
 - No search, grounding or external tools.
 - Record per provider: model ID, request mode, input tokens, output tokens, retries and billed cost.
 - Malformed output: retry once using the exact same prompt. A second failure stays an error row.
