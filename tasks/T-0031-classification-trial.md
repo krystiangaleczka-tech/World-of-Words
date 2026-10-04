@@ -12,7 +12,7 @@ status: blocked
 depends_on: [T-0030, T-0016]
 touch:
   - docs/spikes/S3b-classification-trial.md
-  - docs/spikes/S3b-classification-sample.csv
+  - docs/spikes/S3b-classification-sample.json
   - tasks/T-0031-*.md
 revision: 1
 ---
@@ -72,7 +72,7 @@ the Phase 2 batch-classification design, and establish a realistic cost per 1,00
 
 ## Tests
 Documentation/data checks:
-- sample CSV has exactly 200 unique words and every word is 3-7 characters;
+- sample JSON has exactly 200 unique words and every word is 3-7 characters;
 - report contains the frozen prompt/schema and model/pricing sources;
 - no agreement metric is claimed unless two actual model outputs were obtained;
 - no secret or credential is committed.
