@@ -232,7 +232,8 @@ Exit: ≥3 merged without Chris fixing code; template and AGENTS.md corrected; P
 | T-0048 | Debug screen shell: reachable in debug builds only; shows app and content version; reset save | feat | features.debug | T-0045 | D3 | CHEAP | low | low | low | FR-DEBUG-01, FR-DEBUG-06 |
 | T-0049 | `Shuffle.permute` pure function + tests (dp06 §4 spec, core part only) | feat | core.board | T-0045 | D4 | CHEAP | low | none | low | FR-WHEEL-08, FR-HINT-06, dp06 §4 |
 | T-0050 | Dry-run retrospective: escalations, red CI runs, Chris's review minutes; fixes to TEMPLATE.md and AGENTS.md | docs | docs | T-0046, T-0047, T-0048, T-0049 | DOC | SOL+HUMAN | med | none | low | dp05 §4 |
-| T-0051 | PHASE 0 EXIT: S1 passed or engine switched, `make check` green in CI, ≥3 cheap tasks merged without manual code fixes, docs v1 merged, language and source decisions recorded | docs | docs | T-0050, T-0030, T-0031, T-0032, T-0033 | DOC | HUMAN | — | none | low | dp11 §4 |
+| T-0052 | [HS] Fix pipeline-change detection in CI containers so `pipeline pytest` cannot silently skip changed `pipeline/**` | infra | ci | T-0018 | H | SOL | med | none | high | NFR-15 |
+| T-0051 | PHASE 0 EXIT: S1 passed or engine switched, `make check` green in CI, ≥3 cheap tasks merged without manual code fixes, docs v1 merged, language and source decisions recorded | docs | docs | T-0050, T-0030, T-0031, T-0032, T-0033, T-0052 | DOC | HUMAN | — | none | low | dp11 §4 |
 
 ## Phase 1 — Core Prototype
 
