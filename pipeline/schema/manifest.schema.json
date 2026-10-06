@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:world-of-words:manifest:v1",
+  "title": "P1 Polish content manifest",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "lang",
+    "content_version",
+    "pipeline",
+    "slots",
+    "packs"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "lang": {
+      "const": "pl"
+    },
+    "content_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "pipeline": {
+      "$ref": "urn:world-of-words:level:v1#/$defs/semver"
+    },
+    "slots": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "packs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "file",
+          "kind",
+          "first",
+          "last",
+          "sha256"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "file": {
+            "type": "string",
+            "pattern": "^packs/c-[0-9]{4}-[0-9]{4}\\.json$(?![\\s\\S])"
+          },
+          "kind": {
+            "const": "campaign"
+          },
+          "first": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "last": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-fA-F]{64}$(?![\\s\\S])"
+          }
+        }
+      }
+    },
+    "daily": {
+      "type": "null"
+    }
+  }
+}
