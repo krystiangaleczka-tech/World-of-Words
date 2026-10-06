@@ -70,27 +70,33 @@ All raw JSON and TXT logs are organized by FPS category under [`spikes/s2-swipe/
 
 ### Mini-log & Porównanie trybów
 
-| Tryb | Urządzenie | Ekran Hz | Średni FPS | Czas klatki (avg) | Opóźnienie event→draw (avg) | Swipy | Status pacingu | Logi |
+| Tryb | Urządzenie | Ekran Hz | Średni FPS | Czas klatki (avg) | Opóźnienie event→draw proxy (avg, p95 w koszykach 1 ms) | Swipy | Status pacingu | Logi |
 |---|---|---|---|---|---|---|---|---|
-| **60 FPS** | Galaxy A15 | 90.0 Hz | 60.09 FPS | 16.64 ms | 1.89 ms (max 16.5 ms) | 13 | Stabilny 60 FPS | [JSON](../../spikes/s2-swipe/evidence/60fps/s2_25133_7660896_1.json) \| [TXT](../../spikes/s2-swipe/evidence/60fps/s2_25133_7660896_1.txt) |
-| **60 FPS** | S26 Ultra | 60.0 Hz | 60.05 FPS | 16.65 ms | 1.50 ms (max 7.94 ms) | 34 | Płynny, 0 over-budget | [JSON](../../spikes/s2-swipe/evidence/60fps/s2_3179_8591962_1.json) \| [TXT](../../spikes/s2-swipe/evidence/60fps/s2_3179_8591962_1.txt) |
-| **60 FPS** | S26 Ultra | 120.0 Hz | 60.08 FPS | 16.64 ms | 1.15 ms (max 5.31 ms) | 15 | Płynny (co 2. klatka 120Hz) | [JSON](../../spikes/s2-swipe/evidence/60fps/s2_22586_58481241_3.json) \| [TXT](../../spikes/s2-swipe/evidence/60fps/s2_22586_58481241_3.txt) |
-| **90 FPS** | Galaxy A15 | 90.0 Hz | 90.04 FPS | 11.11 ms | 6.16 ms (max 10.8 ms) | 18 | Stabilny 90 FPS | [JSON](../../spikes/s2-swipe/evidence/90fps/s2_25133_31195934_2.json) \| [TXT](../../spikes/s2-swipe/evidence/90fps/s2_25133_31195934_2.txt) |
-| **90 FPS** | S26 Ultra | 120.0 Hz | 90.07 FPS | 11.10 ms | 1.27 ms (max 8.77 ms) | 21 | Ukończony (v2 timing) | [JSON](../../spikes/s2-swipe/evidence/90fps/s2_3179_60141550_2.json) \| [TXT](../../spikes/s2-swipe/evidence/90fps/s2_3179_60141550_2.txt) |
-| **120 FPS** | S26 Ultra | 120.0 Hz | **120.00 FPS** | **8.33 ms** | **3.95 ms** (max 11.7 ms) | 22 | **Idealny 120 Hz render pacing** | [JSON](../../spikes/s2-swipe/evidence/120fps/s2_3179_89716985_3.json) \| [TXT](../../spikes/s2-swipe/evidence/120fps/s2_3179_89716985_3.txt) |
-| **Adaptive** | S26 Ultra | 120.0 Hz | **120.00 FPS** | **8.33 ms** | **4.16 ms** (max 8.85 ms) | 13 | **Natywne 120 Hz, bez ograniczeń** | [JSON](../../spikes/s2-swipe/evidence/adaptive/s2_3179_121067137_4.json) \| [TXT](../../spikes/s2-swipe/evidence/adaptive/s2_3179_121067137_4.txt) |
+| **60 FPS** | Galaxy A15 | 90.0 Hz | 60.09 FPS | 16.64 ms | 1.89 ms (max 16.47 ms, p95 3 ms) | 13 | 0 over-budget, anomalia całego biegu max 43.67 ms* | [JSON](../../spikes/s2-swipe/evidence/60fps/s2_25133_7660896_1.json) \| [TXT](../../spikes/s2-swipe/evidence/60fps/s2_25133_7660896_1.txt) |
+| **60 FPS** | S26 Ultra | 60.0 Hz | 60.05 FPS | 16.65 ms | 1.50 ms (max 7.94 ms, p95 3 ms) | 34 | 0 over-budget, interwał max 19.47 ms | [JSON](../../spikes/s2-swipe/evidence/60fps/s2_3179_8591962_1.json) \| [TXT](../../spikes/s2-swipe/evidence/60fps/s2_3179_8591962_1.txt) |
+| **60 FPS** | S26 Ultra | 120.0 Hz | 60.08 FPS | 16.64 ms | 1.15 ms (max 5.31 ms, p95 2 ms) | 15 | 0 over-budget, interwał max 21.11 ms | [JSON](../../spikes/s2-swipe/evidence/60fps/s2_22586_58481241_3.json) \| [TXT](../../spikes/s2-swipe/evidence/60fps/s2_22586_58481241_3.txt) |
+| **90 FPS** | Galaxy A15 | 90.0 Hz | 90.04 FPS | 11.11 ms | 6.16 ms (max 10.75 ms, p95 10 ms) | 18 | 0 over-budget, interwał max 15.90 ms | [JSON](../../spikes/s2-swipe/evidence/90fps/s2_25133_31195934_2.json) \| [TXT](../../spikes/s2-swipe/evidence/90fps/s2_25133_31195934_2.txt) |
+| **90 FPS** | S26 Ultra | 120.0 Hz | 78.01 FPS | 12.82 ms | 5.47 ms (max 17.89 ms, p95 16 ms) | 16 | 340 over-budget, interwał max 21.10 ms (przebieg 1) | [JSON](../../spikes/s2-swipe/evidence/90fps/s2_22586_29115938_2.json) \| [TXT](../../spikes/s2-swipe/evidence/90fps/s2_22586_29115938_2.txt) |
+| **90 FPS** | S26 Ultra | 120.0 Hz | 90.07 FPS | 11.10 ms | 1.27 ms (max 8.77 ms, p95 3 ms) | 21 | 0 over-budget, interwał max 12.63 ms (przebieg 2) | [JSON](../../spikes/s2-swipe/evidence/90fps/s2_3179_60141550_2.json) \| [TXT](../../spikes/s2-swipe/evidence/90fps/s2_3179_60141550_2.txt) |
+| **120 FPS** | S26 Ultra | 120.0 Hz | **120.00 FPS** | **8.33 ms** | **3.95 ms** (max 11.72 ms, p95 4 ms) | 22 | Średni 120.00 FPS; 14/2461 over-budget, interwał max 12.86 ms | [JSON](../../spikes/s2-swipe/evidence/120fps/s2_3179_89716985_3.json) \| [TXT](../../spikes/s2-swipe/evidence/120fps/s2_3179_89716985_3.txt) |
+| **Adaptive** | S26 Ultra | 120.0 Hz | **120.00 FPS** | **8.33 ms** | **4.16 ms** (max 8.85 ms, p95 7 ms) | 13 | Średni 120.00 FPS (Engine.max_fps = 0); over-budget n/a | [JSON](../../spikes/s2-swipe/evidence/adaptive/s2_3179_121067137_4.json) \| [TXT](../../spikes/s2-swipe/evidence/adaptive/s2_3179_121067137_4.txt) |
 
 ### Wnioski z testów urządzeń i odświeżania ekranu:
 1. **Tryb 120 FPS na ekranie 120 Hz**:
-   - Perfekcyjne renderowanie z czasem klatki **8.33 ms** i średnim renderem **120.00 FPS**.
-   - Opóźnienie event→draw średnio **3.95 ms** (p95: 4 ms). Pełna responsywność bez żadnych zacięć.
+   - Średni render wyniósł **120.00 FPS** przy średnim czasie klatki **8.33 ms** i opóźnieniu event→post_draw średnio **3.95 ms** (p95 w koszyku 4 ms).
+   - Nie wykazano jednak idealnie jednolitego pacingu: 14 z 2461 zdarzeń dotykowych przekroczyło budżet 8.33 ms (maksymalne opóźnienie proxy 11.72 ms), a maksymalny callback interval renderingu wyniósł 12.863 ms.
 2. **Tryb Adaptive (bez limitu silnika)**:
-   - Silnik dynamicznie synchronizuje się z maksymalnym odświeżaniem ekranu urządzenia (na S26 Ultra: **120.0 Hz**).
-   - Średni render FPS: **120.00 FPS**, średni frame interval: **8.33 ms**, brak zdarzeń over-budget.
-3. **Tryb 60 FPS**:
-   - Zachowuje pełną stabilność zarówno na ekranie 60 Hz (16.65 ms), 90 Hz (16.64 ms), jak i 120 Hz (16.64 ms - klatka co drugi cykl odświeżania).
-4. **Live HUD w czasie rzeczywistym**:
-   - Wyświetla na bieżąco podczas swipe'a: aktualne Hz ekranu, cel FPS, real-time FPS i czas klatki w ms, opóźnienia dotyku oraz liczbę wykonanych swipów.
+   - Zdjęcie limitu silnika (`Engine.max_fps = 0`) pozwoliło na osiągnięcie średniego renderu **120.00 FPS** i średniego czasu klatki **8.33 ms**.
+   - Tryb ten usuwa jedynie sztuczny cap silnika; nie implementuje ani nie dowodzi aktywnego sterowania odświeżaniem po stronie OS. Wyświetlana w HUD i raportowana wartość `display_refresh_hz` to pojedyncze zapytanie do `DisplayServer` w momencie zatrzymania.
+   - *Semantyka starszych raportów*: W surowym pliku [`s2_3179_121067137_4.json`](../../spikes/s2-swipe/evidence/adaptive/s2_3179_121067137_4.json) pole `events_over_target_frame_budget` wynosi 0, ponieważ przy braku limitu silnika porównanie z budżetem było pomijane. Wartość ta oznacza brak zastosowania porównania (unavailable), a nie zero zarejestrowanych przekroczeń. Uaktualnione narzędzie oznacza ten stan jako `target_frame_budget_applicable: false` oraz `events_over_target_frame_budget: -1`.
+3. **Wyniki 90 FPS na S26 Ultra (120 Hz)**:
+   - W repozytorium zachowano oba wykonane przebiegi jako równorzędne dowody pomiarowe: bieg 78.01 FPS (340 zdarzeń over-budget) oraz bieg 90.07 FPS (0 zdarzeń over-budget), bez arbitralnego przesądzania o pojedynczej przyczynie różnicy.
+4. **Tryb 60 FPS i anomalia A15**:
+   - Tryb 60 FPS zachowuje stabilność na ekranach 60 Hz, 90 Hz oraz 120 Hz (render co drugi cykl odświeżania).
+   - Maksymalny interwał klatki 43.665 ms w teście A15 60 FPS dotyczy całego przebiegu pomiaru i pozostaje nierozstrzygnięty co do tego, czy wystąpił podczas aktywnego swipe'a, czy w bezczynności między gestami.
+5. **Charakterystyka metryk**:
+   - Wartości p95 podawane są w koszykach histogramu 1 ms (`[N, N+1) ms`).
+   - Czasy `event_to_update` oraz `event_to_post_draw` to punkty pomiarowe na granicach silnika (scheduling/render proxies), nie fizyczny czas reakcji touch-to-photon.
 
 
 

@@ -7,6 +7,7 @@ const HISTOGRAM_BINS: int = 251
 var active: bool = false
 var run_id: String = ""
 var target_fps: int = 60
+var budget_fps: int = -1
 var swipes: int = 0
 var aborted_swipes: int = 0
 var dropped_events: int = 0
@@ -32,10 +33,11 @@ var _frame_max: int = 0
 var _last_draw_usec: int = -1
 
 
-func begin(id: String, fps: int, now_usec: int) -> void:
+func begin(id: String, fps: int, now_usec: int, explicit_budget_fps: int = -1) -> void:
 	active = true
 	run_id = id
 	target_fps = fps
+	budget_fps = explicit_budget_fps if explicit_budget_fps > 0 else (fps if fps > 0 else -1)
 	_started_usec = now_usec
 	_stopped_usec = -1
 	swipes = 0
@@ -109,7 +111,7 @@ func frame_drawn(now_usec: int) -> void:
 		_draw_sum += elapsed
 		_draw_max = maxi(_draw_max, elapsed)
 		_draw_hist[mini(int(float(elapsed) / 1000.0), HISTOGRAM_BINS - 1)] += 1
-		if target_fps > 0 and elapsed > 1000000.0 / float(target_fps):
+		if budget_fps > 0 and elapsed > 1000000.0 / float(budget_fps):
 			_over_budget += 1
 	_awaiting_draw = 0
 
@@ -142,7 +144,8 @@ func snapshot(now_usec: int) -> Dictionary:
 		"unmeasured_events": _pending + _awaiting_draw,
 		"event_to_update": _stats(_update_count, _update_sum, _update_max, _update_hist),
 		"event_to_post_draw": _stats(_draw_count, _draw_sum, _draw_max, _draw_hist),
-		"events_over_target_frame_budget": _over_budget,
+		"target_frame_budget_applicable": budget_fps > 0,
+		"events_over_target_frame_budget": _over_budget if budget_fps > 0 else -1,
 		"render_frame_intervals": _stats(_frame_count, _frame_sum, _frame_max, _frame_hist),
 		"average_render_fps": (
 			float(_frame_count) * 1000000.0 / float(_frame_sum) if _frame_sum > 0 else 0.0

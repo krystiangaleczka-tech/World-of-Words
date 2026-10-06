@@ -73,8 +73,37 @@ func _test_frame_statistics() -> void:
 	assert(is_equal_approx(stats["average_render_fps"], 50.0))
 	assert(stats["render_frame_intervals"]["samples"] == 2)
 	assert(stats["render_frame_intervals"]["p95_bin_ms"] == 23)
+	assert(stats["target_frame_budget_applicable"] == true)
 	assert(stats["events_over_target_frame_budget"] == 1)
 	assert(is_equal_approx(stats["event_to_post_draw"]["maximum_ms"], 23.0))
+
+	# Deterministic probe with a 50 ms delay across modes (120, Adaptive, Adaptive + explicit budget)
+	var probe_120: Measurement = Measurement.new()
+	probe_120.begin("probe_120", 120, 0)
+	probe_120.record_event(0)
+	probe_120.frame_updated(1000)
+	probe_120.frame_drawn(50000)
+	var stats_120: Dictionary = probe_120.stop(50000)
+	assert(stats_120["target_frame_budget_applicable"] == true)
+	assert(stats_120["events_over_target_frame_budget"] == 1)
+
+	var probe_adaptive: Measurement = Measurement.new()
+	probe_adaptive.begin("probe_adaptive", 0, 0)
+	probe_adaptive.record_event(0)
+	probe_adaptive.frame_updated(1000)
+	probe_adaptive.frame_drawn(50000)
+	var stats_adaptive: Dictionary = probe_adaptive.stop(50000)
+	assert(stats_adaptive["target_frame_budget_applicable"] == false)
+	assert(stats_adaptive["events_over_target_frame_budget"] == -1)
+
+	var probe_adaptive_budget: Measurement = Measurement.new()
+	probe_adaptive_budget.begin("probe_adaptive_budget", 0, 0, 120)
+	probe_adaptive_budget.record_event(0)
+	probe_adaptive_budget.frame_updated(1000)
+	probe_adaptive_budget.frame_drawn(50000)
+	var stats_adaptive_budget: Dictionary = probe_adaptive_budget.stop(50000)
+	assert(stats_adaptive_budget["target_frame_budget_applicable"] == true)
+	assert(stats_adaptive_budget["events_over_target_frame_budget"] == 1)
 
 
 func _test_queue_and_histogram_limits() -> void:
@@ -140,10 +169,19 @@ func _test_scene_controls() -> void:
 
 	start_adaptive.pressed.emit()
 	assert(start_adaptive.disabled and not stop.disabled)
+	var scene_measurement: Measurement = scene.get("_measurement") as Measurement
+	assert(scene_measurement != null)
+	scene_measurement.record_event(1000)
+	scene_measurement.frame_updated(2000)
+	scene_measurement.frame_drawn(52000)
 	stop.pressed.emit()
 	var fourth_id: String = status.text.trim_prefix("Zapisano: ").trim_suffix(".json / .txt")
 	var fourth: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("user://" + fourth_id + ".json"))
 	assert(fourth["target_fps"] == 0 and fourth["target_mode"] == "adaptive")
+	assert(fourth["target_frame_budget_applicable"] == false)
+	assert(fourth["events_over_target_frame_budget"] == -1)
+	assert(fourth["event_to_post_draw"]["samples"] == 1)
+	assert(is_equal_approx(fourth["event_to_post_draw"]["maximum_ms"], 51.0))
 
 	start_90.pressed.emit()
 	stop.pressed.emit()
