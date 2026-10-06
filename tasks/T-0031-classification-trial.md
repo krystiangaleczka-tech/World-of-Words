@@ -14,7 +14,7 @@ touch:
   - docs/spikes/S3b-classification-trial.md
   - docs/spikes/S3b-classification-sample.json
   - tasks/T-0031-*.md
-revision: 1
+revision: 2
 ---
 
 ## Goal
@@ -88,7 +88,7 @@ Documentation/data checks:
 - S1: ROADMAP defined T-0031 but no task file existed on main. Chris explicitly requested execution,
   so this branch freezes the ROADMAP scope without editing ROADMAP.
 - S11: this Sol session has no callable second-model runtime and must not add/request API secrets in
-  repository work. The 200-word sample, prompt, metrics and current public price basis are prepared,
+  repository work. The 200-word sample, prompt, metrics and historical unverified price basis were prepared,
   but the model-vs-model run itself remains blocked rather than fabricated.
 
 ## Runtime recheck — 2026-10-06
@@ -98,3 +98,27 @@ passes the 200 unique / 3–7 character checks. Actual two-provider outputs and 
 The previous done status was premature; blocked reflects the empirical acceptance criteria.
 An optional explicitly authorized in-session two-agent comparison can supply real outputs,
 but must report substitutions and missing API cost telemetry instead of claiming the full gate.
+
+## Authorized in-session execution — 2026-10-06
+Chris selected the in-session alternative after being told that API cost telemetry is unavailable.
+Execute two independent agents with explicitly selected gpt-6-luna and gpt-6.1-sol, medium reasoning,
+no conversation history, the identical frozen prompt and word-only input, and no search or other model.
+These are recorded replacements for the proposed Luna/Gemini pair. Sol is a comparison reference,
+not evidence of a second cheap provider or of the cheap-executor Phase 0 requirement.
+Archive both unedited 200-record outputs in the allowlisted Markdown report, with SHA-256 digests,
+selected model IDs, unavailable provider-resolved versions/usage/billing, and actual retry counts.
+Report the measured agreement and actionable review queue; Chris decisions start pending.
+For flag-only disagreement, compare effective handling = max(declared sensitivity, flag handling).
+Flag handling: block for vulgar/sexual/hate; review for violence/alcohol_drugs/proper_name/abbreviation/other;
+archaic is neutral. This only routes human review; it does not determine word validity or production tiers.
+All percentages are advisory agreement, not accuracy; compare against no human ground truth.
+The current requested comparison is complete when both outputs, metrics and queue are available.
+Full ROADMAP completion remains blocked on measured API cost, cheap-provider validation and Chris review;
+no replacement experiment silently satisfies those requirements.
+
+## Observed in-session result — 2026-10-06
+Both isolated agents returned all 200 records in input order with valid schema on their first attempt.
+The report archives both unedited outputs and measured metrics, digests and the pending Chris queue.
+Provider-resolved model versions, token usage and billing are unavailable; configured selectors are recorded.
+The requested empirical in-session comparison is executed. Status remains blocked only for the original
+ROADMAP cheap-provider/cost/human-review acceptance, not because two local outputs are missing.
