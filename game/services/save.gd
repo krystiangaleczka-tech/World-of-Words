@@ -57,6 +57,34 @@ func load() -> Error:
 	return flush()
 
 
+## @api Whether a valid save has been loaded, without triggering domain work.
+func is_loaded() -> bool:
+	return _loaded
+
+
+## @api Explicit debug reset of gameplay only; identity, settings and purchases are preserved.
+## Persist before publishing new memory. Existing storage recovery semantics apply on failure.
+func debug_reset() -> Error:
+	if not OS.is_debug_build():
+		return ERR_UNAVAILABLE
+	if not _loaded:
+		return ERR_UNCONFIGURED
+	var meta: Dictionary = _data["meta"]
+	var candidate: Dictionary = SaveSchema.fresh(
+		str(meta["install_id"]), str(meta["created_at"]), str(meta["app_version"])
+	)
+	for section: String in ["meta", "settings", "monetization"]:
+		candidate[section] = (_data[section] as Dictionary).duplicate(true)
+	var error: Error = _storage.commit(JSON.stringify(candidate, "", true, true), _primary_valid)
+	if error != OK:
+		flush_failed.emit(error)
+		return error
+	_data = SaveSchema.canonical(candidate)
+	_dirty = false
+	_primary_valid = true
+	return OK
+
+
 ## @api Return an independent copy for the owning service; unknown names return {}.
 func get_section(section: StringName) -> Dictionary:
 	assert(_loaded)
