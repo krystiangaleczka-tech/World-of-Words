@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:world-of-words:level:v1",
+  "title": "P1 Polish level",
+  "description": "Structural contract only; see README for semantic validation. Version belongs to the pack.",
+  "type": "object",
+  "required": [
+    "id",
+    "letters",
+    "words",
+    "bonus",
+    "grid",
+    "difficulty",
+    "landmark",
+    "source",
+    "seed",
+    "pipeline"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "word": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 8,
+      "pattern": "^[AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ]+$(?![\\s\\S])"
+    },
+    "placement": {
+      "type": "object",
+      "required": [
+        "w",
+        "x",
+        "y",
+        "dir"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "w": {
+          "$ref": "#/$defs/word"
+        },
+        "x": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9
+        },
+        "y": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9
+        },
+        "dir": {
+          "enum": [
+            "h",
+            "v"
+          ]
+        }
+      }
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$(?![\\s\\S])"
+    }
+  },
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^pl-[cd]-[0-9]{6}$(?![\\s\\S])"
+    },
+    "slot": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "letters": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 8,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1,
+        "enum": [
+          "A",
+          "Ą",
+          "B",
+          "C",
+          "Ć",
+          "D",
+          "E",
+          "Ę",
+          "F",
+          "G",
+          "H",
+          "I",
+          "J",
+          "K",
+          "L",
+          "Ł",
+          "M",
+          "N",
+          "Ń",
+          "O",
+          "Ó",
+          "P",
+          "R",
+          "S",
+          "Ś",
+          "T",
+          "U",
+          "W",
+          "Y",
+          "Z",
+          "Ź",
+          "Ż"
+        ]
+      }
+    },
+    "words": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/placement"
+      }
+    },
+    "bonus": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/word"
+      }
+    },
+    "grid": {
+      "type": "object",
+      "required": [
+        "w",
+        "h"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "w": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "h": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        }
+      }
+    },
+    "difficulty": {
+      "type": "number"
+    },
+    "landmark": {
+      "type": "boolean"
+    },
+    "source": {
+      "enum": [
+        "generated",
+        "handmade"
+      ]
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "pipeline": {
+      "$ref": "#/$defs/semver"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "id": {
+            "pattern": "^pl-c-"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "slot"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "id": {
+            "pattern": "^pl-d-"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "slot": false
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "landmark": {
+            "const": false
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "letters": {
+            "maxItems": 7
+          }
+        }
+      }
+    }
+  ]
+}
