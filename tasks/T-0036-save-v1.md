@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: xhigh
 ui: none
-status: review
+status: done
 depends_on: [T-0034]
 touch:
   - game/services/save.gd*
@@ -29,7 +29,7 @@ Provide Save v1, atomic replacement, recovery, identity and pure migration frame
 - ARCHITECTURE.md#autoloads: settings/meta belong to Save; other sections belong to their services.
 
 ## Current state
-T-0034 is open in PR #21; this dependent draft uses that branch, not T-0035.
+Original implementation used T-0034 PR #21; it is now merged. T-0035 is also merged on main.
 Save/Events are inert ServiceStub scripts; Clock is injected at boot; GUT discovers integration tests.
 No save, migrations or golden fixture exist on the dependency branch.
 
@@ -92,9 +92,13 @@ Before release a revert is sufficient. Once v1 is shipped, future incompatible c
 schema migration; never silently downgrade a released save format.
 
 ## Deviations / concerns
-Dependency T-0034 remains unmerged/review; implementation is prepared under the user's next-task request
-and published as a dependent draft. Retarget/revalidate after #21 merges and obtain independent review.
+Dependency T-0034 merged in #21; T-0035 merged in #22. Source applied unchanged to fresh main
+without conflicts and the combined contracts revalidated under Chris's sequential-merge instruction.
 Fault tests exercise actual files and controlled stops/errors at write boundaries plus truncated data;
 they do not prove filesystem durability across physical power loss (flush is not directory fsync).
 The complete save contract and recovery tests exceed the ~300-line guideline; there are five production
 scripts, with storage/schema/migrations separated for testability. Device kill testing remains follow-up.
+
+## Completion record
+2026-10-06: Chris explicitly instructed sequential merges. Dependencies are merged;
+task marked done for authorized merge after combined-platform/save validation on fresh main.
