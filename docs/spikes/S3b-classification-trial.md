@@ -7,7 +7,7 @@ Prepared: 2026-10-04. Runtime recheck: 2026-10-06. Task: T-0031.
 BLOCKED before the two-model run.
 
 Everything that can be prepared without credentials or a second-model runtime is frozen below:
-the 200-word sample, identical prompt/schema, disagreement rules, metrics and current public price basis.
+the 200-word sample, identical prompt/schema, disagreement rules, metrics and a historical, unverified price basis.
 This report intentionally does not claim an agreement rate. The current Sol session cannot call a second
 external model, and AGENTS.md S11 forbids inventing or adding provider secrets as part of this task.
 
@@ -37,7 +37,7 @@ Use two distinct cheap models with identical inputs:
 1. OpenAI gpt-6-luna.
 2. Google gemini-2.5-flash-lite.
 
-Why these two: both are current low-cost general text models suitable for high-volume classification,
+Why these two: the preparation proposed two low-cost general text models for high-volume classification,
 and using different providers gives a stronger disagreement signal than two prompts on one model.
 
 Historical planning prices recorded on 2026-10-04; not independently verified in the current run.
