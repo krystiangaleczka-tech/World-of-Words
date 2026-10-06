@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: med
 ui: none
-status: review
+status: done
 depends_on: [T-0037, T-0038]
 touch:
   - tools/check_registries.py
