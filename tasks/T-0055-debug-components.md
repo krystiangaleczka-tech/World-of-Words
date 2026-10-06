@@ -11,12 +11,15 @@ ui: low
 status: done
 depends_on: [T-0054]
 touch:
+  - Makefile
+  - game/tests/unit/ui/test_tokens.gd
+  - tools/tests/test_gut_failure_guard.py
   - game/ui/components/ScreenScaffold.*
   - game/ui/components/TextButton.*
   - game/ui/gallery/debug_components.*
   - game/tests/integration/test_debug_components.gd*
   - tasks/T-0055-debug-components.md
-revision: 2
+revision: 3
 ---
 
 ## Goal
@@ -48,6 +51,14 @@ Add matching .tscn scenes and a gallery scene displaying the scaffold and enable
 ## Tests
 `game/tests/integration/test_debug_components.gd`: test_scaffold_safe_insets_and_layout_classes,
 test_button_translation_and_min_target, test_button_busy_preserves_disabled, test_gallery_instantiates, test_pressed_underline_uses_local_coordinates.
+
+## Validation correction
+T-0054's purity assertion used an impossible static `Tokens is Node` test. Change the variable's
+annotation to Object so both behavioral checks execute. GUT could skip that parse-failed file with
+exit 0; Makefile's test target must reject SCRIPT ERROR or failed-script-load output while preserving
+normal exit status and expected test-asserted push_error diagnostics. CI already invokes make test.
+Add tools/tests/test_gut_failure_guard.py for zero-exit parse/load errors, ordinary asserted errors,
+and nonzero native exit. This narrow correction prevents false-green component validation.
 
 ## Acceptance
 All tests and make check pass. UI impact low: gallery exists for manual inspection; no visual-direction
