@@ -19,9 +19,15 @@ func _mutated(document: Dictionary, key: String, fields: Dictionary) -> Dictiona
 
 func _assert_rejected(prefix: String, document: Dictionary) -> void:
 	var registry: ConfigRegistry = ConfigRegistry.new()
+	var other_prefix: String = "unlocks" if prefix == "hint" else "hint"
+	var previous: Dictionary = _document(other_prefix)
+	assert_eq(registry.append_document(other_prefix, previous), OK)
 	assert_eq(registry.append_document(prefix, document), ERR_INVALID_DATA)
 	for key: String in document:
 		assert_false(registry.has_key(StringName(key)), "no partial entry: " + key)
+	for key: String in previous:
+		assert_true(registry.has_key(StringName(key)), "retained prefix: " + key)
+		assert_eq(registry.read_value(StringName(key), &"int", 0), int(previous[key]["default"]))
 
 
 func test_actual_documents_and_inclusive_bounds() -> void:
