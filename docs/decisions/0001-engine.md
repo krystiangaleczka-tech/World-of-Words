@@ -1,7 +1,7 @@
-# 0001 — Engine: Godot 4.7, conditional on spike S1
+# 0001 — Engine: Godot 4.7.2
 
-- Status: proposed (T-0003, 2026-10-02). The engine gate (T-0033, Sol + Chris) accepts it or replaces it
-  with a superseding decision, after S1 Android (T-0027), S1 iOS (T-0028) and S2 swipe (T-0029).
+- Status: accepted (T-0033, 2026-10-06). Chris explicitly approved Godot 4.7.2 and continued
+  development with deferred SDK/store validation required before release. See the gate record below.
 - Context: design pass `02-technologia.md` §1–§3 (Godot vs Unity vs Kotlin Multiplatform), risks R1 and
   R15 (`11-ryzyka-i-fazy.md` §1), decision 0006 (Sol has no runtime; CI is its test loop).
 
@@ -14,8 +14,9 @@
    created with it.
 3. **Language: typed GDScript**, untyped declarations are errors. No C#: it gives up most of Godot's
    advantages here (design pass 02 §3).
-4. **Conditional.** Production code (E03 onward) starts only after T-0033 accepts this decision.
-   Phase 0 tooling (T-0013 … T-0025) uses Godot before the gate; it is cheap to redo.
+4. **Development gate accepted.** Production code (E03 onward) may use Godot 4.7.2 after T-0033
+   review and merge. The deferred SDK/store matrix remains mandatory before release; this is not a
+   claim that S1 passed or that a release is approved.
 5. **Upgrades.** A patch upgrade (4.7.y → 4.7.z) is an `infra` task in lane `H`. A minor upgrade
    (4.8 or later) needs a new decision that supersedes this one.
 
@@ -75,6 +76,31 @@ These are not failures; they are recorded for T-0033:
   more S1 round on a new task and the switch.
 - **Otherwise:** a new decision supersedes this one with plan B, and T-0033 re-plans the Godot-specific E01
   rows (T-0013, T-0014, T-0015, T-0018), E03 and E04.
+
+## Accepted gate record — 2026-10-06
+
+Chris explicitly approved the Godot 4.7.2 development path after confirming that the Galaxy A15
+swipe test was performed and felt smooth, and after reviewing the residual SDK/store validation risk.
+
+- T-0027: Android export/install/native-plugin smoke evidence; task done under Chris's accepted scope.
+  The full provider/store matrix remains DEFERRED, except the iOS-only P9 which is N/A.
+- T-0028: PR #10 merged; task done under the accepted repository-preparation scope.
+  iOS P1–P11 remain NOT EXECUTED.
+- T-0029: PR #12 merged; device result and done status recorded in PR #19.
+  Chris's qualitative smooth-swipe result is evidence against F4 on Galaxy A15. Numeric FPS/latency,
+  haptics ratings and detailed protocol observations were not supplied and are not inferred.
+- F1–F3: no recorded engine failure; the deferred matrix does not demonstrate that these checks pass.
+- F4: not observed in Chris's human swipe assessment; no instrumented latency claim is made.
+
+**Human gate exception:** Chris accepts possible later SDK/store incompatibility and rework and
+authorizes continued development before the full S1 matrix passes. This exception does not change
+P1–P11 or F1–F4 and does not promote a DEFERRED / NOT EXECUTED row to PASS. Complete the outstanding
+Android/iOS consent, ads, purchase/restore, durability interruption, analytics/crash, native haptics,
+silent-switch, store-upload and stability tests before release. Reopen this decision if F1–F4 is
+established. Minimum-OS device validation remains required by NFR-09.
+
+Provider choices, Android API 24 / iOS 17 integration floors and the mobile accessibility limitation
+are recorded in [decision 0009](0009-platform-providers.md).
 
 ## Plan B: Unity 6.3 LTS
 - Unity 6.3 is the current LTS, supported until December 2027 (6.0 LTS support ends October 2026).

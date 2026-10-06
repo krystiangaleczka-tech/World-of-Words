@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: blocked
+status: review
 depends_on: [T-0028, T-0029]
 touch:
   - docs/decisions/0001-engine.md
@@ -32,26 +32,11 @@ screen-reader outcome.
 - FR-A11Y-04 requires the gate to record whether the pinned engine exposes mobile screen-reader support.
 
 ## Current state
-- `main` has decision 0001 in `proposed` state and pins Godot 4.7.2 conditionally.
-- T-0028 exists only on open PR #10. Its task is marked `done` by Chris's explicit scope decision,
-  but iOS P1-P11 remain DEFERRED / NOT EXECUTED and the PR is not merged to `main`.
-- T-0029 exists only on open PR #12. Its task is `status: review`; the Galaxy A15 build/run,
-  swipe feel, haptics and Chris's latency rating are NOT EXECUTED / NOT RATED.
-- Therefore F4 (engine-caused perceivable swipe lag) has no evidence and T-0033's declared dependencies
-  are not done on `main`.
-- Repository evidence does not currently show an F1-F3 engine failure. Android S1 preparation proved
-  Godot 4.7.2 export/install and native plugin loading, but the deliberately deferred store/provider
-  matrix must not be upgraded to PASS.
-- Current integration floors from the selected S1 candidates are Android API 24+ and iOS 17+; iOS 17
-  is driven by the current OpenIAP prebuilt framework. These are provisional until the gate can close.
-- Godot 4.7 documents screen-reader integration for desktop platforms; mobile TalkBack/VoiceOver
-  exposure is not supported by the pinned version. FR-A11Y-04 therefore remains a Later item on the
-  Godot path.
-- Godot's iOS audio session can respect the hardware silent switch by using the Ambient/default-style
-  session rather than Playback; verify this on device before release.
-- The S1 plan's provisional provider choices remain: Poing AdMob for ads/UMP/ATT, Google Play Billing
-  integration for Android IAP, OpenIAP for StoreKit 2, `godot-x/firebase` Analytics, Sentry for crash
-  reporting, and `toniqat/godot-haptics` with a tiny native iOS bridge as the bounded fallback.
+- Updated preflight on 2026-10-06: T-0028 and T-0029 are done on main.
+- PR #10 and PR #12 are merged; PR #19 records Chris's Galaxy A15 smooth-swipe confirmation.
+- Chris explicitly approved Godot 4.7.2 and accepted deferred SDK/store validation risk after the
+  concrete T-0033 proposal. Deferred P1–P11 rows remain unexecuted rather than PASS.
+- The original draft's dependency escalation is resolved; no runtime/plugin installation is needed.
 
 ## Specification
 
@@ -113,16 +98,13 @@ changing monetization/consent rules, or editing ROADMAP.
 Revert the T-0033 docs commit. If decision 0001 was superseded, never rewrite history: add a new
 superseding decision instead.
 
-## Escalation
-**S1 — dependency/preflight failure.** T-0033 depends on T-0028 and T-0029, but neither is done on
-`main`: PR #10 is open and T-0029 is still `review` with the Galaxy A15 evidence table unexecuted.
-F4 therefore cannot be evaluated. Per AGENTS.md the executor stops here and must not guess the engine
-gate outcome.
+## Escalation — resolved
+S1 dependency/preflight failure is resolved: T-0028 and T-0029 are done on main after PRs #10, #12
+and #19 merged. Chris confirmed the Galaxy A15 test and smooth swipe, then explicitly accepted the
+Godot 4.7.2 development path with SDK/store checks deferred but mandatory before release.
 
-Options once unblocked:
-1. Merge the accepted T-0028 scope, execute/rate T-0029 on Galaxy A15, then close this gate.
-2. If Chris explicitly waives S2 device evidence, record that as a new human gate decision before
-   accepting Godot; do not rewrite T-0029 evidence as PASS.
-3. If T-0029 exposes engine-caused perceivable lag, apply decision 0001's bounded-fix/switch rule.
-
-No engine/provider decision files were changed while blocked.
+## Completion record
+2026-10-06: decision 0001 accepted under the explicit human gate exception, decision 0009 records
+providers/OS floors/haptics/audio/accessibility, and PRODUCT Q8/Q9 refer to decision 0009.
+No unreported measurement or deferred SDK/store row is marked PASS. Task remains review until
+the completed PR is reviewed and merged.
