@@ -29,7 +29,11 @@ func load_manifest(language: String, root: String = "res://content") -> Error:
 	if not data is Dictionary:
 		return ERR_PARSE_ERROR
 	var manifest: Dictionary = data
-	if manifest.get("schema_version") != float(SCHEMA_VERSION) or manifest.get("lang") != language:
+	if (
+		_positive(manifest.get("schema_version")) != SCHEMA_VERSION
+		or not manifest.get("lang") is String
+		or manifest["lang"] != language
+	):
 		return ERR_INVALID_DATA
 	var version: int = _positive(manifest.get("content_version"))
 	var slots: int = _positive(manifest.get("slots"))
@@ -90,7 +94,12 @@ func _read_packs(value: Variant, slots: int) -> Array[Dictionary]:
 		var file: Variant = pack.get("file")
 		var first: int = _positive(pack.get("first"))
 		var last: int = _positive(pack.get("last"))
-		if not file is String or not _safe_path(file) or pack.get("kind") != "campaign":
+		if (
+			not file is String
+			or not _safe_path(file)
+			or not pack.get("kind") is String
+			or pack["kind"] != "campaign"
+		):
 			return []
 		if not pack.get("sha256") is String or first != next or last < first:
 			return []
@@ -137,9 +146,17 @@ func _read_levels(path: String, pack: Dictionary, levels: Array[LevelData]) -> E
 
 
 func _header_ok(header: Dictionary, pack: Dictionary) -> bool:
-	if header.get("schema_version") != float(SCHEMA_VERSION) or header.get("lang") != _language:
+	if (
+		_positive(header.get("schema_version")) != SCHEMA_VERSION
+		or not header.get("lang") is String
+		or header["lang"] != _language
+	):
 		return false
-	if header.get("kind") != "campaign" or not header.get("levels") is Array:
+	if (
+		not header.get("kind") is String
+		or header["kind"] != "campaign"
+		or not header.get("levels") is Array
+	):
 		return false
 	return (header["levels"] as Array).size() == int(pack["last"]) - int(pack["first"]) + 1
 

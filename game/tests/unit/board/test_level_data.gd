@@ -114,6 +114,8 @@ func test_rejects_bad_letters() -> void:
 func test_rejects_bad_placements() -> void:
 	var placements: Array[Dictionary] = [
 		{"w": "DOM", "x": 0.0, "y": 0.0, "dir": "d"},
+		{"w": "DOM", "x": 0.0, "y": 0.0, "dir": true},
+		{"w": "DOM", "x": 0.0, "y": 0.0, "dir": 1},
 		{"w": "DOM", "x": 1.0, "y": 0.0, "dir": "h"},
 		{"w": "DOM", "x": 0.0, "y": 2.0, "dir": "v"},
 		{"w": "DOM", "x": -1.0, "y": 0.0, "dir": "h"},

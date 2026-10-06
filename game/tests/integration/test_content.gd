@@ -89,6 +89,10 @@ func test_invalid_manifests_keep_prior_state() -> void:
 	assert_eq(service.load_manifest("pl", FIXTURE), OK)
 	var edits: Array[Callable] = [
 		func(m: Dictionary) -> void: m["schema_version"] = 2,
+		func(m: Dictionary) -> void: m["schema_version"] = true,
+		func(m: Dictionary) -> void: m["schema_version"] = "1",
+		func(m: Dictionary) -> void: m["lang"] = true,
+		func(m: Dictionary) -> void: m["packs"][0]["kind"] = true,
 		func(m: Dictionary) -> void: m["lang"] = "en",
 		func(m: Dictionary) -> void: m["content_version"] = 0,
 		func(m: Dictionary) -> void: m["slots"] = 4,
@@ -144,3 +148,26 @@ func test_missing_pack_emits_pack_failed() -> void:
 	assert_signal_emitted_with_parameters(
 		service, "pack_failed", ["packs/c-0001-0003.json", ERR_FILE_NOT_FOUND]
 	)
+
+
+func test_mistyped_pack_headers_fail_without_script_errors() -> void:
+	var edits: Array[Callable] = [
+		func(p: Dictionary) -> void: p["schema_version"] = true,
+		func(p: Dictionary) -> void: p["schema_version"] = "1",
+		func(p: Dictionary) -> void: p["lang"] = true,
+		func(p: Dictionary) -> void: p["kind"] = 1,
+	]
+	for edit: Callable in edits:
+		var pack: Dictionary = JSON.parse_string(_fixture_pack())
+		edit.call(pack)
+		var text: String = JSON.stringify(pack)
+		var manifest: Dictionary = _fixture_manifest()
+		manifest["packs"][0]["sha256"] = text.sha256_text()
+		_write_scratch(manifest, text)
+		var service: CONTENT_SCRIPT = _service()
+		assert_eq(service.load_manifest("pl", SCRATCH), OK)
+		watch_signals(service)
+		assert_null(service.level_for_slot(1))
+		assert_signal_emitted_with_parameters(
+			service, "pack_failed", ["packs/c-0001-0003.json", ERR_INVALID_DATA]
+		)
