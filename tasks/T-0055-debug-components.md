@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: med
 ui: low
-status: ready
+status: done
 depends_on: [T-0054]
 touch:
   - game/ui/components/ScreenScaffold.*
