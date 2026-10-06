@@ -8,7 +8,7 @@ risk: low
 executor: cheap
 think: low
 ui: low
-status: blocked
+status: ready
 depends_on: [T-0045, T-0054, T-0055, T-0056, T-0057]
 touch:
   - game/features/debug/**
