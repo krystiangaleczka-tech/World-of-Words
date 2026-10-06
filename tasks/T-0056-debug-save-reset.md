@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: med
 ui: none
-status: ready
+status: done
 depends_on: [T-0054]
 touch:
   - game/services/save.gd
