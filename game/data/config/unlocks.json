@@ -1,0 +1,79 @@
+{
+  "unlocks.shuffle_slot": {
+    "default": 2,
+    "type": "int",
+    "range": [
+      1,
+      50
+    ],
+    "description": "Unlock Shuffle",
+    "owner": "Chris",
+    "remote": false
+  },
+  "unlocks.bonus_meter_slot": {
+    "default": 5,
+    "type": "int",
+    "range": [
+      1,
+      50
+    ],
+    "description": "Unlock bonus meter and chest",
+    "owner": "Chris",
+    "remote": false
+  },
+  "unlocks.hint_slot": {
+    "default": 7,
+    "type": "int",
+    "range": [
+      1,
+      50
+    ],
+    "description": "Unlock Hint, coins and Shop",
+    "owner": "Chris",
+    "remote": false
+  },
+  "unlocks.journey_slot": {
+    "default": 10,
+    "type": "int",
+    "range": [
+      1,
+      50
+    ],
+    "description": "Unlock Home, journey and postcards",
+    "owner": "Chris",
+    "remote": false
+  },
+  "unlocks.reveal_slot": {
+    "default": 12,
+    "type": "int",
+    "range": [
+      1,
+      50
+    ],
+    "description": "Unlock Reveal",
+    "owner": "Chris",
+    "remote": false
+  },
+  "unlocks.double_reward_slot": {
+    "default": 12,
+    "type": "int",
+    "range": [
+      1,
+      50
+    ],
+    "description": "Unlock rewarded double reward",
+    "owner": "Chris",
+    "remote": false
+  },
+  "unlocks.daily_slot": {
+    "default": 15,
+    "type": "int",
+    "range": [
+      1,
+      100
+    ],
+    "description": "Unlock daily puzzle and streak",
+    "owner": "Chris",
+    "remote": false
+  }
+}
