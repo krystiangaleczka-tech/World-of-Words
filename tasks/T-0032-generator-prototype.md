@@ -8,7 +8,7 @@ risk: medium
 executor: cheap
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0016]
 touch:
   - pipeline/spikes/s4/**
