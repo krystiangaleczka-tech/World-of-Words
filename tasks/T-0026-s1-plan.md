@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0003]
 touch:
   - docs/spikes/S1-plan.md

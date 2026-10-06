@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: high
 ui: high
-status: review
+status: done
 depends_on: [T-0029]
 touch:
   - spikes/s2-swipe/**
