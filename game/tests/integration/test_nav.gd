@@ -124,3 +124,21 @@ func test_screens_without_scene_files_mount_nothing() -> void:
 	nav.start(host, FIXTURE)
 	assert_null(nav.mounted_screen())
 	assert_eq(host.get_child_count(), 0)
+
+
+func test_failed_restart_resets_navigation_and_can_retry() -> void:
+	var nav: NAV_SCRIPT = _nav()
+	var host: Node = _host()
+	assert_eq(nav.start(host, FIXTURE), OK)
+	assert_eq(nav.go_to_level(3), OK)
+	watch_signals(nav)
+	assert_eq(nav.start(host, "res://tests/fixtures/missing"), ERR_FILE_NOT_FOUND)
+	assert_eq(nav.current_screen(), NAV_SCRIPT.Screen.BOOT)
+	assert_eq(nav.level_slot(), 0)
+	assert_null(nav.mounted_screen())
+	assert_eq(nav.go_home(), ERR_UNCONFIGURED)
+	assert_signal_emitted_with_parameters(nav, "boot_failed", [ERR_FILE_NOT_FOUND])
+	assert_signal_not_emitted(nav, "screen_changed")
+	assert_eq(nav.start(host, FIXTURE), OK)
+	assert_eq(nav.current_screen(), NAV_SCRIPT.Screen.LEVEL)
+	assert_eq(nav.level_slot(), 1)
