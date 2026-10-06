@@ -8,7 +8,7 @@ risk: high
 executor: human       # done in a Claude Code session Chris started
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0040, T-0034]
 touch:
   - game/services/content.gd
@@ -94,3 +94,9 @@ Revert the squash; nothing reads Content yet and no save data depends on it.
 `LevelData` lives in `core.board` while the task's area is `services.content`, as the roadmap row names
 it. The game-side checks duplicate a small part of the schema on purpose: a broken pack must fail
 softly at runtime even though CI validates content.
+
+
+## Review follow-up
+Checked on current main after T-0040 and T-0053. Wrong JSON primitive types in schema_version,
+lang, kind or placement dir could cause invalid-operand script errors. Type guards and regression
+cases now reject those values softly, preserving the prior manifest. No public API changed.

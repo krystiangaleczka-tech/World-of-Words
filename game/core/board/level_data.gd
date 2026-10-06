@@ -150,7 +150,7 @@ func _place(placement: Dictionary, occupied: Dictionary) -> bool:
 	)
 	if not text is String or (text as String).length() < MIN_TILES or start.x < 0 or start.y < 0:
 		return false
-	if direction != "h" and direction != "v":
+	if not direction is String or (direction != "h" and direction != "v"):
 		return false
 	var step: Vector2i = Vector2i.RIGHT if direction == "h" else Vector2i.DOWN
 	var cells: Array[Vector2i] = []
