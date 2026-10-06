@@ -120,4 +120,11 @@ Evidence files:
   - `event_to_post_draw`: średnia **1.15 ms**, max 5.31 ms, p95 2 ms.
   - Zdarzenia ponad budżet klatki: 0.
 
+## Iteracja v2 narzędzia S2 (120 FPS, Adaptive, Live HUD w trakcie swipe)
+Na podstawie testów i obserwacji z urządzeń dodano w aplikacji:
+1. **Przycisk `START 120 FPS`** (`Engine.max_fps = 120`) do natywnego testu ekranów 120 Hz.
+2. **Przycisk `START ADAPTIVE`** (`Engine.max_fps = 0` / bez sztucznego limitu w silniku, zależne od systemu i adaptacyjnego odświeżania ekranu).
+3. **Live HUD podczas swipe**:
+   - Bezpośrednio nad kołem na bieżąco wyświetlane są: aktualne Hz ekranu (`DisplayServer.screen_get_refresh_rate()`), cel testu, aktualny FPS i czas klatki w ms, opóźnienia `event→draw` oraz `event→update`, a także licznik swipów.
+
 

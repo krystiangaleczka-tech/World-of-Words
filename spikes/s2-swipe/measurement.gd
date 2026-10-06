@@ -109,7 +109,7 @@ func frame_drawn(now_usec: int) -> void:
 		_draw_sum += elapsed
 		_draw_max = maxi(_draw_max, elapsed)
 		_draw_hist[mini(int(float(elapsed) / 1000.0), HISTOGRAM_BINS - 1)] += 1
-		if elapsed > 1000000.0 / float(target_fps):
+		if target_fps > 0 and elapsed > 1000000.0 / float(target_fps):
 			_over_budget += 1
 	_awaiting_draw = 0
 

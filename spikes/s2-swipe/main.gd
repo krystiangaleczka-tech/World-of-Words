@@ -9,6 +9,7 @@ const Measurement = preload("res://measurement.gd")
 @onready var _word: Label = $Word
 @onready var _metrics: Label = $Metrics
 @onready var _timer: Timer = $MetricsTimer
+@onready var _live_hud: Label = $LiveHud
 
 var _positions: PackedVector2Array = PackedVector2Array([
 	Vector2(540, 930), Vector2(790, 1075), Vector2(790, 1365),
@@ -25,9 +26,13 @@ var _frozen_report: Dictionary = {}
 var _unsaved: bool = false
 var _original_cap: int = 0
 var _started_at_local: String = ""
+var _current_target_fps: int = 60
+var _live_accum: float = 0.0
 
 @onready var _start_60: Button = $Start60
 @onready var _start_90: Button = $Start90
+@onready var _start_120: Button = $Start120
+@onready var _start_adaptive: Button = $StartAdaptive
 @onready var _stop: Button = $StopSave
 @onready var _status: Label = $RunStatus
 
@@ -38,8 +43,11 @@ func _ready() -> void:
 	_timer.timeout.connect(_refresh_metrics)
 	_start_60.pressed.connect(_begin.bind(60))
 	_start_90.pressed.connect(_begin.bind(90))
+	_start_120.pressed.connect(_begin.bind(120))
+	_start_adaptive.pressed.connect(_begin.bind(0))
 	_stop.pressed.connect(_stop_and_save)
 	RenderingServer.frame_post_draw.connect(_frame_drawn)
+	_refresh_idle_hud()
 	_refresh_metrics()
 	queue_redraw()
 
@@ -61,16 +69,20 @@ func _input(event: InputEvent) -> void:
 			_visit(_hit(_pointer))
 
 
-func _process(_delta: float) -> void:
-	if not _measurement.active:
-		return
+func _process(delta: float) -> void:
 	if _dragging:
 		_line.set_point_position(_line.get_point_count() - 1, _pointer)
-	_measurement.frame_updated(Time.get_ticks_usec())
+	if _measurement.active:
+		_measurement.frame_updated(Time.get_ticks_usec())
+		_live_accum += delta
+		if _live_accum >= 0.06:
+			_live_accum = 0.0
+			_update_live_hud(delta)
 
 
 func _frame_drawn() -> void:
 	_measurement.frame_drawn(Time.get_ticks_usec())
+
 
 func _draw() -> void:
 	for index: int in range(_positions.size()):
@@ -144,18 +156,52 @@ func _refresh_word() -> void:
 	_word.text = _chain_word()
 
 
+func _refresh_idle_hud() -> void:
+	var screen_hz: float = DisplayServer.screen_get_refresh_rate()
+	var hz_str: String = ("%.1f Hz" % screen_hz) if screen_hz > 0.0 else "nieznane"
+	_live_hud.text = "Wyświetlacz: %s\nWybierz tryb (60, 90, 120 FPS lub ADAPTIVE) i wykonaj swipy." % hz_str
+
+
+func _update_live_hud(delta: float) -> void:
+	var screen_hz: float = DisplayServer.screen_get_refresh_rate()
+	var hz_str: String = ("%.1f Hz" % screen_hz) if screen_hz > 0.0 else "nieznane"
+	var current_fps: float = Engine.get_frames_per_second()
+	var frame_ms: float = delta * 1000.0 if delta > 0.0 else (1000.0 / current_fps if current_fps > 0.0 else 0.0)
+	var mode_str: String = ("%d FPS" % _current_target_fps) if _current_target_fps > 0 else "ADAPTIVE"
+	var snap: Dictionary = _measurement.snapshot(Time.get_ticks_usec())
+	var draw_timing: Dictionary = snap["event_to_post_draw"]
+	var update_timing: Dictionary = snap["event_to_update"]
+	_live_hud.text = (
+		"EKRAN: %s | CEL: %s | FPS: %.1f (%.1f ms)\n"
+		+ "event→draw: avg %.2f ms (max %.2f) | ev→upd: avg %.2f ms | swipy: %d"
+	) % [
+		hz_str, mode_str, current_fps, frame_ms,
+		draw_timing["average_ms"], draw_timing["maximum_ms"],
+		update_timing["average_ms"], snap["completed_swipes"]
+	]
+
+
 func _refresh_metrics() -> void:
 	if not _measurement.active:
 		return
 	var report: Dictionary = _measurement.snapshot(Time.get_ticks_usec())
 	var timing: Dictionary = report["event_to_post_draw"]
+	var target_label: String = ("%d FPS" % report["target_fps"]) if report["target_fps"] > 0 else "ADAPTIVE"
 	_metrics.text = (
-		"Próba %d | cel %d FPS | średni FPS %.1f | swipy %d\n"
-		+ "event→post_draw: avg %.2f ms | max %.2f ms | próbki %d"
+		"Próba %d | cel %s | średni FPS %.1f | swipy %d\n"
+		+ "event→post_draw: avg %.2f ms | max %.2f ms | p95 %d ms | próbki %d"
 	) % [
-		_run_sequence, report["target_fps"], report["average_render_fps"],
-		report["completed_swipes"], timing["average_ms"], timing["maximum_ms"], timing["samples"]
+		_run_sequence, target_label, report["average_render_fps"],
+		report["completed_swipes"], timing["average_ms"], timing["maximum_ms"],
+		timing["p95_bin_ms"], timing["samples"]
 	]
+
+
+func _set_start_buttons_disabled(disabled: bool) -> void:
+	_start_60.disabled = disabled
+	_start_90.disabled = disabled
+	_start_120.disabled = disabled
+	_start_adaptive.disabled = disabled
 
 
 func _begin(fps: int) -> void:
@@ -166,12 +212,14 @@ func _begin(fps: int) -> void:
 	var id: String = "s2_%d_%d_%d" % [OS.get_process_id(), now_usec, _run_sequence]
 	_measurement.begin(id, fps, now_usec)
 	_started_at_local = Time.get_datetime_string_from_system(false, true)
+	_current_target_fps = fps
 	_frozen_report = {}
 	Engine.max_fps = fps
-	_start_60.disabled = true
-	_start_90.disabled = true
+	_set_start_buttons_disabled(true)
 	_stop.disabled = false
-	_status.text = "Próba %d rozpoczęta. Po próbie: ZAKOŃCZ I ZAPISZ." % _run_sequence
+	var target_label: String = ("%d FPS" % fps) if fps > 0 else "ADAPTIVE (bez limitu)"
+	_status.text = "Próba %d (%s) rozpoczęta. Po próbie: ZAKOŃCZ I ZAPISZ." % [_run_sequence, target_label]
+	_update_live_hud(0.0)
 	_refresh_metrics()
 
 
@@ -189,6 +237,7 @@ func _stop_and_save() -> void:
 		_frozen_report["exported_at_local"] = Time.get_datetime_string_from_system(false, true)
 		_frozen_report["started_at_local"] = _started_at_local
 		_frozen_report["display_refresh_hz"] = DisplayServer.screen_get_refresh_rate()
+		_frozen_report["target_mode"] = "adaptive" if _frozen_report["target_fps"] == 0 else "%dfps" % _frozen_report["target_fps"]
 		_frozen_report["measurement_boundary"] = (
 			"Input dispatch to line update / RenderingServer.frame_post_draw; "
 			+ "not hardware touch-to-photon latency. FPS is measured over rendered-frame intervals."
@@ -206,11 +255,11 @@ func _stop_and_save() -> void:
 		_status.text = "Błąd zapisu. Użyj ZAKOŃCZ I ZAPISZ ponownie; próba jest zachowana."
 		return
 	_unsaved = false
-	_start_60.disabled = false
-	_start_90.disabled = false
+	_set_start_buttons_disabled(false)
 	_stop.disabled = true
 	_status.text = "Zapisano: %s.json / .txt" % str(_frozen_report["run_id"])
 	_metrics.text += "\nZakończono. Każdy START zeruje wszystkie pomiary."
+	_refresh_idle_hud()
 	if DisplayServer.has_feature(DisplayServer.FEATURE_CLIPBOARD):
 		DisplayServer.clipboard_set(text)
 	print(text)
