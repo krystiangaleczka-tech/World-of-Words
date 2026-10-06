@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0028, T-0029]
 touch:
   - docs/decisions/0001-engine.md
@@ -106,5 +106,5 @@ Godot 4.7.2 development path with SDK/store checks deferred but mandatory before
 ## Completion record
 2026-10-06: decision 0001 accepted under the explicit human gate exception, decision 0009 records
 providers/OS floors/haptics/audio/accessibility, and PRODUCT Q8/Q9 refer to decision 0009.
-No unreported measurement or deferred SDK/store row is marked PASS. Task remains review until
-the completed PR is reviewed and merged.
+No unreported measurement or deferred SDK/store row is marked PASS.
+2026-10-06: PR #18 squash-merged on Chris's instruction; task marked done in T-0034 bookkeeping.
