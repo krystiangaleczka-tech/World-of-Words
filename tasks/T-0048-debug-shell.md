@@ -34,7 +34,9 @@ They are explicitly planned Phase 0 bootstrap; no phase exit or full T-0103 comp
 ## Specification
 Create debug.tscn rooted in ScreenScaffold with a VBox body using existing TextButton scenes and Label
 primitives only. App version comes from ProjectSettings, content version from Content.content_version.
-Expose configure(save, content, nav) before entering tree for isolated tests; defaults are autoloads.
+Expose configure(save: SAVE_SCRIPT, content: CONTENT_SCRIPT, nav: NAV_SCRIPT) before entering tree
+for isolated tests; constants preload the three service scripts. Nav supplies its configured services
+before mounting DEBUG; direct gallery instantiation defaults to autoloads.
 All text uses translation keys from locale/debug.csv (PL and EN); register this CSV's translations locally
 without project.godot changes, refresh on translation notification. Use Tokens for typography/margins.
 Buttons: reset request, confirm reset (hidden initially), cancel confirmation, Home. Reset requires an

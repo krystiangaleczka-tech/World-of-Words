@@ -4,7 +4,7 @@ title: Add provisional ScreenScaffold and TextButton with a gallery
 epic: E04
 type: contract
 area: ui.components
-risk: medium
+risk: high
 executor: sol
 think: med
 ui: low
@@ -51,3 +51,7 @@ test_button_translation_and_min_target, test_button_busy_preserves_disabled, tes
 ## Acceptance
 All tests and make check pass. UI impact low: gallery exists for manual inspection; no visual-direction
 claim. Default Godot font remains temporary; P2 theme and device review remain future work.
+
+## Rollback
+Revert this scoped bootstrap. No persistent schema or release content changes; dependent debug tasks
+then require their prerequisites again.

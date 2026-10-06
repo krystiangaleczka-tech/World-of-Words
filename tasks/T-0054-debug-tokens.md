@@ -4,7 +4,7 @@ title: Bootstrap provisional tokens for the Phase 0 debug prerequisites
 epic: E04
 type: contract
 area: ui.tokens
-risk: low
+risk: high
 executor: sol
 think: med
 ui: low
@@ -48,3 +48,7 @@ until all prerequisites are done. Record the minimal bootstrap and deferred full
 
 ## Acceptance
 Metadata/scope and make check pass. No generated theme, font dependency, save format or gate changes.
+
+## Rollback
+Revert this scoped bootstrap. No persistent schema or release content changes; dependent debug tasks
+then require their prerequisites again.

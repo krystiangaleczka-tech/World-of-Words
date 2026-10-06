@@ -31,7 +31,12 @@ Nav.Screen.DEBUG, scene path and mounting exist; Save.is_loaded/debug_reset exis
 No debug route exists. BOOT may be visible when shipped content is absent.
 
 ## Specification
-Add go_debug() -> Error and configure_debug(enabled: bool) -> void. Routing requires both
+Add go_debug() -> Error and configure_debug(enabled: bool) -> void.
+Add configure_screens(factory: Callable) -> void (tests/tools): factory takes Screen, returns Node/null.
+For DEBUG only, Nav invokes the mounted scene's typed configure(save: SAVE_SCRIPT,
+content: CONTENT_SCRIPT, nav: NAV_SCRIPT) BEFORE add_child, supplying its injected services and self.
+Default scene loading uses the existing canonical paths. No upward compile-time preload of Debug.
+The test factory creates a probe with the configure signature to verify injection before _ready. Routing requires both
 OS.is_debug_build() and enabled (default true); tests may disable, never enable release routing.
 Require a valid host and loaded Save; BOOT with missing Content may open Debug for diagnostics.
 Rejected routes preserve state/mounted scene/slot. Screen changes retain existing signal behavior.
@@ -43,7 +48,7 @@ Mark T-0048 ready only when all four prerequisites are done. No scene is introdu
 ## Tests
 `game/tests/integration/test_debug_navigation.gd`: test_debug_disabled_preserves_screen,
 test_debug_requires_loaded_save_and_host, test_debug_route_after_boot_and_home,
-test_debug_diagnostics_after_missing_content, test_freed_host_is_rejected. Use isolated Save storage,
+test_debug_diagnostics_after_missing_content, test_freed_host_is_rejected, test_debug_services_are_injected_before_mount. Use isolated Save storage,
 Clock/services/hosts. Existing Nav tests unchanged.
 
 ## Acceptance
