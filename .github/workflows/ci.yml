@@ -174,3 +174,16 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run tools tests
         run: make tools-test
+
+  registries:
+    name: registries
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate registries and literal service calls
+        run: make registries
