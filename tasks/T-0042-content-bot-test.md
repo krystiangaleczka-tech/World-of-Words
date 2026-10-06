@@ -8,7 +8,7 @@ risk: medium
 executor: human       # done in a Claude Code session Chris started
 think: med
 ui: none
-status: review
+status: done
 depends_on: [T-0041]
 touch:
   - game/tests/integration/test_content_bot.gd*
