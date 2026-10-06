@@ -17,6 +17,6 @@ func test_design_values_match() -> void:
 
 
 func test_tokens_are_pure() -> void:
-	var tokens: Tokens = Tokens.new()
+	var tokens: Object = Tokens.new()
 	assert_is(tokens, RefCounted)
 	assert_false(tokens is Node)

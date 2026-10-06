@@ -8,15 +8,18 @@ risk: high
 executor: sol
 think: med
 ui: low
-status: ready
+status: done
 depends_on: [T-0054]
 touch:
+  - Makefile
+  - game/tests/unit/ui/test_tokens.gd
+  - tools/tests/test_gut_failure_guard.py
   - game/ui/components/ScreenScaffold.*
   - game/ui/components/TextButton.*
   - game/ui/gallery/debug_components.*
   - game/tests/integration/test_debug_components.gd*
   - tasks/T-0055-debug-components.md
-revision: 1
+revision: 3
 ---
 
 ## Goal
@@ -40,13 +43,22 @@ apply_insets(insets: Rect2, viewport_size: Vector2) -> void supports determinist
 classify usable safe height/width using the two Layout thresholds. Never calls services.
 TextButton extends Button; exported text_key: String uses tr(), flat provisional style, token LABEL font,
 PRIMARY normal/TEXT_MUTED disabled, min height MIN_TARGET, native pressed/disabled/focus behavior.
-Pressed text is underlined. set_busy(busy: bool) suppresses presses while busy, preserving caller-disabled
+Pressed text is underlined. underline_segment() -> PackedVector2Array exposes the two LOCAL drawing
+endpoints to gallery geometry checks, independent of the button's parent position. set_busy(busy: bool) suppresses presses while busy, preserving caller-disabled
 state; intent is native pressed signal. This provisional component does not claim full P2 theme/a11y.
 Add matching .tscn scenes and a gallery scene displaying the scaffold and enabled/disabled/busy buttons.
 
 ## Tests
 `game/tests/integration/test_debug_components.gd`: test_scaffold_safe_insets_and_layout_classes,
-test_button_translation_and_min_target, test_button_busy_preserves_disabled, test_gallery_instantiates.
+test_button_translation_and_min_target, test_button_busy_preserves_disabled, test_gallery_instantiates, test_pressed_underline_uses_local_coordinates.
+
+## Validation correction
+T-0054's purity assertion used an impossible static `Tokens is Node` test. Change the variable's
+annotation to Object so both behavioral checks execute. GUT could skip that parse-failed file with
+exit 0; Makefile's test target must reject SCRIPT ERROR or failed-script-load output while preserving
+normal exit status and expected test-asserted push_error diagnostics. CI already invokes make test.
+Add tools/tests/test_gut_failure_guard.py for zero-exit parse/load errors, ordinary asserted errors,
+and nonzero native exit. This narrow correction prevents false-green component validation.
 
 ## Acceptance
 All tests and make check pass. UI impact low: gallery exists for manual inspection; no visual-direction

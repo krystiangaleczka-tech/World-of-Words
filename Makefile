@@ -6,6 +6,7 @@ UV ?= uv
 GAME := game
 GD_SRC := $(shell find $(GAME) -name '*.gd' -not -path '$(GAME)/addons/*' -not -path '$(GAME)/.godot/*')
 LOG := /tmp/wow-godot-import.log
+GUT_LOG := /tmp/wow-gut-tests.log
 
 skip = @echo "SKIP $@: $(1)"
 
@@ -21,7 +22,11 @@ import:
 	exit $$status
 
 test: import
-	$(GODOT) --headless --path $(GAME) -s addons/gut/gut_cmdln.gd -gconfig=res://.gutconfig.json
+	@$(GODOT) --headless --path $(GAME) -s addons/gut/gut_cmdln.gd -gconfig=res://.gutconfig.json > $(GUT_LOG) 2>&1; status=$$?; \
+	cat $(GUT_LOG); \
+	if grep -qE '^(SCRIPT ERROR:|ERROR: Failed to load script)' $(GUT_LOG); then \
+		echo "GUT script loading/runtime error ($(GUT_LOG))"; exit 1; fi; \
+	exit $$status
 
 fmt:
 	$(UV) run gdformat $(GD_SRC)
