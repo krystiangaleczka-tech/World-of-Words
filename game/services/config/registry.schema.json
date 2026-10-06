@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:world-of-words:config-registry:v1",
+  "description": "One prefix registry; runtime additionally checks filename prefix, nonblank text, ordered inclusive bounds and default membership. Unlock/consent remote tuning is forbidden in v1.",
+  "type": "object",
+  "minProperties": 1,
+  "propertyNames": {
+    "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$"
+  },
+  "additionalProperties": {
+    "type": "object",
+    "required": [
+      "default",
+      "type",
+      "range",
+      "description",
+      "owner",
+      "remote"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "default": {},
+      "type": {
+        "enum": [
+          "int",
+          "float",
+          "bool",
+          "string"
+        ]
+      },
+      "range": {},
+      "description": {
+        "type": "string",
+        "minLength": 1
+      },
+      "owner": {
+        "type": "string",
+        "minLength": 1
+      },
+      "remote": {
+        "type": "boolean"
+      }
+    },
+    "allOf": [
+      {
+        "if": {
+          "properties": {
+            "type": {
+              "const": "int"
+            }
+          }
+        },
+        "then": {
+          "properties": {
+            "default": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "range": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            }
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "type": {
+              "const": "float"
+            }
+          }
+        },
+        "then": {
+          "properties": {
+            "default": {
+              "type": "number",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "range": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            }
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "type": {
+              "const": "bool"
+            }
+          }
+        },
+        "then": {
+          "properties": {
+            "default": {
+              "type": "boolean"
+            },
+            "range": {
+              "type": "null"
+            }
+          }
+        }
+      },
+      {
+        "if": {
+          "properties": {
+            "type": {
+              "const": "string"
+            }
+          }
+        },
+        "then": {
+          "properties": {
+            "default": {
+              "type": "string"
+            },
+            "range": {
+              "type": "null"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

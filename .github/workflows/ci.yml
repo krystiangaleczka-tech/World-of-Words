@@ -138,17 +138,20 @@ jobs:
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           set -euo pipefail
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
           if [[ "$EVENT_NAME" == "pull_request" ]]; then
             base="$PR_BASE_SHA"
           else
             base="$BEFORE_SHA"
             if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
-              base="$(git rev-list --max-parents=0 HEAD)"
+              base="$(git -C "$GITHUB_WORKSPACE" rev-list --max-parents=0 HEAD)"
             fi
           fi
 
-          if git diff --name-only "$base" "$GITHUB_SHA" -- pipeline/ | grep -q .; then
+          changed_paths="$(git -C "$GITHUB_WORKSPACE" diff --name-only "$base" "$GITHUB_SHA" -- pipeline/)"
+
+          if [[ -n "$changed_paths" ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
             echo "pipeline/ changed; running pipeline tests."
           else
@@ -171,3 +174,16 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run tools tests
         run: make tools-test
+
+  registries:
+    name: registries
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate registries and literal service calls
+        run: make registries

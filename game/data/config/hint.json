@@ -1,0 +1,24 @@
+{
+  "hint.offer_idle_seconds": {
+    "default": 45,
+    "type": "int",
+    "range": [
+      10,
+      600
+    ],
+    "description": "Idle time without a found word before a contextual Hint offer",
+    "owner": "Sol",
+    "remote": false
+  },
+  "hint.offer_invalid_streak": {
+    "default": 5,
+    "type": "int",
+    "range": [
+      2,
+      50
+    ],
+    "description": "Consecutive INVALID attempts before a contextual Hint offer",
+    "owner": "Sol",
+    "remote": false
+  }
+}

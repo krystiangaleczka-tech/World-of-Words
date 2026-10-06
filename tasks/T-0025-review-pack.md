@@ -8,7 +8,7 @@ risk: low
 executor: sol
 think: low
 ui: none
-status: review
+status: done
 depends_on: [T-0024]
 touch:
   - tools/review_pack.py

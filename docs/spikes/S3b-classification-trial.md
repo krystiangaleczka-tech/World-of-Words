@@ -1,6 +1,6 @@
 # S3b — Polish AI classification trial
 
-Date: 2026-10-04. Task: T-0031.
+Prepared: 2026-10-04. Runtime recheck: 2026-10-06. Task: T-0031.
 
 ## Status
 
@@ -40,7 +40,9 @@ Use two distinct cheap models with identical inputs:
 Why these two: both are current low-cost general text models suitable for high-volume classification,
 and using different providers gives a stronger disagreement signal than two prompts on one model.
 
-Pricing checked 2026-10-04 from official provider pages:
+Historical planning prices recorded on 2026-10-04; not independently verified in the current run.
+Do not use them as measured cost or a current price confirmation. Verify actual API model
+availability and current official prices before completing the paid-list-price calculation:
 - gpt-6-luna standard: USD 0.10 / 1M input tokens, USD 0.50 / 1M output tokens.
   Source: https://developers.openai.com/api/docs/models and
   https://developers.openai.com/api/docs/pricing
@@ -160,3 +162,14 @@ S11 — the current Sol execution environment has no callable second-model runti
 empirical model-vs-model requirement would require external model access/credentials, which this task
 must not invent, request into the repository or expose. The trial has therefore been prepared to the
 point immediately before provider execution, and no fabricated agreement number is recorded.
+
+## Runtime recheck — 2026-10-06
+
+The current managed cloud environment reports current readiness observations, unrestricted/enforced
+HTTP networking, and no configured secrets, runtime variables or outbound identities. No authenticated
+OpenAI or Gemini API runtime is available. Sample checks pass: 200 unique tokens, all 3–7 characters,
+120 common / 40 obscure-legacy / 40 sensitive-ambiguous. The frozen word-only input and prompt have
+been extracted for independent execution; no model outputs or agreement percentages are inferred.
+A two-agent in-session comparison is an alternative pending Chris's explicit choice; it would record
+the actual replacement models and lack of token/billing telemetry. It would not close the measured
+API-cost or Chris-review acceptance gates.

@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:world-of-words:pack:v1",
+  "title": "P1 Polish level pack",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "lang",
+    "kind",
+    "levels"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "lang": {
+      "const": "pl"
+    },
+    "kind": {
+      "enum": [
+        "campaign",
+        "daily"
+      ]
+    },
+    "levels": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "urn:world-of-words:level:v1"
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "campaign"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "levels": {
+            "items": {
+              "properties": {
+                "id": {
+                  "pattern": "^pl-c-"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "daily"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "levels": {
+            "items": {
+              "properties": {
+                "id": {
+                  "pattern": "^pl-d-"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

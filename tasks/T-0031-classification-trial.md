@@ -8,7 +8,7 @@ risk: medium
 executor: cheap
 think: med
 ui: none
-status: done
+status: blocked
 depends_on: [T-0030, T-0016]
 touch:
   - docs/spikes/S3b-classification-trial.md
@@ -90,3 +90,11 @@ Documentation/data checks:
 - S11: this Sol session has no callable second-model runtime and must not add/request API secrets in
   repository work. The 200-word sample, prompt, metrics and current public price basis are prepared,
   but the model-vs-model run itself remains blocked rather than fabricated.
+
+## Runtime recheck — 2026-10-06
+Chris requested execution in the current cloud session. Environment status is current and running,
+but configured secrets, runtime variables and outbound identities are all empty. The fixed sample
+passes the 200 unique / 3–7 character checks. Actual two-provider outputs and token usage remain absent.
+The previous done status was premature; blocked reflects the empirical acceptance criteria.
+An optional explicitly authorized in-session two-agent comparison can supply real outputs,
+but must report substitutions and missing API cost telemetry instead of claiming the full gate.
