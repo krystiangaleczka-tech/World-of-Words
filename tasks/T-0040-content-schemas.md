@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: xhigh
 ui: none
-status: review
+status: done
 depends_on: [T-0011]
 touch:
   - pipeline/schema/**

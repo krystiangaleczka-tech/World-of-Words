@@ -1,0 +1,42 @@
+{
+  "aborted_swipes": 0,
+  "average_render_fps": 90.066417084347,
+  "completed_swipes": 21,
+  "device": "SM-S948B",
+  "display_refresh_hz": 120.000022888184,
+  "dropped_events": 0,
+  "duration_ms": 28285.958,
+  "engine": "4.7.2-stable (official)",
+  "event_to_post_draw": {
+    "average_ms": 1.26954309825196,
+    "maximum_ms": 8.772,
+    "overflow_samples": 0,
+    "p95_bin_ms": 3,
+    "samples": 1659
+  },
+  "event_to_update": {
+    "average_ms": 0.214695599758891,
+    "maximum_ms": 5.822,
+    "overflow_samples": 0,
+    "p95_bin_ms": 1,
+    "samples": 1659
+  },
+  "events_over_target_frame_budget": 0,
+  "exported_at_local": "2026-10-06 15:25:28",
+  "histogram_bin_ms": 1,
+  "histogram_overflow_from_ms": 250,
+  "measurement_boundary": "Input dispatch to line update / RenderingServer.frame_post_draw; not hardware touch-to-photon latency. FPS is measured over rendered-frame intervals.",
+  "os": "Android",
+  "render_frame_intervals": {
+    "average_ms": 11.1029175176748,
+    "maximum_ms": 19.426,
+    "overflow_samples": 0,
+    "p95_bin_ms": 13,
+    "samples": 2546
+  },
+  "run_id": "s2_3179_60141550_2",
+  "started_at_local": "2026-10-06 15:25:00",
+  "target_fps": 90,
+  "target_mode": "90fps",
+  "unmeasured_events": 0
+}
