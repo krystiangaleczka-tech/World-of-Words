@@ -1,0 +1,138 @@
+extends SceneTree
+
+const Measurement = preload("res://measurement.gd")
+
+
+func _initialize() -> void:
+	_test_all_events_and_boundaries()
+	_test_reset_and_frozen_stop()
+	_test_frame_statistics()
+	_test_queue_and_histogram_limits()
+	_test_empty_run()
+	call_deferred("_test_scene_controls")
+
+
+func _test_all_events_and_boundaries() -> void:
+	var m: Measurement = Measurement.new()
+	m.begin("first", 60, 0)
+	m.record_event(100)
+	m.record_event(150)
+	m.frame_updated(200)
+	# This event arrived after the update and must wait for the next drawn frame.
+	m.record_event(250)
+	m.frame_drawn(300)
+	var first: Dictionary = m.snapshot(300)
+	assert(first["event_to_update"]["samples"] == 2)
+	assert(is_equal_approx(first["event_to_update"]["average_ms"], 0.075))
+	assert(first["event_to_post_draw"]["samples"] == 2)
+	assert(is_equal_approx(first["event_to_post_draw"]["average_ms"], 0.175))
+	assert(first["unmeasured_events"] == 1)
+	m.frame_updated(400)
+	m.frame_drawn(500)
+	assert(m.stop(600)["event_to_post_draw"]["samples"] == 3)
+
+
+func _test_reset_and_frozen_stop() -> void:
+	var m: Measurement = Measurement.new()
+	m.begin("60fps", 60, 0)
+	m.record_event(10)
+	m.frame_updated(20)
+	m.frame_drawn(30)
+	m.finish_swipe()
+	m.abort_swipe()
+	var frozen: Dictionary = m.stop(100)
+	m.record_event(200)
+	m.frame_updated(300)
+	m.frame_drawn(400)
+	m.finish_swipe()
+	assert(m.snapshot(500) == frozen)
+	m.begin("90fps", 90, 1000)
+	var fresh: Dictionary = m.snapshot(1000)
+	assert(fresh["run_id"] == "90fps" and fresh["target_fps"] == 90)
+	assert(fresh["completed_swipes"] == 0 and fresh["aborted_swipes"] == 0)
+	assert(fresh["event_to_update"]["samples"] == 0)
+	assert(fresh["event_to_post_draw"]["maximum_ms"] == 0.0)
+	assert(fresh["dropped_events"] == 0 and fresh["unmeasured_events"] == 0)
+	assert(fresh["render_frame_intervals"]["samples"] == 0)
+	assert(fresh["event_to_post_draw"]["p95_bin_ms"] == -1)
+	assert(frozen["run_id"] == "60fps" and frozen["completed_swipes"] == 1)
+	assert(frozen["aborted_swipes"] == 1)
+
+
+func _test_frame_statistics() -> void:
+	var m: Measurement = Measurement.new()
+	m.begin("fps", 60, 0)
+	m.frame_drawn(0)
+	m.record_event(1)
+	m.frame_updated(1000)
+	m.frame_drawn(16667)
+	m.record_event(17000)
+	m.frame_updated(18000)
+	m.frame_drawn(40000)
+	var stats: Dictionary = m.stop(40000)
+	assert(is_equal_approx(stats["average_render_fps"], 50.0))
+	assert(stats["render_frame_intervals"]["samples"] == 2)
+	assert(stats["render_frame_intervals"]["p95_bin_ms"] == 23)
+	assert(stats["events_over_target_frame_budget"] == 1)
+	assert(is_equal_approx(stats["event_to_post_draw"]["maximum_ms"], 23.0))
+
+
+func _test_queue_and_histogram_limits() -> void:
+	var m: Measurement = Measurement.new()
+	m.begin("limits", 90, 0)
+	for index: int in range(Measurement.QUEUE_CAPACITY + 1):
+		m.record_event(index)
+	m.frame_updated(300000)
+	m.frame_drawn(400000)
+	var stats: Dictionary = m.stop(500000)
+	assert(stats["dropped_events"] == 1)
+	assert(stats["event_to_update"]["samples"] == Measurement.QUEUE_CAPACITY)
+	assert(stats["event_to_post_draw"]["overflow_samples"] == Measurement.QUEUE_CAPACITY)
+	assert(stats["event_to_post_draw"]["p95_bin_ms"] == 250)
+	m.begin("draw-limit", 60, 0)
+	for index: int in range(Measurement.QUEUE_CAPACITY):
+		m.record_event(index)
+	m.frame_updated(1000)
+	m.record_event(1100)
+	m.frame_updated(1200)
+	assert(m.stop(1300)["dropped_events"] == 1)
+
+
+func _test_empty_run() -> void:
+	var m: Measurement = Measurement.new()
+	m.begin("empty", 60, 10)
+	var stats: Dictionary = m.stop(10)
+	assert(stats["duration_ms"] == 0.0)
+	assert(stats["average_render_fps"] == 0.0)
+	assert(stats["event_to_update"]["average_ms"] == 0.0)
+	assert(stats["render_frame_intervals"]["p95_bin_ms"] == -1)
+
+
+func _test_scene_controls() -> void:
+	var scene: Node = load("res://main.tscn").instantiate()
+	root.add_child(scene)
+	await process_frame
+	var start_60: Button = scene.get_node("Start60")
+	var start_90: Button = scene.get_node("Start90")
+	var stop: Button = scene.get_node("StopSave")
+	var status: Label = scene.get_node("RunStatus")
+	start_60.pressed.emit()
+	assert(start_60.disabled and start_90.disabled and not stop.disabled)
+	# Even a programmatic press cannot silently replace an active run.
+	start_90.pressed.emit()
+	stop.pressed.emit()
+	assert(not start_60.disabled and stop.disabled)
+	var first_id: String = status.text.trim_prefix("Zapisano: ").trim_suffix(".json / .txt")
+	var first: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("user://" + first_id + ".json"))
+	assert(first["target_fps"] == 60)
+	assert(FileAccess.file_exists("user://" + first_id + ".txt"))
+	start_90.pressed.emit()
+	stop.pressed.emit()
+	var second_id: String = status.text.trim_prefix("Zapisano: ").trim_suffix(".json / .txt")
+	var second: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("user://" + second_id + ".json"))
+	assert(second_id != first_id and second["target_fps"] == 90)
+	assert(second["completed_swipes"] == 0 and second["event_to_update"]["samples"] == 0)
+	assert(FileAccess.get_file_as_string("user://" + first_id + ".json").contains(first_id))
+	scene.free()
+	print("S2 measurement: 6 regression tests passed")
+	quit(0)
