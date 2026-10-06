@@ -8,7 +8,7 @@ risk: high
 executor: human       # done in a Claude Code session Chris started
 think: med
 ui: low
-status: review
+status: done
 depends_on: [T-0036, T-0037, T-0041]
 touch:
   - game/services/nav.gd
@@ -76,3 +76,8 @@ Revert the squash; boot returns to Clock injection only. No save format change.
 - Until T-0127 ships content, a real boot stops on BOOT with a warning (no manifest in
   `res://content`). The existing boot-scene test now runs the sequence against the real `user://save.json`
   of the test profile; it still passes unchanged.
+
+## Integration review
+A repeated `start` now clears the prior screen, slot and mounted scene before the boot sequence.
+The regression test boots successfully, fails a restart on missing content, verifies BOOT and a
+zero slot without `screen_changed`, then proves a subsequent valid retry reaches Level 1.

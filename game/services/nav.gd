@@ -60,6 +60,11 @@ func configure(save: SAVE_SCRIPT, config: CONFIG_SCRIPT, content: CONTENT_SCRIPT
 ## @api Boot sequence: Save, Config, Content manifest, then Level for the saved slot.
 ## Screens mount under host. Any failure emits boot_failed and leaves Nav on BOOT.
 func start(host: Node, content_root: String = "res://content") -> Error:
+	if _mounted != null:
+		_mounted.queue_free()
+		_mounted = null
+	_screen = Screen.BOOT
+	_level_slot = 0
 	_host = host
 	if _save == null:
 		configure(Save, Config, Content)

@@ -8,7 +8,7 @@ risk: low
 executor: human       # done in a Claude Code session Chris started
 think: low
 ui: none
-status: review
+status: done
 depends_on: [T-0043]
 touch:
   - game/tests/integration/test_boot_smoke.gd*
