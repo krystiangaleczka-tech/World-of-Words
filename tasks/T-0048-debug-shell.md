@@ -9,53 +9,50 @@ executor: cheap
 think: low
 ui: low
 status: blocked
-depends_on: [T-0045]
+depends_on: [T-0045, T-0054, T-0055, T-0056, T-0057]
 touch:
   - game/features/debug/**
   - game/locale/debug.csv
   - game/tests/integration/test_debug_screen.gd*
   - tasks/T-0048-debug-shell.md
-revision: 1
+revision: 2
 ---
 
 ## Goal
-A debug-only screen shows app and content versions and offers reset save. It is reachable through
-Nav in debug builds; release artifact exclusion is verified by export tasks T-0137/T-0138.
+A debug-only screen shows app/content versions and offers an explicit confirmed reset followed by Level 1.
 
 ## Context
-- `docs/PRODUCT.md#fr-debug-debug-tools` FR-DEBUG-01 and FR-DEBUG-06.
-- `docs/DESIGN.md#rules-quote-these-into-ui-tasks`: "A screen task may not create a component. If a needed component or state is missing, STOP (S4) and request a separate `ui.components` task."
-- "New component = separate task (`area: ui.components`), including its gallery entry."
+- `docs/PRODUCT.md#fr-debug-debug-tools`: FR-DEBUG-01/06; physical release exclusion is T-0137/T-0138.
+- `docs/DESIGN.md#rules-quote-these-into-ui-tasks`: "A screen task may not create a component."
 - "No raw numbers in scenes or feature scripts"; "Strings shown to players use translation keys".
-- `docs/DESIGN.md#screenscaffold-and-safe-areas`: "Every screen root is a `ScreenScaffold`."
+- `docs/DESIGN.md#screenscaffold`: screen root is the existing ScreenScaffold.
 
 ## Current state
-- `Nav.Screen.DEBUG` and canonical `res://features/debug/debug.tscn` path exist; no public debug entry method exists.
-- App version is `ProjectSettings.application/config/version`; `Content.content_version() -> int` exists.
-- `Save` has load/settings/section/flush APIs but no reset API.
-- No `game/ui/tokens.gd`, ScreenScaffold, button component or component gallery exists.
+T-0054 tokens, T-0055 components, T-0056 Save.debug_reset and T-0057 Nav.go_debug are prerequisites.
+They are explicitly planned Phase 0 bootstrap; no phase exit or full T-0103 completion is claimed.
 
 ## Specification
-The intended screen uses existing ScreenScaffold/text/button components, token styling and locale keys.
-It shows both versions, delegates explicit reset to a reviewed Save-owned API, then returns to Level 1.
-Debug routing is gated before mounting the scene. Freeze the exact interfaces and touch scopes in a
-new revision after prerequisites exist; do not implement against imaginary APIs.
-
-## Out of scope
-Inventing UI components inside this screen task; save schema changes; production data deletion;
-slot jump/show answers/complete-level controls (T-0134); export changes (T-0137/T-0138).
+Create debug.tscn rooted in ScreenScaffold with a VBox body using existing TextButton scenes and Label
+primitives only. App version comes from ProjectSettings, content version from Content.content_version.
+Expose configure(save, content, nav) before entering tree for isolated tests; defaults are autoloads.
+All text uses translation keys from locale/debug.csv (PL and EN); register this CSV's translations locally
+without project.godot changes, refresh on translation notification. Use Tokens for typography/margins.
+Buttons: reset request, confirm reset (hidden initially), cancel confirmation, Home. Reset requires an
+explicit second press, delegates to Save.debug_reset, and only then calls Nav.go_to_level(1). Cancel does
+nothing. Failures show translated error status and keep screen accessible; no automatic retry/deletion.
+Screen exposes request_reset(), cancel_reset(), confirm_reset() -> Error and visible text via scene nodes.
+Guard _ready and handlers in release; release never resets/mounts diagnostics. No platform calls.
 
 ## Tests
-After unblocking, `game/tests/integration/test_debug_screen.gd` must cover debug-only routing,
-version display, isolated-save reset and return to Level 1. Release artifact checks stay with export tasks.
+`game/tests/integration/test_debug_screen.gd`: test_debug_route_mounts_versions,
+test_confirmed_reset_returns_to_level_one, test_cancel_preserves_save,
+test_reset_failure_keeps_debug_and_shows_error, test_polish_and_english_copy.
+Use injected services with isolated SaveStorage, never actual autoload reset. Existing Nav and boot tests remain unchanged.
 
 ## Acceptance
-Blocked until separate UI/gallery and Save reset/debug-route contracts are integrated and this task
-is revised to name their APIs, dependencies, approved tokens and executable cases.
+make check and fresh review pass. F3 opens Debug after boot (including missing-content diagnostics).
+Manual gallery/editor inspection available; provisional default font and final release exclusions remain
+future tasks. No claim of a release artifact check or Phase 0 exit.
 
-## Escalation
-S1/S3/S4 and R-UI-1: required components, tokens and reset/routing APIs are absent. Existing roadmap
-places token bootstrap after Phase 0 (T-0103), so silently taking that work into a Phase 0 screen would
-bypass its gate. Options: an explicit Phase 0 bootstrap plan with separate component/gallery and
-Save/Nav contract tasks, or a documented developer-tools exception to the UI requirement.
-Planning identified the gaps; no UI code, persistent files, contracts or exports were changed.
+## Execution provenance
+Codex execution; not evidence of the cheap-model Phase 0 gate.
