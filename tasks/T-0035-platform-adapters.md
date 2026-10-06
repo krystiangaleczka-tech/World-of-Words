@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0034]
 touch:
   - game/platform/**
@@ -26,7 +26,7 @@ Implement the next roadmap contract: services can use eight typed adapters witho
 - PRODUCT.md FR-PLAT-01; ROADMAP T-0035; E03 D3.
 
 ## Current state
-- T-0034 exists in open PR #21, not merged. This is a dependent draft based on that branch.
+- Original implementation was based on T-0034 PR #21; it is now merged on main.
 - Platform extends ServiceStub, with inherited initialize(clock: Clock) and get_clock().
 - Clock, Nav.boot and twelve autoloads exist on the dependency branch; no adapter implementations exist.
 
@@ -84,5 +84,9 @@ All tests pass, eight adapters are typed and accessible, no provider initializat
 Revert this task after its dependents; no migration, save or native dependencies are introduced.
 
 ## Deviations / concerns
-Dependent draft until T-0034 merges; review cannot treat its dependency as done yet. Mandatory eight
+T-0034 merged in PR #21. This task is now based on main, with no source conflicts. Mandatory eight
 interface/Fake pairs exceed the file-count guideline; contract stays atomic for consistent consumers.
+
+## Completion record
+2026-10-06: Chris explicitly instructed sequential merges. Dependency #21 merged;
+original source applied unchanged to fresh main and task marked done for authorized merge.
