@@ -49,7 +49,7 @@ content-validate:
 	$(if $(wildcard pipeline/src/wow_pipeline/validate.py),$(UV) run python -m wow_pipeline.validate,$(call skip,pipeline validator not written yet (E05)))
 
 registries:
-	$(if $(wildcard tools/check_registries.py),$(UV) run python tools/check_registries.py,$(call skip,tools/check_registries.py not written yet (T-0039)))
+	$(UV) run python tools/check_registries.py
 
 context:
 	$(if $(wildcard tools/context_pack.py),$(UV) run python tools/context_pack.py,$(call skip,tools/context_pack.py not written yet))
