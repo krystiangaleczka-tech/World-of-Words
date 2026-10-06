@@ -8,7 +8,7 @@ risk: medium
 executor: cheap
 think: low
 ui: none
-status: ready
+status: done
 depends_on: [T-0045]
 touch:
   - game/core/board/shuffle.gd*
@@ -65,3 +65,8 @@ All pure tests pass; no production file outside the pure Shuffle class changes.
 ## Implementation notes
 Use bounded random attempts (up to 10), then rotate by one when the visible order still matches.
 Rotation guarantees difference for a nonconstant visible sequence and cannot loop forever.
+
+## Execution evidence
+Implemented in the Codex session, not a cheap-model run. An additional seed-174 regression covers
+ten identity draws followed by the guaranteed changed result. Fresh independent review and CI are
+required before merge; this completion alone does not satisfy the Phase 0 cheap-executor gate.
