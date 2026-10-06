@@ -1,0 +1,20 @@
+{
+  "app_boot": {
+    "params": {},
+    "description": "Application process boot"
+  },
+  "app_foreground": {
+    "params": {},
+    "description": "Application returns to foreground"
+  },
+  "app_background": {
+    "params": {},
+    "description": "Application moves to background"
+  },
+  "nav_screen": {
+    "params": {
+      "screen": "string"
+    },
+    "description": "Navigation enters a screen"
+  }
+}
