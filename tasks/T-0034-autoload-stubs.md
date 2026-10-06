@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0033, T-0011]
 touch:
   - game/project.godot
@@ -87,3 +87,7 @@ Squash revert restores the previous project configuration; no save or content mi
   or included as a missing dependency rejected by the task linter.
 - Twelve mandated autoload scripts plus Clock/base/boot exceed the five-production-file guideline;
   the closed-list contract is intentionally atomic and each domain stub has two lines.
+
+## Completion record
+2026-10-06: Chris explicitly instructed sequential merging of T-0034, T-0035 and T-0036.
+Implementation and pinned-engine checks passed; task is marked done for its authorized merge.
