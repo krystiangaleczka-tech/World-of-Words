@@ -5,8 +5,24 @@ config_version=5
 [application]
 
 config/name="World of Words"
+run/main_scene="res://services/nav/boot.tscn"
 config/version="0.1.0"
 config/features=PackedStringArray("4.7", "GL Compatibility")
+
+[autoload]
+
+Config="*res://services/config.gd"
+Save="*res://services/save.gd"
+Progress="*res://services/progress.gd"
+Economy="*res://services/economy.gd"
+Daily="*res://services/daily.gd"
+Content="*res://services/content.gd"
+Monetization="*res://services/monetization.gd"
+Analytics="*res://services/analytics.gd"
+Audio="*res://services/audio.gd"
+Nav="*res://services/nav.gd"
+Events="*res://services/events.gd"
+Platform="*res://platform/platform.gd"
 
 [debug]
 
