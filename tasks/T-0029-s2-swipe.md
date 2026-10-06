@@ -8,7 +8,7 @@ risk: medium
 executor: cheap
 think: high
 ui: high
-status: review
+status: done
 depends_on: [T-0014]
 touch:
   - spikes/s2-swipe/**
@@ -45,3 +45,8 @@ its accepted Galaxy A15 decision. No S2 project/report exists.
 ## Escalation log
 ROADMAP has T-0029 but no task file; Chris explicitly requested execution, so this records that scope.
 T-0012 is omitted from `depends_on` because its task file does not exist; TESTING.md records its result.
+
+## Completion evidence
+2026-10-06: Chris confirmed the Galaxy A15 device test was performed, requested PR #12 to be merged,
+and reported smooth swipe. See docs/spikes/S2-swipe.md for the qualitative latency evidence and the
+explicitly unreported numeric/haptics observations. No missing measurement is represented as PASS.
