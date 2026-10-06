@@ -60,15 +60,12 @@ Task lint/scope and repository CI pass. The dedicated spike suite runs, not mere
 Document the new device protocol and the limits of existing cumulative logs.
 
 ## Completion evidence
-2026-10-06: Chris tested the independent measurement build on Samsung Galaxy A15 5G (SM-A156B) and Samsung Galaxy S26 Ultra (SM-S948B, 120Hz screen).
-Captured independent logs:
-- Galaxy A15 (90Hz display):
-  - Run 1 (target 60 FPS): 13 completed swipes, avg render FPS 60.09, event_to_post_draw avg 1.89 ms (max 16.47 ms, p95 3 ms).
-  - Run 2 (target 90 FPS): 18 completed swipes, avg render FPS 90.04, event_to_post_draw avg 6.16 ms (max 10.75 ms, p95 10 ms).
-- Galaxy S26 Ultra (120Hz display):
-  - Run 1 (target 60 FPS, 60Hz mode): 6 completed swipes, avg render FPS 60.00, event_to_post_draw avg 16.16 ms.
-  - Run 2 (target 90 FPS, 120Hz mode): 16 completed swipes, avg render FPS 78.01, 340 events over frame budget due to 90 FPS vs 120 Hz mismatch.
-  - Run 3 (target 60 FPS, 120Hz mode): 15 completed swipes, avg render FPS 60.08, event_to_post_draw avg 1.15 ms.
-Logs captured in spikes/s2-swipe/evidence/.
-Operator note / mini-log: The UI buttons currently test fixed 60 and 90 FPS caps. The tool should detect and visibly display the screen refresh rate (display_refresh_hz, e.g. 90 Hz on A15, 120 Hz on S26 Ultra, adaptive VRR) so users know their screen's native mode and can test accordingly.
+2026-10-06: Chris tested the independent measurement build on Samsung Galaxy A15 5G (SM-A156B) and Samsung Galaxy S26 Ultra (SM-S948B, 120Hz display).
+Logs are split by FPS category under `spikes/s2-swipe/evidence/{60fps,90fps,120fps,adaptive}/`:
+- **60 FPS**: Verified on A15 (60.09 FPS, avg 1.89 ms latency) and S26 Ultra (60.05 FPS, avg 1.50 ms latency).
+- **90 FPS**: Verified on A15 (90.04 FPS, avg 6.16 ms latency) and S26 Ultra (90.07 FPS, avg 1.27 ms latency).
+- **120 FPS**: Verified on S26 Ultra (120.00 FPS, avg frame interval 8.33 ms, avg 3.95 ms latency, 22 swipes).
+- **Adaptive**: Verified on S26 Ultra (120.00 FPS, avg frame interval 8.33 ms, avg 4.16 ms latency, 13 swipes, uncapped/VSync).
+Mini-log & table recorded in docs/spikes/S2-measurement.md.
+
 
