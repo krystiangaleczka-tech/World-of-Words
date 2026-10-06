@@ -40,6 +40,8 @@ var _mounted: Node = null
 var _save: SAVE_SCRIPT = null
 var _config: CONFIG_SCRIPT = null
 var _content: CONTENT_SCRIPT = null
+var _debug_enabled: bool = true
+var _screen_factory: Callable = Callable()
 
 
 ## @api Explicitly inject one Clock into the closed autoload list. No domain work.
@@ -60,9 +62,7 @@ func configure(save: SAVE_SCRIPT, config: CONFIG_SCRIPT, content: CONTENT_SCRIPT
 ## @api Boot sequence: Save, Config, Content manifest, then Level for the saved slot.
 ## Screens mount under host. Any failure emits boot_failed and leaves Nav on BOOT.
 func start(host: Node, content_root: String = "res://content") -> Error:
-	if _mounted != null:
-		_mounted.queue_free()
-		_mounted = null
+	_discard_mounted()
 	_screen = Screen.BOOT
 	_level_slot = 0
 	_host = host
@@ -94,7 +94,7 @@ func level_slot() -> int:
 
 ## @api Screen node mounted under the host, or null for screens without a scene yet.
 func mounted_screen() -> Node:
-	return _mounted
+	return _mounted if is_instance_valid(_mounted) else null
 
 
 ## @api Enter Level for a slot that Content can load.
@@ -114,6 +114,26 @@ func go_home() -> Error:
 	return OK
 
 
+## @api Tests/tools may disable debug routing; release gating cannot be bypassed.
+func configure_debug(enabled: bool) -> void:
+	_debug_enabled = enabled
+
+
+## @api Tests/tools may inject a screen factory taking Screen and returning Node/null.
+func configure_screens(factory: Callable) -> void:
+	_screen_factory = factory
+
+
+## @api Debug-only diagnostic route, including a boot stopped on missing content.
+func go_debug() -> Error:
+	if not OS.is_debug_build() or not _debug_enabled:
+		return ERR_UNAVAILABLE
+	if not is_instance_valid(_host) or _save == null or not _save.is_loaded():
+		return ERR_UNCONFIGURED
+	_enter(Screen.DEBUG)
+	return OK
+
+
 # Read-only view of the saved slot until Progress owns it (T-0111).
 func _saved_slot(language: String) -> int:
 	var progress: Dictionary = _save.get_section(&"progress")
@@ -122,13 +142,26 @@ func _saved_slot(language: String) -> int:
 	return int(state.get("current_slot", 1))
 
 
-func _enter(screen: Screen) -> void:
-	if _mounted != null:
+func _discard_mounted() -> void:
+	if is_instance_valid(_mounted):
+		var parent: Node = _mounted.get_parent()
+		if parent != null:
+			parent.remove_child(_mounted)
 		_mounted.queue_free()
-		_mounted = null
+	_mounted = null
+
+
+func _enter(screen: Screen) -> void:
+	_discard_mounted()
 	var path: String = SCENES.get(screen, "")
-	if _host != null and not path.is_empty() and ResourceLoader.exists(path):
-		_mounted = (load(path) as PackedScene).instantiate()
-		_host.add_child(_mounted)
+	if is_instance_valid(_host):
+		if _screen_factory.is_valid():
+			_mounted = _screen_factory.call(screen) as Node
+		elif not path.is_empty() and ResourceLoader.exists(path):
+			_mounted = (load(path) as PackedScene).instantiate()
+		if _mounted != null:
+			if screen == Screen.DEBUG and _mounted.has_method("configure"):
+				_mounted.call("configure", _save, _content, self)
+			_host.add_child(_mounted)
 	_screen = screen
 	screen_changed.emit(screen)

@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: med
 ui: none
-status: ready
+status: done
 depends_on: [T-0055, T-0056]
 touch:
   - game/services/nav.gd
