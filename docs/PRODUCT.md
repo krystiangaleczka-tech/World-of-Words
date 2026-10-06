@@ -632,8 +632,8 @@ Quality bars:
 | Q5 | Starter pack: include it at all, contents, and placement without becoming a popup | Chris, Opus second opinion | P3 |
 | Q6 | Price points per store and the coin amounts per pack | Chris | P2 store setup |
 | Q7 | Legal basis for analytics and crash reporting before the consent decision (consent moment itself is fixed: UMP after slot 1, ATT after slot 6) | Chris (verify with current Google/legal guidance) | P2 |
-| Q8 | Analytics and crash providers (Firebase vs HTTP-based) | Sol, from S1 result | end of Phase 0 |
-| Q9 | Minimum Android API and iOS versions | Sol, from S1 | end of Phase 0 |
+| Q8 | Resolved: Firebase Analytics and Sentry, with bounded fallbacks; see [decision 0009](decisions/0009-platform-providers.md). SDK validation remains required before release. | Sol + Chris, T-0033 | resolved 2026-10-06 |
+| Q9 | Resolved: Android API 24 / iOS 17 integration floors; see [decision 0009](decisions/0009-platform-providers.md). Lowest-supported-OS validation remains required before release. | Sol + Chris, T-0033 | resolved 2026-10-06 |
 | Q10 | iPad: portrait only acceptable under current Apple multitasking/orientation rules? | Opus checks, Chris decides | P2 |
 | Q11 | PL dictionary and frequency sources and licences | Chris, from S3 | end of Phase 0 |
 | Q12 | Soft-launch market: PL vs an English tier-2 market | Chris, Sol prepares data | P3 |
