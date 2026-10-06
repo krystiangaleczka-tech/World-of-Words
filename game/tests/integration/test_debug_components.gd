@@ -62,3 +62,16 @@ func test_gallery_instantiates() -> void:
 	assert_false((gallery.body.get_node("normal") as TextButton).disabled)
 	assert_true((gallery.body.get_node("disabled") as TextButton).disabled)
 	assert_true((gallery.body.get_node("busy") as TextButton).disabled)
+
+
+func test_pressed_underline_uses_local_coordinates() -> void:
+	var button: TextButton = BUTTON.instantiate() as TextButton
+	button.text_key = "fixture"
+	add_child_autofree(button)
+	button.size = Vector2(600, 144)
+	button.position = Vector2.ZERO
+	var local: PackedVector2Array = button.underline_segment()
+	button.position = Vector2(220, 450)
+	assert_eq(button.underline_segment(), local, "parent position must not shift draw coordinates")
+	for point: Vector2 in local:
+		assert_true(Rect2(Vector2.ZERO, button.size).has_point(point), str(point))

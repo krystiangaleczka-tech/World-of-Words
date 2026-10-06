@@ -40,12 +40,17 @@ func _notification(what: int) -> void:
 		text = tr(text_key)
 
 
-func _draw() -> void:
-	if not button_pressed:
-		return
+## @api Local pressed-underline endpoints, available to gallery geometry checks.
+func underline_segment() -> PackedVector2Array:
 	var text_size: Vector2 = get_theme_font("font").get_string_size(
 		text, HORIZONTAL_ALIGNMENT_LEFT, -1, get_theme_font_size("font_size")
 	)
 	var half: Vector2 = Rect2(Vector2.ZERO, text_size).get_center()
-	var start: Vector2 = get_rect().get_center() + Vector2(-half.x, half.y)
-	draw_line(start, start + Vector2(text_size.x, 0), get_theme_color("font_pressed_color"))
+	var start: Vector2 = Rect2(Vector2.ZERO, size).get_center() + Vector2(-half.x, half.y)
+	return PackedVector2Array([start, start + Vector2(text_size.x, 0)])
+
+
+func _draw() -> void:
+	if button_pressed:
+		var segment: PackedVector2Array = underline_segment()
+		draw_line(segment[0], segment[1], get_theme_color("font_pressed_color"))

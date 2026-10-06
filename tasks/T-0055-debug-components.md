@@ -16,7 +16,7 @@ touch:
   - game/ui/gallery/debug_components.*
   - game/tests/integration/test_debug_components.gd*
   - tasks/T-0055-debug-components.md
-revision: 1
+revision: 2
 ---
 
 ## Goal
@@ -40,13 +40,14 @@ apply_insets(insets: Rect2, viewport_size: Vector2) -> void supports determinist
 classify usable safe height/width using the two Layout thresholds. Never calls services.
 TextButton extends Button; exported text_key: String uses tr(), flat provisional style, token LABEL font,
 PRIMARY normal/TEXT_MUTED disabled, min height MIN_TARGET, native pressed/disabled/focus behavior.
-Pressed text is underlined. set_busy(busy: bool) suppresses presses while busy, preserving caller-disabled
+Pressed text is underlined. underline_segment() -> PackedVector2Array exposes the two LOCAL drawing
+endpoints to gallery geometry checks, independent of the button's parent position. set_busy(busy: bool) suppresses presses while busy, preserving caller-disabled
 state; intent is native pressed signal. This provisional component does not claim full P2 theme/a11y.
 Add matching .tscn scenes and a gallery scene displaying the scaffold and enabled/disabled/busy buttons.
 
 ## Tests
 `game/tests/integration/test_debug_components.gd`: test_scaffold_safe_insets_and_layout_classes,
-test_button_translation_and_min_target, test_button_busy_preserves_disabled, test_gallery_instantiates.
+test_button_translation_and_min_target, test_button_busy_preserves_disabled, test_gallery_instantiates, test_pressed_underline_uses_local_coordinates.
 
 ## Acceptance
 All tests and make check pass. UI impact low: gallery exists for manual inspection; no visual-direction
