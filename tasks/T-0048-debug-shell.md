@@ -8,14 +8,14 @@ risk: low
 executor: cheap
 think: low
 ui: low
-status: ready
+status: done
 depends_on: [T-0045, T-0054, T-0055, T-0056, T-0057]
 touch:
   - game/features/debug/**
-  - game/locale/debug.csv
+  - game/locale/debug.csv*
   - game/tests/integration/test_debug_screen.gd*
   - tasks/T-0048-debug-shell.md
-revision: 2
+revision: 3
 ---
 
 ## Goal
@@ -38,7 +38,9 @@ Expose configure(save: SAVE_SCRIPT, content: CONTENT_SCRIPT, nav: NAV_SCRIPT) be
 for isolated tests; constants preload the three service scripts. Nav supplies its configured services
 before mounting DEBUG; direct gallery instantiation defaults to autoloads.
 All text uses translation keys from locale/debug.csv (PL and EN); register this CSV's translations locally
-without project.godot changes, refresh on translation notification. Use Tokens for typography/margins.
+without project.godot changes, refresh on translation notification. The CSV import sidecar is in scope.
+Confirmation without a prior request returns ERR_UNCONFIGURED. If reset succeeds but Level 1
+cannot load (missing content), show the same error and retain Debug; the committed reset remains. Use Tokens for typography/margins.
 Buttons: reset request, confirm reset (hidden initially), cancel confirmation, Home. Reset requires an
 explicit second press, delegates to Save.debug_reset, and only then calls Nav.go_to_level(1). Cancel does
 nothing. Failures show translated error status and keep screen accessible; no automatic retry/deletion.
