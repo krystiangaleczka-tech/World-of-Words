@@ -11,10 +11,7 @@ ui: high
 status: review
 depends_on: [T-0029]
 touch:
-  - spikes/s2-swipe/main.gd
-  - spikes/s2-swipe/main.tscn
-  - spikes/s2-swipe/measurement.gd
-  - spikes/s2-swipe/tests/test_measurement.gd
+  - spikes/s2-swipe/**
   - tools/tests/test_s2_measurement.py
   - docs/spikes/S2-measurement.md
 revision: 1
@@ -61,3 +58,17 @@ No project/export settings, SDKs, dependencies or historical logs are changed.
 ## Acceptance
 Task lint/scope and repository CI pass. The dedicated spike suite runs, not merely game/ imports.
 Document the new device protocol and the limits of existing cumulative logs.
+
+## Completion evidence
+2026-10-06: Chris tested the independent measurement build on Samsung Galaxy A15 5G (SM-A156B) and Samsung Galaxy S26 Ultra (SM-S948B, 120Hz screen).
+Captured independent logs:
+- Galaxy A15 (90Hz display):
+  - Run 1 (target 60 FPS): 13 completed swipes, avg render FPS 60.09, event_to_post_draw avg 1.89 ms (max 16.47 ms, p95 3 ms).
+  - Run 2 (target 90 FPS): 18 completed swipes, avg render FPS 90.04, event_to_post_draw avg 6.16 ms (max 10.75 ms, p95 10 ms).
+- Galaxy S26 Ultra (120Hz display):
+  - Run 1 (target 60 FPS, 60Hz mode): 6 completed swipes, avg render FPS 60.00, event_to_post_draw avg 16.16 ms.
+  - Run 2 (target 90 FPS, 120Hz mode): 16 completed swipes, avg render FPS 78.01, 340 events over frame budget due to 90 FPS vs 120 Hz mismatch.
+  - Run 3 (target 60 FPS, 120Hz mode): 15 completed swipes, avg render FPS 60.08, event_to_post_draw avg 1.15 ms.
+Logs captured in spikes/s2-swipe/evidence/.
+Operator note / mini-log: The UI buttons currently test fixed 60 and 90 FPS caps. The tool should detect and visibly display the screen refresh rate (display_refresh_hz, e.g. 90 Hz on A15, 120 Hz on S26 Ultra, adaptive VRR) so users know their screen's native mode and can test accordingly.
+
