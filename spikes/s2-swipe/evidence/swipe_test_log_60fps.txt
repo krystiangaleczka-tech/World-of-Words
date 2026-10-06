@@ -1,0 +1,70 @@
+========================================
+S2 SWIPE SPIKE — TEST LOG
+========================================
+Data i czas: 2026-10-06 12:45:24
+Urządzenie: SM-A156B (Android)
+Silnik: Godot 4.7.2-stable (official)
+
+PODSUMOWANIE METRYK:
+- Liczba przeciągnięć (swipes): 53
+- Liczba próbek opóźnienia: 1469
+- Średnie opóźnienie event→frame: 0.60 ms
+- Maksymalne opóźnienie: 26.67 ms
+- Ostatnie opóźnienie: 0.18 ms
+- Bieżący FPS: 60.0
+
+HISTORIA PRZECIĄGNIĘĆ (53):
+  #1: "KAOSTR" (6 liter, 3695.2 ms)
+  #2: "T" (1 liter, 67.0 ms)
+  #3: "TSKAOR" (6 liter, 1416.4 ms)
+  #4: "STORKA" (6 liter, 1299.4 ms)
+  #5: "SORTKA" (6 liter, 1199.4 ms)
+  #6: "RATOSK" (6 liter, 1145.1 ms)
+  #7: "RTAKOS" (6 liter, 1649.3 ms)
+  #8: "RTAOSK" (6 liter, 3331.5 ms)
+  #9: "KROSTA" (6 liter, 1334.2 ms)
+  #10: "ROSKAT" (6 liter, 1467.5 ms)
+  #11: "ROSKAT" (6 liter, 1532.9 ms)
+  #12: "ORS" (3 liter, 950.5 ms)
+  #13: "ST" (2 liter, 231.5 ms)
+  #14: "KA" (2 liter, 263.2 ms)
+  #15: "OR" (2 liter, 215.6 ms)
+  #16: "SA" (2 liter, 216.2 ms)
+  #17: "KA" (2 liter, 200.8 ms)
+  #18: "OA" (2 liter, 182.8 ms)
+  #19: "S" (1 liter, 199.6 ms)
+  #20: "O" (1 liter, 182.9 ms)
+  #21: "KA" (2 liter, 199.5 ms)
+  #22: "ST" (2 liter, 165.0 ms)
+  #23: "OR" (2 liter, 165.9 ms)
+  #24: "KA" (2 liter, 164.8 ms)
+  #25: "ST" (2 liter, 215.7 ms)
+  #26: "OA" (2 liter, 300.0 ms)
+  #27: "AK" (2 liter, 197.9 ms)
+  #28: "K" (1 liter, 148.6 ms)
+  #29: "RO" (2 liter, 197.8 ms)
+  #30: "OR" (2 liter, 104.0 ms)
+  #31: "STOA" (4 liter, 598.6 ms)
+  #32: "KA" (2 liter, 115.5 ms)
+  #33: "RO" (2 liter, 114.6 ms)
+  #34: "O" (1 liter, 84.3 ms)
+  #35: "ST" (2 liter, 148.0 ms)
+  #36: "T" (1 liter, 99.9 ms)
+  #37: "KA" (2 liter, 182.4 ms)
+  #38: "AO" (2 liter, 334.3 ms)
+  #39: "R" (1 liter, 132.2 ms)
+  #40: "S" (1 liter, 84.4 ms)
+  #41: "KA" (2 liter, 147.1 ms)
+  #42: "AO" (2 liter, 98.3 ms)
+  #43: "OR" (2 liter, 101.4 ms)
+  #44: "R" (1 liter, 148.4 ms)
+  #45: "ST" (2 liter, 103.7 ms)
+  #46: "KA" (2 liter, 149.8 ms)
+  #47: "OA" (2 liter, 151.2 ms)
+  #48: "SA" (2 liter, 151.3 ms)
+  #49: "RA" (2 liter, 198.7 ms)
+  #50: "KA" (2 liter, 180.9 ms)
+  #51: "OA" (2 liter, 119.6 ms)
+  #52: "TS" (2 liter, 282.9 ms)
+  #53: "RKA" (3 liter, 414.4 ms)
+========================================

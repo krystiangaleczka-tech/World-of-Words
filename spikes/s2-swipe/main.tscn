@@ -39,3 +39,19 @@ horizontal_alignment = 1
 [node name="MetricsTimer" type="Timer" parent="."]
 wait_time = 0.25
 autostart = true
+
+[node name="ExportButton" type="Button" parent="."]
+offset_left = 200.0
+offset_top = 1860.0
+offset_right = 880.0
+offset_bottom = 1980.0
+theme_override_font_sizes/font_size = 36
+text = "EKSPORTUJ LOG"
+
+[node name="ExportStatus" type="Label" parent="."]
+offset_left = 70.0
+offset_top = 2000.0
+offset_right = 1010.0
+offset_bottom = 2120.0
+theme_override_font_sizes/font_size = 26
+horizontal_alignment = 1

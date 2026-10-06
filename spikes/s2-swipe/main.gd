@@ -4,15 +4,16 @@ const RADIUS: float = 82.0
 const HIT_RADIUS_SQ: float = RADIUS * RADIUS * 1.35 * 1.35
 const HAPTIC_MS: int = 12
 
-@onready var _line: Line2D = $SwipeLine
-@onready var _word: Label = $Word
-@onready var _metrics: Label = $Metrics
-@onready var _timer: Timer = $MetricsTimer
-
-var _positions: PackedVector2Array = PackedVector2Array([
-	Vector2(540, 930), Vector2(790, 1075), Vector2(790, 1365),
-	Vector2(540, 1510), Vector2(290, 1365), Vector2(290, 1075),
-])
+var _positions: PackedVector2Array = PackedVector2Array(
+	[
+		Vector2(540, 930),
+		Vector2(790, 1075),
+		Vector2(790, 1365),
+		Vector2(540, 1510),
+		Vector2(290, 1365),
+		Vector2(290, 1075),
+	]
+)
 var _letters: PackedStringArray = PackedStringArray(["K", "O", "T", "A", "R", "S"])
 var _selected: PackedInt32Array = PackedInt32Array()
 var _dragging: bool = false
@@ -24,11 +25,33 @@ var _latency_ms: float = 0.0
 var _max_ms: float = 0.0
 var _sum_ms: float = 0.0
 var _samples: int = 0
+var _swipe_counter: int = 0
+var _swipe_start_usec: int = 0
+var _swipes_history: Array[Dictionary] = []
+
+@onready var _line: Line2D = $SwipeLine
+@onready var _word: Label = $Word
+@onready var _metrics: Label = $Metrics
+@onready var _timer: Timer = $MetricsTimer
+@onready var _export_btn: Button = $ExportButton
+@onready var _export_status: Label = $ExportStatus
 
 
 func _ready() -> void:
 	_line.visible = false
 	_timer.timeout.connect(_refresh_metrics)
+	_export_btn.pressed.connect(_on_export_pressed)
+
+	var style_normal: StyleBoxFlat = StyleBoxFlat.new()
+	style_normal.bg_color = Color(0.18, 0.52, 0.88)
+	style_normal.set_corner_radius_all(18)
+	_export_btn.add_theme_stylebox_override("normal", style_normal)
+
+	var style_pressed: StyleBoxFlat = StyleBoxFlat.new()
+	style_pressed.bg_color = Color(0.12, 0.40, 0.70)
+	style_pressed.set_corner_radius_all(18)
+	_export_btn.add_theme_stylebox_override("pressed", style_pressed)
+
 	_refresh_metrics()
 	queue_redraw()
 
@@ -62,10 +85,19 @@ func _process(_delta: float) -> void:
 
 func _draw() -> void:
 	for index: int in range(_positions.size()):
-		var fill: Color = Color(0.16, 0.55, 0.82) if _selected.has(index) else Color(0.18, 0.21, 0.28)
+		var fill: Color = (
+			Color(0.16, 0.55, 0.82) if _selected.has(index) else Color(0.18, 0.21, 0.28)
+		)
 		draw_circle(_positions[index], RADIUS, fill)
-		draw_string(ThemeDB.fallback_font, _positions[index] + Vector2(-60, 22), _letters[index],
-			HORIZONTAL_ALIGNMENT_CENTER, 120.0, 58, Color(0.96, 0.97, 1.0))
+		draw_string(
+			ThemeDB.fallback_font,
+			_positions[index] + Vector2(-60, 22),
+			_letters[index],
+			HORIZONTAL_ALIGNMENT_CENTER,
+			120.0,
+			58,
+			Color(0.96, 0.97, 1.0)
+		)
 
 
 func _start(finger: int, position: Vector2) -> void:
@@ -76,6 +108,7 @@ func _start(finger: int, position: Vector2) -> void:
 	_finger = finger
 	_pointer = position
 	_event_usec = Time.get_ticks_usec()
+	_swipe_start_usec = _event_usec
 	_selected.clear()
 	_selected.append(hit)
 	_line.clear_points()
@@ -91,7 +124,19 @@ func _finish() -> void:
 	_dragging = false
 	_finger = -1
 	_line.visible = false
-	_word.text = "Puść → " + _chain_word()
+	var word_str: String = _chain_word()
+	if not _selected.is_empty():
+		_swipe_counter += 1
+		var duration_ms: float = float(Time.get_ticks_usec() - _swipe_start_usec) / 1000.0
+		_swipes_history.append(
+			{
+				"id": _swipe_counter,
+				"word": word_str,
+				"letters": _selected.size(),
+				"duration_ms": duration_ms
+			}
+		)
+	_word.text = "Puść → " + word_str
 	queue_redraw()
 
 
@@ -133,6 +178,50 @@ func _refresh_word() -> void:
 
 func _refresh_metrics() -> void:
 	var average: float = _sum_ms / float(_samples) if _samples > 0 else 0.0
-	_metrics.text = "event→frame %.2f ms | avg %.2f | max %.2f | n %d\nFPS %.0f" % [
-		_latency_ms, average, _max_ms, _samples, Engine.get_frames_per_second()
-	]
+	_metrics.text = (
+		"event→frame %.2f ms | avg %.2f | max %.2f | n %d\nFPS %.0f"
+		% [_latency_ms, average, _max_ms, _samples, Engine.get_frames_per_second()]
+	)
+
+
+func _on_export_pressed() -> void:
+	var average: float = _sum_ms / float(_samples) if _samples > 0 else 0.0
+	var now_str: String = Time.get_datetime_string_from_system(false, true)
+	var device_name: String = OS.get_model_name()
+	if device_name.is_empty():
+		device_name = OS.get_name()
+
+	var report: String = ""
+	report += "========================================\n"
+	report += "S2 SWIPE SPIKE — TEST LOG\n"
+	report += "========================================\n"
+	report += "Data i czas: %s\n" % now_str
+	report += "Urządzenie: %s (%s)\n" % [device_name, OS.get_name()]
+	report += "Silnik: Godot %s\n" % Engine.get_version_info()["string"]
+	report += "\nPODSUMOWANIE METRYK:\n"
+	report += "- Liczba przeciągnięć (swipes): %d\n" % _swipe_counter
+	report += "- Liczba próbek opóźnienia: %d\n" % _samples
+	report += "- Średnie opóźnienie event→frame: %.2f ms\n" % average
+	report += "- Maksymalne opóźnienie: %.2f ms\n" % _max_ms
+	report += "- Ostatnie opóźnienie: %.2f ms\n" % _latency_ms
+	report += "- Bieżący FPS: %.1f\n" % Engine.get_frames_per_second()
+	report += "\nHISTORIA PRZECIĄGNIĘĆ (%d):\n" % _swipes_history.size()
+	for item: Dictionary in _swipes_history:
+		report += (
+			'  #%d: "%s" (%d liter, %.1f ms)\n'
+			% [item["id"], item["word"], item["letters"], item["duration_ms"]]
+		)
+	report += "========================================\n"
+
+	print(report)
+	DisplayServer.clipboard_set(report)
+
+	var file: FileAccess = FileAccess.open("user://swipe_test_log.txt", FileAccess.WRITE)
+	if is_instance_valid(file):
+		file.store_string(report)
+		file.close()
+
+	_export_status.text = (
+		"✓ Zapisano user://swipe_test_log.txt\noraz skopiowano do schowka! (swipes: %d)"
+		% _swipe_counter
+	)
