@@ -1,0 +1,111 @@
+{
+  "kind": "campaign",
+  "lang": "pl",
+  "levels": [
+    {
+      "bonus": [
+        "TOK"
+      ],
+      "difficulty": 0,
+      "grid": {
+        "h": 1,
+        "w": 3
+      },
+      "id": "pl-c-000001",
+      "landmark": false,
+      "letters": [
+        "K",
+        "O",
+        "T"
+      ],
+      "pipeline": "0.0.0",
+      "seed": 0,
+      "slot": 1,
+      "source": "handmade",
+      "words": [
+        {
+          "dir": "h",
+          "w": "KOT",
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "bonus": [
+        "DAM",
+        "ODA"
+      ],
+      "difficulty": 0,
+      "grid": {
+        "h": 4,
+        "w": 3
+      },
+      "id": "pl-c-000002",
+      "landmark": false,
+      "letters": [
+        "D",
+        "O",
+        "M",
+        "A"
+      ],
+      "pipeline": "0.0.0",
+      "seed": 0,
+      "slot": 2,
+      "source": "handmade",
+      "words": [
+        {
+          "dir": "h",
+          "w": "DOM",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "dir": "v",
+          "w": "MODA",
+          "x": 2,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "bonus": [
+        "KASA",
+        "SKALA"
+      ],
+      "difficulty": 0,
+      "grid": {
+        "h": 4,
+        "w": 5
+      },
+      "id": "pl-c-000003",
+      "landmark": false,
+      "letters": [
+        "L",
+        "A",
+        "S",
+        "K",
+        "A"
+      ],
+      "pipeline": "0.0.0",
+      "seed": 0,
+      "slot": 3,
+      "source": "handmade",
+      "words": [
+        {
+          "dir": "h",
+          "w": "LASKA",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "dir": "v",
+          "w": "SALA",
+          "x": 2,
+          "y": 0
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}
