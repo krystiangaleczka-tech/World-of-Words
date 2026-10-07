@@ -118,7 +118,13 @@ no replacement experiment silently satisfies those requirements.
 
 ## Observed in-session result — 2026-10-06
 Both isolated agents returned all 200 records in input order with valid schema on their first attempt.
-The report archives both unedited outputs and measured metrics, digests and the pending Chris queue.
+The report archives both unedited outputs and measured metrics, digests and the Chris review queue.
 Provider-resolved model versions, token usage and billing are unavailable; configured selectors are recorded.
 The requested empirical in-session comparison is executed. Status remains blocked only for the original
-ROADMAP cheap-provider/cost/human-review acceptance, not because two local outputs are missing.
+ROADMAP cheap-provider/cost acceptance, not because two local outputs are missing.
+
+## Human review complete — 2026-10-07
+Chris explicitly accepted baba, hazard, kasyno and poker as safe and rejected the remaining
+kurna, suka, burdel and orgazm as unsuitable (block). All eight sensitivity decisions are recorded.
+Raw model records, flags, familiarity and measured agreement remain unchanged. No production content
+or tier rules are changed. Only the original cheap-provider and token/cost evidence remain unavailable.

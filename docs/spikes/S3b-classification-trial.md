@@ -13,7 +13,7 @@ Chris explicitly selected this alternative after the session reported no authent
 or token/billing telemetry. Requested replacements: gpt-6-luna and gpt-6.1-sol. The latter is a reference
 model, not a second cheap provider. This run does not measure the proposed Luna/Gemini production pair,
 API cost per 1,000 words, classification accuracy or the cheap-executor Phase 0 gate.
-Full ROADMAP completion remains blocked on those external measurements and Chris's review.
+Full ROADMAP completion remains blocked on those external measurements; Chris's disagreement review is complete.
 
 AI is advisory metadata only. SJP.PL remains the validity authority from decision 0008.
 No output here decides word validity, adds a word to production, or changes production tier rules.
@@ -122,17 +122,17 @@ A harmless archaic-flag mismatch alone does not cause an actionable disagreement
 
 ## Chris review queue — 8 tokens
 
-Columns show familiarity / sensitivity / flags. Chris explicitly accepted baba, hazard, kasyno and
-poker as safe on 2026-10-07; four remaining decisions are pending. Raw model answers stay unchanged. Review only this queue first, then inspect agreed
-but flagged items if planning production rules. Every record remains auditable below.
+Columns show familiarity / sensitivity / flags. Chris completed all eight sensitivity decisions on
+2026-10-07: baba, hazard, kasyno and poker are safe; kurna, suka, burdel and orgazm are block.
+Raw model answers stay unchanged. Every record remains auditable below.
 
 | Word | Luna | Sol | Reason | Chris decision | Chris note |
 |---|---|---|---|---|---|
-| kurna | 2 / review / vulgar | 2 / review / other | flags change effective handling | pending | — |
+| kurna | 2 / review / vulgar | 2 / review / other | flags change effective handling | block | Chris, 2026-10-07: explicitly rejected as unsuitable. |
 | baba | 3 / safe / — | 3 / review / other | sensitivity differs, flags change effective handling | safe | Chris, 2026-10-07: explicitly accepted as OK. |
-| suka | 3 / block / vulgar | 3 / review / vulgar | sensitivity differs | pending | — |
-| burdel | 3 / review / sexual | 3 / block / vulgar, sexual | sensitivity differs | pending | — |
-| orgazm | 2 / review / sexual | 3 / block / sexual | sensitivity differs | pending | — |
+| suka | 3 / block / vulgar | 3 / review / vulgar | sensitivity differs | block | Chris, 2026-10-07: explicitly rejected as unsuitable. |
+| burdel | 3 / review / sexual | 3 / block / vulgar, sexual | sensitivity differs | block | Chris, 2026-10-07: explicitly rejected as unsuitable. |
+| orgazm | 2 / review / sexual | 3 / block / sexual | sensitivity differs | block | Chris, 2026-10-07: explicitly rejected as unsuitable. |
 | hazard | 3 / safe / — | 3 / review / other | sensitivity differs, flags change effective handling | safe | Chris, 2026-10-07: explicitly accepted as OK. |
 | kasyno | 3 / safe / — | 3 / review / other | sensitivity differs, flags change effective handling | safe | Chris, 2026-10-07: explicitly accepted as OK. |
 | poker | 3 / safe / — | 3 / review / other | sensitivity differs, flags change effective handling | safe | Chris, 2026-10-07: explicitly accepted as OK. |
@@ -140,7 +140,8 @@ but flagged items if planning production rules. Every record remains auditable b
 ## Human review progress
 
 Chris approved four tokens as safe on 2026-10-07: baba, hazard, kasyno, poker.
-Four tokens still need a decision: kurna, suka, burdel, orgazm. This records sensitivity only;
+Chris rejected the remaining four as block on 2026-10-07: kurna, suka, burdel, orgazm.
+All eight human decisions are recorded. This records sensitivity only;
 no familiarity or raw model flags are rewritten and no production content is changed.
 
 ## Cost evidence and remaining gates
@@ -156,7 +157,8 @@ Verify the available exact API model IDs first; these selectors alone do not pro
 A later measured API cost must include prompt repetition, returned/billable token usage and retries.
 
 To complete the original ROADMAP gate: obtain the original two cheap-provider outputs (or a recorded
-validated cheap replacement), measured token/cost evidence, and Chris's decisions on disagreements.
+validated cheap replacement) and measured token/cost evidence. Chris's eight disagreement decisions
+are now recorded above.
 Do not use this reference-model comparison or fabricated zero cost as that evidence.
 
 ## Reproduction of comparison
