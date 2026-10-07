@@ -1,6 +1,6 @@
 class_name BoardState
 extends RefCounted
-## @api Pure per-level state. Matching behavior follows in T-0101.
+## @api Pure per-level matching, reveal and persistence state.
 
 signal completed
 
@@ -33,16 +33,47 @@ func bonus_words() -> PackedStringArray:
 	return _bonus.duplicate()
 
 
-## @api Safe contract baseline; membership and reveal transitions arrive in T-0101.
+## @api Evaluate ordered original tile IDs; short attempts are ignored without mutation.
 func evaluate(tiles: PackedInt32Array) -> AttemptResult:
 	if tiles.size() < LevelData.MIN_TILES:
 		return null
-	return AttemptResult.new(AttemptResult.Kind.INVALID, _level.spell(tiles))
+	var word: String = _level.spell(tiles)
+	var result: AttemptResult = AttemptResult.new(AttemptResult.Kind.INVALID, word)
+	if word.is_empty():
+		return result
+	if _found.has(word) or _bonus.has(word):
+		result.kind = AttemptResult.Kind.ALREADY_FOUND
+		return result
+	for index: int in _level.word_count():
+		if _level.word(index) != word:
+			continue
+		result.kind = AttemptResult.Kind.LEVEL
+		for cell: Vector2i in _level.word_cells(index):
+			if cell not in _revealed:
+				_revealed.append(cell)
+				result.cells_to_reveal.append(cell)
+		_after_reveal()
+		return result
+	if _level.bonus_words().has(word):
+		_bonus.append(word)
+		result.kind = AttemptResult.Kind.BONUS
+	return result
 
 
-## @api Reveal one occupied cell; domain transitions arrive in T-0101.
-func reveal_cell(_cell: Vector2i) -> bool:
-	return false
+## @api Reveal one new occupied cell, including crossing words and completion.
+func reveal_cell(cell: Vector2i) -> bool:
+	if cell in _revealed or not _occupied(cell):
+		return false
+	_revealed.append(cell)
+	_after_reveal()
+	return true
+
+
+func _after_reveal() -> void:
+	_sync_found()
+	if is_complete() and not _completion_emitted:
+		_completion_emitted = true
+		completed.emit()
 
 
 ## @api All level words are found; false for unconfigured/empty content.

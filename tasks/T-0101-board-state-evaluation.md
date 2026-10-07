@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: med
 ui: none
-status: ready
+status: done
 depends_on: [T-0100]
 touch:
   - game/core/board/board_state.gd
