@@ -6,11 +6,21 @@ signal chain_changed(indices: PackedInt32Array)
 signal word_attempted(indices: PackedInt32Array)
 signal tile_added(index: int)
 
+const MOUSE_ID: int = -2
+
 var _letters: PackedStringArray = PackedStringArray()
 var _centers: PackedVector2Array = PackedVector2Array()
 var _tiles: Array[LetterTile] = []
 var _locked: bool = false
 var _tile_radius: float = 0.0
+var _owner: int = -1
+var _chain: PackedInt32Array = PackedInt32Array()
+var _length: int = 0
+var _last_hit_position: Vector2 = Vector2.ZERO
+
+
+func _init() -> void:
+	_chain.resize(LevelData.MAX_TILES)
 
 
 func _ready() -> void:
@@ -20,6 +30,7 @@ func _ready() -> void:
 
 ## @api Replace content. Only the supported 3–8 tile range is accepted.
 func set_letters(letters: PackedStringArray) -> void:
+	pointer_end(_owner, true)
 	for tile: LetterTile in _tiles:
 		remove_child(tile)
 		tile.queue_free()
@@ -36,9 +47,11 @@ func set_letters(letters: PackedStringArray) -> void:
 	_layout_tiles()
 
 
-## @api Lock future input; cancellation is implemented in T-0105.
+## @api Lock input and cancel any current gesture without submitting.
 func set_locked(locked: bool) -> void:
 	_locked = locked
+	if locked:
+		pointer_end(_owner, true)
 
 
 func is_locked() -> bool:
@@ -46,11 +59,11 @@ func is_locked() -> bool:
 
 
 func is_dragging() -> bool:
-	return false
+	return _owner != -1
 
 
 func current_chain() -> PackedInt32Array:
-	return PackedInt32Array()
+	return _chain.slice(0, _length)
 
 
 func tile_position(index: int) -> Vector2:
@@ -63,6 +76,7 @@ func shuffle(_rng: RandomNumberGenerator) -> bool:
 
 
 func _layout_tiles() -> void:
+	pointer_end(_owner, true)
 	var diameter: float = minf(size.x, size.y)
 	_tile_radius = diameter * Tokens.Layout.TILE_RADIUS_RATIO
 	_centers = WheelGeometry.positions(
@@ -76,3 +90,98 @@ func _layout_tiles() -> void:
 
 func _draw() -> void:
 	draw_circle(size / 2.0, minf(size.x, size.y) / 2.0, Tokens.Palette.SURFACE_ALT)
+
+
+## @api Start only on a tile; all subsequent events belong to this pointer.
+func pointer_begin(id: int, point: Vector2) -> void:
+	if id == -1 or is_locked() or is_dragging():
+		return
+	var hit: int = WheelGeometry.hit_test(
+		point, _centers, _tile_radius * Tokens.Touch.TILE_HIT_RATIO
+	)
+	if hit < 0:
+		return
+	_owner = id
+	_last_hit_position = point
+	_visit(hit)
+
+
+## @api Motion uses fixed buffers. A copied chain is emitted only when it changes.
+func pointer_move(id: int, point: Vector2) -> void:
+	if id != _owner or not is_dragging():
+		return
+	if (
+		point.distance_squared_to(_last_hit_position)
+		< Tokens.Touch.DRAG_SLOP * Tokens.Touch.DRAG_SLOP
+	):
+		return
+	var hit: int = WheelGeometry.hit_test(
+		point, _centers, _tile_radius * Tokens.Touch.TILE_HIT_RATIO
+	)
+	if hit >= 0:
+		_visit(hit)
+		_last_hit_position = point
+
+
+## @api Clear before emitting an attempt; cancellation never submits.
+func pointer_end(id: int, canceled: bool = false) -> void:
+	if not is_dragging() or id != _owner:
+		return
+	var attempt: PackedInt32Array = (
+		current_chain() if not canceled and _length >= 3 else PackedInt32Array()
+	)
+	_owner = -1
+	_length = 0
+	for tile: LetterTile in _tiles:
+		tile.selected = false
+	chain_changed.emit(current_chain())
+	if not attempt.is_empty():
+		word_attempted.emit(attempt)
+
+
+func _visit(hit: int) -> void:
+	if _length >= 2 and _chain[_length - 2] == hit:
+		_length -= 1
+		_tiles[_chain[_length]].selected = false
+		chain_changed.emit(current_chain())
+		return
+	for index: int in _length:
+		if _chain[index] == hit:
+			return
+	_chain[_length] = hit
+	_length += 1
+	_tiles[hit].selected = true
+	chain_changed.emit(current_chain())
+	tile_added.emit(hit)
+
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventScreenTouch:
+		var touch: InputEventScreenTouch = event as InputEventScreenTouch
+		if touch.pressed and not touch.canceled:
+			pointer_begin(touch.index, touch.position)
+		else:
+			pointer_end(touch.index, touch.canceled)
+	elif event is InputEventScreenDrag:
+		var drag: InputEventScreenDrag = event as InputEventScreenDrag
+		pointer_move(drag.index, drag.position)
+	elif event is InputEventMouseButton:
+		var mouse: InputEventMouseButton = event as InputEventMouseButton
+		if mouse.button_index == MOUSE_BUTTON_LEFT:
+			if mouse.pressed:
+				pointer_begin(MOUSE_ID, mouse.position)
+			else:
+				pointer_end(MOUSE_ID)
+	elif event is InputEventMouseMotion:
+		pointer_move(MOUSE_ID, (event as InputEventMouseMotion).position)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		pointer_end(_owner, true)
+
+
+func _exit_tree() -> void:
+	pointer_end(_owner, true)
+	if resized.is_connected(_layout_tiles):
+		resized.disconnect(_layout_tiles)
