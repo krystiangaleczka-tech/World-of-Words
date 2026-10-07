@@ -15,12 +15,15 @@ var _locked: bool = false
 var _tile_radius: float = 0.0
 var _owner: int = -1
 var _chain: PackedInt32Array = PackedInt32Array()
+var _line: PackedVector2Array = PackedVector2Array()
 var _length: int = 0
+var _pointer: Vector2 = Vector2.ZERO
 var _last_hit_position: Vector2 = Vector2.ZERO
 
 
 func _init() -> void:
 	_chain.resize(LevelData.MAX_TILES)
+	_line.resize(LevelData.MAX_TILES + 1)
 
 
 func _ready() -> void:
@@ -90,6 +93,10 @@ func _layout_tiles() -> void:
 
 func _draw() -> void:
 	draw_circle(size / 2.0, minf(size.x, size.y) / 2.0, Tokens.Palette.SURFACE_ALT)
+	for segment: int in maxi(line_point_count() - 1, 0):
+		draw_line(
+			_line[segment], _line[segment + 1], Tokens.Palette.LINE, Tokens.Layout.LINE_WIDTH, true
+		)
 
 
 ## @api Start only on a tile; all subsequent events belong to this pointer.
@@ -103,6 +110,7 @@ func pointer_begin(id: int, point: Vector2) -> void:
 		return
 	_owner = id
 	_last_hit_position = point
+	_pointer = point
 	_visit(hit)
 
 
@@ -110,6 +118,8 @@ func pointer_begin(id: int, point: Vector2) -> void:
 func pointer_move(id: int, point: Vector2) -> void:
 	if id != _owner or not is_dragging():
 		return
+	_pointer = point
+	_update_line()
 	if (
 		point.distance_squared_to(_last_hit_position)
 		< Tokens.Touch.DRAG_SLOP * Tokens.Touch.DRAG_SLOP
@@ -134,6 +144,7 @@ func pointer_end(id: int, canceled: bool = false) -> void:
 	_length = 0
 	for tile: LetterTile in _tiles:
 		tile.selected = false
+	_update_line()
 	chain_changed.emit(current_chain())
 	if not attempt.is_empty():
 		word_attempted.emit(attempt)
@@ -143,6 +154,7 @@ func _visit(hit: int) -> void:
 	if _length >= 2 and _chain[_length - 2] == hit:
 		_length -= 1
 		_tiles[_chain[_length]].selected = false
+		_update_line()
 		chain_changed.emit(current_chain())
 		return
 	for index: int in _length:
@@ -151,6 +163,7 @@ func _visit(hit: int) -> void:
 	_chain[_length] = hit
 	_length += 1
 	_tiles[hit].selected = true
+	_update_line()
 	chain_changed.emit(current_chain())
 	tile_added.emit(hit)
 
@@ -185,3 +198,20 @@ func _exit_tree() -> void:
 	pointer_end(_owner, true)
 	if resized.is_connected(_layout_tiles):
 		resized.disconnect(_layout_tiles)
+
+
+## @api Selected tile centers followed by the owner's pointer; no points when idle.
+func line_point_count() -> int:
+	return _length + 1 if is_dragging() else 0
+
+
+func line_point(index: int) -> Vector2:
+	return _line[index] if index >= 0 and index < line_point_count() else Vector2.ZERO
+
+
+func _update_line() -> void:
+	for index: int in _length:
+		_line[index] = _centers[_chain[index]]
+	if is_dragging():
+		_line[_length] = _pointer
+	queue_redraw()
