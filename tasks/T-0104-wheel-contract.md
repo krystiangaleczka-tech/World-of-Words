@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: low
-status: ready
+status: done
 depends_on: [T-0103, T-0041, T-0029]
 touch:
   - game/ui/components/LetterWheelView.gd*
