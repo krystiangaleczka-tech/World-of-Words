@@ -33,7 +33,7 @@ ScreenScaffold/TextButton and the diagnostic token subset already exist. Other l
 by this wave in dependency order. Verify actual signatures before editing.
 
 ## Specification
-Use the existing catalog HintButton from T-0108, with a free translated label and no economy cost. HUD usesexistingLabel/IconButton: levelnumber, bonuscount, shuffle andunlimitedfreehint, debugbutton onlydebug. All composed components already exist. InjectseededRNG via screenconfigure_rng; defaultperlevelstablehashseed noTime/randi. Disablehint/shufflewhencompleted/dragging/shuffling; handlersguardtoo. HintusesHintLogic, persistsreveals/crossingcompletion; bonuslabelupdatesonce. Onsavefailure statuslabeltranslated withretryonaction; noautomaticrewrite, userSaveisolatedtest. LocaleupdatesPL/EN. Galleryshowsbuttonstates. CompletedleveldisabledHUD; nextlevelcompletionlayerremainsT118.
+Use the existing catalog HintButton from T-0058, with a free translated label and no economy cost. HUD usesexistingLabel/IconButton: levelnumber, bonuscount, shuffle andunlimitedfreehint, debugbutton onlydebug. All composed components already exist. InjectseededRNG via screenconfigure_rng; defaultperlevelstablehashseed noTime/randi. Disablehint/shufflewhencompleted/dragging/shuffling; handlersguardtoo. HintusesHintLogic, persistsreveals/crossingcompletion; bonuslabelupdatesonce. Onsavefailure statuslabeltranslated withretryonaction; noautomaticrewrite, userSaveisolatedtest. LocaleupdatesPL/EN. Galleryshowsbuttonstates. CompletedleveldisabledHUD; nextlevelcompletionlayerremainsT118.
 
 ## Tests
 Required public-behavior cases in the task's declared test file(s):
