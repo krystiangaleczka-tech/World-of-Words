@@ -20,3 +20,8 @@ coverage through injected no-scene factories and adding real-scene integration c
 Production packs remain generated-only; the editor gallery runs the existing fixture pack untilT127.
 No native device test, release export, consent/ads/IAP integration or phase exit is claimed.
 The requested final screenshot direction belongs T-0204 onward; this wave builds the playable P1.
+
+Independent plan review required one separate catalog prerequisite: T-0058 creates IconButton and
+HintButton with a gallery after T-0107 and before T-0108, honoring DESIGN R-UI-2. The requested18
+implementation tasks keep their roadmap responsibilities; no screen or wheel-shuffle task invents
+these action components. The explicit prototype request includes this necessary scoped prerequisite.

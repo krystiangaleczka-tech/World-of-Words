@@ -9,15 +9,9 @@ executor: sol
 think: med
 ui: med
 status: ready
-depends_on: [T-0107, T-0049]
+depends_on: [T-0107, T-0049, T-0058]
 touch:
   - game/ui/components/LetterWheelView.gd
-  - game/ui/components/IconButton.gd*
-  - game/ui/components/IconButton.tscn
-  - game/ui/components/HintButton.gd*
-  - game/ui/components/HintButton.tscn
-  - game/ui/gallery/controls.gd*
-  - game/ui/gallery/controls.tscn
   - game/ui/gallery/wheel.gd
   - game/tests/integration/test_wheel_shuffle.gd*
   - tasks/T-0108-wheel-shuffle.md
@@ -39,7 +33,7 @@ ScreenScaffold/TextButton and the diagnostic token subset already exist. Other l
 by this wave in dependency order. Verify actual signatures before editing.
 
 ## Specification
-shuffle uses existing Shuffle.permute with injected RNG and stable tile IDs. Reject while dragging/externally locked/shuffling, null RNG or nonchangeable visible sequence. Tween all tile positions to shuffled slots over Tokens.Motion.BASE; lock until finished, ensure external lock remains and queued callbacks cannot unlock newer states. Reduced-motion immediate placement; destroy/resize/set_letters safely terminates tween and relayout. Public tile_order()->PackedInt32Array. Add provisional catalog IconButton with exported text_key and native pressed; translated accessible name, minimum touch target, token styling. Create catalog HintButton as a translated free-hint variant of IconButton, with a controls gallery, before T-0117 screen composition. Gallery shuffle uses injected seeded RNG; screen composition later.
+shuffle uses existing Shuffle.permute with injected RNG and stable tile IDs. Reject while dragging/externally locked/shuffling, null RNG or nonchangeable visible sequence. Tween all tile positions to shuffled slots over Tokens.Motion.BASE; lock until finished, ensure external lock remains and queued callbacks cannot unlock newer states. Reduced-motion immediate placement; destroy/resize/set_letters safely terminates tween and relayout. Public tile_order()->PackedInt32Array. Use the catalog IconButton supplied by T-0058. Gallery shuffle uses injected seeded RNG; screen composition later.
 
 ## Tests
 Required public-behavior cases in the task's declared test file(s):

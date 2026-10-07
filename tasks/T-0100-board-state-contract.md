@@ -15,6 +15,7 @@ touch:
   - game/core/board/attempt_result.gd*
   - game/tests/unit/board/test_board_state_contract.gd*
   - tasks/T-01*.md
+  - tasks/T-0058-prototype-buttons.md
   - tasks/epics/E0[567]-*.md
   - docs/qa/P1-authorized-wave.md
   - tasks/T-0100-board-state-contract.md
