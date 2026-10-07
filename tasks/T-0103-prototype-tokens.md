@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: low
-status: ready
+status: done
 depends_on: [T-0054, T-0055]
 touch:
   - game/ui/tokens.gd
