@@ -4,22 +4,23 @@ extends Node
 
 const EVENTS_SCRIPT: Script = preload("res://services/events.gd")
 const SAVE_SCRIPT: Script = preload("res://services/save.gd")
+const PLATFORM_SCRIPT: Script = preload("res://platform/platform.gd")
 
 var _events: EVENTS_SCRIPT
 var _save: SAVE_SCRIPT
-var _haptics: HapticsAdapter
+var _platform: PLATFORM_SCRIPT
 
 
 ## @api Supply services before mounting, or replace them safely in tests.
-func configure(events: EVENTS_SCRIPT, save: SAVE_SCRIPT, haptics: HapticsAdapter) -> void:
+func configure(events: EVENTS_SCRIPT, save: SAVE_SCRIPT, platform: PLATFORM_SCRIPT) -> void:
 	_disconnect_events()
 	_events = events
 	_save = save
-	_haptics = haptics
+	_platform = platform
 	_connect_events()
 
 
-func _ready() -> void:
+func _enter_tree() -> void:
 	_connect_events()
 
 
@@ -54,10 +55,10 @@ func _disconnect_events() -> void:
 
 
 func _play(pattern: String) -> void:
-	if _save == null or _haptics == null or not _save.is_loaded():
+	if _save == null or _platform == null or not _save.is_loaded():
 		return
-	if _save.get_setting(&"haptics_enabled") == true:
-		_haptics.play(pattern)
+	if _save.get_setting(&"haptics_enabled") == true and _platform.haptics != null:
+		_platform.haptics.play(pattern)
 
 
 func _on_tile_touched(_index: int) -> void:

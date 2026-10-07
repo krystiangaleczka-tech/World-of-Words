@@ -13,7 +13,7 @@ func _ready() -> void:
 		push_warning("Boot stopped before the first screen: %s" % error_string(error))
 		return
 	_haptics_listener = HapticsListener.new()
-	_haptics_listener.configure(Events, Save, Platform.haptics)
+	_haptics_listener.configure(Events, Save, Platform)
 	add_child(_haptics_listener)
 
 
