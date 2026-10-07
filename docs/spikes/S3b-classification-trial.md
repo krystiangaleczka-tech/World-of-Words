@@ -122,20 +122,26 @@ A harmless archaic-flag mismatch alone does not cause an actionable disagreement
 
 ## Chris review queue — 8 tokens
 
-Columns show familiarity / sensitivity / flags. Chris decisions and notes are intentionally pending;
-no model answer is called a human-approved outcome. Review only this queue first, then inspect agreed
+Columns show familiarity / sensitivity / flags. Chris explicitly accepted baba, hazard, kasyno and
+poker as safe on 2026-10-07; four remaining decisions are pending. Raw model answers stay unchanged. Review only this queue first, then inspect agreed
 but flagged items if planning production rules. Every record remains auditable below.
 
 | Word | Luna | Sol | Reason | Chris decision | Chris note |
 |---|---|---|---|---|---|
 | kurna | 2 / review / vulgar | 2 / review / other | flags change effective handling | pending | — |
-| baba | 3 / safe / — | 3 / review / other | sensitivity differs, flags change effective handling | pending | — |
+| baba | 3 / safe / — | 3 / review / other | sensitivity differs, flags change effective handling | safe | Chris, 2026-10-07: explicitly accepted as OK. |
 | suka | 3 / block / vulgar | 3 / review / vulgar | sensitivity differs | pending | — |
 | burdel | 3 / review / sexual | 3 / block / vulgar, sexual | sensitivity differs | pending | — |
 | orgazm | 2 / review / sexual | 3 / block / sexual | sensitivity differs | pending | — |
-| hazard | 3 / safe / — | 3 / review / other | sensitivity differs, flags change effective handling | pending | — |
-| kasyno | 3 / safe / — | 3 / review / other | sensitivity differs, flags change effective handling | pending | — |
-| poker | 3 / safe / — | 3 / review / other | sensitivity differs, flags change effective handling | pending | — |
+| hazard | 3 / safe / — | 3 / review / other | sensitivity differs, flags change effective handling | safe | Chris, 2026-10-07: explicitly accepted as OK. |
+| kasyno | 3 / safe / — | 3 / review / other | sensitivity differs, flags change effective handling | safe | Chris, 2026-10-07: explicitly accepted as OK. |
+| poker | 3 / safe / — | 3 / review / other | sensitivity differs, flags change effective handling | safe | Chris, 2026-10-07: explicitly accepted as OK. |
+
+## Human review progress
+
+Chris approved four tokens as safe on 2026-10-07: baba, hazard, kasyno, poker.
+Four tokens still need a decision: kurna, suka, burdel, orgazm. This records sensitivity only;
+no familiarity or raw model flags are rewritten and no production content is changed.
 
 ## Cost evidence and remaining gates
 
