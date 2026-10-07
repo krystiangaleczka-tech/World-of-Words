@@ -3,6 +3,7 @@ extends Node
 
 ## Content root; tests point it at fixture content until the pipeline ships packs (T-0127).
 @export var content_root: String = "res://content"
+var _haptics_listener: HapticsListener
 
 
 func _ready() -> void:
@@ -10,6 +11,10 @@ func _ready() -> void:
 	var error: Error = Nav.start(self, content_root)
 	if error != OK:
 		push_warning("Boot stopped before the first screen: %s" % error_string(error))
+		return
+	_haptics_listener = HapticsListener.new()
+	_haptics_listener.configure(Events, Save, Platform.haptics)
+	add_child(_haptics_listener)
 
 
 func _unhandled_key_input(event: InputEvent) -> void:

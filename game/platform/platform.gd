@@ -54,7 +54,11 @@ func select_adapters(
 	analytics = _select(&"analytics", AnalyticsFake.new(), device, plugins) as AnalyticsAdapter
 	crash = _select(&"crash", CrashFake.new(), device, plugins) as CrashAdapter
 	consent = _select(&"consent", ConsentFake.new(), device, plugins) as ConsentAdapter
-	haptics = _select(&"haptics", HapticsFake.new(), device, plugins) as HapticsAdapter
+	haptics = (
+		HapticsAndroid.new()
+		if device and os_name == "Android" and not _forced.has(&"haptics")
+		else HapticsFake.new()
+	)
 	review = _select(&"review", ReviewFake.new(), device, plugins) as ReviewAdapter
 	notifications = (
 		_select(&"notifications", NotificationsFake.new(), device, plugins) as NotificationsAdapter
