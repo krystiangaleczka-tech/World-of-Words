@@ -8,7 +8,7 @@ risk: low
 executor: sol
 think: med
 ui: med
-status: ready
+status: done
 depends_on: [T-0103, T-0107]
 touch:
   - game/ui/components/IconButton.gd*
