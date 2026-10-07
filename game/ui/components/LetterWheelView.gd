@@ -11,7 +11,11 @@ const MOUSE_ID: int = -2
 var _letters: PackedStringArray = PackedStringArray()
 var _centers: PackedVector2Array = PackedVector2Array()
 var _tiles: Array[LetterTile] = []
+var _order: PackedInt32Array = PackedInt32Array()
 var _locked: bool = false
+var _shuffling: bool = false
+var _shuffle_tween: Tween
+var _shuffle_generation: int = 0
 var _tile_radius: float = 0.0
 var _owner: int = -1
 var _chain: PackedInt32Array = PackedInt32Array()
@@ -33,6 +37,7 @@ func _ready() -> void:
 
 ## @api Replace content. Only the supported 3–8 tile range is accepted.
 func set_letters(letters: PackedStringArray) -> void:
+	_cancel_shuffle()
 	pointer_end(_owner, true)
 	for tile: LetterTile in _tiles:
 		remove_child(tile)
@@ -41,7 +46,9 @@ func set_letters(letters: PackedStringArray) -> void:
 	_letters = (
 		letters.duplicate() if letters.size() >= 3 and letters.size() <= 8 else PackedStringArray()
 	)
+	_order.resize(_letters.size())
 	for index: int in _letters.size():
+		_order[index] = index
 		var tile: LetterTile = LetterTile.new()
 		tile.index = index
 		tile.letter = _letters[index]
@@ -58,7 +65,7 @@ func set_locked(locked: bool) -> void:
 
 
 func is_locked() -> bool:
-	return _locked
+	return _locked or _shuffling
 
 
 func is_dragging() -> bool:
@@ -73,21 +80,102 @@ func tile_position(index: int) -> Vector2:
 	return _centers[index] if index >= 0 and index < _centers.size() else Vector2.ZERO
 
 
-## @api T-0108 supplies deterministic permutation and animation.
-func shuffle(_rng: RandomNumberGenerator) -> bool:
-	return false
+## @api Shuffle visible slots while retaining each tile's original identity.
+func shuffle(rng: RandomNumberGenerator) -> bool:
+	if is_locked() or is_dragging() or rng == null:
+		return false
+	var next_order: PackedInt32Array = Shuffle.permute(_order, _letters, rng)
+	if next_order.is_empty():
+		return false
+	var visible_change: bool = false
+	for slot: int in _order.size():
+		if _letters[next_order[slot]] != _letters[_order[slot]]:
+			visible_change = true
+			break
+	if not visible_change:
+		return false
+	_order = next_order
+	if Tokens.reduced_motion or not is_inside_tree():
+		_layout_tiles()
+		return true
+	_shuffling = true
+	_shuffle_generation += 1
+	var generation: int = _shuffle_generation
+	var diameter: float = minf(size.x, size.y)
+	var slots: PackedVector2Array = WheelGeometry.positions(
+		_order.size(), diameter * Tokens.Layout.WHEEL_RING_RATIO, size / 2.0
+	)
+	var center: Vector2 = size / 2.0
+	var radius: float = diameter * Tokens.Layout.WHEEL_RING_RATIO
+	_shuffle_tween = create_tween().set_parallel(true)
+	_shuffle_tween.set_trans(Tokens.Ease.IN_OUT.x).set_ease(Tokens.Ease.IN_OUT.y)
+	for slot: int in _order.size():
+		var tile_id: int = _order[slot]
+		var start: Vector2 = _tiles[tile_id].position + _tiles[tile_id].size / 2.0
+		var start_angle: float = (start - center).angle()
+		var angle_delta: float = wrapf((slots[slot] - center).angle() - start_angle, -PI, PI)
+		_centers[tile_id] = slots[slot]
+		_shuffle_tween.tween_method(
+			_move_tile_on_arc.bind(tile_id, start_angle, angle_delta, radius, center),
+			0.0,
+			1.0,
+			Tokens.dur(Tokens.Motion.BASE)
+		)
+	_shuffle_tween.chain().tween_callback(_finish_shuffle.bind(generation))
+	return true
+
+
+## @api Slot-to-tile mapping; callers may mutate the returned copy.
+func tile_order() -> PackedInt32Array:
+	return _order.duplicate()
+
+
+func _move_tile_on_arc(
+	progress: float,
+	tile_id: int,
+	start_angle: float,
+	angle_delta: float,
+	radius: float,
+	center: Vector2
+) -> void:
+	_tiles[tile_id].position = (
+		center
+		+ Vector2.from_angle(start_angle + angle_delta * progress) * radius
+		- _tiles[tile_id].size / 2.0
+	)
+
+
+func _finish_shuffle(generation: int) -> void:
+	if generation != _shuffle_generation or not _shuffling:
+		return
+	_shuffle_tween = null
+	for tile_id: int in _tiles.size():
+		_tiles[tile_id].position = _centers[tile_id] - _tiles[tile_id].size / 2.0
+	_shuffling = false
+
+
+func _cancel_shuffle() -> void:
+	_shuffle_generation += 1
+	if _shuffle_tween != null:
+		_shuffle_tween.kill()
+		_shuffle_tween = null
+	_shuffling = false
 
 
 func _layout_tiles() -> void:
+	_cancel_shuffle()
 	pointer_end(_owner, true)
 	var diameter: float = minf(size.x, size.y)
 	_tile_radius = diameter * Tokens.Layout.TILE_RADIUS_RATIO
-	_centers = WheelGeometry.positions(
+	var slots: PackedVector2Array = WheelGeometry.positions(
 		_letters.size(), diameter * Tokens.Layout.WHEEL_RING_RATIO, size / 2.0
 	)
-	for index: int in _centers.size():
-		_tiles[index].size = Vector2.ONE * _tile_radius * 2.0
-		_tiles[index].position = _centers[index] - _tiles[index].size / 2.0
+	_centers.resize(_letters.size())
+	for slot: int in _order.size():
+		var tile_id: int = _order[slot]
+		_centers[tile_id] = slots[slot]
+		_tiles[tile_id].size = Vector2.ONE * _tile_radius * 2.0
+		_tiles[tile_id].position = slots[slot] - _tiles[tile_id].size / 2.0
 	queue_redraw()
 
 
@@ -195,6 +283,7 @@ func _notification(what: int) -> void:
 
 
 func _exit_tree() -> void:
+	_cancel_shuffle()
 	pointer_end(_owner, true)
 	if resized.is_connected(_layout_tiles):
 		resized.disconnect(_layout_tiles)
