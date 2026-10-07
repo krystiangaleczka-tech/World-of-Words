@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: med
 ui: none
-status: ready
+status: done
 depends_on: [T-0101]
 touch:
   - game/core/board/hint_logic.gd*
