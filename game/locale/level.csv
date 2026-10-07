@@ -1,0 +1,12 @@
+keys,pl,en
+level.hud.level_n,Poziom: {n},Level: {n}
+level.hud.bonus_count,Bonus: {n},Bonus: {n}
+level.hud.hint,Podpowiedź,Hint
+level.hud.shuffle,Tasuj,Shuffle
+level.hud.debug,Diagnostyka,Debug
+level.state.missing_content,Brak poziomu,Level unavailable
+level.state.persistence_failed,Nie zapisano postępu. Spróbuj ponownie.,Progress was not saved. Try again.
+level.feedback.level,✓ Znaleziono,✓ Found
+level.feedback.bonus,★ Słowo bonusowe,★ Bonus word
+level.feedback.already_found,↻ Już znalezione,↻ Already found
+level.feedback.invalid,× Brak na liście,× Not in our word list
