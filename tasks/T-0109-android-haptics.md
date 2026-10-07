@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: med
 ui: low
-status: ready
+status: done
 depends_on: [T-0046, T-0104]
 touch:
   - game/platform/haptics/haptics_android.gd*
