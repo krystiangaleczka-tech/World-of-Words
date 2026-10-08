@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: low
-status: ready
+status: done
 depends_on: [T-0101, T-0104, T-0111, T-0109]
 touch:
   - game/features/level/level_controller.gd*
