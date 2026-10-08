@@ -1,6 +1,10 @@
 extends ScreenScaffold
 ## Provisional catalog: shared intersections, irregular outlines and every cell state.
 
+var _views: Array[BoardView] = []
+var _levels: Array[LevelData] = []
+var _demo: Tween
+
 
 func _ready() -> void:
 	super._ready()
@@ -41,3 +45,42 @@ func _ready() -> void:
 		view.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		body.add_child(view)
 		view.set_board(board)
+		_views.append(view)
+		_levels.append(level)
+	replay_feedback()
+
+
+## @api Repeat hint, word reveal, already-found pulse and completion wave in the gallery.
+func replay_feedback() -> void:
+	if _demo != null and _demo.is_valid():
+		_demo.kill()
+	_demo = create_tween().set_loops()
+	for action: Callable in [_demo_hint, _demo_word, _demo_highlight, _demo_wave]:
+		_demo.tween_callback(action)
+		_demo.tween_interval(float(Tokens.Motion.CELEBRATE) / 1000.0)
+
+
+func _demo_hint() -> void:
+	for index: int in _views.size():
+		_views[index].refresh()
+		_views[index].reveal_cell(_levels[index].word_cells(1)[1], true)
+
+
+func _demo_word() -> void:
+	for index: int in _views.size():
+		_views[index].reveal_word(_levels[index].word_cells(1))
+
+
+func _demo_highlight() -> void:
+	for index: int in _views.size():
+		_views[index].highlight_word(_levels[index].word_cells(1))
+
+
+func _demo_wave() -> void:
+	for view: BoardView in _views:
+		view.play_wave()
+
+
+func _exit_tree() -> void:
+	if _demo != null and _demo.is_valid():
+		_demo.kill()

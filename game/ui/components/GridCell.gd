@@ -10,10 +10,85 @@ var letter: String = "":
 		queue_redraw()
 var state: State = State.EMPTY:
 	set(value):
+		_cancel_feedback()
 		state = value
+		_base_state = value
 		queue_redraw()
 
 var _style: StyleBoxFlat = StyleBoxFlat.new()
+var _feedback: Tween
+var _base_state: State = State.EMPTY
+var _letter_alpha: float = 1.0:
+	set(value):
+		_letter_alpha = value
+		queue_redraw()
+
+
+## @api Reveal feedback; logical state is available immediately.
+func reveal(hinted: bool) -> void:
+	state = State.HINTED if hinted else State.FILLED
+	if Tokens.reduced_motion or not is_inside_tree():
+		return
+	pivot_offset = size / 2.0
+	scale = Vector2.ONE / Tokens.Layout.TILE_SELECTED_SCALE
+	_letter_alpha = 0.0
+	_feedback = create_tween().set_parallel(true)
+	_feedback.tween_property(self, "_letter_alpha", 1.0, Tokens.dur(Tokens.Motion.FAST))
+	(
+		_feedback
+		. tween_property(self, "scale", Vector2.ONE, Tokens.dur(Tokens.Motion.BASE))
+		. set_trans(Tokens.Ease.SPRING.x)
+		. set_ease(Tokens.Ease.SPRING.y)
+	)
+
+
+## @api Temporary highlight, preserving filled/hinted state through repeated calls.
+func highlight(delay: float = 0.0) -> void:
+	var previous: State = _base_state
+	state = previous
+	if previous == State.EMPTY or Tokens.reduced_motion or not is_inside_tree():
+		return
+	# Preserve the underlying state while showing the temporary highlight.
+	_set_highlight()
+	pivot_offset = size / 2.0
+	_feedback = create_tween()
+	_feedback.tween_interval(delay)
+	(
+		_feedback
+		. tween_property(
+			self,
+			"scale",
+			Vector2.ONE * Tokens.Layout.TILE_SELECTED_SCALE,
+			Tokens.dur(Tokens.Motion.FAST)
+		)
+		. set_trans(Tokens.Ease.OUT.x)
+		. set_ease(Tokens.Ease.OUT.y)
+	)
+	_feedback.tween_property(self, "scale", Vector2.ONE, Tokens.dur(Tokens.Motion.FAST))
+	_feedback.tween_callback(_finish_highlight.bind(previous))
+
+
+func _set_highlight() -> void:
+	var previous: State = _base_state
+	state = State.HIGHLIGHTED
+	_base_state = previous
+
+
+func _finish_highlight(previous: State) -> void:
+	_feedback = null
+	state = previous
+
+
+func _cancel_feedback() -> void:
+	if _feedback != null and _feedback.is_valid():
+		_feedback.kill()
+	_feedback = null
+	scale = Vector2.ONE
+	_letter_alpha = 1.0
+
+
+func _exit_tree() -> void:
+	state = _base_state
 
 
 func _init() -> void:
@@ -22,6 +97,7 @@ func _init() -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED:
+		pivot_offset = size / 2.0
 		queue_redraw()
 
 
@@ -61,7 +137,7 @@ func _draw() -> void:
 		HORIZONTAL_ALIGNMENT_LEFT,
 		-1,
 		font_size,
-		Tokens.Palette.TEXT
+		Color(Tokens.Palette.TEXT, _letter_alpha)
 	)
 	if state == State.HINTED:
 		var radius: float = side * Tokens.Layout.HINT_DOT_RATIO
