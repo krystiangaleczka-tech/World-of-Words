@@ -61,9 +61,11 @@ func _save(storage: SaveStorage = null) -> SAVE_SCRIPT:
 
 func test_golden_v1_exact_defaults_and_round_trip() -> void:
 	var golden: Dictionary = _fixture()
-	assert_true(SaveSchema.is_valid(golden))
+	assert_eq(golden["schema_version"], 1.0)
+	var migrated: Dictionary = SaveMigrations.new().upgrade(golden)
+	assert_true(SaveSchema.is_valid(migrated))
 	assert_eq_deep(
-		SaveSchema.fresh(ID, "2026-10-02T12:00:00Z", "0.1.0"), SaveSchema.canonical(golden)
+		SaveSchema.fresh(ID, "2026-10-02T12:00:00Z", "0.1.0"), SaveSchema.canonical(migrated)
 	)
 	_write(JSON.stringify(golden))
 	var service: SAVE_SCRIPT = _save()
@@ -127,7 +129,7 @@ func test_invalid_primary_shapes_fall_back_to_valid_backup() -> void:
 	var missing_version: Dictionary = _fixture()
 	missing_version.erase("schema_version")
 	var future: Dictionary = _fixture()
-	future["schema_version"] = 2
+	future["schema_version"] = SaveSchema.VERSION + 1
 	var malformed: Dictionary = _fixture()
 	malformed["settings"]["haptics_enabled"] = "true"
 	var bad_identity: Dictionary = _fixture()
@@ -166,7 +168,10 @@ func test_backup_recovery_never_overwrites_valid_backup_with_corrupt_primary() -
 	assert_eq(service.load(), OK)
 	assert_eq(service.flush(), OK)
 	assert_eq_deep(SaveStorage.new(TEST_PATH).read_document(".bak"), golden)
-	assert_eq_deep(SaveStorage.new(TEST_PATH).read_document(), golden)
+	assert_eq_deep(
+		SaveSchema.canonical(SaveStorage.new(TEST_PATH).read_document()),
+		SaveSchema.canonical(SaveMigrations.new().upgrade(golden))
+	)
 
 
 func test_each_atomic_write_boundary_recovers_last_committed_or_new_document() -> void:
@@ -288,13 +293,14 @@ func test_migration_chain_preserves_golden_source_and_rejects_missing_or_invalid
 
 
 func test_non_json_values_and_unsafe_numbers_are_rejected() -> void:
-	var data: Dictionary = _fixture()
+	var data: Dictionary = SaveMigrations.new().upgrade(_fixture())
+	assert_true(SaveSchema.is_valid(data))
 	data["economy"]["coins"] = 9007199254740992
 	assert_false(SaveSchema.is_valid(data))
-	data = _fixture()
+	data = SaveMigrations.new().upgrade(_fixture())
 	data["progress"]["level_state"] = RefCounted.new()
 	assert_false(SaveSchema.is_valid(data))
-	data = _fixture()
+	data = SaveMigrations.new().upgrade(_fixture())
 	data["settings"]["music_volume"] = NAN
 	assert_false(SaveSchema.is_valid(data))
 

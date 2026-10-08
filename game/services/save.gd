@@ -1,5 +1,5 @@
 extends ServiceStub
-## @api Save v1. Other services use only their own section; settings/meta belong to Save.
+## @api Save v2. Other services use only their own section; settings/meta belong to Save.
 
 signal setting_changed(key: StringName)
 signal backup_restored
@@ -29,12 +29,13 @@ func load() -> Error:
 		return OK
 	assert(get_clock() != null, "Save requires an injected Clock before load")
 	for suffix: String in ["", ".tmp", ".bak"]:
-		var candidate: Dictionary = _migrations.upgrade(_storage.read_document(suffix))
+		var source: Dictionary = _storage.read_document(suffix)
+		var candidate: Dictionary = _migrations.upgrade(source)
 		if SaveSchema.is_valid(candidate):
 			_data = SaveSchema.canonical(candidate)
 			_loaded = true
 			_primary_valid = suffix.is_empty()
-			_dirty = not _primary_valid
+			_dirty = not _primary_valid or source.get("schema_version") != SaveSchema.VERSION
 			if not _primary_valid:
 				backup_restored.emit()
 			return OK
