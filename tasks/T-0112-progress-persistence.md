@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0111, T-0101]
 touch:
   - game/services/progress.gd

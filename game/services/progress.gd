@@ -1,15 +1,22 @@
 extends ServiceStub
 ## @api Owns per-language campaign progress and restoration from Save snapshots.
 
+signal completed(slot: int)
+
 const SAVE_SCRIPT: Script = preload("res://services/save.gd")
 const CONTENT_SCRIPT: Script = preload("res://services/content.gd")
 
 var _save: SAVE_SCRIPT
 var _content: CONTENT_SCRIPT
+var _bound_board: BoardState
+var _bound_language: String = ""
+var _pending: Dictionary[String, int] = {}
 
 
 ## @api Supply loaded Save and Content services before using campaign progress.
 func configure(save: SAVE_SCRIPT, content: CONTENT_SCRIPT) -> void:
+	unbind_board()
+	_pending.clear()
 	_save = save
 	_content = content
 
@@ -42,14 +49,145 @@ func restore_level(level: LevelData) -> BoardState:
 	return BoardState.new(level)
 
 
-## @api Persistence implementation arrives in T-0112.
-func save_level(_board: BoardState) -> Error:
-	return ERR_UNAVAILABLE if _is_ready() else ERR_UNCONFIGURED
+## @api Persist a meaningful board mutation synchronously; a failed flush remains retryable.
+func save_level(board: BoardState) -> Error:
+	if not _is_ready():
+		return ERR_UNCONFIGURED
+	if not _valid_board(board):
+		return ERR_INVALID_PARAMETER
+	var language: String = _save_language()
+	var state: Dictionary = _language_state(language)
+	if state.is_empty():
+		state = SaveSchema.LANGUAGE_STATE.duplicate(true)
+	var snapshot: Dictionary = board.to_dict()
+	if state.get("level_state") != snapshot:
+		state["level_state"] = snapshot
+		var error: Error = _write_state(language, state)
+		if error != OK:
+			return error
+	return _flush_pending(language)
 
 
-## @api Durable completion implementation arrives in T-0112.
-func complete_level(_slot: int) -> Error:
-	return ERR_UNAVAILABLE if _is_ready() else ERR_UNCONFIGURED
+## @api Advance exactly once; publish completion only after successful durable storage.
+## After a failure retry this API even if another Save owner has already flushed the data.
+func complete_level(slot: int) -> Error:
+	if not _is_ready():
+		return ERR_UNCONFIGURED
+	if slot < 1 or _content.level_for_slot(slot) == null:
+		return ERR_INVALID_PARAMETER
+	var language: String = _save_language()
+	_discard_stale_pending(language)
+	if slot <= highest_completed_slot():
+		return _flush_pending(language) if _pending.has(language) else OK
+	if slot != current_slot():
+		return ERR_INVALID_PARAMETER
+	if _pending.has(language):
+		return _retry_completion(language, slot)
+	return _advance(language, slot)
+
+
+func _retry_completion(language: String, slot: int) -> Error:
+	var retry: Error = _flush_pending(language)
+	# Completion listeners run synchronously and may advance or switch language.
+	if retry == OK and language != _save_language():
+		return ERR_UNCONFIGURED
+	return complete_level(slot) if retry == OK else retry
+
+
+func _advance(language: String, slot: int) -> Error:
+	var state: Dictionary = _language_state(language)
+	if state.is_empty():
+		state = SaveSchema.LANGUAGE_STATE.duplicate(true)
+	state["current_slot"] = slot + 1
+	state["highest_completed_slot"] = slot
+	state["completed_slot"] = maxi(int(state["completed_slot"]), slot)
+	state["level_state"] = null
+	var error: Error = _write_state(language, state)
+	if error != OK:
+		return error
+	_pending[language] = slot
+	return _flush_pending(language)
+
+
+## @api Own a board only while its screen is active, for application-pause persistence.
+func bind_board(board: BoardState) -> Error:
+	if not _is_ready():
+		return ERR_UNCONFIGURED
+	if not _valid_board(board):
+		return ERR_INVALID_PARAMETER
+	unbind_board()
+	_bound_board = board
+	_bound_language = _save_language()
+	_save.setting_changed.connect(_on_setting_changed)
+	return OK
+
+
+## @api Release screen state and disconnect its language-change listener.
+func unbind_board() -> void:
+	if is_instance_valid(_save) and _save.setting_changed.is_connected(_on_setting_changed):
+		_save.setting_changed.disconnect(_on_setting_changed)
+	_bound_board = null
+	_bound_language = ""
+
+
+func _notification(what: int) -> void:
+	if what != NOTIFICATION_APPLICATION_PAUSED or not _is_ready():
+		return
+	var language: String = _save_language()
+	if _pending.has(language) and _flush_pending(language) != OK:
+		return
+	if (
+		_bound_board == null
+		or _bound_language != _save_language()
+		or not _matches_content(_bound_board.get_level())
+	):
+		return
+	if _bound_board.is_complete():
+		complete_level(_bound_board.get_level().get_slot())
+	else:
+		save_level(_bound_board)
+
+
+func _exit_tree() -> void:
+	unbind_board()
+
+
+func _on_setting_changed(key: StringName) -> void:
+	if key == &"language":
+		unbind_board()
+
+
+func _valid_board(board: BoardState) -> bool:
+	return (
+		board != null
+		and _matches_content(board.get_level())
+		and board.get_level().get_slot() == current_slot()
+	)
+
+
+func _write_state(language: String, state: Dictionary) -> Error:
+	var section: Dictionary = _save.get_section(&"progress")
+	section["by_lang"][language] = state
+	return _save.set_section(&"progress", section)
+
+
+func _discard_stale_pending(language: String) -> void:
+	if not _pending.has(language):
+		return
+	var state: Dictionary = _language_state(language)
+	var slot: int = _pending[language]
+	if state.get("current_slot", 1) != slot + 1 or state.get("highest_completed_slot", 0) != slot:
+		_pending.erase(language)
+
+
+func _flush_pending(language: String) -> Error:
+	_discard_stale_pending(language)
+	var error: Error = _save.flush()
+	if error == OK and _pending.has(language):
+		var slot: int = _pending[language]
+		_pending.erase(language)
+		completed.emit(slot)
+	return error
 
 
 func _is_ready() -> bool:
