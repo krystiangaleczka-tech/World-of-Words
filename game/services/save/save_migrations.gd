@@ -1,13 +1,16 @@
 class_name SaveMigrations
 extends RefCounted
-## @api Ordered pure migration chain. T-0036 ships v1 with no historical steps.
+## @api Ordered pure migration chain. The default v2 chain includes the built-in v1 migration.
 
 var _target: int
 var _steps: Dictionary[int, Callable] = {}
 
 
-func _init(target: int = SaveSchema.VERSION) -> void:
-	_target = target
+## Explicit targets are caller-owned chains, including custom future-version tests.
+func _init(target: int = -1) -> void:
+	_target = SaveSchema.VERSION if target == -1 else target
+	if target == -1 and _target == 2:
+		_steps[1] = MigrateV1ToV2.migrate
 
 
 ## @api Register migrate_vN_to_vN1; duplicate, invalid and out-of-range steps are rejected.

@@ -1,0 +1,57 @@
+{
+  "schema_version": 2,
+  "meta": {
+    "install_id": "12345678-1234-4234-8234-123456789abc",
+    "created_at": "2026-10-02T12:00:00Z",
+    "app_version": "0.1.0"
+  },
+  "settings": {
+    "sfx_volume": 1.0,
+    "music_volume": 0.8,
+    "haptics_enabled": true,
+    "reduced_motion": false,
+    "high_contrast": false,
+    "text_scale": 0,
+    "language": "pl"
+  },
+  "progress": {
+    "by_lang": {
+      "pl": {
+        "current_slot": 1,
+        "completed_slot": 0,
+        "highest_completed_slot": 0,
+        "stars": 0,
+        "level_state": null,
+        "location_pieces": {}
+      }
+    },
+    "unlocked": [],
+    "coach_marks_seen": [],
+    "bonus_meter": 0
+  },
+  "economy": {
+    "coins": 0,
+    "items": {
+      "hint": 0,
+      "reveal": 0
+    },
+    "journal": []
+  },
+  "daily": {
+    "completed_days": [],
+    "last_seen_day": null,
+    "level_state": null,
+    "freezes": 0,
+    "last_freeze_week": null,
+    "streak": 0,
+    "streak_broken_at": null
+  },
+  "monetization": {
+    "remove_forced_ads": false,
+    "processed_transactions": [],
+    "last_interstitial": null,
+    "levels_since_interstitial": 0,
+    "levels_since_purchase": null,
+    "shop_coins_ads": {}
+  }
+}
