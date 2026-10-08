@@ -1,7 +1,8 @@
 keys,pl,en
-level.hud.level_n,Poziom: {n},Level: {n}
-level.hud.bonus_count,Bonus: {n},Bonus: {n}
+level.hud.level_n,Poziom: %d,Level: %d
+level.hud.bonus_count,Bonus: %d,Bonus: %d
 level.hud.hint,Podpowiedź,Hint
+level.hud.free_hint,Podpowiedź • gratis,Hint • free
 level.hud.shuffle,Tasuj,Shuffle
 level.hud.debug,Diagnostyka,Debug
 level.state.missing_content,Brak poziomu,Level unavailable
