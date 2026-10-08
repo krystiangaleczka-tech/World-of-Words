@@ -70,7 +70,7 @@ func test_debug_disabled_preserves_screen() -> void:
 	assert_eq(nav.go_debug(), ERR_UNAVAILABLE)
 	assert_eq(nav.current_screen(), NAV_SCRIPT.Screen.LEVEL)
 	assert_eq(nav.level_slot(), 1)
-	assert_null(nav.mounted_screen())
+	assert_true(nav.mounted_screen() is LevelScreen)
 	assert_signal_not_emitted(nav, "screen_changed")
 
 

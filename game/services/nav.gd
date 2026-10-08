@@ -160,7 +160,9 @@ func _enter(screen: Screen) -> void:
 		elif not path.is_empty() and ResourceLoader.exists(path):
 			_mounted = (load(path) as PackedScene).instantiate()
 		if _mounted != null:
-			if screen == Screen.DEBUG and _mounted.has_method("configure"):
+			if screen == Screen.LEVEL and _mounted.has_method("configure"):
+				_mounted.call("configure", _save, _content, _level_slot)
+			elif screen == Screen.DEBUG and _mounted.has_method("configure"):
 				_mounted.call("configure", _save, _content, self)
 			_host.add_child(_mounted)
 	_screen = screen

@@ -102,7 +102,7 @@ func test_confirmed_reset_returns_to_level_one() -> void:
 	assert_eq(screen.confirm_reset(), OK)
 	assert_eq(nav.current_screen(), NAV_SCRIPT.Screen.LEVEL)
 	assert_eq(nav.level_slot(), 1)
-	assert_null(nav.mounted_screen())
+	assert_true(nav.mounted_screen() is LevelScreen)
 	assert_eq(save.get_section(&"economy")["coins"], 0)
 	for section: StringName in [&"meta", &"settings", &"monetization"]:
 		assert_eq_deep(save.get_section(section), prior[section])
