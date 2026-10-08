@@ -45,7 +45,8 @@ func refresh() -> void:
 		_cells[cell].state = GridCell.State.HINTED if cell in revealed else GridCell.State.EMPTY
 	for index: int in level.word_count():
 		if level.word(index) in found:
-			reveal_word(level.word_cells(index))
+			for cell: Vector2i in level.word_cells(index):
+				_cells[cell].state = GridCell.State.FILLED
 
 
 ## @api Read a unique occupied cell; empty coordinates return null.
@@ -59,24 +60,40 @@ func cell_global_position(cell: Vector2i) -> Vector2:
 	return node.get_global_transform() * (node.size / 2.0) if node != null else Vector2.ZERO
 
 
-## @api Present a word reveal. Motion is added by T-0114.
+## @api Present a word reveal, clearing hint markers on completed words.
 func reveal_word(cells: Array[Vector2i]) -> void:
 	for cell: Vector2i in cells:
 		reveal_cell(cell, false)
+	# AttemptResult lists only newly revealed cells, excluding existing hints.
+	if _board == null:
+		return
+	var level: LevelData = _board.get_level()
+	for index: int in level.word_count():
+		if level.word(index) in _board.found_words():
+			for cell: Vector2i in level.word_cells(index):
+				if _cells[cell].state != GridCell.State.FILLED:
+					_cells[cell].reveal(false)
 
 
 ## @api Present one reveal without changing gameplay state.
 func reveal_cell(cell: Vector2i, hinted: bool) -> void:
 	var node: GridCell = cell_node(cell)
 	if node != null:
-		node.state = GridCell.State.HINTED if hinted else GridCell.State.FILLED
+		node.reveal(hinted)
 
 
-## @api Static completion highlight; T-0114 adds the timed wave and reset.
+## @api Already-found feedback; unknown and unrevealed coordinates are ignored.
+func highlight_word(cells: Array[Vector2i]) -> void:
+	for cell: Vector2i in cells:
+		var node: GridCell = cell_node(cell)
+		if node != null:
+			node.highlight()
+
+
+## @api Completion wave ordered by grid diagonal, without blocking input.
 func play_wave() -> void:
-	for node: GridCell in _cells.values():
-		if node.state != GridCell.State.EMPTY:
-			node.state = GridCell.State.HIGHLIGHTED
+	for cell: Vector2i in _cells:
+		_cells[cell].highlight((cell.x + cell.y) * Tokens.dur(Tokens.Motion.STAGGER))
 
 
 ## @api False when the available rect requires cells below the content minimum.
