@@ -120,6 +120,7 @@ func test_unknown_slot_is_rejected_without_changing_screen() -> void:
 
 func test_screens_without_scene_files_mount_nothing() -> void:
 	var nav: NAV_SCRIPT = _nav()
+	nav.configure_screens(func(_screen: int) -> Node: return null)
 	var host: Node = _host()
 	nav.start(host, FIXTURE)
 	assert_null(nav.mounted_screen())
