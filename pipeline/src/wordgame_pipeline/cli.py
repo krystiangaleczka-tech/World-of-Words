@@ -5,10 +5,8 @@ import sys
 from pathlib import Path
 
 from .config import load_config
-from .stages import StageHandler, artifact_path, run_build, select_stages
-
-# Production handlers are added by the explicit stage tasks T-0121 onward.
-HANDLERS: dict[str, StageHandler] = {}
+from .ingest import handlers_for
+from .stages import artifact_path, run_build, select_stages
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -28,7 +26,9 @@ def main(argv: list[str] | None = None) -> int:
             for stage in selected:
                 print(artifact_path(args.root, config.lang, stage).relative_to(args.root))
         else:
-            for path in run_build(args.root, config, HANDLERS, args.first, args.last):
+            for path in run_build(
+                args.root, config, handlers_for(args.root), args.first, args.last
+            ):
                 print(path.relative_to(args.root))
     except (OSError, ValueError, TypeError) as exc:
         print(f"wg: {exc}", file=sys.stderr)
