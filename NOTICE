@@ -1,0 +1,19 @@
+World of Words — Polish validity source
+
+Source: Słownik SJP.PL, version for word games, snapshot 20260901.
+Source page: https://sjp.pl/sl/growy/
+Archive: https://sjp.pl/sl/growy/sjp-20260901.zip
+Archive SHA-256: 43796ccf34a8ba9b6e965588b842721056b5a89cad4c8c38e057f838d4eaa6a5
+
+The source is offered under GPL 2 or Creative Commons Attribution 4.0
+International. This project selects the CC BY 4.0 option:
+https://creativecommons.org/licenses/by/4.0/
+
+Words selected and processed based on the SJP.PL word-game list. Processing
+includes Unicode NFC normalization, uppercasing, alphabet/length filtering,
+sorting and deduplication. Published QA summaries report these modifications.
+The raw archive and derived word corpora are not committed to this repository.
+This notice does not imply endorsement by SJP.PL.
+
+Future shipped derived content must retain this attribution in Settings >
+Licences, as required by project decision 0008.

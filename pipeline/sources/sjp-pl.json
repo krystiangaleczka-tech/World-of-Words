@@ -1,0 +1,14 @@
+{
+  "id": "sjp-pl-game",
+  "version": "20260901",
+  "url": "https://sjp.pl/sl/growy/sjp-20260901.zip",
+  "sha256": "43796ccf34a8ba9b6e965588b842721056b5a89cad4c8c38e057f838d4eaa6a5",
+  "archive_bytes": 8515982,
+  "member": "slowa.txt",
+  "member_bytes": 45650247,
+  "entry_count": 3245600,
+  "encoding": "utf-8",
+  "license": "CC-BY-4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "source_url": "https://sjp.pl/sl/growy/"
+}
