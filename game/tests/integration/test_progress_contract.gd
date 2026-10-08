@@ -24,9 +24,7 @@ func before_each() -> void:
 	_save = SAVE_SCRIPT.new()
 	add_child_autofree(_save)
 	_save.initialize(FixedClock.new())
-	_save.configure(
-		SaveStorage.new(TEST_PATH), func() -> String: return INSTALL_ID
-	)
+	_save.configure(SaveStorage.new(TEST_PATH), func() -> String: return INSTALL_ID)
 	_content = CONTENT_SCRIPT.new()
 	add_child_autofree(_content)
 	_progress = PROGRESS_SCRIPT.new()
