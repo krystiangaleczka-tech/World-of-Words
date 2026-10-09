@@ -32,6 +32,53 @@ identity and handmade intent. Fixture stage/CLI runs repeat byte-identically;
 malformed artifacts, duplicate IDs and stale provenance leave prior output intact.
 
 Full pinned Godot 4.7.2 `make check` passes: 199 GUT, 165 pipeline and
-81 tools tests; formatting/lint, registries and task lint pass. Actual source-stage
-counts/hashes are recorded below once the full native run completes. Corpora and generated artifacts remain ignored; game content
+81 tools tests; formatting/lint, registries and task lint pass. The native source-stage evidence below completes the full-data acceptance. Corpora and generated artifacts remain ignored; game content
 and runtime settings are unchanged. Export and P2 sequencing/locks remain later tasks.
+
+
+## Full pinned-source evidence
+
+Rebuilt the actual pinned SJP/SGJP/KWJP sources through candidates: 450122
+annotated forms, 31949 automatic candidates and zero handmade entries. Native
+annotation used Morfeusz 1.99.15 / pl.sgjp.sgjp-2026.06.01.
+
+Grid preparation used ordered two-process calls to the unchanged T-0125
+`make_level`; the unchanged grid handler supplied pins/search options and the
+official `run_build` supplied the full predecessor hash and canonical envelope.
+The temporary driver was independently reviewed. The resulting artifact exactly
+matches the prior full native T-0125 hash recorded in PR #70:
+
+| Artifact | Bytes | SHA-256 |
+|---|---:|---|
+| 06-candidates | 18704149 | f1f9649cdc54674c17af971859c82063e3d528d516da35ec53e21f861ab95721 |
+| 07-grid | 26495096 | 98f123eacdf9efbaf1b163e1163b157a09bda92eed5be683e40fd6cc50855666 |
+| 09-validate | 26495402 | 809bf9efdf3b2e9e83a7eaf00a6ac83602749543061e38c2dcd4d8e6689ed888 |
+
+Two consecutive real CLI validation runs succeeded for all 31949 automatic
+entries (0 handmade). Sizes and SHA-256 were identical. The validation artifact's
+input hash matches the full grid artifact, and every input payload field and
+collection is preserved exactly; only deterministic validation evidence is added.
+These are actual corpus results, separate from the handmade fixture tests.
+
+From repository root, the normal serial CLI can reproduce the same preparation:
+
+```sh
+uv run --all-packages --extra annotate wg build --lang pl --to candidates
+uv run wg build --lang pl --from grid --to grid
+uv run wg build --lang pl --from validate --to validate
+uv run wg build --lang pl --from validate --to validate
+```
+
+The last two commands are the actual native acceptance runs performed here.
+Raw corpora and artifacts remain in ignored pipeline/build/pl directories.
+All 9 GitHub CI jobs passed for full-Draft code head 0354598; final evidence/status
+publication is checked again before merge. Independent final review approved exact commit
+7f64bed40c0582861f81d3f62395115f77db929f after independently verifying the actual
+artifact counts, hash, predecessor identity and unchanged input collections.
+
+## Resolved dependency lock
+
+Approved direct dependency: jsonschema 4.26.0. Its locked dependencies are attrs
+26.1.0, jsonschema-specifications 2025.9.1, referencing 0.37.0, rpds-py 2026.9.1
+and typing-extensions 4.16.0. Default pipeline checks run with the native Morfeusz
+extra uninstalled; no game runtime dependency is introduced.

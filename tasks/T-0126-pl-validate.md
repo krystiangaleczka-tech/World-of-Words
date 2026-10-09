@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0125, T-0040]
 touch:
   - pipeline/src/wordgame_pipeline/validate/**
