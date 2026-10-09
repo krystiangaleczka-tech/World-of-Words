@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: med
 ui: med
-status: review
+status: done
 depends_on: [T-0117, T-0112, T-0114]
 touch:
   - game/features/level/level.gd
