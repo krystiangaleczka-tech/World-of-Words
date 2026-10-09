@@ -2,5 +2,17 @@
   "lang": "pl",
   "alphabet": "AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUWYZŹŻ",
   "min_length": 3,
-  "max_length": 8
+  "max_length": 8,
+  "tier_rules": {
+    "base_min_arf": 10,
+    "inflected_min_arf": 100,
+    "banned_labels": [
+      "wulg."
+    ],
+    "excluded_level_labels": [
+      "daw.",
+      "przest.",
+      "rzad."
+    ]
+  }
 }

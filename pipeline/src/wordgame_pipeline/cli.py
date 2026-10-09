@@ -8,6 +8,7 @@ from .annotate import handlers_for as annotation_handlers
 from .config import load_config
 from .ingest import handlers_for
 from .stages import artifact_path, run_build, select_stages
+from .tiers import handlers_for as tier_handlers
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -30,7 +31,11 @@ def main(argv: list[str] | None = None) -> int:
             for path in run_build(
                 args.root,
                 config,
-                {**handlers_for(args.root), **annotation_handlers(args.root)},
+                {
+                    **handlers_for(args.root),
+                    **annotation_handlers(args.root),
+                    **tier_handlers(args.root),
+                },
                 args.first,
                 args.last,
             ):

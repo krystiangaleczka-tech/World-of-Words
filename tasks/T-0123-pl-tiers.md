@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: ready
+status: review
 depends_on: [T-0122]
 touch:
   - pipeline/src/wordgame_pipeline/tiers/**
