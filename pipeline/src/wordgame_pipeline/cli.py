@@ -4,6 +4,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from .annotate import handlers_for as annotation_handlers
 from .config import load_config
 from .ingest import handlers_for
 from .stages import artifact_path, run_build, select_stages
@@ -27,7 +28,11 @@ def main(argv: list[str] | None = None) -> int:
                 print(artifact_path(args.root, config.lang, stage).relative_to(args.root))
         else:
             for path in run_build(
-                args.root, config, handlers_for(args.root), args.first, args.last
+                args.root,
+                config,
+                {**handlers_for(args.root), **annotation_handlers(args.root)},
+                args.first,
+                args.last,
             ):
                 print(path.relative_to(args.root))
     except (OSError, ValueError, TypeError) as exc:
