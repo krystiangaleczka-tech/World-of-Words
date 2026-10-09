@@ -151,6 +151,25 @@ custom tags and multiple YAML documents. Source pins, rule/override hashes and a
 hash of sorted handmade paths plus exact bytes are carried into the artifact.
 Candidate pools can overlap; sequencing/export enforces the 100-slot repetition policy.
 
+### P1 grid artifact
+
+The grid stage keeps automatic and handmade collections separate. Each result has
+letters, selected words, canonical word placements, `grid: {w, h}`, complete bonus
+and a stable SHA256-derived search seed. Automatic entries retain candidate_id;
+handmade entries retain slot and expected bonus. Coordinates start at zero and
+landscape layouts transpose to portrait (height >= width). Single-word wheels
+are valid intermediate candidates; sequencing applies slot balance later.
+
+Search starts greedily and explores bounded backtracking across four seeded
+restarts: 128 nodes per restart, three placement branches, up to 16 considered
+words and six selected words. These are offline search budgets, recorded in the
+artifact, not slot balance. The best result maximizes words, then crossings, then
+minimizes area with canonical tie breaking. Unselected eligible words become bonuses.
+Handmade generation requires every specified word; explicit placements undergo
+the same geometry checks. Invalid/unplaceable handmade entries fail without
+replacing the previous artifact. Search budget failure does not prove geometric
+impossibility. Final validation/export and 100-slot spacing remain later stages.
+
 ## Level schema
 
 One level is a JSON object. The schema lives in `pipeline/schema/level.schema.json` (T-0040) and is
