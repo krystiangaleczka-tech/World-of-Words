@@ -184,5 +184,5 @@ def test_stage_determinism_and_atomicity(tmp_path, capsys):
     with pytest.raises(ValueError, match="provenance"):
         run_build(tmp_path, config, handlers, "candidates", "candidates")
     assert path.read_bytes() == changed
-    assert main(["build", "--root", str(tmp_path), "--lang", "pl", "--to", "grid"]) == 1
-    assert "grid is not implemented" in capsys.readouterr().err
+    assert main(["build", "--root", str(tmp_path), "--lang", "pl", "--to", "validate"]) == 1
+    assert "validate is not implemented" in capsys.readouterr().err
