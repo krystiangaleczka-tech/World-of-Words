@@ -7,6 +7,7 @@ from pathlib import Path
 from .annotate import handlers_for as annotation_handlers
 from .candidates import handlers_for as candidate_handlers
 from .config import load_config
+from .content import validate_content
 from .export import handlers_for as export_handlers
 from .export.publish import publish
 from .grid import handlers_for as grid_handlers
@@ -30,9 +31,24 @@ def main(argv: list[str] | None = None) -> int:
     build.add_argument("--content-version", type=int)
     build.add_argument("--output", type=Path)
     build.add_argument("--check", action="store_true")
+    validate = commands.add_parser("validate-content")
+    validate.add_argument("--lang", default="pl")
+    validate.add_argument("--root", type=Path, default=Path("pipeline"))
+    validate.add_argument("--content-root", type=Path, default=Path("game/content"))
+    validate.add_argument("--prepare-evidence", action="store_true")
     args = parser.parse_args(argv)
     try:
         config = load_config(args.root, args.lang)
+        if args.command == "validate-content":
+            count = validate_content(
+                args.root, config, args.content_root, prepare=args.prepare_evidence
+            )
+            print(
+                "SKIP content-validate: no campaign or evidence yet (T-0131)"
+                if count is None
+                else f"OK: {count} {config.lang} campaign levels validated"
+            )
+            return 0
         selected = select_stages(args.first, args.last)
         exporting = selected[-1].name == "export"
         if args.check and (not exporting or selected[0].name != "export" or args.plan):

@@ -441,3 +441,29 @@ transaction guarantee. A failed publication may leave a newly built ignored expo
 artifact, but preserves existing content on handled I/O failures. Release locks
 (T-0302), the `validate-content` CI entry point (T-0128), and human play QA remain
 separate tasks.
+
+## Shipped content validation (T-0128)
+
+`uv run wg validate-content` is the read-only local/CI entry point (also
+`make content-validate`). It checks canonical shared schemas, manifest ranges,
+exact pack hashes, identities, complete level word/bonus semantics, geometry,
+P1 ordering/onboarding and the 100-slot crossword spacing policy. Unsafe or
+unmanaged files, stale provenance and missing content/evidence fail.
+Before T-0131 first ships content, absence of both campaign and evidence prints
+an explicit SKIP. Once either exists, the other is required. Release-lock checks
+will be added inside this command in T-0302, without changing CI wiring.
+
+CI does not download dictionaries or use ignored native build artifacts. A content
+PR runs `uv run wg validate-content --prepare-evidence` after export, then commits
+its generated `pipeline/content-evidence/pl.json` alongside packs. The evidence
+contains the authoritative tier of every eligible form for the shipped wheels,
+the full native tier artifact SHA256, manifest hash and current language/source/
+annotation/override/handmade provenance. Preparation reads current canonical
+native tiers and validates content before atomically replacing the evidence.
+This compact index belongs to offline tooling; it is not a runtime dictionary.
+
+Trust boundary: CI verifies shipped content against the committed generated tier
+extract and current pins. It does not repeat full morphology/frequency annotation
+or prove a manually altered extract's membership against downloaded source bytes.
+Reproducing evidence from the pinned native pipeline and reviewing content diffs
+remain part of a content PR. Ordinary validation never writes evidence or content.
