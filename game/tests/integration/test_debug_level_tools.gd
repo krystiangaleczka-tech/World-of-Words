@@ -24,13 +24,14 @@ class MemoryStorage:
 	)
 	var fail: bool = false
 	var writes: int = 0
+	var fail_from: int = 0
 
 	func read_document(_suffix: String = "") -> Dictionary:
 		return document.duplicate(true)
 
 	func commit(text: String, _rotate: bool) -> Error:
 		writes += 1
-		if fail:
+		if fail or (fail_from > 0 and writes >= fail_from):
 			return ERR_FILE_CANT_WRITE
 		document = JSON.parse_string(text)
 		return OK
@@ -161,3 +162,81 @@ func test_locale_and_layout() -> void:
 	assert_eq((screen.get_node("Safe/Body/SlotSelector/SelectedSlot") as Label).text, "Level: 1")
 	assert_true((screen.get_node("Safe/Body/Answers") as Label).text.begins_with("Show answers:"))
 	assert_eq((screen.get_node("Safe/Body/OpenLevel") as TextButton).text, "Open level")
+
+
+class BrokenContent:
+	extends "res://services/content.gd"
+
+	func level_for_slot(_slot_number: int) -> LevelData:
+		pack_failed.emit("packs/broken.json", ERR_PARSE_ERROR)
+		return null
+
+
+func test_failed_override_then_changed_selection_and_controller_retry() -> void:
+	var screen: Node = _debug()
+	var original: Dictionary = _save.get_section(&"progress")
+	screen.select_next()
+	_storage.fail = true
+	assert_eq(screen.complete_selected(), ERR_FILE_CANT_WRITE)
+	assert_eq_deep(_save.get_section(&"progress"), original)
+	_storage.fail = false
+	screen.select_previous()
+	assert_eq(screen.complete_selected(), OK)
+	assert_true((_nav.mounted_screen() as LevelScreen).controller.is_complete())
+	assert_eq(_nav.go_debug(), OK)
+	screen = _debug()
+	screen.select_next()
+	_storage.fail_from = _storage.writes + 2
+	assert_eq(screen.complete_selected(), ERR_FILE_CANT_WRITE)
+	var level: LevelScreen = _nav.mounted_screen() as LevelScreen
+	assert_not_null(level)
+	assert_true(level.status_label.visible)
+	assert_false(level.completion_layer.visible)
+	var revealed: int = level.controller.get_board().revealed_cells().size()
+	_storage.fail_from = 0
+	level.hint_button.pressed.emit()
+	assert_eq(level.controller.get_board().revealed_cells().size(), revealed)
+	for _index: int in 12:
+		if not level.controller.is_complete():
+			level.hint_button.pressed.emit()
+	assert_true(level.completion_layer.visible)
+	assert_eq(int(_storage.document["progress"]["by_lang"]["pl"]["current_slot"]), 3)
+
+
+func test_broken_pack_and_earlier_uncompleted_slot_rejected() -> void:
+	var broken: BrokenContent = BrokenContent.new()
+	add_child_autofree(broken)
+	assert_eq(broken.load_manifest("pl", "res://tests/fixtures/content"), OK)
+	var screen: Node = DEBUG_SCENE.instantiate()
+	screen.configure(_save, broken, _nav)
+	add_child_autofree(screen)
+	watch_signals(broken)
+	var writes: int = _storage.writes
+	screen.toggle_answers()
+	assert_signal_emitted(broken, "pack_failed")
+	assert_false((screen.get_node("Safe/Body/Answers") as Label).visible)
+	assert_eq(screen.complete_selected(), ERR_FILE_NOT_FOUND)
+	assert_eq(_storage.writes, writes)
+	var section: Dictionary = _save.get_section(&"progress")
+	section["by_lang"]["pl"]["current_slot"] = 2
+	assert_eq(_save.set_section(&"progress", section), OK)
+	assert_eq(_save.flush(), OK)
+	var normal: Node = _debug()
+	writes = _storage.writes
+	assert_eq(normal.complete_selected(), ERR_INVALID_PARAMETER)
+	assert_same(_nav.mounted_screen(), normal)
+	assert_eq(_storage.writes, writes)
+
+
+func test_last_cell_failure_reports_error_until_durable_retry() -> void:
+	var screen: Node = _debug()
+	_storage.fail_from = _storage.writes + 3
+	assert_eq(screen.complete_selected(), ERR_FILE_CANT_WRITE)
+	var level: LevelScreen = _nav.mounted_screen() as LevelScreen
+	assert_true(level.controller.is_complete())
+	assert_false(level.completion_layer.visible)
+	assert_eq(int(_storage.document["progress"]["by_lang"]["pl"]["current_slot"]), 1)
+	_storage.fail_from = 0
+	level.hint_button.pressed.emit()
+	assert_true(level.completion_layer.visible)
+	assert_eq(int(_storage.document["progress"]["by_lang"]["pl"]["current_slot"]), 2)

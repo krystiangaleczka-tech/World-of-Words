@@ -147,11 +147,17 @@ func complete_selected() -> Error:
 		_level_failed = true
 		_refresh_copy()
 		return ERR_FILE_NOT_FOUND
-	var section: Dictionary = _save.get_section(&"progress")
+	var original: Dictionary = _save.get_section(&"progress")
+	var section: Dictionary = original.duplicate(true)
 	var language: String = str(_save.get_setting(&"language"))
 	var state: Dictionary = section["by_lang"].get(
 		language, SaveSchema.LANGUAGE_STATE.duplicate(true)
 	)
+	if (
+		_selected < int(state.get("current_slot", 1))
+		and _selected > int(state.get("highest_completed_slot", 0))
+	):
+		return _level_error(ERR_INVALID_PARAMETER)
 	var error: Error = OK
 	if _selected > int(state.get("current_slot", 1)):
 		state["current_slot"] = _selected
@@ -160,35 +166,40 @@ func complete_selected() -> Error:
 		error = _save.set_section(&"progress", section)
 	if error == OK:
 		error = _save.flush()
-	if error == OK:
+	if error != OK:
+		_save.set_section(&"progress", original)
+	else:
 		error = _nav.go_to_level(_selected)
 	if error != OK:
-		_level_failed = true
-		_refresh_copy()
-		return error
+		return _level_error(error)
 	var screen: LevelScreen = _nav.mounted_screen() as LevelScreen
 	if screen == null:
 		return ERR_UNAVAILABLE
+	var cells: Array[Vector2i] = []
+	for index: int in level.word_count():
+		for cell: Vector2i in level.word_cells(index):
+			if cell not in cells:
+				cells.append(cell)
 	# Earlier slots already have durable completion history. Hydrate that board up to
 	# the final cell, then use the controller for the final reveal and normal effects.
 	# This avoids save_level(), which correctly rejects an earlier active snapshot.
-	if _selected < int(state.get("current_slot", 1)):
-		var cells: Array[Vector2i] = []
-		for index: int in level.word_count():
-			for cell: Vector2i in level.word_cells(index):
-				if cell not in cells:
-					cells.append(cell)
+	if _selected <= int(state.get("highest_completed_slot", 0)):
 		for index: int in maxi(cells.size() - 1, 0):
 			screen.controller.get_board().reveal_cell(cells[index])
-	var attempts: int = 1
-	for index: int in level.word_count():
-		attempts += level.word_cells(index).size()
+	var attempts: int = cells.size() + 1
 	for _index: int in attempts:
 		if screen.controller.is_complete():
 			break
 		if not screen.controller.hint():
-			return ERR_FILE_CANT_WRITE
-	return OK if screen.controller.is_complete() else ERR_UNAVAILABLE
+			error = ERR_FILE_CANT_WRITE
+			break
+	return error if error != OK else (OK if screen.controller.is_complete() else ERR_UNAVAILABLE)
+
+
+func _level_error(error: Error) -> Error:
+	_level_failed = true
+	_refresh_copy()
+	return error
 
 
 ## @api First press only opens confirmation; no Save mutation.

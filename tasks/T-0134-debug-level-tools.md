@@ -8,7 +8,7 @@ risk: low
 executor: sol
 think: low
 ui: low
-status: blocked
+status: review
 depends_on: [T-0048, T-0118]
 touch:
   - game/features/debug/debug.gd
@@ -17,7 +17,7 @@ touch:
   - tasks/T-0134-debug-level-tools.md
   - tasks/T-0118-level-completion.md
   - tasks/T-0122-pl-annotate.md
-revision: 1
+revision: 2
 ---
 
 ## Goal
@@ -40,8 +40,8 @@ Make the P1 debug screen useful for device QA: select any shipped slot, show its
 ## Specification
 1. In debug builds initialize selection to the mounted slot clamped to shipped content. Previous/Next stay inside 1..slot_count; changing selection performs no save writes or navigation and hides old answers. Disable boundary actions and every level action when content is unavailable.
 2. Open uses injected Nav.go_to_level(selected). Show answers toggles a translated label containing only the selected level's declared words; no generated dictionary or bonus mutation. Failed pack load shows a translated retryable error, never stale answers.
-3. Complete is an explicit developer progress override: for a selected slot ahead of current progress, set only current_slot and clear level_state for the current language, preserving all other sections and completed history. Flush before navigating; failure stays in Debug with an error and allows retry. Opening a slot alone never performs this override.
-4. Mount the selected LevelScreen through injected Nav, then reveal through its existing controller.hint() until complete. Limit attempts to occupied-cell count plus one durability retry, stop on first failure, and leave LevelScreen's existing persistence error retry path available. No economy grants or new events; normal controller effects apply. Completing an earlier replay never moves saved progress backwards.
+3. Complete is an explicit developer progress override: for a selected slot ahead of current progress, set only current_slot and clear level_state for the current language, preserving all other sections and completed history. Flush before navigating; failure restores the original in-memory progress section, stays in Debug with an error and allows retry. Opening a slot alone never performs this override.
+4. Reject earlier slots without durable completion history before navigation. For previously completed replays, hydrate all but the last occupied cell from that history without Save writes. Mount the selected LevelScreen through injected Nav, then finish through its existing controller.hint(); current/future slots reveal through controller.hint() until complete. Limit attempts to occupied-cell count plus one durability retry, stop on first failure, and leave LevelScreen's existing persistence error retry path available. No economy grants or new events; normal controller effects apply. Completing an earlier replay never moves saved progress backwards.
 5. All player-visible debug copy uses debug CSV keys. Labels wrap. Previous/Next share a row with selection. Existing confirmation/reset/Home behavior remains. Disconnect manually connected new signals on exit. Guard callable actions with OS.is_debug_build().
 6. Record only merged status bookkeeping for T-0118/T-0122; no other task or ROADMAP edits.
 
@@ -56,14 +56,9 @@ File: game/tests/integration/test_debug_level_tools.gd
 Pinned Godot 4.7.2 make check, task lint, scope, independent fresh review and CI pass. Actual REGULAR/PL runtime screenshot inspected. One task branch and PR; no cheap-executor provenance claimed.
 
 ## Escalation log
-S4 pending: independent review found that item 4 excludes the direct BoardState
-hydration needed for previously completed replays. Proposed revision: hydrate
-all but the final cell only when selected_slot <= highest_completed_slot;
-let controller.hint() handle the final durable completion and normal effects.
-An earlier slot with no durable completion history returns a translated error
-before navigation; it never regresses current progress. Chris approval requested.
-
-Review also requires restoring the original in-memory progress section if the
-pre-navigation override flush fails, counting unique occupied cells, and adding
-failed-pack and controller-flush-failure coverage. These fixes are prepared for
-the next execution round after S4 resolution. Current draft must not merge.
+S4 resolved: Chris approved the proposed replay specification clarification by
+replying "kontynuuj" on 2026-10-09. Revision 2 explicitly permits read-only
+hydration of previously completed replays and rejects earlier uncompleted slots
+before navigation. Failed override flush restores the original in-memory section.
+Required regression coverage includes changed selection after failed override,
+failed pack loading, and controller-phase durability failure/retry.
