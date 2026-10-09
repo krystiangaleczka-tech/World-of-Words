@@ -31,13 +31,13 @@ Add the third P1 stage: lemma, POS, inflection and nullable frequency evidence f
 - tasks/ROADMAP.md T-0122; docs/CONTENT.md#stages-and-artifacts — annotation stage.
 - docs/decisions/0008-pl-word-sources.md: Morfeusz SGJP, KWJP100 orth_lc/lemma lists, nullable frequency; no usable lemma means at most bonus_ok.
 - docs/decisions/0004-language-rules-pl.md: Polish diacritics and word rules.
-- AGENTS.md S7 requires a stop for a new dependency; the optional Morfeusz package is pending explicit approval.
+- AGENTS.md S7: Chris approved the optional Morfeusz dependency on 2026-10-09 ("Rób").
 
 ## Current state
-T-0121 supplies normalized sorted uppercase forms and pinned SJP provenance; StageHandler and canonical artifacts exist. CLI registers ingest/normalize only. Morfeusz is absent from the project. PyPI offers morfeusz2 1.99.15, SGJP dictionary id sgjp-2026.06.01 visible in the pinned Linux wheel. KWJP repository full commit is 26d82bd8b906dfed1cfcf8f903b1650b56daeabf; both chosen gzipped CSVs have named ARF/ipm columns and unique word or (lemma, POS) keys.
+T-0121 supplies normalized sorted uppercase forms and pinned SJP provenance; StageHandler and canonical artifacts exist. CLI registers ingest/normalize only. Morfeusz is absent from the project. PyPI offers morfeusz2 1.99.15, SGJP dictionary date 2026.06.01 visible in the pinned Linux wheel; the verified native dictionary ID is pl.sgjp.sgjp-2026.06.01. KWJP repository full commit is 26d82bd8b906dfed1cfcf8f903b1650b56daeabf; both chosen gzipped CSVs have named ARF/ipm columns and unique word or (lemma, POS) keys.
 
 ## Specification
-1. After approval only, add optional dependency annotate = [morfeusz2==1.99.15] and update uv.lock. Default installs and CI remain stdlib-only; invoke real builds with uv run --extra annotate. No other dependency or project/game setting change.
+1. After approval only, add optional dependency annotate = [morfeusz2==1.99.15] and update uv.lock. Default installs and CI remain stdlib-only; invoke real builds from the workspace root with uv run --all-packages --extra annotate. No other dependency or project/game setting change.
 2. Pin engine version/dictionary id/date and KWJP full commit, URLs, SHA256, sizes and CC BY 4.0 provenance in sources/annotation-pl.json. Verify the loaded engine/dictionary identity before downloads or artifacts. Verify downloaded/cached frequency bytes before use; cache under ignored build/pl/sources, atomic writes only. No floating latest sources or committed raw corpus.
 3. Parse gzip CSVs strictly, keeping ARF and IPM as finite nonnegative numeric metrics. Orthographic keys and lemma/POS keys remain separate. Missing exact form or lemma frequency is null; never substitute a more frequent homonym or use frequency as validity.
 4. Inject an analyzer protocol for offline tests. Analyze original normalized forms with pinned Morfeusz SGJP ignoring case, generation disabled. Keep all deterministic sorted unique whole-form interpretations; do not attach partial DAG segment lemmas to the entire word. Discard unknown ign interpretations; retain raw lemma, canonical NFC uppercase lemma, POS, full tag, source names/labels and inflection flag. Preserve homonym numbering in lemma_raw while stripping it only for canonical frequency lookup. Do not guess proper-name status or sensitivity; metadata remains evidence for T-0123.
@@ -56,4 +56,11 @@ pipeline/tests/annotate/test_annotate.py:
 Required tests, pinned Godot 4.7.2 make check, task lint/scope and independent review pass. Real-data coverage/rebuild evidence only after dependency approval. One task/branch/PR; actual Codex provenance recorded.
 
 ## Escalation log
-S7: proposed optional morfeusz2==1.99.15 (SGJP 2026.06.01). Approval requested through clarification tool. Do not add/install the dependency, execute native engine code or merge this task until approved. Read-only source inspection and independent stdlib adapters/tests can proceed.
+S7 resolved: Chris approved optional morfeusz2==1.99.15 (SGJP 2026.06.01) on 2026-10-09, replying "Rób" to the concrete dependency proposal. Native activation, verification and final merge may proceed within this scope.
+
+S2/S5 pending: native CLI registration makes the existing ingest CLI test’s
+`annotate is not implemented` expectation obsolete. Proposed exact correction:
+change its `--to annotate` and error expectation to `tiers` (two lines in
+`pipeline/tests/ingest/test_ingest.py`). No ingest behavior changes. This file
+is outside touch; authorization to add it and apply the correction was requested.
+The test remains unchanged and PR remains draft pending that answer.

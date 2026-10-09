@@ -38,7 +38,9 @@ def load_pin(root: Path) -> dict[str, object]:
         raise ValueError("Invalid Morfeusz version")
     if not _matches(morphology["dictionary_date"], r"[0-9]{4}-[0-9]{2}-[0-9]{2}"):
         raise ValueError("Invalid SGJP dictionary date")
-    if morphology["dictionary_id"] != "sgjp-" + morphology["dictionary_date"].replace("-", "."):
+    if morphology["dictionary_id"] != "pl.sgjp.sgjp-" + morphology["dictionary_date"].replace(
+        "-", "."
+    ):
         raise ValueError("SGJP dictionary identity/date mismatch")
     if morphology["source_url"] != "https://morfeusz.sgjp.pl/":
         raise ValueError("Unselected morphology source")

@@ -4,6 +4,9 @@ version = "0.1.0"
 requires-python = ">=3.11"
 dependencies = []
 
+[project.optional-dependencies]
+annotate = ["morfeusz2==1.99.15"]
+
 [project.scripts]
 wg = "wordgame_pipeline.cli:main"
 

@@ -1,16 +1,16 @@
-# T-0122 — annotation preparation, pending dependency approval
+# T-0122 — pinned Polish annotation
 
-Status: blocked by AGENTS S7. Prepared by Codex on 2026-10-09.
-No real morphology run, completed-task claim or cheap-executor evidence is asserted.
+Implemented and verified by Codex on 2026-10-09. Chris approved the optional
+`morfeusz2==1.99.15` dependency (AGENTS S7) by replying "Rób".
 
-## Sources inspected read-only
+## Engine and source identity
 
-Morfeusz PyPI metadata offers `morfeusz2==1.99.15`. The Linux wheel SHA-256 is
+The native engine reports version `1.99.15` and dictionary ID
+`pl.sgjp.sgjp-2026.06.01`. The adapter checks both before fetching frequency
+sources or writing artifacts. It loads SGJP with generation disabled and
+case ignored. The pinned Linux wheel SHA-256 is
 `089a83ab03a137a57e23d9d42028d80b8858d1a4de78f1db86a18ba504400a98`.
-The archive contains the API wrapper and native libraries; static inspection of the embedded
-dictionary string yields `sgjp-2026.06.01` and the SGJP BSD copyright/disclaimer.
-The wheel has not been installed and native code has not been executed.
-The loaded engine/dictionary identity still requires verification after approval.
+NOTICE includes the engine and SGJP BSD notices and KWJP attribution.
 
 KWJP100 repository: `https://github.com/ipipan/kwjp100-varia`.
 Pinned commit: `26d82bd8b906dfed1cfcf8f903b1650b56daeabf`.
@@ -20,28 +20,48 @@ Pinned commit: `26d82bd8b906dfed1cfcf8f903b1650b56daeabf`.
 | `kwjp100-slowa-orth_lc-all.csv.gz` | 5870924 | `20f71004b99ba9ebb158e68360aa88c627aa2e0f4ce43e18979187b0a2fa3949` | 360472 |
 | `kwjp100-slowa-lemma-all.csv.gz` | 3133438 | `5206e80669a054ad4d3c9d39b7643d13e75435afa3612a15d2847f39f42bb5fc` | 184917 |
 
-Both downloaded files were parsed by the new strict parser; ARF/IPM values are finite and
-nonnegative, and exact keys are unique. The first file keys forms; the second keys (lemma, POS).
-No raw or derived corpus is committed. NOTICE records attribution and modification notices.
+Verified cached gzip bytes are parsed strictly. ARF/IPM values must be finite
+and nonnegative, with unique exact form or (lemma, POS) keys. Missing joins
+remain null. Corpus-only forms never become valid words.
 
-## Prepared implementation
+## Full-source verification
 
-- Strict, checksum-verified frequency cache/parser and nullable exact joins.
-- An injected analyzer protocol and pure interpretation mapping. Whole-form SGJP interpretations
-  preserve raw homonyms, tags, names/labels and inflection; partial DAG segments and `ign` are excluded.
-- Annotation records exactly match the normalized source forms. Corpus-only words cannot enter
-  gameplay validity; no tier or commonness decision is made.
-- A stage handler supports canonical artifact repeat/resume and identity checks with offline fakes.
+Input: T-0121's 450122 normalized SJP forms (snapshot 20260901, lengths 3–8).
+With the existing ingest and normalize artifacts, execute from repository root:
 
-Four offline behavior tests pass, with fixed synthetic gzip inputs and injected byte fetchers/analyzer.
-No tests perform network I/O or execute Morfeusz. Pure adapters do not require an additional package.
+```sh
+uv run --all-packages --extra annotate wg build --lang pl --from annotate --to annotate
+```
 
-Prepared adapter tree: pinned Godot 4.7.2 `make check` passed (187 GUT, 148 pipeline,
-81 tools tests). This validates the preparation, not the pending native backend or full-source stage.
+Two consecutive executions completed successfully and produced byte-identical
+`pipeline/build/pl/03-annotate/artifact.json`:
 
-## Remaining before completion
+- Size: 136320433 bytes.
+- SHA-256: `880fc18ec5a81287028b7a7487c01d661b4c75c0f987efc0476e0e902727b47d`.
+- Source forms: 450122; forms with usable lemma: 360250.
+- Unique canonical lemmas: 67182; forms with exact form frequency: 109506.
 
-Approve optional `annotate = [morfeusz2==1.99.15]`; then update the dependency/lock, implement native
-backend binding and register the CLI stage. Verify actual loaded engine/SGJP identity and BSD notice,
-run all normalized SJP forms through the pinned sources, measure actual coverage and repeat for
-byte-identical artifacts. Run final full checks and independent review before merging.
+All whole-form interpretations retain raw homonyms, full tags, names/labels,
+canonical lemma, POS and inflection evidence. Partial DAG segments and `ign`
+interpretations are excluded. Each input form has exactly one output record;
+empty analyses and nullable frequency are explicit. Annotation assigns no
+validity, eligibility or tier. The full default CLI build now stops preflight
+at the unimplemented tiers stage.
+
+## Automated verification
+
+Five annotation behavior tests use authored gzip data and injected engines or
+fetchers, without network access or the optional native package. They cover
+strict parsing, nullable exact joins, ambiguity and whole-form identity, exact
+source membership, repeat/resume, identity failures before downloads/writes,
+and native loader/CLI registration. The existing contract test changes only
+the first unimplemented stage expectation.
+
+Pinned Godot 4.7.2 default-install checks: 187 GUT tests passed, 148 pipeline
+tests passed and one legacy ingest CLI assertion failed because it still expects
+annotation to be unimplemented. The proposed two-line update uses the next
+unimplemented stage, tiers; AGENTS S2/S5 authorization is pending because that
+test file is outside touch. Separately, 81 tools tests, registries and task lint
+passed. Independent fresh code review found no additional material blockers;
+final approval and green full checks remain required before merging. Raw corpora
+and the generated artifact stay ignored.

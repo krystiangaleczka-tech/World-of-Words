@@ -2,7 +2,7 @@
   "morphology": {
     "package": "morfeusz2",
     "version": "1.99.15",
-    "dictionary_id": "sgjp-2026.06.01",
+    "dictionary_id": "pl.sgjp.sgjp-2026.06.01",
     "dictionary_date": "2026-06-01",
     "linux_wheel_sha256": "089a83ab03a137a57e23d9d42028d80b8858d1a4de78f1db86a18ba504400a98",
     "license": "BSD-2-Clause",

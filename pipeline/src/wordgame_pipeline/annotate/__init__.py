@@ -1,4 +1,4 @@
-"""Annotation stage preparation; native backend activation awaits T-0122 S7 approval."""
+"""Pinned annotation stage; native engine is loaded only when this handler executes."""
 
 from pathlib import Path
 
@@ -7,7 +7,19 @@ from ..ingest.source import load_pin as load_sjp_pin
 from ..stages import StageHandler
 from .core import Analyzer, annotate_words
 from .frequency import Frequency
-from .sources import verify_engine
+from .native import load_native
+from .sources import load_frequency, load_pin, verify_engine
+
+
+def handlers_for(root: Path) -> dict[str, StageHandler]:
+    def annotate(config: LanguageConfig, previous: object) -> object:
+        pin = load_pin(root)
+        analyzer = load_native(pin)
+        forms = load_frequency(root, pin, "orth")
+        lemmas = load_frequency(root, pin, "lemma")
+        return make_handler(root, analyzer, pin, forms, lemmas)(config, previous)
+
+    return {"annotate": annotate}
 
 
 def make_handler(

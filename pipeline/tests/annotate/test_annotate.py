@@ -6,12 +6,15 @@ import hashlib
 import json
 import shutil
 from pathlib import Path
+from types import ModuleType
 
 import pytest
 from wordgame_pipeline.annotate import make_handler
 from wordgame_pipeline.annotate.core import annotate_words
 from wordgame_pipeline.annotate.frequency import Frequency, parse_frequency
+from wordgame_pipeline.annotate.native import load_native
 from wordgame_pipeline.annotate.sources import load_frequency, load_pin, verify_engine
+from wordgame_pipeline.cli import main
 from wordgame_pipeline.config import load_config
 from wordgame_pipeline.ingest.source import load_pin as load_sjp_pin
 from wordgame_pipeline.stages import run_build
@@ -21,7 +24,7 @@ PIPELINE = Path(__file__).parents[2]
 
 class FakeAnalyzer:
     version = "1.99.15"
-    dictionary_id = "sgjp-2026.06.01"
+    dictionary_id = "pl.sgjp.sgjp-2026.06.01"
 
     def __init__(self, reversed_order=False):
         self.reversed_order = reversed_order
@@ -174,3 +177,72 @@ def test_stage_artifacts_and_identity_failures(tmp_path):
         (tmp_path / "sources" / "annotation-pl.json").write_text(json.dumps(altered))
         with pytest.raises(ValueError):
             load_pin(tmp_path)
+
+
+def test_native_loader_and_cli_registration(tmp_path, monkeypatch, capsys):
+    import wordgame_pipeline.annotate as annotation
+
+    config, pin = workspace(tmp_path)
+    settings = []
+    module = ModuleType("fixture_morfeusz")
+    module.__version__ = "1.99.15"
+    module.IGNORE_CASE = 99
+
+    class Engine:
+        def __init__(self, **kwargs):
+            settings.append(kwargs)
+
+        def dict_id(self):
+            return pin["morphology"]["dictionary_id"]
+
+        def analyse(self, word):
+            return FakeAnalyzer().analyse(word)
+
+    module.Morfeusz = Engine
+    analyzer = load_native(pin, lambda _name: module)
+    assert settings == [{"dict_name": "sgjp", "generate": False, "case_handling": 99}]
+    assert analyzer.analyse("kot") == FakeAnalyzer().analyse("kot")
+
+    def missing(_name):
+        raise ImportError("not installed")
+
+    with pytest.raises(ValueError, match="--extra annotate"):
+        load_native(pin, missing)
+    module.__version__ = "999"
+    with pytest.raises(ValueError, match="version mismatch"):
+        load_native(pin, lambda _name: module)
+    assert len(settings) == 1, "version mismatch fails before constructing native engine"
+    module.__version__ = "1.99.15"
+    previous = {"source": load_sjp_pin(tmp_path).to_dict(), "words": ["DOMU", "KOT"]}
+    handlers = {name: lambda _cfg, _prior: previous for name in ("ingest", "normalize")}
+    run_build(tmp_path, config, handlers, last="normalize")
+    calls = []
+    monkeypatch.setattr(annotation, "load_native", lambda _pin: load_native(_pin, lambda _: module))
+    monkeypatch.setattr(
+        annotation, "load_frequency", lambda _root, _pin, kind: calls.append(kind) or {}
+    )
+    args = [
+        "build",
+        "--root",
+        str(tmp_path),
+        "--lang",
+        "pl",
+        "--from",
+        "annotate",
+        "--to",
+        "annotate",
+    ]
+    assert main(args) == 0
+    assert calls == ["orth", "lemma"]
+    path = tmp_path / "build" / "pl" / "03-annotate" / "artifact.json"
+    original = path.read_bytes()
+    assert [entry["word"] for entry in json.loads(original)["payload"]["records"]] == [
+        "DOMU",
+        "KOT",
+    ]
+    calls.clear()
+    module.__version__ = "999"
+    assert main(args) == 1
+    assert "version mismatch" in capsys.readouterr().err
+    assert calls == [], "identity verification precedes source downloads"
+    assert path.read_bytes() == original
