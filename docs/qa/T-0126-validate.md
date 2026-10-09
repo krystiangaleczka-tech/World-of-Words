@@ -1,33 +1,37 @@
-# T-0126 — prepared validation alternative
+# T-0126 — full schema and hard content validation
 
 Implemented by Codex on 2026-10-09 from main c3a2638 (T-0125 merged).
-The clean baseline passed pinned Godot 4.7.2 `make check` before implementation.
+Chris approved jsonschema==4.26.0 plus its resolved dependencies on 2026-10-09
+("Zatwierdzam"). The original full Draft 2020-12 contract is implemented.
 
-## Evidence
+## Backend and offline behavior
 
-Four authored offline behavior tests cover schema assertions/references and
-fail-closed unsupported vocabulary, integral JSON numbers, conditional campaign/
-daily and landmark rules, tile multiplicity, tier membership, complete bonus
-sets, spelling, placement geometry, identity and handmade intent.
+SchemaRegistry(root) loads and meta-validates the level, pack and manifest schemas
+once, registers their local IDs and rejects retrieval of unknown resources.
+validate_schema(name, document) uses jsonschema's Draft202012Validator; fragment
+validation retains the parent level resource for local references. Programmatic
+values must be finite JSON, with string object keys and no cycles. Integral JSON
+numbers remain valid integers; booleans are rejected as coordinates and slots.
+Errors report deterministic paths/reasons as ValueError.
 
-A fixture containing one automatic wheel (KOT selected, TOK bonus) is validated
-through the real artifact runner and CLI. Repeating the stage yields identical
-bytes. Invalid bonuses and stale provenance preserve the prior artifact. A
-handmade YAML fixture verifies that authored slots cannot disappear and the
-validated record retains its intended words and bonuses.
+validate_level checks complete exported objects against their shared schema plus
+source-tier membership, tile multiplicity, exact sorted bonus sets, placements,
+matching grid dimensions and connected portrait geometry with no accidental runs.
+validate_grid_entry applies the same semantics and available schema properties
+without manufacturing final IDs, landmark flags or difficulty. Final eight-tile
+landmark gating remains required at export. Handmade content has identical hard
+gates and retains authored membership, words, expected bonuses and explicit layout.
 
-These are fixture checks, not a native full-corpus run. No source corpus or
-shipped game content changed. Export remains unimplemented. Final pinned Godot 4.7.2 `make check` passed: 199 GUT, 165 pipeline and
-81 tools tests, with formatting/lint and registries green. Task lint passes.
-Committed scope passed. An independent fresh reviewer approved exact commit
-`f61171ea1fd42ec6c18efc11d26f8180ca4ea89e` with no remaining material blockers.
-The discovered large-integer overflow was fixed and a positive regression added;
-full checks were rerun successfully after that fix.
+## Automated evidence
 
-## Pending contract decision
+The four required tests exercise local schema cross-references, full-Draft `not`,
+meta-schema failures, unknown/cyclic references, invalid/nonfinite programmatic JSON,
+large integer seeds, repeated deterministic error paths, campaign/daily and
+landmark rules, spelling/tile overuse, tiers, missing/extra bonuses, geometry,
+identity and handmade intent. Fixture stage/CLI runs repeat byte-identically;
+malformed artifacts, duplicate IDs and stale provenance leave prior output intact.
 
-The existing remote draft task requests a full Draft 2020-12 jsonschema backend
-and waits for S7 dependency approval. This independently reviewed prepared
-alternative uses a finite-vocabulary backend and therefore is not completion
-of that original contract. It remains draft pending explicit adoption (S4), or
-replacement of the schema adapter once the original dependency is approved.
+Full pinned Godot 4.7.2 `make check` passes: 199 GUT, 165 pipeline and
+81 tools tests; formatting/lint, registries and task lint pass. Actual source-stage
+counts/hashes are recorded below once the full native run completes. Corpora and generated artifacts remain ignored; game content
+and runtime settings are unchanged. Export and P2 sequencing/locks remain later tasks.

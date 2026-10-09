@@ -12,7 +12,12 @@ from wordgame_pipeline.candidates.core import WordIndex
 from wordgame_pipeline.cli import main
 from wordgame_pipeline.config import TierRules, canonical_bytes, load_config
 from wordgame_pipeline.stages import run_build
-from wordgame_pipeline.validate import Schemas, handlers_for, validate_grid, validate_level
+from wordgame_pipeline.validate import (
+    SchemaRegistry,
+    handlers_for,
+    validate_grid_entry,
+    validate_level,
+)
 
 PIPELINE = Path(__file__).parents[2]
 
@@ -58,18 +63,18 @@ def grid():
     }
 
 
-def test_schema_vocabulary_and_fail_closed(tmp_path):
-    schemas = Schemas(PIPELINE / "schema")
+def test_shared_schema_validation(tmp_path):
+    schemas = SchemaRegistry(PIPELINE)
     good = level()
-    schemas.validate("level", good)
+    schemas.validate_schema("level", good)
     good["slot"] = 1.0
     good["words"][0]["x"] = 0.0
     validate_level(good, index(), schemas)
     good["seed"] = 10**400
     validate_level(good, index(), schemas)
     pack = {"schema_version": 1.0, "lang": "pl", "kind": "campaign", "levels": [good]}
-    schemas.validate("pack", pack)
-    schemas.validate(
+    schemas.validate_schema("pack", pack)
+    schemas.validate_schema(
         "manifest",
         {
             "schema_version": 1,
@@ -91,11 +96,11 @@ def test_schema_vocabulary_and_fail_closed(tmp_path):
     daily = copy.deepcopy(good)
     daily["id"] = "pl-d-000001"
     with pytest.raises(ValueError):
-        schemas.validate("level", daily)
+        schemas.validate_schema("level", daily)
     del daily["slot"]
-    schemas.validate("level", daily)
+    schemas.validate_schema("level", daily)
     with pytest.raises(ValueError):
-        schemas.validate("pack", {**pack, "levels": [daily]})
+        schemas.validate_schema("pack", {**pack, "levels": [daily]})
     for field, value in (
         ("slot", True),
         ("seed", 1.5),
@@ -105,38 +110,60 @@ def test_schema_vocabulary_and_fail_closed(tmp_path):
         ("id", "pl-c-000001\n"),
     ):
         with pytest.raises(ValueError):
-            schemas.validate("level", {**level(), field: value})
+            schemas.validate_schema("level", {**level(), field: value})
+    for invalid in (
+        {**level(), "extra": {"value": float("nan")}},
+        {**level(), "letters": tuple("KOT")},
+        {**level(), 1: "bad"},
+    ):
+        with pytest.raises(ValueError, match="JSON"):
+            schemas.validate_schema("level", invalid)
+    invalid = {**level(), "seed": True}
+    messages = []
+    for _ in range(2):
+        with pytest.raises(ValueError) as error:
+            schemas.validate_schema("level", invalid)
+        messages.append(str(error.value))
+    assert messages[0] == messages[1] and "$/seed" in messages[0]
     for field in good:
         invalid = level()
         del invalid[field]
         with pytest.raises(ValueError):
-            schemas.validate("level", invalid)
+            schemas.validate_schema("level", invalid)
     eight = {**level(), "letters": list("AAAKOTYZ")}
     with pytest.raises(ValueError):
-        schemas.validate("level", eight)
-    schemas.validate("level", {**eight, "landmark": True})
+        schemas.validate_schema("level", eight)
+    schemas.validate_schema("level", {**eight, "landmark": True})
     shutil.copytree(PIPELINE / "schema", tmp_path / "schema")
     path = tmp_path / "schema/level.schema.json"
     original = path.read_text()
-    for update in (
-        {"not": {}},
-        {"properties": {"letters": {"$ref": "https://invalid/schema"}}},
-        {"properties": {"letters": {"$ref": "#/$defs/missing"}}},
-        {"properties": {"letters": {"$ref": "#"}}},
-    ):
-        path.write_text(json.dumps(json.loads(original) | update))
-        with pytest.raises(ValueError):
-            Schemas(tmp_path / "schema")
+    for reference in ("https://invalid/schema", "#/$defs/missing"):
+        modified = json.loads(original)
+        modified["properties"]["letters"] = {"$ref": reference}
+        path.write_text(json.dumps(modified))
+        with pytest.raises(ValueError, match="reference"):
+            SchemaRegistry(tmp_path).validate_schema("level", level())
+    path.write_text(json.dumps(json.loads(original) | {"$ref": "#"}))
+    with pytest.raises(ValueError, match="reference"):
+        SchemaRegistry(tmp_path).validate_schema("level", level())
+    invalid_schema = json.loads(original) | {"type": 3}
+    path.write_text(json.dumps(invalid_schema))
+    with pytest.raises(ValueError, match="invalid Draft"):
+        SchemaRegistry(tmp_path)
+    # A full-Draft keyword outside the old finite vocabulary is enforced.
+    path.write_text(json.dumps(json.loads(original) | {"not": {}}))
+    with pytest.raises(ValueError):
+        SchemaRegistry(tmp_path).validate_schema("level", level())
     path.write_text(original)
     modified = json.loads(original)
     modified["properties"]["bonus"]["maxItems"] = 0
     path.write_text(json.dumps(modified))
     with pytest.raises(ValueError):
-        Schemas(tmp_path / "schema").validate("level", level())
+        SchemaRegistry(tmp_path).validate_schema("level", level())
 
 
-def test_semantic_validation_rejects_invalid_content():
-    schemas = Schemas(PIPELINE / "schema")
+def test_level_semantics():
+    schemas = SchemaRegistry(PIPELINE)
     words = index()
     good = level()
     before = copy.deepcopy(good)
@@ -191,11 +218,11 @@ def test_semantic_validation_rejects_invalid_content():
         validate_level(repeated, words, schemas)
 
 
-def test_preexport_preserves_identity_and_handmade_intent():
-    schemas = Schemas(PIPELINE / "schema")
+def test_intermediate_and_handmade_validation():
+    schemas = SchemaRegistry(PIPELINE)
     entry = grid()
     original = copy.deepcopy(entry)
-    validate_grid(entry, index(), schemas, False)
+    validate_grid_entry(entry, index(), schemas, False)
     assert entry == original
     eight = {
         **entry,
@@ -203,13 +230,13 @@ def test_preexport_preserves_identity_and_handmade_intent():
         "bonus": ["AAA", "KOTY", "TOK"],
         "candidate_id": "pl-auto-AAAKOTYZ",
     }
-    validate_grid(eight, index(), schemas, False)
+    validate_grid_entry(eight, index(), schemas, False)
     assert "landmark" not in eight
     handmade = {k: v for k, v in entry.items() if k != "candidate_id"} | {
         "slot": 3,
         "expect_bonus": ["TOK"],
     }
-    validate_grid(handmade, index(), schemas, True)
+    validate_grid_entry(handmade, index(), schemas, True)
     for change in (
         {"expect_bonus": ["AAA"]},
         {"expect_bonus": ["TOK", "TOK"]},
@@ -219,12 +246,12 @@ def test_preexport_preserves_identity_and_handmade_intent():
         {"extra": 0},
     ):
         with pytest.raises(ValueError):
-            validate_grid({**handmade, **change}, index(), schemas, True)
+            validate_grid_entry({**handmade, **change}, index(), schemas, True)
     with pytest.raises(ValueError, match="identity"):
-        validate_grid({**entry, "candidate_id": "pl-auto-OTHER"}, index(), schemas, False)
+        validate_grid_entry({**entry, "candidate_id": "pl-auto-OTHER"}, index(), schemas, False)
 
 
-def test_stage_provenance_atomicity_and_determinism(tmp_path, capsys):
+def test_stage_provenance_and_atomicity(tmp_path, capsys):
     from wordgame_pipeline.annotate.sources import load_pin as annotation_pin
     from wordgame_pipeline.ingest.source import load_pin as source_pin
 
@@ -279,7 +306,13 @@ def test_stage_provenance_atomicity_and_determinism(tmp_path, capsys):
         )
         == 0
     )
-    for key in ("source", "tier_rules_sha256", "overrides_sha256", "handmade_sha256"):
+    for key in (
+        "source",
+        "annotation_sources",
+        "tier_rules_sha256",
+        "overrides_sha256",
+        "handmade_sha256",
+    ):
         original = previous[key]
         previous[key] = "bad"
         run_build(tmp_path, config, fake, "grid", "grid")
@@ -287,6 +320,19 @@ def test_stage_provenance_atomicity_and_determinism(tmp_path, capsys):
             run_build(tmp_path, config, handlers_for(tmp_path), "validate", "validate")
         assert path.read_bytes() == raw
         previous[key] = original
+    previous["automatic"].append(copy.deepcopy(previous["automatic"][0]))
+    run_build(tmp_path, config, fake, "grid", "grid")
+    with pytest.raises(ValueError, match="Duplicate"):
+        run_build(tmp_path, config, handlers_for(tmp_path), "validate", "validate")
+    assert path.read_bytes() == raw
+    previous["automatic"].pop()
+    grid_path = run_build(tmp_path, config, fake, "grid", "grid")[0]
+    original_grid = grid_path.read_bytes()
+    grid_path.write_bytes(original_grid + b" ")
+    with pytest.raises(ValueError, match="canonical"):
+        run_build(tmp_path, config, handlers_for(tmp_path), "validate", "validate")
+    assert path.read_bytes() == raw
+    grid_path.write_bytes(original_grid)
     previous["automatic"][0]["bonus"] = []
     run_build(tmp_path, config, fake, "grid", "grid")
     with pytest.raises(ValueError, match="complete"):

@@ -5,7 +5,7 @@ from collections import Counter
 from ..candidates.core import WordIndex
 from ..grid.geometry import validate_geometry
 from ..tiers.core import valid_word
-from .schema import Schemas, schema_errors
+from .schema import SchemaRegistry, json_value
 
 
 def semantics(level: dict, selected: list[str], index: WordIndex) -> None:
@@ -28,24 +28,24 @@ def semantics(level: dict, selected: list[str], index: WordIndex) -> None:
         raise ValueError("Declared grid dimensions do not match placements")
 
 
-def validate_level(level: object, index: WordIndex, schemas: Schemas) -> None:
-    schemas.validate("level", level)
+def validate_level(level: object, index: WordIndex, registry: SchemaRegistry) -> None:
+    registry.validate_schema("level", level)
     if level["id"].startswith("pl-c-") and int(level["id"][-6:]) != level["slot"]:
         raise ValueError("Campaign ID must match slot")
     prepared = {**level, "placements": level["words"]}
     semantics(prepared, [p["w"] for p in level["words"]], index)
 
 
-def validate_grid(level: object, index: WordIndex, schemas: Schemas, handmade: bool) -> None:
+def validate_grid_entry(
+    level: object, index: WordIndex, registry: SchemaRegistry, handmade: bool
+) -> None:
     common = {"letters", "words", "placements", "grid", "bonus", "seed"}
     identity = {"slot", "expect_bonus"} if handmade else {"candidate_id"}
     if not isinstance(level, dict) or set(level) != common | identity:
         raise ValueError("Invalid pre-export grid fields")
-    properties = schemas.documents["level"]["properties"]
+    json_value(level)
     for key in ("letters", "placements", "grid", "bonus", "seed"):
-        errors = schema_errors(level[key], properties["words" if key == "placements" else key])
-        if errors:
-            raise ValueError(f"Grid schema {key}: {'; '.join(errors)}")
+        registry.validate_fragment("level", "words" if key == "placements" else key, level[key])
     words = level["words"]
     if not isinstance(words, list) or any(not isinstance(w, str) for w in words):
         raise ValueError("Invalid selected word list")

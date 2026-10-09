@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: blocked
+status: review
 depends_on: [T-0125, T-0040]
 touch:
   - pipeline/src/wordgame_pipeline/validate/**
@@ -63,26 +63,11 @@ pipeline/tests/validate/test_validate.py:
 make check, scope/task lint, independent fresh review and all CI. Validate every actual full-source T-0125 grid candidate, repeat and report counts/hashes. No source dictionary replacement, runtime dictionary or exported packs.
 
 ## Escalation
-S7: Proposed direct jsonschema==4.26.0 runtime dependency plus its resolved dependency lock. This provides the actual Draft 2020-12 implementation rather than promoting the test-only partial evaluator. Package/version and official project metadata verified at https://pypi.org/project/jsonschema/4.26.0/. Pending Chris approval; no dependency change or implementation yet.
+S7 resolved: Chris approved jsonschema==4.26.0 and its resolved dependencies
+on 2026-10-09 by replying "Zatwierdzam" to the concrete dependency proposal.
+The original full Draft 2020-12 contract is selected; the finite-vocabulary
+alternative is replaced. QA documentation remains in the declared scope.
 
 ## Rollback
 Revert task commits and rebuild ignored validation artifacts. No runtime saves or shipped content changes.
 
-## Prepared alternative for approval
-
-A Codex implementation of the semantic/atomic validation gates and an offline
-finite-vocabulary schema evaluator is prepared on 2026-10-09. It adds no
-jsonschema dependency. Public alternative APIs are Schemas.validate(name, value),
-validate_grid(entry, index, schemas, handmade) and validate_level(level, index,
-schemas). Four authored behavior tests and full checks pass: 199 GUT, 165 pipeline,
-81 tools. Independent review approved local implementation f61171e; QA evidence
-is in docs/qa/T-0126-validate.md (proposed scope addition).
-
-S4 decision pending: this alternative deliberately supports only the existing
-schema vocabulary, whereas specification item 1 requests full Draft 2020-12 via
-jsonschema. It does not satisfy that original requirement and must not merge as
-completed T-0126 until Chris approves either adopting the alternative contract
-(including its named APIs/tests and QA scope) or the original S7 dependency.
-If jsonschema is approved, retain the semantic gates and replace the schema
-adapter with the specified library/API, then rerun checks and independent review.
-No dependency added and no merge performed pending that choice.

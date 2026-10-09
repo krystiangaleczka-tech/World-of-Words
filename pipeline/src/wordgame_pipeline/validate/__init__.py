@@ -11,10 +11,10 @@ from ..config import LanguageConfig, TierRules, canonical_bytes, parse_json
 from ..grid.geometry import normalize
 from ..ingest.source import load_pin as source_pin
 from ..stages import P1_STAGES, StageHandler, read_artifact
-from .core import validate_grid, validate_level
-from .schema import Schemas
+from .core import validate_grid_entry, validate_level
+from .schema import SchemaRegistry
 
-__all__ = ["handlers_for", "validate_grid", "validate_level", "Schemas"]
+__all__ = ["handlers_for", "validate_grid_entry", "validate_level", "SchemaRegistry"]
 
 
 def handlers_for(root: Path) -> dict[str, StageHandler]:
@@ -42,7 +42,7 @@ def handlers_for(root: Path) -> dict[str, StageHandler]:
         authored, digest = load_handmade(root, index)
         if previous.get("handmade_sha256") != digest:
             raise ValueError("Stale handmade input provenance")
-        schemas = Schemas(root / "schema")
+        registry = SchemaRegistry(root)
         counts: dict[str, int] = {}
         for key in ("automatic", "handmade"):
             levels = previous.get(key)
@@ -50,7 +50,7 @@ def handlers_for(root: Path) -> dict[str, StageHandler]:
                 raise ValueError("Malformed validation collection")
             seen: set[str | int] = set()
             for level in levels:
-                validate_grid(level, index, schemas, key == "handmade")
+                validate_grid_entry(level, index, registry, key == "handmade")
                 identity = level["slot" if key == "handmade" else "candidate_id"]
                 if identity in seen:
                     raise ValueError("Duplicate grid identity")
@@ -77,7 +77,7 @@ def handlers_for(root: Path) -> dict[str, StageHandler]:
             "validation": {
                 "counts": counts,
                 "schema_sha256": {
-                    name: hashlib.sha256(raw).hexdigest() for name, raw in schemas.raw.items()
+                    name: hashlib.sha256(raw).hexdigest() for name, raw in registry.raw.items()
                 },
             },
         }

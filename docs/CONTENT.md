@@ -374,10 +374,14 @@ validation artifact is replaced; valid grid collections retain their ordering,
 identities and contents, with validation counts and schema hashes added.
 
 `wordgame_pipeline.validate.validate_level` applies the actual shared level schema
-and the same word/geometry rules to final level objects. The offline `Schemas`
-evaluator supports only the checked-in schema vocabulary and registered local
-references; unknown keywords or references fail closed. It is not a general Draft
-2020-12 implementation. No network or additional dependency is required.
+and the same word/geometry rules to final level objects. `SchemaRegistry(root)`
+meta-validates the three local schemas and uses pinned `jsonschema==4.26.0` for
+Draft 2020-12 validation. `validate_schema(name, document)` validates level, pack
+or manifest structure; `validate_grid_entry` applies common schema fragments and
+semantic checks to pre-export entries. Registered local references retain their
+root context; retrieval of unknown resources always fails without network access.
+Programmatic callers must supply finite JSON values. Errors expose deterministic
+paths and reasons as ValueError. All schemas are loaded once per stage.
 
 Before export, schema property rules apply to the available grid fields. IDs,
 sequencing, difficulty, landmark flags and packs are assigned by export, not by
