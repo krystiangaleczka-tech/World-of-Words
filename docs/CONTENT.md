@@ -136,6 +136,21 @@ candidates stage. The pipeline builds the grid, validates and exports.
   by hand.
 - `grid:` with explicit coordinates is optional, for a landmark whose layout matters.
 
+### P1 candidate artifact
+
+The candidates stage imports handmade YAML while bypassing automatic seed discovery for
+those entries. `automatic` contains one wheel per canonical sorted letter multiset,
+its stable `pl-auto-<signature>` candidate ID, sorted seeds, and complete `level_ok` /
+`bonus_ok` pools. The grid stage selects crossword words; remaining eligible words
+become bonus words. These are intermediate IDs, not exported level IDs.
+
+`handmade` contains slot, letters, selected words, complete bonus, expected bonus and
+optional `grid` placements (`[{w: KOT, x: 0, y: 0, dir: h}]`). Geometry is checked by
+subsequent grid/validation stages. Import rejects duplicate keys/slots, aliases,
+custom tags and multiple YAML documents. Source pins, rule/override hashes and a
+hash of sorted handmade paths plus exact bytes are carried into the artifact.
+Candidate pools can overlap; sequencing/export enforces the 100-slot repetition policy.
+
 ## Level schema
 
 One level is a JSON object. The schema lives in `pipeline/schema/level.schema.json` (T-0040) and is

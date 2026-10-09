@@ -494,6 +494,9 @@ dev = [
 name = "wow-pipeline"
 version = "0.1.0"
 source = { editable = "pipeline" }
+dependencies = [
+    { name = "pyyaml" },
+]
 
 [package.optional-dependencies]
 annotate = [
@@ -501,7 +504,10 @@ annotate = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "morfeusz2", marker = "extra == 'annotate'", specifier = "==1.99.15" }]
+requires-dist = [
+    { name = "morfeusz2", marker = "extra == 'annotate'", specifier = "==1.99.15" },
+    { name = "pyyaml", specifier = "==6.0.3" },
+]
 provides-extras = ["annotate"]
 
 [[package]]
