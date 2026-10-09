@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 from .annotate import handlers_for as annotation_handlers
+from .candidates import handlers_for as candidate_handlers
 from .config import load_config
 from .ingest import handlers_for
 from .stages import artifact_path, run_build, select_stages
@@ -35,6 +36,7 @@ def main(argv: list[str] | None = None) -> int:
                     **handlers_for(args.root),
                     **annotation_handlers(args.root),
                     **tier_handlers(args.root),
+                    **candidate_handlers(args.root),
                 },
                 args.first,
                 args.last,

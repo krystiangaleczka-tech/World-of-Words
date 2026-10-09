@@ -169,8 +169,8 @@ def test_stage_cli_build_and_resume(tmp_path, capsys):
     )
     assert result.returncode == 0, result.stderr
     assert result.stdout.strip() == "build/pl/sources/sjp-20260901.zip"
-    assert main([*args, "--to", "candidates"]) == 1
-    assert "candidates is not implemented" in capsys.readouterr().err
+    assert main([*args, "--to", "grid"]) == 1
+    assert "grid is not implemented" in capsys.readouterr().err
     assert [path.read_bytes() for path in paths] == original
     metadata_path = root / "sources" / "sjp-pl.json"
     metadata_path.write_text(json.dumps(pin.to_dict() | {"entry_count": 5}))

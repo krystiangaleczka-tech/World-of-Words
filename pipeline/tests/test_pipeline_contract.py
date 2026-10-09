@@ -153,7 +153,7 @@ def test_unimplemented_or_invalid_output_does_not_replace_artifact(tmp_path, cap
         run_build(root, config, {"ingest": lambda _config, _prior: []})
     assert not (root / "build").exists(), "preflight all handlers before executing any"
     assert main(["build", "--lang", "pl", "--root", str(root)]) == 1
-    assert "candidates is not implemented" in capsys.readouterr().err
+    assert "grid is not implemented" in capsys.readouterr().err
     assert not (root / "build").exists()
     path = run_build(root, config, fake_handlers(), last="ingest")[0]
     original = path.read_bytes()
