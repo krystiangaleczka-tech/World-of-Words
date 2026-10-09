@@ -169,8 +169,8 @@ def test_stage_cli_build_and_resume(tmp_path, capsys):
     )
     assert result.returncode == 0, result.stderr
     assert result.stdout.strip() == "build/pl/sources/sjp-20260901.zip"
-    assert main([*args, "--to", "annotate"]) == 1
-    assert "annotate is not implemented" in capsys.readouterr().err
+    assert main([*args, "--to", "tiers"]) == 1
+    assert "tiers is not implemented" in capsys.readouterr().err
     assert [path.read_bytes() for path in paths] == original
     metadata_path = root / "sources" / "sjp-pl.json"
     metadata_path.write_text(json.dumps(pin.to_dict() | {"entry_count": 5}))

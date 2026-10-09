@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: med
 ui: none
-status: blocked
+status: review
 depends_on: [T-0121]
 touch:
   - pipeline/src/wordgame_pipeline/annotate/**
@@ -18,6 +18,7 @@ touch:
   - uv.lock
   - pipeline/tests/annotate/**
   - pipeline/tests/test_pipeline_contract.py
+  - pipeline/tests/ingest/test_ingest.py
   - docs/qa/T-0122-annotate.md
   - NOTICE
   - tasks/T-0122-pl-annotate.md
@@ -58,9 +59,7 @@ Required tests, pinned Godot 4.7.2 make check, task lint/scope and independent r
 ## Escalation log
 S7 resolved: Chris approved optional morfeusz2==1.99.15 (SGJP 2026.06.01) on 2026-10-09, replying "Rób" to the concrete dependency proposal. Native activation, verification and final merge may proceed within this scope.
 
-S2/S5 pending: native CLI registration makes the existing ingest CLI test’s
+S2/S5 resolved: native CLI registration makes the existing ingest CLI test’s
 `annotate is not implemented` expectation obsolete. Proposed exact correction:
 change its `--to annotate` and error expectation to `tiers` (two lines in
-`pipeline/tests/ingest/test_ingest.py`). No ingest behavior changes. This file
-is outside touch; authorization to add it and apply the correction was requested.
-The test remains unchanged and PR remains draft pending that answer.
+`pipeline/tests/ingest/test_ingest.py`). No ingest behavior changes. Chris approved adding this file to touch and the exact two-line correction on 2026-10-09.

@@ -57,11 +57,10 @@ source membership, repeat/resume, identity failures before downloads/writes,
 and native loader/CLI registration. The existing contract test changes only
 the first unimplemented stage expectation.
 
-Pinned Godot 4.7.2 default-install checks: 187 GUT tests passed, 148 pipeline
-tests passed and one legacy ingest CLI assertion failed because it still expects
-annotation to be unimplemented. The proposed two-line update uses the next
-unimplemented stage, tiers; AGENTS S2/S5 authorization is pending because that
-test file is outside touch. Separately, 81 tools tests, registries and task lint
-passed. Independent fresh code review found no additional material blockers;
-final approval and green full checks remain required before merging. Raw corpora
-and the generated artifact stay ignored.
+Final verification on 2026-10-09 after clean rebase onto main containing T-0118:
+192 GUT tests, 149 pipeline tests and 81 tools tests pass; formatting/lint,
+registries, task lint and scope pass. Full `make check` is green. Chris explicitly
+approved the two-line ingest CLI expectation correction from annotate to tiers
+and adding that test file to touch (S2/S5). The recorded full-source Linux runs
+above are inherited evidence, not new native runs on macOS. A fresh independent
+final review is required before merge. Raw corpora and artifacts remain ignored.
