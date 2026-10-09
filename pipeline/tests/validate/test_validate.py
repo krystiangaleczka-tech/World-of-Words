@@ -362,4 +362,4 @@ def test_stage_provenance_and_atomicity(tmp_path, capsys):
     assert json.loads(path.read_bytes())["payload"]["validation"]["counts"]["handmade"] == 1
     assert authored[0]["words"] == handmade["words"]
     assert main(["build", "--root", str(tmp_path), "--lang", "pl"]) == 1
-    assert "export is not implemented" in capsys.readouterr().err
+    assert "Export requires --slots and --content-version" in capsys.readouterr().err
