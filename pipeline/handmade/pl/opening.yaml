@@ -1,0 +1,147 @@
+# P1 authored opening levels; source membership and grid checked in T-0130.
+# No released slot lock exists yet. Human gameplay QA remains T-0140.
+- slot: 1
+  letters:
+  - K
+  - O
+  - T
+  words:
+  - KOT
+- slot: 2
+  letters:
+  - R
+  - A
+  - K
+  words:
+  - RAK
+  - KRA
+- slot: 3
+  letters:
+  - D
+  - O
+  - M
+  - Y
+  words:
+  - DOM
+  - DYM
+- slot: 4
+  letters:
+  - L
+  - A
+  - T
+  - O
+  words:
+  - LATO
+  - LAT
+- slot: 5
+  letters:
+  - K
+  - O
+  - S
+  - A
+  words:
+  - KOSA
+  - OSA
+  expect_bonus:
+  - KOS
+  - SOK
+- slot: 6
+  letters:
+  - W
+  - O
+  - D
+  - A
+  words:
+  - WODA
+  - DWA
+- slot: 7
+  letters:
+  - K
+  - U
+  - R
+  - A
+  words:
+  - KURA
+  - KUR
+- slot: 8
+  letters:
+  - R
+  - Y
+  - B
+  - A
+  words:
+  - RYBA
+  - RYB
+- slot: 9
+  letters:
+  - M
+  - O
+  - S
+  - T
+  words:
+  - MOST
+  - TOM
+- slot: 10
+  letters:
+  - P
+  - I
+  - E
+  - S
+  words:
+  - PIES
+  - PSI
+- slot: 11
+  letters:
+  - K
+  - W
+  - I
+  - A
+  - T
+  words:
+  - KWIAT
+  - KIWA
+  - WITA
+- slot: 12
+  letters:
+  - K
+  - L
+  - A
+  - S
+  - A
+  words:
+  - KLASA
+  - SALA
+  - LAS
+- slot: 13
+  letters:
+  - Ż
+  - A
+  - B
+  - K
+  - A
+  words:
+  - ŻABKA
+  - ŻABA
+  - BAK
+- slot: 14
+  letters:
+  - K
+  - U
+  - L
+  - K
+  - A
+  words:
+  - KULKA
+  - KULA
+  - LUKA
+- slot: 15
+  letters:
+  - T
+  - O
+  - R
+  - B
+  - A
+  words:
+  - TORBA
+  - TOR
+  - BAR
