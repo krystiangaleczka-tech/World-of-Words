@@ -363,3 +363,26 @@ Pending spike S3a (T-0030), decided by Chris in decision `NNNN-pl-word-sources` 
 
 Every source's licence and attribution go into the in-game licences screen (FR-SET-03) and
 `pipeline/sources/README.md`.
+
+### P1 validation implementation (T-0126)
+
+`wg build --lang pl --from validate --to validate` reads the grid predecessor and
+canonical pinned tiers artifact. It checks current source pins, rules and override
+hashes, handmade input digest and intent, then rebuilds each eligible word pool
+from the tier index to verify complete bonuses. Invalid input fails before the
+validation artifact is replaced; valid grid collections retain their ordering,
+identities and contents, with validation counts and schema hashes added.
+
+`wordgame_pipeline.validate.validate_level` applies the actual shared level schema
+and the same word/geometry rules to final level objects. The offline `Schemas`
+evaluator supports only the checked-in schema vocabulary and registered local
+references; unknown keywords or references fail closed. It is not a general Draft
+2020-12 implementation. No network or additional dependency is required.
+
+Before export, schema property rules apply to the available grid fields. IDs,
+sequencing, difficulty, landmark flags and packs are assigned by export, not by
+validation. An eight-tile pre-export wheel remains a candidate; its final exported
+level must satisfy the schema's landmark gate. P2 slot balance windows, pixel
+geometry, similarity dedupe, released-slot lock enforcement and manifest/pack
+semantic validation belong to their later tasks. Hand-authored levels have no
+validation exemption. The full default CLI build now stops preflight at export.

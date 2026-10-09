@@ -178,5 +178,5 @@ def test_stage_atomicity_and_bonus(tmp_path, capsys):
     with pytest.raises(ValueError, match="provenance"):
         run_build(tmp_path, config, handlers, "grid", "grid")
     assert path.read_bytes() == original
-    assert main(["build", "--root", str(tmp_path), "--lang", "pl", "--to", "validate"]) == 1
-    assert "validate is not implemented" in capsys.readouterr().err
+    assert main(["build", "--root", str(tmp_path), "--lang", "pl", "--to", "export"]) == 1
+    assert "export is not implemented" in capsys.readouterr().err

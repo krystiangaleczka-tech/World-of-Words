@@ -22,6 +22,7 @@ touch:
   - pipeline/tests/candidates/test_candidates.py
   - pipeline/tests/grid/test_grid.py
   - docs/CONTENT.md
+  - docs/qa/T-0126-validate.md
   - tasks/T-0126-pl-validate.md
   - tasks/T-0125-pl-grid.md
 revision: 1
@@ -66,3 +67,22 @@ S7: Proposed direct jsonschema==4.26.0 runtime dependency plus its resolved depe
 
 ## Rollback
 Revert task commits and rebuild ignored validation artifacts. No runtime saves or shipped content changes.
+
+## Prepared alternative for approval
+
+A Codex implementation of the semantic/atomic validation gates and an offline
+finite-vocabulary schema evaluator is prepared on 2026-10-09. It adds no
+jsonschema dependency. Public alternative APIs are Schemas.validate(name, value),
+validate_grid(entry, index, schemas, handmade) and validate_level(level, index,
+schemas). Four authored behavior tests and full checks pass: 199 GUT, 165 pipeline,
+81 tools. Independent review approved local implementation f61171e; QA evidence
+is in docs/qa/T-0126-validate.md (proposed scope addition).
+
+S4 decision pending: this alternative deliberately supports only the existing
+schema vocabulary, whereas specification item 1 requests full Draft 2020-12 via
+jsonschema. It does not satisfy that original requirement and must not merge as
+completed T-0126 until Chris approves either adopting the alternative contract
+(including its named APIs/tests and QA scope) or the original S7 dependency.
+If jsonschema is approved, retain the semantic gates and replace the schema
+adapter with the specified library/API, then rerun checks and independent review.
+No dependency added and no merge performed pending that choice.
