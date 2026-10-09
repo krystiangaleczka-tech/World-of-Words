@@ -1,0 +1,522 @@
+{
+  "authored_by": "codex",
+  "boards": [
+    {
+      "bonus_count": 2,
+      "grid": {
+        "h": 3,
+        "w": 1
+      },
+      "letters": [
+        "K",
+        "O",
+        "T"
+      ],
+      "placements": [
+        {
+          "dir": "v",
+          "w": "KOT",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "slot": 1,
+      "words": [
+        "KOT"
+      ]
+    },
+    {
+      "bonus_count": 3,
+      "grid": {
+        "h": 3,
+        "w": 3
+      },
+      "letters": [
+        "R",
+        "A",
+        "K"
+      ],
+      "placements": [
+        {
+          "dir": "v",
+          "w": "KRA",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "dir": "h",
+          "w": "RAK",
+          "x": 0,
+          "y": 1
+        }
+      ],
+      "slot": 2,
+      "words": [
+        "KRA",
+        "RAK"
+      ]
+    },
+    {
+      "bonus_count": 8,
+      "grid": {
+        "h": 3,
+        "w": 3
+      },
+      "letters": [
+        "D",
+        "O",
+        "M",
+        "Y"
+      ],
+      "placements": [
+        {
+          "dir": "v",
+          "w": "DOM",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "dir": "h",
+          "w": "DYM",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "slot": 3,
+      "words": [
+        "DOM",
+        "DYM"
+      ]
+    },
+    {
+      "bonus_count": 6,
+      "grid": {
+        "h": 4,
+        "w": 3
+      },
+      "letters": [
+        "L",
+        "A",
+        "T",
+        "O"
+      ],
+      "placements": [
+        {
+          "dir": "h",
+          "w": "LAT",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "dir": "v",
+          "w": "LATO",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "slot": 4,
+      "words": [
+        "LAT",
+        "LATO"
+      ]
+    },
+    {
+      "bonus_count": 9,
+      "grid": {
+        "h": 4,
+        "w": 3
+      },
+      "letters": [
+        "K",
+        "O",
+        "S",
+        "A"
+      ],
+      "placements": [
+        {
+          "dir": "v",
+          "w": "KOSA",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "dir": "h",
+          "w": "OSA",
+          "x": 0,
+          "y": 1
+        }
+      ],
+      "slot": 5,
+      "words": [
+        "KOSA",
+        "OSA"
+      ]
+    },
+    {
+      "bonus_count": 7,
+      "grid": {
+        "h": 4,
+        "w": 3
+      },
+      "letters": [
+        "W",
+        "O",
+        "D",
+        "A"
+      ],
+      "placements": [
+        {
+          "dir": "h",
+          "w": "DWA",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "dir": "v",
+          "w": "WODA",
+          "x": 1,
+          "y": 0
+        }
+      ],
+      "slot": 6,
+      "words": [
+        "DWA",
+        "WODA"
+      ]
+    },
+    {
+      "bonus_count": 10,
+      "grid": {
+        "h": 4,
+        "w": 3
+      },
+      "letters": [
+        "K",
+        "U",
+        "R",
+        "A"
+      ],
+      "placements": [
+        {
+          "dir": "h",
+          "w": "KUR",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "dir": "v",
+          "w": "KURA",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "slot": 7,
+      "words": [
+        "KUR",
+        "KURA"
+      ]
+    },
+    {
+      "bonus_count": 9,
+      "grid": {
+        "h": 4,
+        "w": 3
+      },
+      "letters": [
+        "R",
+        "Y",
+        "B",
+        "A"
+      ],
+      "placements": [
+        {
+          "dir": "h",
+          "w": "RYB",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "dir": "v",
+          "w": "RYBA",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "slot": 8,
+      "words": [
+        "RYB",
+        "RYBA"
+      ]
+    },
+    {
+      "bonus_count": 4,
+      "grid": {
+        "h": 4,
+        "w": 3
+      },
+      "letters": [
+        "M",
+        "O",
+        "S",
+        "T"
+      ],
+      "placements": [
+        {
+          "dir": "v",
+          "w": "MOST",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "dir": "h",
+          "w": "TOM",
+          "x": 0,
+          "y": 3
+        }
+      ],
+      "slot": 9,
+      "words": [
+        "MOST",
+        "TOM"
+      ]
+    },
+    {
+      "bonus_count": 6,
+      "grid": {
+        "h": 4,
+        "w": 3
+      },
+      "letters": [
+        "P",
+        "I",
+        "E",
+        "S"
+      ],
+      "placements": [
+        {
+          "dir": "v",
+          "w": "PIES",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "dir": "h",
+          "w": "PSI",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "slot": 10,
+      "words": [
+        "PIES",
+        "PSI"
+      ]
+    },
+    {
+      "bonus_count": 27,
+      "grid": {
+        "h": 5,
+        "w": 4
+      },
+      "letters": [
+        "K",
+        "W",
+        "I",
+        "A",
+        "T"
+      ],
+      "placements": [
+        {
+          "dir": "h",
+          "w": "KIWA",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "dir": "v",
+          "w": "KWIAT",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "dir": "v",
+          "w": "WITA",
+          "x": 2,
+          "y": 0
+        }
+      ],
+      "slot": 11,
+      "words": [
+        "KIWA",
+        "KWIAT",
+        "WITA"
+      ]
+    },
+    {
+      "bonus_count": 22,
+      "grid": {
+        "h": 5,
+        "w": 3
+      },
+      "letters": [
+        "K",
+        "L",
+        "A",
+        "S",
+        "A"
+      ],
+      "placements": [
+        {
+          "dir": "v",
+          "w": "KLASA",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "dir": "h",
+          "w": "LAS",
+          "x": 0,
+          "y": 1
+        },
+        {
+          "dir": "v",
+          "w": "SALA",
+          "x": 2,
+          "y": 1
+        }
+      ],
+      "slot": 12,
+      "words": [
+        "KLASA",
+        "LAS",
+        "SALA"
+      ]
+    },
+    {
+      "bonus_count": 7,
+      "grid": {
+        "h": 5,
+        "w": 3
+      },
+      "letters": [
+        "Ż",
+        "A",
+        "B",
+        "K",
+        "A"
+      ],
+      "placements": [
+        {
+          "dir": "h",
+          "w": "BAK",
+          "x": 0,
+          "y": 3
+        },
+        {
+          "dir": "v",
+          "w": "ŻABA",
+          "x": 0,
+          "y": 1
+        },
+        {
+          "dir": "v",
+          "w": "ŻABKA",
+          "x": 2,
+          "y": 0
+        }
+      ],
+      "slot": 13,
+      "words": [
+        "BAK",
+        "ŻABA",
+        "ŻABKA"
+      ]
+    },
+    {
+      "bonus_count": 16,
+      "grid": {
+        "h": 5,
+        "w": 4
+      },
+      "letters": [
+        "K",
+        "U",
+        "L",
+        "K",
+        "A"
+      ],
+      "placements": [
+        {
+          "dir": "h",
+          "w": "KULA",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "dir": "v",
+          "w": "KULKA",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "dir": "h",
+          "w": "LUKA",
+          "x": 0,
+          "y": 2
+        }
+      ],
+      "slot": 14,
+      "words": [
+        "KULA",
+        "KULKA",
+        "LUKA"
+      ]
+    },
+    {
+      "bonus_count": 37,
+      "grid": {
+        "h": 5,
+        "w": 3
+      },
+      "letters": [
+        "T",
+        "O",
+        "R",
+        "B",
+        "A"
+      ],
+      "placements": [
+        {
+          "dir": "h",
+          "w": "BAR",
+          "x": 0,
+          "y": 3
+        },
+        {
+          "dir": "h",
+          "w": "TOR",
+          "x": 0,
+          "y": 0
+        },
+        {
+          "dir": "v",
+          "w": "TORBA",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "slot": 15,
+      "words": [
+        "BAR",
+        "TOR",
+        "TORBA"
+      ]
+    }
+  ],
+  "complete_export_fixture_sha256": "6882a3536df004b78522c395e26a48483e4cc7557b2e91ae5b111e0b0666cdca",
+  "handmade_sha256": "81f7aadd85bb6e55fc0e1b97c4f6493a9184025847a12f1619275b9cb781b1ad",
+  "human_playtest": false,
+  "levels": 15,
+  "tier_artifact_sha256": "727ee36eb596461c08da6c8bee4926d54f937942e13715208ad9a47cd6a226c9",
+  "unique_crossword_words": 34
+}
