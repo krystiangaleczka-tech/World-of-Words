@@ -17,6 +17,11 @@ var bonus_label: Label
 var hint_button: HintButton
 var shuffle_button: IconButton
 var debug_button: IconButton
+var completion_layer: VBoxContainer
+var completion_title: Label
+var continue_button: PrimaryButton
+var _navigation: Node
+var _continued: bool = false
 var _actions: BoxContainer
 var _action_spacer: Control
 var _rng: RandomNumberGenerator
@@ -43,10 +48,16 @@ func configure_rng(rng: RandomNumberGenerator) -> void:
 	_rng = rng
 
 
+## @api Inject the navigation owner before mounting.
+func configure_navigation(nav: Node) -> void:
+	_navigation = nav
+
+
 func _ready() -> void:
 	super._ready()
 	_copy.register()
 	_create_hud()
+	_create_completion()
 	status_label = Label.new()
 	status_label.name = "Status"
 	status_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -116,6 +127,52 @@ func _create_hud() -> void:
 	hint_button.pressed.connect(_on_hint)
 
 
+func _create_completion() -> void:
+	completion_layer = VBoxContainer.new()
+	completion_layer.name = "Completion"
+	completion_layer.add_theme_constant_override("separation", Tokens.Space.S)
+	completion_layer.visible = false
+	body.add_child(completion_layer)
+	completion_title = Label.new()
+	completion_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	completion_title.add_theme_font_size_override("font_size", Tokens.Type.SUBTITLE)
+	completion_title.add_theme_color_override("font_color", Tokens.Palette.TEXT)
+	completion_layer.add_child(completion_title)
+	continue_button = PrimaryButton.new()
+	continue_button.text_key = "level.complete.continue"
+	completion_layer.add_child(continue_button)
+	continue_button.pressed.connect(_on_continue)
+
+
+func _show_completion() -> void:
+	completion_layer.visible = true
+	var terminal: bool = _slot >= _content.slot_count()
+	completion_title.text = tr("level.complete.terminal" if terminal else "level.complete.title")
+	continue_button.disabled = terminal or _continued
+	if not terminal:
+		_content.level_for_slot(_slot + 1)
+	_refresh_actions()
+	_layout_play_area.call_deferred()
+
+
+func _on_continue() -> void:
+	if not completion_layer.visible or continue_button.disabled or _continued:
+		return
+	continue_button.disabled = true
+	var error: Error = ERR_UNAVAILABLE
+	if (
+		_content.level_for_slot(_slot + 1) != null
+		and is_instance_valid(_navigation)
+		and _navigation.has_method("go_to_level")
+	):
+		_continued = true
+		error = _navigation.call("go_to_level", _slot + 1)
+	if error != OK:
+		_continued = false
+		continue_button.disabled = false
+		_set_status("level.complete.retry")
+
+
 func _refresh_hud() -> void:
 	var board: BoardState = controller.get_board() if controller != null else null
 	level_label.text = tr("level.hud.level_n") % _slot
@@ -129,6 +186,7 @@ func _can_act() -> bool:
 	return (
 		is_instance_valid(wheel)
 		and controller.get_board() != null
+		and not completion_layer.visible
 		and not wheel.is_locked()
 		and not wheel.is_dragging()
 		and (not controller.is_complete() or _status_key == "level.state.persistence_failed")
@@ -184,6 +242,13 @@ func _load_board() -> void:
 		_set_status("level.state.missing_content")
 		wheel.set_locked(true)
 		return
+	var terminal_resume: bool = (
+		_slot == _content.slot_count() and progress.current_slot() > _content.slot_count()
+	)
+	if terminal_resume:
+		for index: int in board.get_level().word_count():
+			for cell: Vector2i in board.get_level().word_cells(index):
+				board.reveal_cell(cell)
 	controller.configure(board, progress, _event_bus)
 	if _rng == null:
 		_rng = RandomNumberGenerator.new()
@@ -194,6 +259,8 @@ func _load_board() -> void:
 		progress.bind_board(board)
 	wheel.set_locked(board.is_complete())
 	_set_status("")
+	if terminal_resume:
+		_show_completion()
 
 
 func _on_attempt(tiles: PackedInt32Array) -> void:
@@ -233,7 +300,7 @@ func _on_result(result: AttemptResult) -> void:
 func _on_completed() -> void:
 	wheel.set_locked(true)
 	board_view.play_wave()
-	_refresh_actions()
+	_show_completion()
 
 
 func _on_persistence_failed(_error: Error) -> void:
@@ -304,10 +371,20 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_TRANSLATION_CHANGED and is_instance_valid(status_label):
 		_set_status(_status_key)
 		_refresh_hud()
+		if completion_layer.visible:
+			completion_title.text = tr(
+				(
+					"level.complete.terminal"
+					if _slot >= _content.slot_count()
+					else "level.complete.title"
+				)
+			)
 		_layout_play_area.call_deferred()
 
 
 func _exit_tree() -> void:
+	if is_instance_valid(continue_button):
+		continue_button.pressed.disconnect(_on_continue)
 	if is_instance_valid(hint_button):
 		hint_button.pressed.disconnect(_on_hint)
 		shuffle_button.pressed.disconnect(_on_shuffle)

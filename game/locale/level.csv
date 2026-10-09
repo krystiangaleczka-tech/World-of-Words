@@ -11,3 +11,7 @@ level.feedback.level,✓ Znaleziono,✓ Found
 level.feedback.bonus,★ Słowo bonusowe,★ Bonus word
 level.feedback.already_found,↻ Już znalezione,↻ Already found
 level.feedback.invalid,× Brak na liście,× Not in our word list
+level.complete.title,Poziom ukończony,Level complete
+level.complete.continue,Kontynuuj,Continue
+level.complete.terminal,Ukończono dostępne poziomy,All available levels complete
+level.complete.retry,Nie można otworzyć poziomu. Spróbuj ponownie.,Could not open the level. Try again.
