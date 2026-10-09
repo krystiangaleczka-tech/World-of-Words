@@ -207,6 +207,6 @@ def test_stage_repeat_override_change_and_failure_atomicity(tmp_path, capsys):
     with pytest.raises(ValueError, match="provenance"):
         run_build(tmp_path, config, handlers, "tiers", "tiers")
     assert path.read_bytes() == changed
-    assert main(["build", "--root", str(tmp_path), "--lang", "pl", "--to", "validate"]) == 1
-    assert "validate is not implemented" in capsys.readouterr().err
+    assert main(["build", "--root", str(tmp_path), "--lang", "pl", "--to", "export"]) == 1
+    assert "export is not implemented" in capsys.readouterr().err
     assert canonical_bytes(json.loads(changed)) == changed

@@ -11,6 +11,7 @@ from .grid import handlers_for as grid_handlers
 from .ingest import handlers_for
 from .stages import artifact_path, run_build, select_stages
 from .tiers import handlers_for as tier_handlers
+from .validate import handlers_for as validation_handlers
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -39,6 +40,7 @@ def main(argv: list[str] | None = None) -> int:
                     **tier_handlers(args.root),
                     **candidate_handlers(args.root),
                     **grid_handlers(args.root),
+                    **validation_handlers(args.root),
                 },
                 args.first,
                 args.last,
