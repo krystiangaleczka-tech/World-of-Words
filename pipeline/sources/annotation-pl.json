@@ -1,0 +1,29 @@
+{
+  "morphology": {
+    "package": "morfeusz2",
+    "version": "1.99.15",
+    "dictionary_id": "sgjp-2026.06.01",
+    "dictionary_date": "2026-06-01",
+    "linux_wheel_sha256": "089a83ab03a137a57e23d9d42028d80b8858d1a4de78f1db86a18ba504400a98",
+    "license": "BSD-2-Clause",
+    "source_url": "https://morfeusz.sgjp.pl/"
+  },
+  "frequency": {
+    "repository": "https://github.com/ipipan/kwjp100-varia",
+    "commit": "26d82bd8b906dfed1cfcf8f903b1650b56daeabf",
+    "license": "CC-BY-4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "files": {
+      "orth": {
+        "file": "kwjp100-slowa-orth_lc-all.csv.gz",
+        "bytes": 5870924,
+        "sha256": "20f71004b99ba9ebb158e68360aa88c627aa2e0f4ce43e18979187b0a2fa3949"
+      },
+      "lemma": {
+        "file": "kwjp100-slowa-lemma-all.csv.gz",
+        "bytes": 3133438,
+        "sha256": "5206e80669a054ad4d3c9d39b7643d13e75435afa3612a15d2847f39f42bb5fc"
+      }
+    }
+  }
+}
