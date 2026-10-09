@@ -51,7 +51,7 @@ tools-test:
 	$(UV) run pytest tools/tests
 
 content-validate:
-	$(if $(wildcard pipeline/src/wow_pipeline/validate.py),$(UV) run python -m wow_pipeline.validate,$(call skip,pipeline validator not written yet (E05)))
+	$(UV) run wg validate-content
 
 registries:
 	$(UV) run python tools/check_registries.py
