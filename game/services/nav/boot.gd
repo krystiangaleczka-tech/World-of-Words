@@ -3,18 +3,27 @@ extends Node
 
 ## Content root; tests point it at fixture content until the pipeline ships packs (T-0127).
 @export var content_root: String = "res://content"
+var _locale_catalog: LocaleCatalog = LocaleCatalog.new()
 var _haptics_listener: HapticsListener
 
 
 func _ready() -> void:
 	Nav.boot(Clock.new())
-	var error: Error = Nav.start(self, content_root)
+	var error: Error = _locale_catalog.register_all()
+	if error != OK:
+		push_warning("Boot locale registration failed: %s" % error_string(error))
+		return
+	error = Nav.start(self, content_root)
 	if error != OK:
 		push_warning("Boot stopped before the first screen: %s" % error_string(error))
 		return
 	_haptics_listener = HapticsListener.new()
 	_haptics_listener.configure(Events, Save, Platform)
 	add_child(_haptics_listener)
+
+
+func _exit_tree() -> void:
+	_locale_catalog.unregister()
 
 
 func _unhandled_key_input(event: InputEvent) -> void:

@@ -82,7 +82,7 @@ func test_debug_route_mounts_versions() -> void:
 	)
 	assert_eq(
 		(screen.get_node("Safe/Body/ContentVersion") as Label).text,
-		"Wersja contentu: " + str((bundle["content"] as CONTENT_SCRIPT).content_version())
+		"Wersja poziomów: " + str((bundle["content"] as CONTENT_SCRIPT).content_version())
 	)
 	assert_false((screen.get_node("Safe/Body/Confirm") as TextButton).visible)
 	assert_false((screen.get_node("Safe/Body/Cancel") as TextButton).visible)
@@ -163,7 +163,7 @@ func test_missing_content_still_shows_diagnostics_and_failed_navigation() -> voi
 	var bundle: Dictionary = _bundle(null, "res://tests/fixtures/missing")
 	var screen: DEBUG_SCRIPT = bundle["screen"]
 	var nav: NAV_SCRIPT = bundle["nav"]
-	assert_eq((screen.get_node("Safe/Body/ContentVersion") as Label).text, "Wersja contentu: 0")
+	assert_eq((screen.get_node("Safe/Body/ContentVersion") as Label).text, "Wersja poziomów: 0")
 	screen.request_reset()
 	assert_eq(screen.confirm_reset(), ERR_INVALID_PARAMETER)
 	assert_eq(nav.current_screen(), NAV_SCRIPT.Screen.DEBUG)

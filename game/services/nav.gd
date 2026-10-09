@@ -76,7 +76,12 @@ func start(host: Node, content_root: String = "res://content") -> Error:
 		language = str(_save.get_setting(&"language"))
 		error = _content.load_manifest(language, content_root)
 	if error == OK:
-		error = go_to_level(clampi(_saved_slot(language), 1, _content.slot_count()))
+		var slot: int = clampi(_saved_slot(language), 1, _content.slot_count())
+		if _content.level_for_slot(slot) == null:
+			error = ERR_INVALID_PARAMETER
+		else:
+			TranslationServer.set_locale(language)
+			error = go_to_level(slot)
 	if error != OK:
 		boot_failed.emit(error)
 	return error

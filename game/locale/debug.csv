@@ -1,11 +1,11 @@
 keys,pl,en
 debug.shell.title,Narzędzia debugowania,Developer tools
 debug.shell.app_version,Wersja aplikacji,App version
-debug.shell.content_version,Wersja contentu,Content version
+debug.shell.content_version,Wersja poziomów,Content version
 debug.shell.reset,Resetuj postęp,Reset progress
 debug.shell.confirm,Potwierdź reset,Confirm reset
 debug.shell.cancel,Anuluj,Cancel
-debug.shell.home,Home,Home
+debug.shell.home,Menu,Home
 debug.shell.prompt,Potwierdź usunięcie postępu i monet,Confirm clearing progress and coins
 debug.shell.error,Nie udało się zakończyć resetu,Could not complete reset
 debug.level.slot_n,Poziom: %d,Level: %d
