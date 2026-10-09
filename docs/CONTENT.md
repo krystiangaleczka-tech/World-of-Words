@@ -389,4 +389,55 @@ validation. An eight-tile pre-export wheel remains a candidate; its final export
 level must satisfy the schema's landmark gate. P2 slot balance windows, pixel
 geometry, similarity dedupe, released-slot lock enforcement and manifest/pack
 semantic validation belong to their later tasks. Hand-authored levels have no
-validation exemption. The full default CLI build now stops preflight at export.
+validation exemption. The exporter requires explicit slot/version options; see the T-0127 section below.
+
+## P1 deterministic campaign export (T-0127)
+
+The export stage rechecks current pinned tiers, source/override/handmade provenance,
+all grid entries and the recorded validation schema hashes. It then validates every
+complete level and the shared pack/manifest structures. The stage artifact retains
+its predecessor hash, selection options and exact output documents, so output can
+be traced to the pinned upstream artifacts without adding manifest fields.
+
+```sh
+uv run wg build --lang pl --from export --to export --slots 30 --content-version 1
+uv run wg build --lang pl --from export --to export --slots 30 --content-version 1 --check
+```
+
+`--slots` (15–9999) and `--content-version` (positive integer) are explicit. The
+four-digit campaign pack filename contract sets the current upper slot limit.
+`--output` overrides the default `<pipeline-root-parent>/game/content/pl` directory.
+`--check` requires export-only selection and compares every output byte without
+writing either content or stage artifacts. `--plan` never exports or requires these
+options. Ordinary builds ending before export keep their previous interface.
+
+P1 selection preserves authored slots and requires handmade onboarding slots 1–15.
+It chooses automatic entries by wheel size then candidate ID, without reusing an
+entry or decreasing automatic wheel size. Generated eight-tile candidates remain
+unshipped; only handmade eight-tile levels receive `landmark: true`, outside
+onboarding. Placements sort by word, establishing stable hint/reveal tie order.
+Difficulty is serialized as `0.0`; no P2 scoring or curve is invented.
+
+Crossword word occurrences are separated by at least 100 slots, including looking
+ahead to pinned handmade levels. Bonus lists do not enter this spacing rule.
+Selection is deterministic and greedy: exhaustion fails at the exact slot rather
+than relaxing spacing, changing authored intent or claiming an optimal sequence.
+Missing onboarding is a hard error. T-0130/T-0131 supply reviewed authored content;
+T-0127 implements the exporter and ships no placeholder campaign.
+
+Packs contain 100 levels except the final partial pack; inclusive filename ranges
+and manifest ranges agree, and SHA256 covers canonical UTF-8 pack bytes including
+the final newline. An identical rebuild retains the chosen version and all bytes.
+A changed export to an existing language directory requires the previous version
+plus one. This clarifies the version increase as a new content revision, rather
+than increasing it for a byte-identical rebuild.
+
+Publication stages a whole language directory before replacement and restores the
+previous directory if replacement fails. Existing files must belong to the valid,
+hashed manifest; symlinks and unmanaged files are rejected. If rollback itself
+fails, the sibling temporary directory retains the old copy for recovery. Directory
+replacement is a single-writer operation, with no concurrent-reader or power-loss
+transaction guarantee. A failed publication may leave a newly built ignored export
+artifact, but preserves existing content on handled I/O failures. Release locks
+(T-0302), the `validate-content` CI entry point (T-0128), and human play QA remain
+separate tasks.

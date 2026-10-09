@@ -185,4 +185,4 @@ def test_stage_determinism_and_atomicity(tmp_path, capsys):
         run_build(tmp_path, config, handlers, "candidates", "candidates")
     assert path.read_bytes() == changed
     assert main(["build", "--root", str(tmp_path), "--lang", "pl", "--to", "export"]) == 1
-    assert "export is not implemented" in capsys.readouterr().err
+    assert "Export requires --slots and --content-version" in capsys.readouterr().err
