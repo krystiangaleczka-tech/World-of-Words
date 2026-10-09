@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: med
 ui: none
-status: blocked
+status: ready
 depends_on: [T-0123]
 touch:
   - pipeline/src/wordgame_pipeline/candidates/**
@@ -59,7 +59,7 @@ pipeline/tests/candidates/test_candidates.py:
 make check, task scope/lint, independent fresh review and all CI checks pass. Attach actual pinned-source candidate counts and repeated artifact hashes if native annotation is available; otherwise escalate the missing real-data execution requirement instead of claiming synthetic evidence as native.
 
 ## Escalation
-S7: Full YAML import needs a declared runtime parser. Proposed: promote already locked PyYAML 6.0.3 to pipeline/pyproject.toml dependencies, update uv.lock workspace metadata. No package version change or implementation performed pending Chris approval. Alternative: restrict handmade files to JSON-compatible YAML, which would reject the documented flow-style YAML example and therefore requires a contract change.
+S7: Full YAML import needs a declared runtime parser. Proposed: promote already locked PyYAML 6.0.3 to pipeline/pyproject.toml dependencies, update uv.lock workspace metadata. Chris approved this exact proposal on 2026-10-09. No package version change; implementation may proceed. Alternative: restrict handmade files to JSON-compatible YAML, which would reject the documented flow-style YAML example and therefore requires a contract change.
 
 ## Rollback
 Revert task commits and rebuild ignored derived artifacts; no runtime saves or shipped content changes.
