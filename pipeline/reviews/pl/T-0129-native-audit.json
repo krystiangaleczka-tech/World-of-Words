@@ -1,0 +1,19 @@
+{
+  "accepted_words": {
+    "BABA": "level_ok",
+    "HAZARD": "level_ok",
+    "KASYNO": "level_ok",
+    "POKER": "level_ok"
+  },
+  "override_count": 103,
+  "overrides_sha256": "7ff0995633d08fc23bcdd36ad15eb82b6f10e1fcc45b55f69098b8b667fc82dc",
+  "records": 450122,
+  "reviewed_decisions_verified": 300,
+  "tier_artifact_sha256": "727ee36eb596461c08da6c8bee4926d54f937942e13715208ad9a47cd6a226c9",
+  "tier_counts": {
+    "banned": 6444,
+    "bonus_ok": 409819,
+    "level_ok": 33859
+  },
+  "unmatched_overrides": 0
+}

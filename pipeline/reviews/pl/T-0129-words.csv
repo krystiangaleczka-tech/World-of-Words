@@ -1,0 +1,301 @@
+rank,word,previous_tier,decision,reason,form_arf,reviewed_by
+1,AGA,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,61.41,codex
+2,AHA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,500.61,codex
+3,ARA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,17.07,codex
+4,ATA,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,12.95,codex
+5,DAB,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,11.26,codex
+6,DBA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,641.87,codex
+7,BAJ,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,28.27,codex
+8,BAK,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,35.65,codex
+9,BAL,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,268.54,codex
+10,BAM,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,14.48,codex
+11,BAN,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,23.42,codex
+12,ABO,level_ok,bonus_ok,rare_archaic_or_regional_standalone_form,17.71,codex
+13,BOA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,40.38,codex
+14,OBA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,1757.56,codex
+15,BAR,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,441.81,codex
+16,BAS,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,133.7,codex
+17,BAT,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,86.35,codex
+18,TAB,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,20.93,codex
+19,ABY,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,25950.12,codex
+20,BAZ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,190.56,codex
+21,BAĆ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,913.98,codex
+22,BAŁ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,1427.43,codex
+23,ŁBA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,179.1,codex
+24,ACH,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,827.25,codex
+25,CHA,level_ok,bonus_ok,unfamiliar_interjection_variant_for_opening_campaign,46.25,codex
+26,KAC,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,99.74,codex
+27,CAL,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,29.43,codex
+28,CNA,level_ok,bonus_ok,rare_archaic_or_regional_standalone_form,137.25,codex
+29,CAP,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,38.26,codex
+30,PAC,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,22.02,codex
+31,CAR,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,223.21,codex
+32,ACZ,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,384.19,codex
+33,CŁA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,126.41,codex
+34,GAD,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,50.05,codex
+35,DAJ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,1580.69,codex
+36,JAD,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,99.82,codex
+37,DAL,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,287.23,codex
+38,DLA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,125416.67,codex
+39,DAM,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,1216.22,codex
+40,DAN,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,82.83,codex
+41,DNA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,1019.81,codex
+42,NAD,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,37502.98,codex
+43,ODA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,20.59,codex
+44,PAD,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,16.29,codex
+45,DAR,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,867.8,codex
+46,RAD,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,775.72,codex
+47,SAD,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,128.92,codex
+48,DAT,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,157.9,codex
+49,UDA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,3874.54,codex
+50,DWA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,25592.3,codex
+51,WAD,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,364.61,codex
+52,ZAD,level_ok,bonus_ok,valid_body_term; bonus_only_in_opening_campaign,29.78,codex
+53,ZDA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,144.62,codex
+54,DAĆ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,4347.13,codex
+55,DAŁ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,4537.39,codex
+56,ŁAD,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,379.2,codex
+57,DAŃ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,258.38,codex
+58,ALE,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,215593.78,codex
+59,ERA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,185.07,codex
+60,ETA,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,18.97,codex
+61,GAF,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,16.24,codex
+62,FAL,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,325.83,codex
+63,FAN,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,122.85,codex
+64,FAS,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,12.83,codex
+65,UFA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,208.16,codex
+66,GAG,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,3.77,codex
+67,GAJ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,63.68,codex
+68,GAL,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,23.46,codex
+69,MAG,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,107.71,codex
+70,GAP,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,46.22,codex
+71,GAR,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,52.0,codex
+72,GRA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,3398.72,codex
+73,TAG,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,27.84,codex
+74,GAZ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,798.08,codex
+75,GAĆ,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,28.78,codex
+76,HAJ,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,18.89,codex
+77,HAK,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,68.55,codex
+78,HAL,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,108.32,codex
+79,HAU,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,16.63,codex
+80,MAI,level_ok,bonus_ok,specialist_philosophical_religious_maja_inflection; named_corpus_overlap,113.88,codex
+81,ANI,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,22740.48,codex
+82,IWA,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,11.14,codex
+83,JAJ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,288.64,codex
+84,JAK,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,248960.92,codex
+85,JAM,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,57.14,codex
+86,MAJ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,394.35,codex
+87,JAR,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,36.69,codex
+88,RAJ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,394.95,codex
+89,JAW,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,730.69,codex
+90,JAZ,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,9.02,codex
+91,JAŚ,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,124.88,codex
+92,JAŹ,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,,codex
+93,LAK,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,15.41,codex
+94,MAK,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,221.52,codex
+95,OKA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,2579.22,codex
+96,KAP,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,23.83,codex
+97,PAK,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,24.1,codex
+98,AKR,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,,codex
+99,KAR,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,415.1,codex
+100,KRA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,27.82,codex
+101,RAK,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,356.92,codex
+102,KAS,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,235.88,codex
+103,SAK,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,14.91,codex
+104,SKA,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,52.44,codex
+105,AKT,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,2236.36,codex
+106,KAT,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,225.68,codex
+107,TAK,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,145349.62,codex
+108,KAŁ,level_ok,bonus_ok,valid_body_term; bonus_only_in_opening_campaign,24.43,codex
+109,ŻAK,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,128.74,codex
+110,PAL,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,132.4,codex
+111,LAS,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,1341.2,codex
+112,SAL,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,360.34,codex
+113,ALT,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,31.0,codex
+114,LAT,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,51339.38,codex
+115,TAL,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,15.4,codex
+116,ULA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,130.83,codex
+117,LWA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,267.86,codex
+118,WAL,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,65.6,codex
+119,LAĆ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,79.16,codex
+120,LAŁ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,111.46,codex
+121,ŻAL,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,1470.05,codex
+122,MAM,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,21217.33,codex
+123,MAN,level_ok,bonus_ok,niche_inflection_of_mana_or_historical_man; avoid_as_standalone_answer,228.7,codex
+124,NAM,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,22492.27,codex
+125,MAP,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,229.09,codex
+126,RAM,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,244.29,codex
+127,MAS,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,314.28,codex
+128,SAM,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,24856.04,codex
+129,MAT,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,127.37,codex
+130,TAM,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,39993.72,codex
+131,WAM,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,2856.58,codex
+132,MAĆ,level_ok,bonus_ok,rare_archaic_or_regional_standalone_form,187.9,codex
+133,ĆMA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,34.84,codex
+134,ŁAM,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,27.35,codex
+135,MAŹ,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,57.67,codex
+136,ANO,level_ok,bonus_ok,rare_archaic_or_regional_standalone_form,328.14,codex
+137,ONA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,22817.51,codex
+138,PAN,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,14419.43,codex
+139,RAN,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,384.95,codex
+140,NAS,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,34394.54,codex
+141,TAN,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,25.04,codex
+142,WAN,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,13.98,codex
+143,ZNA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,3240.61,codex
+144,NAĆ,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,8.26,codex
+145,ŁAN,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,35.77,codex
+146,OSA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,62.8,codex
+147,TAO,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,14.81,codex
+148,OWA,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,510.44,codex
+149,PAP,level_ok,bonus_ok,unfamiliar_plural_of_roofing_papa; corpus_ARF_ambiguous_with_PAP_acronym,455.63,codex
+150,PAR,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,1037.41,codex
+151,RAP,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,60.96,codex
+152,PAS,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,1080.42,codex
+153,PSA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,1449.57,codex
+154,SAP,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,21.72,codex
+155,SPA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,194.03,codex
+156,PAT,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,78.06,codex
+157,PAW,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,87.25,codex
+158,PAŁ,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,7.97,codex
+159,ŁAP,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,154.28,codex
+160,PAŃ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,566.94,codex
+161,PAŹ,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,22.46,codex
+162,RAS,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,138.74,codex
+163,RAT,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,148.45,codex
+164,TRA,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,12.68,codex
+165,WAR,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,123.48,codex
+166,RAZ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,26379.15,codex
+167,ŻAR,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,278.64,codex
+168,WAS,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,3984.6,codex
+169,SZA,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,37.18,codex
+170,SAŃ,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,40.78,codex
+171,AUT,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,1107.97,codex
+172,TAU,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,14.57,codex
+173,WAT,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,42.06,codex
+174,TŁA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,208.21,codex
+175,ŁAT,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,20.45,codex
+176,ZZA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,2386.9,codex
+177,ZŁA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,2080.38,codex
+178,ŁZA,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,155.62,codex
+179,ZAŚ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,10034.67,codex
+180,ŁAŁ,level_ok,bonus_ok,rare_archaic_or_regional_standalone_form,17.22,codex
+181,BÓB,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,24.69,codex
+182,BUC,level_ok,banned,derogatory_person_label; source pogard./pot. evidence,20.16,codex
+183,BĘC,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,27.29,codex
+184,DĄB,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,202.75,codex
+185,BEL,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,21.77,codex
+186,BEN,level_ok,banned,foreign_name_fragment; no ordinary standalone form evidence,207.85,codex
+187,WEB,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,35.41,codex
+188,BEZ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,47237.0,codex
+189,ŁEB,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,719.59,codex
+190,BEŻ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,24.33,codex
+191,BIG,level_ok,bonus_ok,rare_inflection_of_biga; corpus_ARF_ambiguous_with_foreign_big,324.04,codex
+192,BÓG,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,3590.84,codex
+193,BIL,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,22.82,codex
+194,BIM,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,15.55,codex
+195,BIN,level_ok,banned,foreign_name_fragment; no ordinary standalone form evidence,94.04,codex
+196,IBN,level_ok,banned,foreign_name_fragment; no ordinary standalone form evidence,54.01,codex
+197,BOI,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,1326.97,codex
+198,OBI,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,24.11,codex
+199,BIS,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,102.58,codex
+200,BIT,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,49.62,codex
+201,IZB,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,139.85,codex
+202,BIĆ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,662.25,codex
+203,BIŁ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,439.34,codex
+204,BÓJ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,505.46,codex
+205,BOK,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,1357.09,codex
+206,BUK,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,42.92,codex
+207,BYK,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,131.72,codex
+208,BĄK,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,116.99,codex
+209,LUB,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,34892.56,codex
+210,BÓL,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,2347.93,codex
+211,BUM,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,88.47,codex
+212,BON,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,205.81,codex
+213,BOR,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,77.51,codex
+214,BOT,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,11.29,codex
+215,OBU,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,5082.57,codex
+216,BOY,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,113.08,codex
+217,OBY,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,725.02,codex
+218,BOĆ,level_ok,bonus_ok,rare_archaic_or_regional_standalone_form,23.57,codex
+219,PUB,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,70.08,codex
+220,BRR,level_ok,bonus_ok,unfamiliar_interjection_variant_for_opening_campaign,19.62,codex
+221,RYB,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,571.86,codex
+222,BÓR,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,69.78,codex
+223,RÓB,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,454.01,codex
+224,BUS,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,134.55,codex
+225,BUT,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,298.85,codex
+226,BYT,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,469.43,codex
+227,BYĆ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,68439.87,codex
+228,BYŁ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,84360.02,codex
+229,ŁBY,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,105.7,codex
+230,ZĄB,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,199.54,codex
+231,CUD,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,972.04,codex
+232,CHE,level_ok,bonus_ok,unfamiliar_interjection_variant_for_opening_campaign,92.91,codex
+233,ECH,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,250.06,codex
+234,CIE,level_ok,bonus_ok,rare_archaic_or_regional_standalone_form,55.04,codex
+235,CEL,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,3570.65,codex
+236,LEC,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,22.3,codex
+237,CEN,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,1145.27,codex
+238,CEP,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,15.96,codex
+239,CES,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,13.52,codex
+240,CEZ,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,13.2,codex
+241,CUG,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,13.34,codex
+242,CHI,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,50.2,codex
+243,ICH,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,80655.94,codex
+244,HOC,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,95.06,codex
+245,OCH,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,526.67,codex
+246,CHU,level_ok,bonus_ok,unfamiliar_interjection_variant_for_opening_campaign,14.88,codex
+247,UCH,level_ok,bonus_ok,unfamiliar_interjection_variant_for_opening_campaign,13.93,codex
+248,HYC,level_ok,bonus_ok,unfamiliar_interjection_variant_for_opening_campaign,16.99,codex
+249,CII,level_ok,banned,Roman_numeral_102; only_romandig_analysis_not_a_word,12.09,codex
+250,NIC,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,33450.1,codex
+251,PIC,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,21.2,codex
+252,CIS,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,54.01,codex
+253,CIĘ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,7951.79,codex
+254,KOC,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,334.11,codex
+255,KUC,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,26.5,codex
+256,CYK,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,32.86,codex
+257,MOC,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,2158.75,codex
+258,MÓC,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,1526.03,codex
+259,NOC,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,3671.09,codex
+260,CŁO,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,47.7,codex
+261,COŚ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,35207.44,codex
+262,CUP,level_ok,bonus_ok,unfamiliar_interjection_variant_for_opening_campaign,125.46,codex
+263,CYT,level_ok,bonus_ok,unfamiliar_interjection_variant_for_opening_campaign,79.68,codex
+264,CZY,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,115271.01,codex
+265,CÓŻ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,3347.81,codex
+266,DEJ,level_ok,bonus_ok,rare_archaic_or_regional_standalone_form,12.75,codex
+267,END,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,128.75,codex
+268,ODE,level_ok,bonus_ok,context_bound_variant_used_in_ode_mnie; not_an_independent_opening_answer,1663.93,codex
+269,DER,level_ok,bonus_ok,rare_inflection_of_horse_blanket_dera; corpus_ARF_ambiguous_with_foreign_der,360.42,codex
+270,RED,level_ok,bonus_ok,specialist_maritime_reda_inflection; corpus_ARF_ambiguous_with_foreign_red,1226.73,codex
+271,DES,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,206.18,codex
+272,DOG,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,54.7,codex
+273,GDY,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,58581.39,codex
+274,DNI,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,15521.37,codex
+275,DIP,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,4.02,codex
+276,DIS,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,10.97,codex
+277,WID,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,2.98,codex
+278,IDY,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,37.07,codex
+279,IDĄ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,1596.86,codex
+280,IDĘ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,1249.37,codex
+281,IDŹ,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,905.96,codex
+282,JOD,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,21.5,codex
+283,DOK,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,15.19,codex
+284,KOD,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,587.26,codex
+285,DOL,level_ok,bonus_ok,unfamiliar_plural_of_abstract_dola; avoid_as_standalone_opening_answer,634.37,codex
+286,LUD,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,601.69,codex
+287,DYL,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,10.85,codex
+288,LÓD,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,362.24,codex
+289,LĄD,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,189.93,codex
+290,DOM,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,6272.69,codex
+291,MOD,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,7.17,codex
+292,DYM,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,715.5,codex
+293,DNO,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,655.7,codex
+294,DON,level_ok,banned,foreign_name_fragment; no ordinary standalone form evidence,289.09,codex
+295,POD,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,65953.26,codex
+296,ROD,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,38.49,codex
+297,DUO,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,32.29,codex
+298,UDO,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,131.18,codex
+299,PĘD,level_ok,level_ok,common_ordinary_word_or_frequent_form; keep_source_tier,179.43,codex
+300,DUR,level_ok,bonus_ok,specialist_or_unfamiliar_standalone_form_for_opening_campaign,40.92,codex

@@ -1,0 +1,20 @@
+{
+  "accepted_preferences_unchanged": [
+    "BABA",
+    "HAZARD",
+    "KASYNO",
+    "POKER"
+  ],
+  "banned": 6,
+  "bonus_only": 97,
+  "delegated_by": "Chris: next five tasks request",
+  "grid_artifact_sha256": "98f123eacdf9efbaf1b163e1163b157a09bda92eed5be683e40fd6cc50855666",
+  "human_playtest": false,
+  "kept": 197,
+  "overrides_sha256": "7ff0995633d08fc23bcdd36ad15eb82b6f10e1fcc45b55f69098b8b667fc82dc",
+  "reviewed": 300,
+  "reviewed_by": "codex",
+  "selection": "First 300 unique crossword words from automatic entries ordered by (wheel size, candidate_id), words already sorted, wheels <=7",
+  "source_review_csv_sha256": "c3fa728c59c0eaf87384fd679ca0929dc17a13b40da30869d0b9c0bbad521b08",
+  "tier_artifact_sha256": "a70682baf0e9e441f8cfddf4ee1a2f46a301d0ddb7292918a75c45b76af337dc"
+}
