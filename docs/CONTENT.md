@@ -64,6 +64,14 @@ game/content/<lang>/               final output: manifest.json, packs/*.json (co
 In P1 the pipeline runs stages 1–3, 5–7, 9 and 13. Levels are ordered by letter count, with no scoring,
 dedupe or AI (T-0120 … T-0131).
 
+## P1 repetition spacing
+
+Chris requested on 2026-10-09 that crossword words may recur only at a slot
+distance of at least 100 (for example, slots 1 and 101). Recurrence is optional;
+a word need never return. This applies to every crossword word, not only the
+seed word. Bonus lists do not count as crossword occurrences. Subsequent P1
+sequencing and export work must enforce this policy before shipping packs.
+
 ## Word tiers
 
 Every normalized word gets exactly one tier:
