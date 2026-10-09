@@ -18,6 +18,17 @@ var _version: Label
 var _status: Label
 var _confirm: TextButton
 var _cancel: TextButton
+var _selected: int = 0
+var _slot_label: Label
+var _answers: Label
+var _previous: TextButton
+var _next: TextButton
+var _open: TextButton
+var _show_answers: TextButton
+var _complete: TextButton
+var _level_failed: bool = false
+var _buttons: Array[TextButton] = []
+var _handlers: Array[Callable] = []
 
 
 ## @api Supply the same services as Nav, before entering the scene tree.
@@ -42,12 +53,142 @@ func _ready() -> void:
 	_app = _label("AppVersion", Tokens.Type.BODY)
 	_version = _label("ContentVersion", Tokens.Type.BODY)
 	_status = _label("Status", Tokens.Type.CAPTION)
+	_create_level_tools()
 	_button("Reset", "debug.shell.reset", request_reset)
 	_confirm = _button("Confirm", "debug.shell.confirm", confirm_reset)
 	_cancel = _button("Cancel", "debug.shell.cancel", cancel_reset)
 	_button("Home", "debug.shell.home", _go_home)
 	_refresh_copy()
 	_show_confirmation(false)
+
+
+func _create_level_tools() -> void:
+	var row: HBoxContainer = HBoxContainer.new()
+	row.name = "SlotSelector"
+	row.add_theme_constant_override("separation", Tokens.Space.S)
+	body.add_child(row)
+	_previous = _button("Previous", "debug.level.previous", select_previous)
+	_previous.reparent(row)
+	_slot_label = _label("SelectedSlot", Tokens.Type.BODY)
+	_slot_label.reparent(row)
+	_slot_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_slot_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_next = _button("Next", "debug.level.next", select_next)
+	_next.reparent(row)
+	_open = _button("OpenLevel", "debug.level.open", open_selected)
+	_show_answers = _button("ShowAnswers", "debug.level.answers", toggle_answers)
+	_answers = _label("Answers", Tokens.Type.CAPTION)
+	_answers.visible = false
+	_complete = _button("CompleteLevel", "debug.level.complete", complete_selected)
+	_selected = clampi(_nav.level_slot(), 1, _content.slot_count()) if _content.is_loaded() else 0
+
+
+## @api Read the currently selected shipped slot; zero when content is unavailable.
+func selected_slot() -> int:
+	return _selected
+
+
+func select_previous() -> void:
+	_select(_selected - 1)
+
+
+func select_next() -> void:
+	_select(_selected + 1)
+
+
+func _select(slot: int) -> void:
+	if not OS.is_debug_build() or not _content.is_loaded():
+		return
+	_selected = clampi(slot, 1, _content.slot_count())
+	_answers.visible = false
+	_level_failed = false
+	_refresh_copy()
+
+
+func _selected_level() -> LevelData:
+	return _content.level_for_slot(_selected) if _selected > 0 else null
+
+
+## @api Toggle only the declared answers for this selection; no Save writes.
+func toggle_answers() -> void:
+	if not OS.is_debug_build():
+		return
+	if _answers.visible:
+		_answers.visible = false
+		return
+	var level: LevelData = _selected_level()
+	_level_failed = level == null
+	if level != null:
+		var words: PackedStringArray = PackedStringArray()
+		for index: int in level.word_count():
+			words.append(level.word(index))
+		_answers.text = "%s: %s" % [tr("debug.level.answers"), ", ".join(words)]
+		_answers.visible = true
+	_refresh_copy()
+
+
+## @api Navigate to the selected slot without altering progress.
+func open_selected() -> Error:
+	if not OS.is_debug_build():
+		return ERR_UNAVAILABLE
+	var error: Error = _nav.go_to_level(_selected)
+	if error != OK:
+		_level_failed = true
+		_refresh_copy()
+	return error
+
+
+## @api Explicit debug completion may skip forward, never regress saved campaign progress.
+func complete_selected() -> Error:
+	if not OS.is_debug_build():
+		return ERR_UNAVAILABLE
+	var level: LevelData = _selected_level()
+	if level == null:
+		_level_failed = true
+		_refresh_copy()
+		return ERR_FILE_NOT_FOUND
+	var section: Dictionary = _save.get_section(&"progress")
+	var language: String = str(_save.get_setting(&"language"))
+	var state: Dictionary = section["by_lang"].get(
+		language, SaveSchema.LANGUAGE_STATE.duplicate(true)
+	)
+	var error: Error = OK
+	if _selected > int(state.get("current_slot", 1)):
+		state["current_slot"] = _selected
+		state["level_state"] = null
+		section["by_lang"][language] = state
+		error = _save.set_section(&"progress", section)
+	if error == OK:
+		error = _save.flush()
+	if error == OK:
+		error = _nav.go_to_level(_selected)
+	if error != OK:
+		_level_failed = true
+		_refresh_copy()
+		return error
+	var screen: LevelScreen = _nav.mounted_screen() as LevelScreen
+	if screen == null:
+		return ERR_UNAVAILABLE
+	# Earlier slots already have durable completion history. Hydrate that board up to
+	# the final cell, then use the controller for the final reveal and normal effects.
+	# This avoids save_level(), which correctly rejects an earlier active snapshot.
+	if _selected < int(state.get("current_slot", 1)):
+		var cells: Array[Vector2i] = []
+		for index: int in level.word_count():
+			for cell: Vector2i in level.word_cells(index):
+				if cell not in cells:
+					cells.append(cell)
+		for index: int in maxi(cells.size() - 1, 0):
+			screen.controller.get_board().reveal_cell(cells[index])
+	var attempts: int = 1
+	for index: int in level.word_count():
+		attempts += level.word_cells(index).size()
+	for _index: int in attempts:
+		if screen.controller.is_complete():
+			break
+		if not screen.controller.hint():
+			return ERR_FILE_CANT_WRITE
+	return OK if screen.controller.is_complete() else ERR_UNAVAILABLE
 
 
 ## @api First press only opens confirmation; no Save mutation.
@@ -100,6 +241,7 @@ func _show_confirmation(pending: bool) -> void:
 func _label(node_name: String, font_size: int) -> Label:
 	var label: Label = Label.new()
 	label.name = node_name
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.add_theme_font_size_override("font_size", font_size)
 	label.add_theme_color_override("font_color", Tokens.Palette.TEXT)
 	body.add_child(label)
@@ -111,6 +253,8 @@ func _button(node_name: String, key: String, handler: Callable) -> TextButton:
 	button.name = node_name
 	button.text_key = key
 	button.pressed.connect(handler)
+	_buttons.append(button)
+	_handlers.append(handler)
 	body.add_child(button)
 	return button
 
@@ -145,10 +289,29 @@ func _refresh_copy() -> void:
 	)
 	_version.text = "%s: %s" % [tr("debug.shell.content_version"), _content.content_version()]
 	_status.text = (
-		tr("debug.shell.error") if _failed else (tr("debug.shell.prompt") if _pending else "")
+		tr("debug.level.error")
+		if _level_failed
+		else (
+			tr("debug.shell.error") if _failed else (tr("debug.shell.prompt") if _pending else "")
+		)
 	)
+	if is_instance_valid(_slot_label):
+		_slot_label.text = tr("debug.level.slot_n") % _selected
+		var unavailable: bool = _selected == 0 or not _content.is_loaded()
+		_previous.disabled = unavailable or _selected <= 1
+		_next.disabled = unavailable or _selected >= _content.slot_count()
+		for button: TextButton in [_open, _show_answers, _complete]:
+			button.disabled = unavailable
+		if _answers.visible:
+			var level: LevelData = _selected_level()
+			if level != null:
+				var words: PackedStringArray = PackedStringArray()
+				for index: int in level.word_count():
+					words.append(level.word(index))
+				_answers.text = "%s: %s" % [tr("debug.level.answers"), ", ".join(words)]
 	_status.add_theme_color_override(
-		"font_color", Tokens.Palette.ERROR if _failed else Tokens.Palette.TEXT_MUTED
+		"font_color",
+		Tokens.Palette.ERROR if _failed or _level_failed else Tokens.Palette.TEXT_MUTED
 	)
 
 
@@ -158,6 +321,14 @@ func _notification(what: int) -> void:
 
 
 func _exit_tree() -> void:
+	for index: int in _buttons.size():
+		if (
+			is_instance_valid(_buttons[index])
+			and _buttons[index].pressed.is_connected(_handlers[index])
+		):
+			_buttons[index].pressed.disconnect(_handlers[index])
+	_buttons.clear()
+	_handlers.clear()
 	for translation: Translation in _translations:
 		TranslationServer.remove_translation(translation)
 	_translations.clear()

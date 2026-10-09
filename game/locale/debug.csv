@@ -8,3 +8,10 @@ debug.shell.cancel,Anuluj,Cancel
 debug.shell.home,Home,Home
 debug.shell.prompt,Potwierdź usunięcie postępu i monet,Confirm clearing progress and coins
 debug.shell.error,Nie udało się zakończyć resetu,Could not complete reset
+debug.level.slot_n,Poziom: %d,Level: %d
+debug.level.previous,Poprzedni,Previous
+debug.level.next,Następny,Next
+debug.level.open,Otwórz poziom,Open level
+debug.level.answers,Pokaż odpowiedzi,Show answers
+debug.level.complete,Ukończ poziom,Complete level
+debug.level.error,Nie udało się otworzyć lub ukończyć poziomu. Spróbuj ponownie.,Could not open or complete the level. Try again.

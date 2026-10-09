@@ -8,7 +8,7 @@ risk: low
 executor: sol
 think: low
 ui: low
-status: ready
+status: blocked
 depends_on: [T-0048, T-0118]
 touch:
   - game/features/debug/debug.gd
@@ -54,3 +54,16 @@ File: game/tests/integration/test_debug_level_tools.gd
 
 ## Acceptance
 Pinned Godot 4.7.2 make check, task lint, scope, independent fresh review and CI pass. Actual REGULAR/PL runtime screenshot inspected. One task branch and PR; no cheap-executor provenance claimed.
+
+## Escalation log
+S4 pending: independent review found that item 4 excludes the direct BoardState
+hydration needed for previously completed replays. Proposed revision: hydrate
+all but the final cell only when selected_slot <= highest_completed_slot;
+let controller.hint() handle the final durable completion and normal effects.
+An earlier slot with no durable completion history returns a translated error
+before navigation; it never regresses current progress. Chris approval requested.
+
+Review also requires restoring the original in-memory progress section if the
+pre-navigation override flush fails, counting unique occupied cells, and adding
+failed-pack and controller-flush-failure coverage. These fixes are prepared for
+the next execution round after S4 resolution. Current draft must not merge.
