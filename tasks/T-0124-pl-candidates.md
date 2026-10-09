@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: med
 ui: none
-status: ready
+status: blocked
 depends_on: [T-0123]
 touch:
   - pipeline/src/wordgame_pipeline/candidates/**
@@ -60,6 +60,8 @@ make check, task scope/lint, independent fresh review and all CI checks pass. At
 
 ## Escalation
 S7: Full YAML import needs a declared runtime parser. Proposed: promote already locked PyYAML 6.0.3 to pipeline/pyproject.toml dependencies, update uv.lock workspace metadata. Chris approved this exact proposal on 2026-10-09. No package version change; implementation may proceed. Alternative: restrict handmade files to JSON-compatible YAML, which would reject the documented flow-style YAML example and therefore requires a contract change.
+
+S2: Preflight found a third boundary assertion in pipeline/tests/tiers/test_tiers.py::test_stage_repeat_override_change_and_failure_atomicity. Once candidates is implemented its final CLI check must request grid and expect "grid is not implemented". This file is outside the frozen touch list; no test was changed. Proposed scope addition: this file, only that obsolete CLI assertion.
 
 ## Rollback
 Revert task commits and rebuild ignored derived artifacts; no runtime saves or shipped content changes.
