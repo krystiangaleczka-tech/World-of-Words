@@ -15,3 +15,7 @@ debug.level.open,Otwórz poziom,Open level
 debug.level.answers,Pokaż odpowiedzi,Show answers
 debug.level.complete,Ukończ poziom,Complete level
 debug.level.error,Nie udało się otworzyć lub ukończyć poziomu. Spróbuj ponownie.,Could not open or complete the level. Try again.
+debug.performance.unavailable,—,—
+debug.performance.fps,FPS: %s,FPS: %s
+debug.performance.latency,Wejście→render średnie/maks.: %s/%s ms,Input→render mean/max: %s/%s ms
+debug.performance.coverage,Próbki: %d · oczekujące: %d · utracone: %d,Samples: %d · pending: %d · dropped: %d

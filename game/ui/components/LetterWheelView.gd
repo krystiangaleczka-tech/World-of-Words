@@ -8,6 +8,9 @@ signal tile_added(index: int)
 
 const MOUSE_ID: int = -2
 
+var _diagnostic_input: Callable = Callable()
+var _diagnostic_drawn: Callable = Callable()
+
 var _letters: PackedStringArray = PackedStringArray()
 var _centers: PackedVector2Array = PackedVector2Array()
 var _tiles: Array[LetterTile] = []
@@ -25,6 +28,17 @@ var _pointer: Vector2 = Vector2.ZERO
 var _last_hit_position: Vector2 = Vector2.ZERO
 
 
+## @api Optional debug probes; release builds always discard them.
+func configure_diagnostics(input: Callable = Callable(), drawn: Callable = Callable()) -> void:
+	_diagnostic_input = input if OS.is_debug_build() else Callable()
+	_diagnostic_drawn = drawn if OS.is_debug_build() else Callable()
+
+
+func _record_input() -> void:
+	if _diagnostic_input.is_valid():
+		_diagnostic_input.call()
+
+
 func _init() -> void:
 	_chain.resize(LevelData.MAX_TILES)
 	_line.resize(LevelData.MAX_TILES + 1)
@@ -38,7 +52,7 @@ func _ready() -> void:
 ## @api Replace content. Only the supported 3–8 tile range is accepted.
 func set_letters(letters: PackedStringArray) -> void:
 	_cancel_shuffle()
-	pointer_end(_owner, true)
+	_end_pointer(_owner, true, false)
 	for tile: LetterTile in _tiles:
 		remove_child(tile)
 		tile.queue_free()
@@ -61,7 +75,7 @@ func set_letters(letters: PackedStringArray) -> void:
 func set_locked(locked: bool) -> void:
 	_locked = locked
 	if locked:
-		pointer_end(_owner, true)
+		_end_pointer(_owner, true, false)
 
 
 func is_locked() -> bool:
@@ -164,7 +178,7 @@ func _cancel_shuffle() -> void:
 
 func _layout_tiles() -> void:
 	_cancel_shuffle()
-	pointer_end(_owner, true)
+	_end_pointer(_owner, true, false)
 	var diameter: float = minf(size.x, size.y)
 	_tile_radius = diameter * Tokens.Layout.TILE_RADIUS_RATIO
 	var slots: PackedVector2Array = WheelGeometry.positions(
@@ -186,6 +200,9 @@ func _draw() -> void:
 			_line[segment], _line[segment + 1], Tokens.Palette.LINE, Tokens.Layout.LINE_WIDTH, true
 		)
 
+	if _diagnostic_drawn.is_valid():
+		_diagnostic_drawn.call()
+
 
 ## @api Start only on a tile; all subsequent events belong to this pointer.
 func pointer_begin(id: int, point: Vector2) -> void:
@@ -196,6 +213,7 @@ func pointer_begin(id: int, point: Vector2) -> void:
 	)
 	if hit < 0:
 		return
+	_record_input()
 	_owner = id
 	_last_hit_position = point
 	_pointer = point
@@ -206,6 +224,7 @@ func pointer_begin(id: int, point: Vector2) -> void:
 func pointer_move(id: int, point: Vector2) -> void:
 	if id != _owner or not is_dragging():
 		return
+	_record_input()
 	_pointer = point
 	_update_line()
 	if (
@@ -223,8 +242,14 @@ func pointer_move(id: int, point: Vector2) -> void:
 
 ## @api Clear before emitting an attempt; cancellation never submits.
 func pointer_end(id: int, canceled: bool = false) -> void:
+	_end_pointer(id, canceled, true)
+
+
+func _end_pointer(id: int, canceled: bool, observed_input: bool) -> void:
 	if not is_dragging() or id != _owner:
 		return
+	if observed_input:
+		_record_input()
 	var attempt: PackedInt32Array = (
 		current_chain() if not canceled and _length >= 3 else PackedInt32Array()
 	)
@@ -279,12 +304,13 @@ func _gui_input(event: InputEvent) -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_APPLICATION_FOCUS_OUT:
-		pointer_end(_owner, true)
+		_end_pointer(_owner, true, false)
 
 
 func _exit_tree() -> void:
+	configure_diagnostics()
 	_cancel_shuffle()
-	pointer_end(_owner, true)
+	_end_pointer(_owner, true, false)
 	if resized.is_connected(_layout_tiles):
 		resized.disconnect(_layout_tiles)
 
