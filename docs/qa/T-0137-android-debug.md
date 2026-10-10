@@ -60,3 +60,13 @@ smoke passed without engine errors. Full make check passed:218 GUT/8,524 asserti
 Fresh independent review approved 01cc84dff866f1273f842eee3cbc5c0a112411ad; no blockers.
 Reviewer independently verified actual APK/manifest/signature/resources and 16
 focused tools tests. CI JDK17 Android build remains required before merge.
+
+### CI template-path correction
+
+The first APK job exposed that Actions replaces HOME with /github/home, while
+the pinned image installs templates under /root/.local/share. The job now passes
+that exact installed template directory explicitly to the existing --templates
+option, which links it into isolated XDG data. No image, key or engine change.
+
+Fresh reviewer approved CI correction at 5b1d80bf705dc783f4e5f50b135f1c0dc5bf5b05;
+full make check and scope passed. Merge requires rerun of all 11 CI jobs green.

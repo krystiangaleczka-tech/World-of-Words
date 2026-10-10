@@ -213,7 +213,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build and verify debug APK without upload secrets
-        run: uv run python tools/android_debug_build.py
+        run: >-
+          uv run python tools/android_debug_build.py
+          --templates /root/.local/share/godot/export_templates/4.7.2.stable
       - uses: actions/upload-artifact@v4
         with:
           name: world-of-words-android-debug
