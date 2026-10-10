@@ -1,6 +1,7 @@
 extends ServiceStub
 ## @api Typed adapter container. SDK registration is separate from SDK initialization.
-## Until production SDK tasks register factories, every build uses inert Fakes.
+## Editor/headless/desktop/--fakes use Fakes; normal Android uses engine haptics.
+## Other SDK adapters require registered factories and installed plugins.
 
 var ads: AdsAdapter = AdsFake.new()
 var iap: IapAdapter = IapFake.new()
