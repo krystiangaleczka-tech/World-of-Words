@@ -41,7 +41,7 @@ func evaluate(tiles: PackedInt32Array) -> AttemptResult:
 	var result: AttemptResult = AttemptResult.new(AttemptResult.Kind.INVALID, word)
 	if word.is_empty():
 		return result
-	if _found.has(word) or _bonus.has(word):
+	if _found.has(word) or (_bonus.has(word) and _level.bonus_words().has(word)):
 		result.kind = AttemptResult.Kind.ALREADY_FOUND
 		return result
 	for index: int in _level.word_count():
@@ -95,7 +95,10 @@ func to_dict() -> Dictionary:
 
 
 ## @api Restore only consistent snapshots for this level; malformed data returns null.
-static func from_dict(level: LevelData, data: Dictionary) -> BoardState:
+## Historical mode preserves bounded credited records, never current eligibility.
+static func from_dict(
+	level: LevelData, data: Dictionary, allow_historical_bonus: bool = false
+) -> BoardState:
 	if level == null or data.get("level_id") != level.get_id():
 		return null
 	for key: String in ["found_words", "bonus_words", "revealed_cells"]:
@@ -120,13 +123,28 @@ static func from_dict(level: LevelData, data: Dictionary) -> BoardState:
 	if data["found_words"] != Array(board._found):
 		return null
 	for word: Variant in data["bonus_words"]:
-		if not word is String or not level.bonus_words().has(word) or board._bonus.has(word):
+		if not word is String or board._bonus.has(word):
 			return null
 		if board._is_level_word(word):
 			return null
+		if not level.bonus_words().has(word):
+			if not allow_historical_bonus or not board._valid_historical_bonus(word):
+				return null
 		board._bonus.append(word)
 	board._completion_emitted = board.is_complete()
 	return board
+
+
+func _valid_historical_bonus(word: String) -> bool:
+	if word.length() < LevelData.MIN_TILES or word.length() > _level.tile_count():
+		return false
+	var available: PackedStringArray = _level.get_letters()
+	for index: int in word.length():
+		var tile: int = available.find(word[index])
+		if tile < 0:
+			return false
+		available.remove_at(tile)
+	return true
 
 
 func _occupied(cell: Vector2i) -> bool:

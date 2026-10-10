@@ -36,6 +36,7 @@ func highest_completed_slot(language: String = "") -> int:
 
 
 ## @api Restore matching content or return a fresh board for stale/invalid snapshots.
+## Retired formable bonus credits survive; current content alone controls eligibility.
 ## Unready services or a level outside loaded campaign content return null.
 func restore_level(level: LevelData) -> BoardState:
 	if not _is_ready() or not _matches_content(level):
@@ -43,7 +44,7 @@ func restore_level(level: LevelData) -> BoardState:
 	var state: Dictionary = _language_state(_save_language())
 	var snapshot: Variant = state.get("level_state")
 	if level.get_slot() == current_slot() and snapshot is Dictionary:
-		var restored: BoardState = BoardState.from_dict(level, snapshot)
+		var restored: BoardState = BoardState.from_dict(level, snapshot, true)
 		if restored != null:
 			return restored
 	return BoardState.new(level)
