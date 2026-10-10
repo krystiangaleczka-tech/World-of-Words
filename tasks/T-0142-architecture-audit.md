@@ -8,19 +8,20 @@ risk: low
 executor: human
 think: high
 ui: none
-status: blocked
+status: done
 depends_on: [T-0118, T-0127]
 touch:
  - docs/qa/T-0142-architecture-preflight.md
  - tasks/T-0142-architecture-audit.md
-revision: 1
+revision: 2
 ---
 
 ## Goal
 Deliver the ROADMAP architecture checkpoint on the actual P0/P1 implementation.
-The row explicitly assigns Claude Opus in a session started by Chris. Codex may
-prepare a factual preflight and reproducible context pack, but cannot label that
-preparation as the requested Opus opinion or close the checkpoint.
+The roadmap row originally assigns Claude Opus. On 2026-10-10 Chris explicitly
+selected Astra instead: "Zróbmy audyt z astra teraz". The assigned independent
+reviewer for this task is therefore GPT-6 Astra (`gpt-6-astra`), with its actual
+identity recorded. Preparation or routine PR review alone does not close the audit.
 
 ## Context
 - docs/ARCHITECTURE.md#layers: core is pure; services own persistence; features
@@ -40,7 +41,10 @@ Eight typed Platform adapter boundaries and Fakes exist. P1 pipeline stages and
 versioned intermediate artifacts are implemented. Android debug APK and actual
 release-resource inspection passed the 12-job CI run 38015068644. Neither device
 playtests, FUN GATE nor production signing has been completed.
-No T-0142 task/report exists yet. Claude Opus is not available in this session.
+Draft PR83 contains the factual preflight and task. Its preparation passed all
+12 CI jobs in run 38036637940. Context/source review artifacts and an earlier
+independent Codex opinion exist; Astra must independently examine the source and
+challenge those conclusions. No runtime changes exist on the audit branch.
 
 ## Specification
 1. Prepare docs/qa/T-0142-architecture-preflight.md with the exact audited source
@@ -53,14 +57,16 @@ No T-0142 task/report exists yet. Claude Opus is not available in this session.
 3. Record confirmed issues and bounded design questions with evidence; do not
    turn task-approved P1 choices into fabricated regressions. Source inspection
    and desktop/headless tests do not prove Android performance or playtest results.
-4. Prepare an explicit Opus review brief covering ownership, durability, schemas,
-   pipeline trust boundaries and P2 compatibility. Leave its verdict pending.
-5. If the assigned reviewer is unavailable, keep status blocked and the PR draft.
-   Document the missing Opus opinion and any alternative requires Chris's explicit
-   choice. The independent routine Codex PR review is not relabeled as Opus.
-6. Complete the task only after the actual assigned review (or Chris's explicit
-   replacement) is attached and critical findings have an agreed disposition.
-   T-0143 remains a separate human FUN GATE.
+4. Obtain an actual independent Astra opinion covering all eight dimensions,
+   ownership, durability, schemas, pipeline trust and P2 compatibility. Include
+   exact source SHA, reviewer identity, reproducible findings and severity, Q1-Q4
+   dispositions, verification limits and final architecture verdict in the report.
+5. Keep the task blocked and PR draft if the assigned opinion is unavailable or
+   critical findings lack a disposition. No Opus provenance may be claimed.
+6. Complete the task after the Astra opinion is attached, findings are dispositioned,
+   final documentation passes fresh independent review and CI is green. Required
+   P2 contracts are recorded as follow-up requirements, not implemented in this
+   documentation task. T-0143 remains a separate human FUN GATE.
 
 ## Tests
 - Generate the context pack with tools/context_pack.py; all cited anchors resolve.
@@ -68,13 +74,24 @@ No T-0142 task/report exists yet. Claude Opus is not available in this session.
   boundaries; run full make check, task lint, scope and test-count checks.
 - Fresh independent review validates the preparation and provenance. Existing
   tests are retained; no runtime tests are added for documentation-only changes.
-- CI must pass before the preparation is ready for the assigned audit reviewer.
+- CI must pass on the final published audit documentation before merge.
 
 ## Acceptance
 Complete architecture opinion with explicit reviewer identity, source SHA,
-findings/disposition and P2 risks. A Codex preflight alone does not satisfy this.
+findings/disposition and P2 risks. A preflight alone does not satisfy this.
 
-## Remaining required input
-The assigned Claude Opus architecture opinion is unavailable in this session.
-Codex preparation is complete; task remains blocked and PR stays draft until
-the actual opinion or Chris's explicit replacement is provided.
+## Reviewer decision
+Chris explicitly selected Astra on 2026-10-10, replacing the roadmap's Opus
+assignment for this task only. This resolves the reviewer-availability escalation;
+it does not approve device results, outsider playtests or FUN GATE.
+
+## Outcome
+Astra completed the independent audit on source
+68d7ccd55d01160c4512347b550136a2f16c93ec: PASS for the architecture checkpoint,
+with no confirmed critical/high P1 blocker and no required P1 runtime fix.
+The full opinion is in docs/qa/T-0142-architecture-preflight.md. A1 (bonus-update
+snapshot compatibility), A2 (sole-temp recovery) and Q1-Q4 have explicit dispositions
+and named follow-up tasks. A3 (stale Platform header) is assigned to the next
+Platform edit; it has no separate task ID yet.
+Astra's focused verification passed 18 GUT tests / 100 assertions on Godot 4.7.2
+and an in-memory artifact hash-boundary probe. The human gates remain open.
