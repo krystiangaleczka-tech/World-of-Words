@@ -20,8 +20,10 @@ var _busy: bool = false
 
 
 ## @api Inject one active board, its progress service and the side-effect bus.
-## Reconfiguration replaces references without gameplay, persistence or signal side effects.
-func configure(board: BoardState, progress: PROGRESS_SCRIPT, event_bus: Node) -> void:
+## Idle reconfiguration returns true; an active action rejects it without changes.
+func configure(board: BoardState, progress: PROGRESS_SCRIPT, event_bus: Node) -> bool:
+	if _busy:
+		return false
 	_board = board
 	_progress = progress
 	_event_bus = event_bus
@@ -29,6 +31,7 @@ func configure(board: BoardState, progress: PROGRESS_SCRIPT, event_bus: Node) ->
 	_pending_result = null
 	_pending_hint = false
 	_announced_complete = false
+	return true
 
 
 ## @api The active board, or null before configuration.
@@ -46,12 +49,14 @@ func submit(tiles: PackedInt32Array) -> AttemptResult:
 		return retry if _commit() else null
 	if is_complete():
 		return null
+	_busy = true
 	var result: AttemptResult = _board.evaluate(tiles)
 	if result.kind in [AttemptResult.Kind.LEVEL, AttemptResult.Kind.BONUS]:
 		_pending = true
 		_pending_result = result
 		return result if _commit() else null
 	_publish(result, false)
+	_busy = false
 	return result
 
 
@@ -61,8 +66,10 @@ func hint() -> bool:
 		return false
 	if _pending:
 		return _commit()
+	_busy = true
 	var cell: Vector2i = HintLogic.next_cell(_board)
 	if not _board.reveal_cell(cell):
+		_busy = false
 		return false
 	_pending = true
 	_pending_hint = true
