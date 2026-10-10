@@ -224,3 +224,30 @@ jobs:
             builds/android-debug-verification.txt
           if-no-files-found: error
           retention-days: 14
+
+  release-inspection:
+    name: Android release resource inspection
+    needs: [format, lint, godot-test]
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    env:
+      XDG_DATA_HOME: /root/.local/share
+      XDG_CONFIG_HOME: /root/.config
+    steps:
+      - uses: actions/checkout@v4
+      - name: Export and inspect actual unsigned Android Release resources
+        run: >-
+          uv run python tools/check_release_export.py builds/android-release-content.zip
+          --export --report builds/android-release-inspection.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: world-of-words-release-content
+          path: |
+            builds/android-release-content.zip
+            builds/android-release-inspection.json
+          if-no-files-found: error
+          retention-days: 14
