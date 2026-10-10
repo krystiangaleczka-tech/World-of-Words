@@ -1,8 +1,12 @@
 extends Node
 ## Boot scene: inject one Clock, then run the Nav boot sequence with screens mounted here.
 
+const AUDIO_LISTENER: Script = preload("res://services/audio/audio_listener.gd")
+
 ## Content root; tests point it at fixture content until the pipeline ships packs (T-0127).
 @export var content_root: String = "res://content"
+
+var _audio_listener: Node
 var _locale_catalog: LocaleCatalog = LocaleCatalog.new()
 var _haptics_listener: HapticsListener
 
@@ -24,6 +28,10 @@ func _ready() -> void:
 	_haptics_listener = HapticsListener.new()
 	_haptics_listener.configure(Events, Save, Platform)
 	add_child(_haptics_listener)
+	_audio_listener = AUDIO_LISTENER.new()
+	_audio_listener.name = "AudioListener"
+	_audio_listener.configure(Events, Audio)
+	add_child(_audio_listener)
 	if OS.is_debug_build():
 		var overlay: CanvasLayer = load("res://features/debug/performance_overlay.gd").new()
 		overlay.name = "PerformanceOverlay"
