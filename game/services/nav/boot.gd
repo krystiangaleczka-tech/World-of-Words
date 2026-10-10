@@ -13,6 +13,10 @@ func _ready() -> void:
 	if error != OK:
 		push_warning("Boot locale registration failed: %s" % error_string(error))
 		return
+	Audio.configure(Save)
+	var audio_error: Error = Audio.load_cues()
+	if audio_error != OK:
+		push_warning("Sound cues unavailable: %s" % error_string(audio_error))
 	error = Nav.start(self, content_root)
 	if error != OK:
 		push_warning("Boot stopped before the first screen: %s" % error_string(error))
