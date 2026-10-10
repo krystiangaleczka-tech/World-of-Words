@@ -1,6 +1,9 @@
 extends ScreenScaffold
 ## Debug-only diagnostics; reset always targets the services Nav injected before mounting.
 
+const PL: Translation = preload("res://locale/debug.pl.translation")
+const EN: Translation = preload("res://locale/debug.en.translation")
+
 const SAVE_SCRIPT = preload("res://services/save.gd")
 const CONTENT_SCRIPT = preload("res://services/content.gd")
 const NAV_SCRIPT = preload("res://services/nav.gd")
@@ -271,19 +274,9 @@ func _button(node_name: String, key: String, handler: Callable) -> TextButton:
 
 
 func _register_copy() -> void:
-	var csv: FileAccess = FileAccess.open("res://locale/debug.csv", FileAccess.READ)
-	var header: PackedStringArray = csv.get_csv_line()
-	for column: int in range(1, header.size()):
-		var translation: Translation = Translation.new()
-		translation.locale = header[column]
+	for source: Translation in [PL, EN]:
+		var translation: Translation = source.duplicate() as Translation
 		_translations.append(translation)
-	while not csv.eof_reached():
-		var row: PackedStringArray = csv.get_csv_line()
-		if row.size() != header.size():
-			continue
-		for index: int in _translations.size():
-			_translations[index].add_message(row[0], row[index + 1])
-	for translation: Translation in _translations:
 		TranslationServer.add_translation(translation)
 
 

@@ -17,3 +17,6 @@ pipeline/build/
 .DS_Store
 .vscode/
 .idea/
+
+# Local Godot export credentials (T-0137); never required for prototype CI.
+game/export_credentials.cfg
