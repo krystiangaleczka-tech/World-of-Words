@@ -12,6 +12,7 @@ var _data: Dictionary = {}
 var _loaded: bool = false
 var _dirty: bool = false
 var _primary_valid: bool = false
+var _loaded_temp: bool = false
 
 
 ## @api Inject isolated storage/identity generation before loading (tests/tools only).
@@ -35,6 +36,7 @@ func load() -> Error:
 			_data = SaveSchema.canonical(candidate)
 			_loaded = true
 			_primary_valid = suffix.is_empty()
+			_loaded_temp = suffix == ".tmp"
 			_dirty = not _primary_valid or source.get("schema_version") != SaveSchema.VERSION
 			if not _primary_valid:
 				backup_restored.emit()
@@ -76,7 +78,9 @@ func debug_reset() -> Error:
 	)
 	for section: String in ["meta", "settings", "monetization"]:
 		candidate[section] = (_data[section] as Dictionary).duplicate(true)
-	var error: Error = _storage.commit(JSON.stringify(candidate, "", true, true), _primary_valid)
+	var error: Error = _prepare_write()
+	if error == OK:
+		error = _storage.commit(JSON.stringify(candidate, "", true, true), _primary_valid)
 	if error != OK:
 		flush_failed.emit(error)
 		return error
@@ -139,12 +143,24 @@ func flush() -> Error:
 		return ERR_UNCONFIGURED
 	if not _dirty:
 		return OK
-	var error: Error = _storage.commit(JSON.stringify(_data, "", true, true), _primary_valid)
+	var error: Error = _prepare_write()
+	if error == OK:
+		error = _storage.commit(JSON.stringify(_data, "", true, true), _primary_valid)
 	if error == OK:
 		_dirty = false
 		_primary_valid = true
 	else:
 		flush_failed.emit(error)
+	return error
+
+
+func _prepare_write() -> Error:
+	if not _loaded_temp:
+		return OK
+	var error: Error = _storage.promote_temp()
+	if error == OK:
+		_loaded_temp = false
+		_primary_valid = true
 	return error
 
 

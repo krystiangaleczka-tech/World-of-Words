@@ -31,14 +31,21 @@ func has_any_file() -> bool:
 	)
 
 
+## @api Preserve the validated recovered temp before its path is reused for output.
+func promote_temp() -> Error:
+	return DirAccess.rename_absolute(path + ".tmp", path)
+
+
 ## @api Write temp -> flush -> primary to backup -> temp to primary. Return I/O errors.
-## rotate_primary is false after recovery, so a corrupt primary never replaces a valid backup.
+## rotate_primary is false after backup recovery; a promoted valid temp may rotate safely.
 func commit(text: String, rotate_primary: bool) -> Error:
 	var file: FileAccess = FileAccess.open(path + ".tmp", FileAccess.WRITE)
 	if file == null:
 		return FileAccess.get_open_error()
-	file.store_string(text)
-	var error: Error = file.get_error()
+	var error: Error = checkpoint(&"temp_opened")
+	if error == OK:
+		file.store_string(text)
+		error = file.get_error()
 	if error == OK:
 		error = checkpoint(&"temp_written")
 	if error == OK:
