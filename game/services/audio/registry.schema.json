@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema_version", "max_voices", "cues"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": 1, "type": "integer"},
+    "max_voices": {"type": "integer", "minimum": 1, "maximum": 16},
+    "cues": {
+      "type": "object", "minProperties": 1,
+      "propertyNames": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+      "additionalProperties": {
+        "type": "object", "additionalProperties": false,
+        "required": ["files", "volume_db", "pitch_scale"],
+        "properties": {
+          "files": {"type": "array", "minItems": 1, "maxItems": 1, "items": {"type": "string", "pattern": "^res://assets/audio/p1/[a-z_]+\\.wav$"}},
+          "volume_db": {"type": "number", "minimum": -60, "maximum": 0},
+          "pitch_scale": {"type": "number", "minimum": 0.5, "maximum": 2}
+        }
+      }
+    }
+  }
+}

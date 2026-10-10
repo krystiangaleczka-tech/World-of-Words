@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "max_voices": 8,
+  "cues": {
+    "tile_touch": {
+      "files": [
+        "res://assets/audio/p1/tile_touch.wav"
+      ],
+      "volume_db": -12,
+      "pitch_scale": 1.0
+    },
+    "word_valid": {
+      "files": [
+        "res://assets/audio/p1/word_valid.wav"
+      ],
+      "volume_db": -12,
+      "pitch_scale": 1.0
+    },
+    "word_bonus": {
+      "files": [
+        "res://assets/audio/p1/word_bonus.wav"
+      ],
+      "volume_db": -12,
+      "pitch_scale": 1.0
+    },
+    "word_already": {
+      "files": [
+        "res://assets/audio/p1/word_already.wav"
+      ],
+      "volume_db": -12,
+      "pitch_scale": 1.0
+    },
+    "word_invalid": {
+      "files": [
+        "res://assets/audio/p1/word_invalid.wav"
+      ],
+      "volume_db": -18,
+      "pitch_scale": 1.0
+    },
+    "level_complete": {
+      "files": [
+        "res://assets/audio/p1/level_complete.wav"
+      ],
+      "volume_db": -12,
+      "pitch_scale": 1.0
+    }
+  }
+}

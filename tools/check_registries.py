@@ -12,6 +12,7 @@ import json
 import math
 import re
 import sys
+import wave
 from pathlib import Path
 from typing import Any
 
@@ -174,6 +175,33 @@ def load_registry(root: Path, area: str) -> tuple[dict[str, Any], list[str]]:
     return registry, errors
 
 
+def load_audio(root: Path) -> tuple[dict[str, Any], list[str]]:
+    schema_path = root / "game/services/audio/registry.schema.json"
+    data_path = root / "game/data/audio/cues.json"
+    if not schema_path.exists() and not data_path.parent.exists():
+        return {}, []  # Config/analytics-only fixture workspaces.
+    try:
+        schema = read_json(schema_path)
+        check_schema(schema)
+        document = read_json(data_path)
+        errors = schema_errors(document, schema)
+        if errors:
+            return {}, [f"audio: {error}" for error in errors]
+        for cue, entry in document["cues"].items():
+            for source in entry["files"]:
+                path = root / "game" / source.removeprefix("res://")
+                with wave.open(str(path), "rb") as stream:
+                    if (
+                        stream.getnchannels() != 1
+                        or stream.getsampwidth() != 2
+                        or stream.getnframes() < 1
+                    ):
+                        raise ValueError(f"{cue}: expected nonempty mono PCM16 WAV")
+        return document["cues"], []
+    except (OSError, ValueError, TypeError, wave.Error, EOFError) as exc:
+        return {}, [f"audio: {exc}"]
+
+
 def literal(node: Any) -> str | None:
     if isinstance(node, Tree) and node.data in ("expr", "string_name") and len(node.children) == 1:
         return literal(node.children[0])
@@ -184,7 +212,10 @@ def literal(node: Any) -> str | None:
 
 
 def scan_calls(
-    root: Path, config: dict[str, Any], analytics: dict[str, Any]
+    root: Path,
+    config: dict[str, Any],
+    analytics: dict[str, Any],
+    audio: dict[str, Any] | None = None,
 ) -> tuple[list[str], int]:
     errors: list[str] = []
     dynamic = 0
@@ -205,13 +236,14 @@ def scan_calls(
                 if not (
                     (service == "Config" and method in TYPES)
                     or (service == "Analytics" and method == "track")
+                    or (service == "Audio" and method == "play")
                 ):
                     continue
                 name = literal(call.children[1]) if len(call.children) > 1 else None
                 if name is None:
                     dynamic += 1
                     continue
-                entries = config if service == "Config" else analytics
+                entries = {"Config": config, "Analytics": analytics, "Audio": audio or {}}[service]
                 location = f"{label}:{call.meta.line}"
                 if name not in entries:
                     errors.append(f"{location}: unregistered {service}.{method} literal {name!r}")
@@ -229,10 +261,11 @@ def main(argv: list[str] | None = None) -> int:
     root = args.root.resolve()
     config, config_errors = load_registry(root, "config")
     analytics, analytics_errors = load_registry(root, "analytics")
-    errors = config_errors + analytics_errors
+    audio, audio_errors = load_audio(root)
+    errors = config_errors + analytics_errors + audio_errors
     dynamic = 0
     if not errors:
-        call_errors, dynamic = scan_calls(root, config, analytics)
+        call_errors, dynamic = scan_calls(root, config, analytics, audio)
         errors.extend(call_errors)
     if errors:
         for error in errors:
@@ -240,7 +273,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     print(
         f"OK: registries: {len(config)} config keys, {len(analytics)} events; "
-        f"{dynamic} dynamic calls checked at runtime"
+        f"{len(audio)} audio cues; {dynamic} dynamic calls checked at runtime"
     )
     return 0
 
