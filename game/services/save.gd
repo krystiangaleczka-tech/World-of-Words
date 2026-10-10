@@ -13,6 +13,7 @@ var _loaded: bool = false
 var _dirty: bool = false
 var _primary_valid: bool = false
 var _loaded_temp: bool = false
+var _pending_settings: Dictionary[StringName, bool] = {}
 
 
 ## @api Inject isolated storage/identity generation before loading (tests/tools only).
@@ -87,6 +88,7 @@ func debug_reset() -> Error:
 	_data = SaveSchema.canonical(candidate)
 	_dirty = false
 	_primary_valid = true
+	_publish_settings()
 	return OK
 
 
@@ -120,7 +122,7 @@ func get_setting(key: StringName) -> Variant:
 
 
 ## @api Persist a structurally valid setting immediately; signal only after successful flush.
-## On I/O error the new value remains dirty for retry; caller receives the error.
+## On I/O error the value stays dirty; any successful retry publishes pending keys.
 func set_setting(key: StringName, value: Variant) -> Error:
 	assert(_loaded)
 	if key not in SaveSchema.SETTINGS:
@@ -131,10 +133,8 @@ func set_setting(key: StringName, value: Variant) -> Error:
 		return ERR_INVALID_DATA
 	_data = SaveSchema.canonical(candidate)
 	_dirty = true
-	var error: Error = flush()
-	if error == OK:
-		setting_changed.emit(key)
-	return error
+	_pending_settings[key] = true
+	return flush()
 
 
 ## @api Synchronous durable write; success is required before a caller finishes a transaction.
@@ -149,9 +149,18 @@ func flush() -> Error:
 	if error == OK:
 		_dirty = false
 		_primary_valid = true
+		_publish_settings()
 	else:
 		flush_failed.emit(error)
 	return error
+
+
+func _publish_settings() -> void:
+	var keys: Array[StringName] = []
+	keys.assign(_pending_settings.keys())
+	_pending_settings.clear()
+	for key: StringName in keys:
+		setting_changed.emit(key)
 
 
 func _prepare_write() -> Error:
