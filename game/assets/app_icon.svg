@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Original provisional prototype launcher mark, using the P1 palette. -->
+  <rect width="1024" height="1024" rx="180" fill="#F6F1E7"/>
+  <path d="M256 264 L352 760 L512 480 L672 760 L768 264" fill="none" stroke="#2F6F62" stroke-width="88" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

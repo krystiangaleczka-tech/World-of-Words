@@ -200,3 +200,25 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate shipped content
         run: make content-validate
+
+  android-build:
+    name: Android prototype debug APK
+    needs: [format, lint, registries, content-validate, godot-test]
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and verify debug APK without upload secrets
+        run: uv run python tools/android_debug_build.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: world-of-words-android-debug
+          path: |
+            builds/world-of-words-debug.apk
+            builds/android-debug-verification.txt
+          if-no-files-found: error
+          retention-days: 14
