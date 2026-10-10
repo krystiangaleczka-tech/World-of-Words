@@ -11,3 +11,8 @@ func unix_time_seconds() -> int:
 ## @api Monotonic milliseconds for elapsed durations only.
 func monotonic_msec() -> int:
 	return Time.get_ticks_msec()
+
+
+## @api Monotonic microseconds for render-boundary diagnostics only.
+func monotonic_usec() -> int:
+	return Time.get_ticks_usec()

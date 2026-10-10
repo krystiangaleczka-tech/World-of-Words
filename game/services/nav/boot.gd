@@ -24,6 +24,11 @@ func _ready() -> void:
 	_haptics_listener = HapticsListener.new()
 	_haptics_listener.configure(Events, Save, Platform)
 	add_child(_haptics_listener)
+	if OS.is_debug_build():
+		var overlay: CanvasLayer = load("res://features/debug/performance_overlay.gd").new()
+		overlay.name = "PerformanceOverlay"
+		overlay.configure(Audio.get_clock(), Nav)
+		add_child(overlay)
 
 
 func _exit_tree() -> void:
