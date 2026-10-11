@@ -14,6 +14,8 @@ var _wheel: LetterWheelView
 var _label: Label
 var _timer: Timer
 var _active: bool = true
+var _application_paused: bool = false
+var _application_focused: bool = true
 var _window_open: bool = false
 var _translations: Array[Translation] = []
 
@@ -130,12 +132,21 @@ func _refresh() -> void:
 
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_APPLICATION_FOCUS_OUT:
-		set_foreground(false)
-	elif what == NOTIFICATION_APPLICATION_RESUMED or what == NOTIFICATION_APPLICATION_FOCUS_IN:
-		set_foreground(true)
-	elif what == NOTIFICATION_TRANSLATION_CHANGED:
-		_refresh()
+	match what:
+		NOTIFICATION_APPLICATION_PAUSED:
+			_application_paused = true
+		NOTIFICATION_APPLICATION_RESUMED:
+			_application_paused = false
+		NOTIFICATION_APPLICATION_FOCUS_OUT:
+			_application_focused = false
+		NOTIFICATION_APPLICATION_FOCUS_IN:
+			_application_focused = true
+		NOTIFICATION_TRANSLATION_CHANGED:
+			_refresh()
+			return
+		_:
+			return
+	set_foreground(not _application_paused and _application_focused)
 
 
 func _exit_tree() -> void:
