@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0165]
 touch:
   - game/features/debug/performance_metrics.gd
@@ -35,3 +35,8 @@ Injected timestamps: unavailable initial/first frame, exact and above budget, un
 
 ## Acceptance
 All behavior and tests; full make check, scope/count, fresh independent review and final-head green CI before sequential squash merge. No human/device/FUN GATE approval invented.
+
+## Outcome
+Fresh independent review approved 6351db35be4813dbb5e8bc151b8c4409e35f6ef1.
+Full make check:251 GUT /13086assertions,311pipeline,142tools,65levels.
+Scope four files; count444 vs440. Final-head CI required before merge.
