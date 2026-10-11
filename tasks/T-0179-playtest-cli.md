@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0178]
 touch:
   - tools/playtest_cli.py
@@ -38,3 +38,6 @@ Subprocess command end-to-end: blank template roundtrip, validation success mean
 
 ## Acceptance
 All specified behavior and tests. Full make check, scope/count, fresh independent review and final-head 12-job successful CI before sequential squash merge. Helpers never close T-0139/T-0140/T-0141/T-0143.
+
+## Outcome
+Exposed template/validate/report commands and operator capture guidance; no input writes, inferred observations or human gate verdict. 23 CLI subprocess tests and all103wave focused cases pass. Full check:275GUT/13332assertions,311pipeline,286tools,65levels. Scope4files/count507vs501. Fresh independent review APPROVE on a81455252e5dbe0084cd732caaae6d6b44234cbf. Blank worksheet and missing-evidence reports generated outside repo using CLI, not claimed real sessions. Final-head successful12jobCI required before squash merge.
