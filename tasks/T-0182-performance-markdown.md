@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0181]
 touch:
   - tools/performance_markdown.py
@@ -37,3 +37,6 @@ Complete ordered windows/fields, values/units, sentinels vs zero, boundary cover
 
 ## Acceptance
 Specified behavior/tests; full make check, scope/count, fresh independent review and final-head successful12jobCI before sequential squash merge.
+
+## Outcome
+Added validated readable Markdown with ordered complete windows, units, coverage, unavailable/zero distinction and escaped operator text. Seven focused tests pass; in-memory HTML escaping mutation fails one test without disk edits. Full check: 275 GUT / 13332 assertions, 311 pipeline, 336 tools, 65 levels. Scope three files; count 524 vs 518. Fresh independent review APPROVE on f1158aad88cbf4901a27d010ee2f896516607255. Final-head successful 12-job CI required before merge; no human acceptance conclusion.
