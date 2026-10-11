@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0175]
 touch:
   - tools/playtest_worksheet.py
@@ -37,3 +37,6 @@ Five unique IDs, exact keys/schema, all observation fields blank, repeated outpu
 
 ## Acceptance
 All specified behavior and tests. Full make check, scope/count, fresh independent review and final-head 12-job successful CI before sequential squash merge. Helpers never close T-0139/T-0140/T-0141/T-0143.
+
+## Outcome
+Added deterministic blank five-session JSON with independent containers and no assumed observations. Five focused tests pass. Full check: 275 GUT /13332 assertions,311 pipeline,188 tools,65 levels. Scope3files; count481vs476. Fresh independent review APPROVE on 6637712e267f3fe1a17edb3eac027a54f409df48. Final-head CI required before merge; human gates unchanged.
