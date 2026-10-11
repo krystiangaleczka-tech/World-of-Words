@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0163]
 touch:
   - pipeline/src/wordgame_pipeline/review_packet.py
@@ -33,3 +33,10 @@ Test actual HTML/CSV and comparison CLI stdout/default/explicit paths, invalid o
 ## Acceptance
 Only authorized touch files; full make check, scope/count, independent fresh review
 and final-head green CI before squash merge. No human review or phase result invented.
+
+## Outcome
+Module CLI and usage pass ten focused cases. Full make check: 247 GUT /
+13049 assertions, 311 pipeline, 142 tools, 65 levels. Scope four files;
+count440 vs434. Fresh review approved 56bf8d0347df73c9c8c570f5168456974dd710f0.
+Final-head CI and sequential squash merge required before generating the
+current-main local HTML/CSV preview artifacts. No curator approvals invented.
