@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0160]
 touch:
   - pipeline/src/wordgame_pipeline/review_html.py
@@ -32,3 +32,10 @@ Test actual65/103 rendering, faithful horizontal/vertical/intersecting letters a
 ## Acceptance
 Only authorized touch files; full make check, scope/count, independent fresh review
 and final-head green CI before squash merge. No human review or phase result invented.
+
+## Outcome
+Faithful standalone HTML passes 11 focused cases and independent all65-cell,
+wheel and annotation comparisons. Final-source full make check passes: 247 GUT /
+13049 assertions, 286 pipeline, 142 tools, 65 levels. Scope three files; count425
+vs421. Fresh review approved bbb94981a9742cc14c3f51eb853389eff3ad477a after
+summary escaping correction. Final-head green CI required before squash merge.
