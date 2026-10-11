@@ -21,6 +21,7 @@ var completion_layer: VBoxContainer
 var completion_title: Label
 var continue_button: PrimaryButton
 var _navigation: Node
+var _navigation_supplied: bool = false
 var _continued: bool = false
 var _actions: BoxContainer
 var _action_spacer: Control
@@ -51,6 +52,7 @@ func configure_rng(rng: RandomNumberGenerator) -> void:
 ## @api Inject the navigation owner before mounting.
 func configure_navigation(nav: Node) -> void:
 	_navigation = nav
+	_navigation_supplied = is_instance_valid(nav)
 
 
 func _ready() -> void:
@@ -227,8 +229,9 @@ func _process(_delta: float) -> void:
 
 
 func _on_debug() -> void:
-	if OS.is_debug_build():
-		Nav.go_debug()
+	var target: Node = _navigation if _navigation_supplied else Nav
+	if OS.is_debug_build() and is_instance_valid(target) and target.has_method("go_debug"):
+		target.call("go_debug")
 
 
 func _load_board() -> void:

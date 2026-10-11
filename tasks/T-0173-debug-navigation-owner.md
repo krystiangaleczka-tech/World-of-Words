@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0172]
 touch:
   - game/features/level/level.gd
@@ -43,3 +43,6 @@ DESIGN.md#rules-quote-these-into-ui-tasks:
 - R-UI-3: No raw numbers in scenes or feature scripts; use Tokens.
 - R-UI-4: Strings shown to players use translation keys.
 No visible design change or new components.
+
+## Outcome
+Implemented revision 2 debug routing through the current injected navigation owner, with intentional global fallback only for unconfigured/null ownership. Destroyed or incapable owners do not reroute globally. Three regression tests pass (24 assertions); reverting production routing fails two tests/seven assertions. Fresh independent review approved source HEAD 1eebcb8bcbd682a7b83cae7e95301e3eb4bcbb91. Full make check passes: 270 GUT tests/13271 assertions, 311 pipeline tests, 183 tools tests, 65 levels. Scope: four allowed files; test count 471. Final-head CI required before merge. No human gate inferred.
