@@ -17,16 +17,21 @@ var _pending_result: AttemptResult
 var _pending_hint: bool = false
 var _announced_complete: bool = false
 var _busy: bool = false
+var _persist_progress: bool = true
 
 
 ## @api Inject one active board, its progress service and the side-effect bus.
 ## Idle reconfiguration returns true; an active action rejects it without changes.
-func configure(board: BoardState, progress: PROGRESS_SCRIPT, event_bus: Node) -> bool:
+## Diagnostic sessions may disable persistence without changing campaign Save.
+func configure(
+	board: BoardState, progress: PROGRESS_SCRIPT, event_bus: Node, persist_progress: bool = true
+) -> bool:
 	if _busy:
 		return false
 	_board = board
 	_progress = progress
 	_event_bus = event_bus
+	_persist_progress = persist_progress
 	_pending = false
 	_pending_result = null
 	_pending_hint = false
@@ -78,8 +83,8 @@ func hint() -> bool:
 
 func _commit() -> bool:
 	_busy = true
-	var error: Error = ERR_UNCONFIGURED
-	if is_instance_valid(_progress):
+	var error: Error = OK if not _persist_progress else ERR_UNCONFIGURED
+	if _persist_progress and is_instance_valid(_progress):
 		error = (
 			_progress.complete_level(_board.get_level().get_slot())
 			if is_complete()
