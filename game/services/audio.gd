@@ -19,7 +19,7 @@ func configure(save: SAVE_SCRIPT, sink: Callable = Callable()) -> void:
 	_disconnect_settings()
 	_save = save
 	_sink = sink
-	if _save != null:
+	if is_instance_valid(_save):
 		_save.setting_changed.connect(_on_setting_changed)
 	_refresh_volume()
 
@@ -130,7 +130,11 @@ func play(cue: StringName) -> bool:
 
 
 func _volume() -> float:
-	return float(_save.get_setting(&"sfx_volume")) if _save != null and _save.is_loaded() else 0.0
+	return (
+		float(_save.get_setting(&"sfx_volume"))
+		if is_instance_valid(_save) and _save.is_loaded()
+		else 0.0
+	)
 
 
 func _refresh_volume() -> void:
@@ -147,7 +151,7 @@ func _on_setting_changed(key: StringName) -> void:
 
 
 func _disconnect_settings() -> void:
-	if _save != null and _save.setting_changed.is_connected(_on_setting_changed):
+	if is_instance_valid(_save) and _save.setting_changed.is_connected(_on_setting_changed):
 		_save.setting_changed.disconnect(_on_setting_changed)
 
 

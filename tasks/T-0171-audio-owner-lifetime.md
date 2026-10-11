@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: blocked
 depends_on: [T-0170]
 touch:
   - game/services/audio.gd
@@ -35,3 +35,11 @@ In-memory loaded Save with injected clock and audio sink: freed Save makes play 
 
 ## Acceptance
 All specified behavior/tests; full make check, scope/count, fresh independent review and final-head green CI before sequential squash merge. No human/phase approval inferred.
+
+## Escalation
+S4: the frozen contract claims freed Save is unsafe with null guards, but Godot
+4.7.2 reports freed Node==null true. Three new tests/53assertions pass on both
+original and rewritten Audio guards. Proposed rewrite is not a proven fix.
+Pause this task; no merge. Concrete revised wave proposed separately for owner
+approval: documentation correction, lifetime regression coverage, injected debug
+routing with an explicit supplied-owner flag, and overlapping focus/pause fix.
