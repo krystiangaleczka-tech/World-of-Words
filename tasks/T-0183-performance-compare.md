@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0182]
 touch:
   - tools/performance_compare.py
@@ -37,3 +37,6 @@ Positive/negative/zero deltas, unavailable one/both sides, unequal counts/contex
 
 ## Acceptance
 Specified behavior/tests; full make check, scope/count, fresh independent review and final-head successful12jobCI before sequential squash merge.
+
+## Outcome
+Added descriptive comparison with independent full captures, exact metadata differences, nine candidate-minus-baseline deltas and null unavailable maxima. Genuine negative -1 differences remain numeric. Twelve focused tests pass; in-memory subtraction-direction mutation fails two tests without disk edits. Full check: 275 GUT / 13332 assertions, 311 pipeline, 348 tools, 65 levels. Scope three files; count 531 vs 524. Fresh independent review APPROVE on 50f37b23809da3a104a8a0415efb8cb54988bd8d. Final-head successful 12-job CI required before merge; no causal or human acceptance verdict.
