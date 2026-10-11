@@ -412,6 +412,9 @@ writing either content or stage artifacts. `--plan` never exports or requires th
 options. Ordinary builds ending before export keep their previous interface.
 
 P1 selection preserves authored slots and requires handmade onboarding slots 1–15.
+Authored slots may also pin the remainder of an unreleased prototype. T-0152
+uses this existing mechanism to curate all 65 Polish prototype slots by word
+familiarity after Chris's playtest; automatic ordering is not a lexical rating.
 It chooses automatic entries by wheel size then candidate ID, without reusing an
 entry or decreasing automatic wheel size. Generated eight-tile candidates remain
 unshipped; only handmade eight-tile levels receive `landmark: true`, outside
