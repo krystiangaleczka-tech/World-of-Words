@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0176]
 touch:
   - tools/playtest_validation.py
@@ -37,3 +37,6 @@ Blank/partial/full packets accepted; duplicates at top/nested JSON rejected; req
 
 ## Acceptance
 All specified behavior and tests. Full make check, scope/count, fresh independent review and final-head 12-job successful CI before sequential squash merge. Helpers never close T-0139/T-0140/T-0141/T-0143.
+
+## Outcome
+Added strict nonmutating parser/validator for blank, partial and observed records; no acceptance verdict. Focused56validator+5worksheet tests pass. Removing duplicate guard in memory fails3tests; tracked source untouched. Full check:275GUT/13332assertions,311pipeline,244tools,65levels. Scope3files/count492vs481. Fresh independent review APPROVE on e73bf9197b154a062e11bfd9eccf917995b7cce6. Final-head successful12jobCI required before squash merge.
