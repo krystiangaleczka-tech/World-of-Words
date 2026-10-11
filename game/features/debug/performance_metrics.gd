@@ -7,6 +7,7 @@ const USEC_PER_SECOND: float = 1000000.0
 const USEC_PER_MSEC: float = 1000.0
 
 var _times: PackedInt64Array = PackedInt64Array()
+var _latencies: PackedInt64Array = PackedInt64Array()
 var _head: int = 0
 var _count: int = 0
 var _drawn: int = 0
@@ -23,6 +24,7 @@ var _over_budget: int = 0
 
 func _init() -> void:
 	_times.resize(CAPACITY)
+	_latencies.resize(CAPACITY)
 
 
 func record_input(timestamp: int) -> void:
@@ -51,6 +53,7 @@ func frame_post_draw(timestamp: int) -> void:
 		var duration: int = maxi(0, timestamp - _times[(_head + index) % CAPACITY])
 		_sum += duration
 		_maximum = maxi(_maximum, duration)
+		_latencies[_samples % CAPACITY] = duration
 		_samples += 1
 	_head = (_head + _drawn) % CAPACITY
 	_count -= _drawn
@@ -73,6 +76,9 @@ func reset() -> void:
 
 
 func snapshot() -> Dictionary:
+	var count: int = mini(_samples, CAPACITY)
+	var ordered: PackedInt64Array = _latencies.slice(0, count)
+	ordered.sort()
 	return {
 		"fps": _intervals * USEC_PER_SECOND / _elapsed if _elapsed > 0 else -1.0,
 		"mean_ms": float(_sum) / _samples / USEC_PER_MSEC if _samples > 0 else -1.0,
@@ -82,6 +88,9 @@ func snapshot() -> Dictionary:
 		"frame_max_ms": _frame_maximum / USEC_PER_MSEC if _intervals > 0 else -1.0,
 		"frame_budget_usec": FRAME_BUDGET_USEC,
 		"frame_over_budget": _over_budget,
+		"latency_window_samples": count,
+		"p50_ms": ordered[ceili(count * 0.50) - 1] / USEC_PER_MSEC if count > 0 else -1.0,
+		"p95_ms": ordered[ceili(count * 0.95) - 1] / USEC_PER_MSEC if count > 0 else -1.0,
 		"samples": _samples,
 		"pending": _count,
 		"dropped": _dropped,
