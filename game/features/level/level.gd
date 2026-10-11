@@ -249,7 +249,8 @@ func _load_board() -> void:
 		for index: int in board.get_level().word_count():
 			for cell: Vector2i in board.get_level().word_cells(index):
 				board.reveal_cell(cell)
-	controller.configure(board, progress, _event_bus)
+	var diagnostic_play: bool = OS.is_debug_build() and _slot != progress.current_slot()
+	controller.configure(board, progress, _event_bus, not diagnostic_play)
 	if _rng == null:
 		_rng = RandomNumberGenerator.new()
 		_rng.seed = hash(board.get_level().get_id())
