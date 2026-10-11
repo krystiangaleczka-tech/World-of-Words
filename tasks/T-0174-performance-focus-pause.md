@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0173]
 touch:
   - game/features/debug/performance_overlay.gd
@@ -36,3 +36,6 @@ Real Nav/Save/Content/wheel injectedclock+forceddraw: pause→focus-in remains i
 
 ## Acceptance
 All specified behavior/tests; full make check, scope/count, fresh independent review and final-head green CI before sequential squash merge. No human/phase approval inferred.
+
+## Outcome
+Implemented revision 2 independent pause/focus state through notification dispatch only. Five deterministic regression tests / 61 assertions pass; isolated reverted overlay fails four tests / 17 assertions with no script errors. Full make check passes: 275 GUT tests / 13332 assertions, 311 pipeline tests, 183 tools tests, 65 levels. Scope: five allowed files; test count 476 vs 471. Fresh independent review APPROVE on f1a59fec7b398bd5913b630f50e7b3e21f6a0dde; this outcome is metadata only. QA follow-up documents two confirmed fixes, existing lifetime coverage, discarded PR109 and pending human gates. Final-head CI required before squash merge; no phone acceptance or phase gate inferred.
