@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0180]
 touch:
   - tools/performance_validation.py
@@ -37,3 +37,6 @@ Existing synthetic valid records accepted, duplicate nested keys and extra/missi
 
 ## Acceptance
 Specified behavior/tests; full make check, scope/count, fresh independent review and final-head successful12jobCI before sequential squash merge.
+
+## Outcome
+Added strict exported-report validation with recomputed summaries, duplicate-key rejection and independent normalized copies. 43 focused tests pass; removing summary comparison in memory fails nine tests, tracked source untouched. Full check: 275 GUT / 13332 assertions, 311 pipeline, 329 tools, 65 levels. Scope three files; count 518 vs 507. Fresh independent review APPROVE on 829ea61d8a02ec28b453e4b989607d653c3a9afc. Final-head successful 12-job CI required before merge. Existing parser, runtime and human gates unchanged.
