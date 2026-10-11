@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0177]
 touch:
   - tools/playtest_summary.py
@@ -37,3 +37,6 @@ Blank, partial, complete five-session records, early exit, assistance, insider, 
 
 ## Acceptance
 All specified behavior and tests. Full make check, scope/count, fresh independent review and final-head 12-job successful CI before sequential squash merge. Helpers never close T-0139/T-0140/T-0141/T-0143.
+
+## Outcome
+Added validated nonmutating summaries with raw observation copies, separate missing/deviation lists, exact build comparison, honest totals and escaped Markdown. 19 focused tests pass. In-memory duration mutation fails2tests; disk source untouched. Full check:275GUT/13332assertions,311pipeline,263tools,65levels. Scope3files/count501vs492. Fresh independent review APPROVE on af9fae455dc89a3240102b97c1da58db2d4f5f0a. Final-head successful12jobCI required before squash merge; no acceptance verdict inferred.
