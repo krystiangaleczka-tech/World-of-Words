@@ -15,7 +15,7 @@ touch:
   - game/tests/integration/test_debug_navigation_owner.gd
   - game/tests/integration/test_debug_navigation_owner.gd.uid
   - tasks/T-0173-debug-navigation-owner.md
-revision: 1
+revision: 2
 ---
 
 ## Goal
@@ -28,7 +28,7 @@ AGENTS.md requires owned signal cleanup and injected services; T-0165 diagnostic
 LevelScreen.configure_navigation(nav: Node) sets _navigation; debug_button IconButton.pressed connects _on_debug which calls global Nav. _on_continue already uses _navigation.
 
 ## Specification
-Implement T-0170 Debug button section, change only _on_debug. Use local target Node = _navigation if _navigation != null else Nav, then debug-build/validity/has_method guard. No API or geometry/copy/continue changes.
+Implement T-0170 Debug button section, add _navigation_supplied: bool=false; configure_navigation stores nav and sets this flag from is_instance_valid(nav). In _on_debug choose _navigation if supplied, otherwise Nav; then debug-build/validity/has_method guard. A destroyed supplied owner must never fall back globally (freed Node==null). Changes limited to that field, configure_navigation and _on_debug. No API or geometry/copy/continue changes.
 
 ## Tests
 Real LevelScreen/in-memory Save/Contentfixture with two injected Node owners: button signal calls only current owner once; owner destruction and owner lacking go_debug cause no errors/global reroute; unconfigured/null fallback uses Nav under guarded isolated test, restore global routing config; existing screen tests remain unchanged.

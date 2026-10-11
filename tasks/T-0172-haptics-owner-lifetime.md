@@ -1,8 +1,8 @@
 ---
 id: T-0172
-title: Safely handle destroyed haptics dependencies
+title: Cover existing Audio and Haptics owner lifetime safety
 epic: E08
-type: fix
+type: test
 area: platform.haptics
 risk: med
 executor: sol
@@ -11,15 +11,16 @@ ui: none
 status: ready
 depends_on: [T-0171]
 touch:
-  - game/services/haptics_listener.gd
+  - game/tests/integration/test_audio_owner_lifetime.gd
+  - game/tests/integration/test_audio_owner_lifetime.gd.uid
   - game/tests/integration/test_haptics_owner_lifetime.gd
   - game/tests/integration/test_haptics_owner_lifetime.gd.uid
   - tasks/T-0172-haptics-owner-lifetime.md
-revision: 1
+revision: 2
 ---
 
 ## Goal
-Safely handle destroyed haptics dependencies. Owner requested another five pre-P2 technical tasks.
+Protect existing Audio/Haptics behavior from future lifetime regressions, not repair a newly demonstrated bug.
 
 ## Context
 AGENTS.md requires owned signal cleanup and injected services; T-0165 diagnostics exclude background observations. Original Astra P2 ownership requirements and human gates remain separate.
@@ -28,10 +29,10 @@ AGENTS.md requires owned signal cleanup and injected services; T-0165 diagnostic
 HapticsListener.configure(events: EVENTS_SCRIPT, save: SAVE_SCRIPT, platform: PLATFORM_SCRIPT), _connect_events, _disconnect_events and _play use null checks before event/settings/platform access; adapters are RefCounted.
 
 ## Specification
-Implement T-0170 Haptics dependencies section. Edit only those guard expressions; preserve signals, current adapter lookup, preference and no hot-path allocation.
+Implement T-0170 Existing Audio/Haptics owner-lifetime safety section. Add only two new integration test files and generated UIDs. No production changes. Existing null guards already reject freed Nodes on Godot4.7.2; passing baseline is expected. Use public effects/connections, memory storage and injected clocks.
 
 ## Tests
-In-memory Save +Events +HapticsFake: free Save or Platform then emit, silent/no errors; free Events before reconfiguration/tree reentry/teardown, safe; configure fresh owners reconnects exactly once and detaches old emitter. Null owners silent; live preference still suppresses effects. No real device/clock/sleep.
+Audio: freed Save makes play false without sink call/errors; replacement after free restores play/preferences, configure(null) and teardown safe, bounded real voices. Haptics: in-memory Save +Events +HapticsFake: free Save or Platform then emit, silent/no errors; free Events before reconfiguration/tree reentry/teardown, safe; configure fresh owners reconnects exactly once and detaches old emitter. Null owners silent; live preference still suppresses effects. No real device/clock/sleep. Confirm a missing guard mutation or equivalent stale dependency regression is detected; temporary local mutations must be restored before full checks and commit.
 
 ## Acceptance
 All specified behavior/tests; full make check, scope/count, fresh independent review and final-head green CI before sequential squash merge. No human/phase approval inferred.
