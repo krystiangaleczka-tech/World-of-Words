@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0171]
 touch:
   - game/tests/integration/test_audio_owner_lifetime.gd
@@ -36,3 +36,10 @@ Audio: freed Save makes play false without sink call/errors; replacement after f
 
 ## Acceptance
 All specified behavior/tests; full make check, scope/count, fresh independent review and final-head green CI before sequential squash merge. No human/phase approval inferred.
+
+## Outcome
+Fresh review approved eed150e26e38680b8aef6fba69864da981a58883.
+Fullcheck:267GUT/13247assertions,311pipeline,183tools,65levels.
+Focused7tests/76assertions pass; isolated missing-disconnect copy triggers
+one test/five failed assertions, no script errors. Production unchanged.
+Scope5files,count468vs461. Final-head12jobCI required beforemerge.
