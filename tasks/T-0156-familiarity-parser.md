@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0155]
 touch:
   - pipeline/src/wordgame_pipeline/familiarity.py
@@ -48,3 +48,9 @@ unknown/banned source word, reviewed unknown band, empty data. Verify read-only.
 ## Acceptance
 Focused tests, full make check, scope/count and fresh review pass; remote CI
 green before merge. Existing pipeline/build/runtime behavior is unchanged.
+
+## Outcome
+Frozen source-backed CSV loader and 27 focused cases pass. Full make check:
+247 GUT / 13049 assertions, 228 pipeline, 142 tools, 65 levels. Scope three
+files; test count 402 vs 397. Fresh independent review approved bd6e7e2
+without blockers. Remote final-head CI is required before squash merge.
