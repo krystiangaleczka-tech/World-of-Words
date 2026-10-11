@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0158]
 touch:
   - pipeline/src/wordgame_pipeline/familiarity_report.py
@@ -50,3 +50,12 @@ compatibility and gate CLI exit/JSON (including actual proposal-only campaign).
 ## Acceptance
 Useful auditable gate/report plus meaningful tests, full make check, fresh review,
 scope/count and green CI. No claim of editorial or P2 readiness is inferred.
+
+## Outcome
+Opt-in required-answer readiness helper/CLI and QA instructions pass 38 new
+cases plus nine report regression cases. Current first-15 check correctly
+returns 24 proposed issues; no catalog rows are relabeled. Full make check:
+247 GUT / 13049 assertions, 275 pipeline, 142 tools, 65 levels. Scope four
+files; test count 421 vs 410. Fresh independent review approved
+11bbb19d47afeb036039a8e08cec5610b59852ff without blockers. Final-head green
+CI is required before squash merge; engineering success is not editorial approval.
