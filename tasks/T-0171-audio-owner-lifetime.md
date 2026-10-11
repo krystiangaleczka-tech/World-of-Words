@@ -1,37 +1,40 @@
 ---
 id: T-0171
-title: Safely handle destroyed audio settings owner
+title: Correct the P1 lifecycle plan from runtime evidence
 epic: E08
-type: fix
-area: services.audio
+type: docs
+area: features.debug
 risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0170]
 touch:
-  - game/services/audio.gd
-  - game/tests/integration/test_audio_owner_lifetime.gd
-  - game/tests/integration/test_audio_owner_lifetime.gd.uid
-  - tasks/T-0171-audio-owner-lifetime.md
-revision: 1
+  - docs/qa/T-0170-p1-lifecycle-contract.md
+  - tasks/T-017[1-4]-*.md
+revision: 2
 ---
 
 ## Goal
-Safely handle destroyed audio settings owner. Owner requested another five pre-P2 technical tasks.
-
-## Context
-AGENTS.md requires owned signal cleanup and injected services; T-0165 diagnostics exclude background observations. Original Astra P2 ownership requirements and human gates remain separate.
+Correct false Audio/Haptics defect claims and freeze the owner's approved remaining scope. Still five tasks total, T-0170..T-0174.
 
 ## Current state
-Audio exposes configure(save: SAVE_SCRIPT, sink: Callable = Callable()), play(cue: StringName) -> bool, load_cues(path: String = REGISTRY) -> Error. configure/_volume/_disconnect_settings access _save after null checks.
+T-0170 merged; its original null-guard assessment is disproved by Godot4.7.2. PR109 was blocked and closed without merge. Main Audio/Haptics production guards are unchanged, new lifetime tests absent. LevelScreen still routes debug globally; overlay still resumes on individual focus-in/resume notifications.
 
 ## Specification
-Implement T-0170 Audio settings section, changing only configure, _volume, _disconnect_settings guards. Preserve signatures, cue/voice/settings semantics and hot-path allocation behavior.
+Correct docs/qa/T-0170-p1-lifecycle-contract.md, replace T-0172 with existing-behavior lifetime regression tests only, expand T-0173 to explicit supplied-owner flag/configure_navigation scope, remove T-0174 four-fixes claim. No production or test files in this task; keep stable task paths/IDs/dependencies and human/P2 gates.
 
 ## Tests
-In-memory loaded Save with injected clock and audio sink: freed Save makes play false without sink call/errors; replacement after owner free restores play and preference updates; configure(null) safe after free; audio teardown safe after Save destruction, real loaded voices remain bounded. No sleeps/native calls.
+Verify exact runtime/baseline evidence, current APIs, future paths and revised scopes. Full checks, scope/count/task lint and fresh independent review.
 
 ## Acceptance
-All specified behavior/tests; full make check, scope/count, fresh independent review and final-head green CI before sequential squash merge. No human/phase approval inferred.
+Full make check, fresh review and final-head12job CI before sequential squash merge. No unproven guard rewrite or human approval inferred.
+
+## Escalation resolution
+S4 in revision1: runtime disproved frozen null-guard defect claim. Owner approved concrete corrected five-task scope with "Rób". PR109 discarded; this revision reimplemented on fresh main under the approved documentation scope. Baseline Audio3tests/53assertions pass; standalone compile-failed probe excluded. Project-context asserted probe reproduces the two real defects (debug owner0 instead1; paused pending1 instead0).
+
+## Outcome
+Fresh review approved 90ebfe41587eb400717d1fbee15566c86d715034.
+Full check:260GUT/13171assertions,311pipeline,183tools,65levels.
+Scope5files,count461 unchanged. Final-head12job CI required before merge.
