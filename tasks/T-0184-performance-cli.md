@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0183]
 touch:
   - tools/performance_cli.py
@@ -38,3 +38,6 @@ Subprocess real entrypoint: both report/compare formats, Unicode, malformed/dupl
 
 ## Acceptance
 Specified behavior/tests; full make check, scope/count, fresh independent review and final-head successful12jobCI before sequential squash merge.
+
+## Outcome
+Added read-only report/compare commands and actual capture analysis guidance. Report renders Markdown; comparison supports JSON/Markdown as frozen interface specifies. 22 CLI subprocess cases and all 84 wave cases pass. Full check: 275 GUT / 13332 assertions, 311 pipeline, 370 tools, 65 levels. Scope four files; count 536 vs 531. Fresh independent review APPROVE on e9f49578b4339f9891fa1ad568cbbe37ace288a3. Final-head successful 12-job CI required before merge. Existing runtime/parser and human gates unchanged; no new phone observations claimed.
