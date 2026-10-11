@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0157]
 touch:
   - pipeline/src/wordgame_pipeline/familiarity_report.py
@@ -50,3 +50,10 @@ tampered pack rejected by replay, read-only tree equality, CLI stdout/errors.
 
 ## Acceptance
 Focused/full checks, scope/count, fresh review and green CI before merge.
+
+## Outcome
+Deterministic required-answer reporting, source/input hash receipts and canonical
+CLI pass nine focused cases. Full make check: 247 GUT / 13049 assertions,
+237 pipeline, 142 tools, 65 levels. Scope three files; test count 410 vs 402.
+Fresh independent review approved 790348aa651a22dfc6279c3eafb3b6adff151362
+without blockers. Final-head CI is required before squash merge.
