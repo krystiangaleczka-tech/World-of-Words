@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0161]
 touch:
   - pipeline/src/wordgame_pipeline/review_worksheet.py
@@ -32,3 +32,10 @@ Test actual103 roundtrip through load_catalog/native tiers, all proposal states 
 ## Acceptance
 Only authorized touch files; full make check, scope/count, independent fresh review
 and final-head green CI before squash merge. No human review or phase result invented.
+
+## Outcome
+Draft export passes six focused cases including actual103 native roundtrip;
+annotations and proposal states retained. Full make check: 247 GUT / 13049
+assertions, 292 pipeline, 142 tools, 65 levels. Scope three files; count428
+vs425. Fresh independent review approved 3c07afd3654f51b788904aa1c9c8764fbfe38c0f.
+Final-head green CI required before squash merge.
