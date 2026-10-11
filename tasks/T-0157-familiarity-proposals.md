@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0156, T-0152]
 touch:
   - pipeline/reviews/pl/familiarity.csv
@@ -44,3 +44,11 @@ proposal and rationale; full make check, scope/count, fresh review and green CI.
 
 ## Acceptance
 The queue is complete, reviewable and accurately labeled; current game unchanged.
+
+## Outcome
+103/103 source-backed required forms proposed by Codex, with no extras:
+69 band 1, 30 band 2, four band 3. Native parser and read-only replay pass.
+Full make check: 247 GUT / 13049 assertions, 228 pipeline, 142 tools, 65 levels.
+Scope three files; test count unchanged 402. Fresh independent row-by-row review
+approved f54389a5ed85b0af0397fff594969d416c9e009b. Final-head green CI is
+required before squash merge; this is not individual human lexical approval.
