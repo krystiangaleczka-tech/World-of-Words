@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0162]
 touch:
   - pipeline/src/wordgame_pipeline/review_comparison.py
@@ -32,3 +32,10 @@ Test unchanged current catalog/no changes/24 proposed issues, explicit reviewed 
 ## Acceptance
 Only authorized touch files; full make check, scope/count, independent fresh review
 and final-head green CI before squash merge. No human review or phase result invented.
+
+## Outcome
+Read-only source-backed comparison passes nine focused cases. Full make check:
+247 GUT / 13049 assertions, 301 pipeline, 142 tools, 65 levels. Scope three
+files; count434 vs428. Fresh review approved d6490b486be1ded8e317cb7940f4198341a3de7d.
+Current catalog remains proposed; unchanged comparison retains24 early issues.
+Final-head green CI required before squash merge.
