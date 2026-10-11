@@ -43,10 +43,45 @@ def test_real_campaign_rebuild_is_offline_readonly(tmp_path):
     assert not (root / "build").exists()
     pack = json.loads((content / "pl/packs/c-0001-0065.json").read_bytes())
     levels = pack["levels"]
-    assert sum(level["source"] == "generated" for level in levels) == 50
-    assert all(level["source"] == "handmade" for level in levels[:15])
+    assert all(level["source"] == "handmade" for level in levels)
     words = [p["w"] for level in levels for p in level["words"]]
     assert len(words) == len(set(words))
+
+
+def test_curated_opening_keeps_familiar_answers_and_complete_bonuses():
+    pack = json.loads((REPO / "game/content/pl/packs/c-0001-0065.json").read_bytes())
+    manifest = json.loads((REPO / "game/content/pl/manifest.json").read_bytes())
+    levels = pack["levels"]
+    assert manifest["content_version"] == 2
+    assert [level["slot"] for level in levels] == list(range(1, 66))
+    required = [{p["w"] for p in level["words"]} for level in levels]
+    assert required[:10] == [
+        {"KOT"},
+        {"RAK"},
+        {"DOM", "DYM"},
+        {"LATO"},
+        {"KOSA", "OSA"},
+        {"WODA", "DWA"},
+        {"KURA"},
+        {"RYBA"},
+        {"MOST"},
+        {"PIES"},
+    ]
+    excluded = {"LAT", "KUR", "RYB", "KOS", "PSI", "CŁA", "DAŃ", "HAL", "JAJ", "JAR", "KAJ"}
+    assert not set.union(*required) & excluded
+    for slot, bonus in ((4, "LAT"), (5, "KOS"), (7, "KUR"), (8, "RYB"), (10, "PSI")):
+        assert bonus in levels[slot - 1]["bonus"]
+    assert required[-1] == {"PARASOL", "ROSA", "PAS"}
+    assert max(len(level["letters"]) for level in levels) == 7
+    assert all(level["difficulty"] == 0.0 for level in levels)
+
+
+def test_changed_authored_input_is_not_silently_accepted(tmp_path):
+    root, content = workspace(tmp_path)
+    path = root / "handmade/pl/opening.yaml"
+    path.write_bytes(path.read_bytes().replace(b"words: [KOT]", b"words: [KOT, KTO]"))
+    with pytest.raises(ValueError, match="candidate inputs"):
+        check(root, content)
 
 
 def test_semantically_valid_pack_edit_still_fails_rebuild(tmp_path):

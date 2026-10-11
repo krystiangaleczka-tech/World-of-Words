@@ -1,147 +1,71 @@
-# P1 authored opening levels; source membership and grid checked in T-0130.
-# No released slot lock exists yet. Human gameplay QA remains T-0140.
-- slot: 1
-  letters:
-  - K
-  - O
-  - T
-  words:
-  - KOT
-- slot: 2
-  letters:
-  - R
-  - A
-  - K
-  words:
-  - RAK
-  - KRA
-- slot: 3
-  letters:
-  - D
-  - O
-  - M
-  - Y
-  words:
-  - DOM
-  - DYM
-- slot: 4
-  letters:
-  - L
-  - A
-  - T
-  - O
-  words:
-  - LATO
-  - LAT
-- slot: 5
-  letters:
-  - K
-  - O
-  - S
-  - A
-  words:
-  - KOSA
-  - OSA
-  expect_bonus:
-  - KOS
-  - SOK
-- slot: 6
-  letters:
-  - W
-  - O
-  - D
-  - A
-  words:
-  - WODA
-  - DWA
-- slot: 7
-  letters:
-  - K
-  - U
-  - R
-  - A
-  words:
-  - KURA
-  - KUR
-- slot: 8
-  letters:
-  - R
-  - Y
-  - B
-  - A
-  words:
-  - RYBA
-  - RYB
-- slot: 9
-  letters:
-  - M
-  - O
-  - S
-  - T
-  words:
-  - MOST
-  - TOM
-- slot: 10
-  letters:
-  - P
-  - I
-  - E
-  - S
-  words:
-  - PIES
-  - PSI
-- slot: 11
-  letters:
-  - K
-  - W
-  - I
-  - A
-  - T
-  words:
-  - KWIAT
-  - KIWA
-  - WITA
-- slot: 12
-  letters:
-  - K
-  - L
-  - A
-  - S
-  - A
-  words:
-  - KLASA
-  - SALA
-  - LAS
-- slot: 13
-  letters:
-  - Ż
-  - A
-  - B
-  - K
-  - A
-  words:
-  - ŻABKA
-  - ŻABA
-  - BAK
-- slot: 14
-  letters:
-  - K
-  - U
-  - L
-  - K
-  - A
-  words:
-  - KULKA
-  - KULA
-  - LUKA
-- slot: 15
-  letters:
-  - T
-  - O
-  - R
-  - B
-  - A
-  words:
-  - TORBA
-  - TOR
-  - BAR
+# T-0152: editorial familiarity bands for 65 UNRELEASED prototype slots.
+# Required answers are reviewed native source forms; complete bonuses are generated.
+# Slots 1–15: very easy onboarding; no forced obscure inflections.
+- {slot: 1, letters: [K, O, T], words: [KOT]}
+- {slot: 2, letters: [R, A, K], words: [RAK]}
+- {slot: 3, letters: [D, O, M, Y], words: [DOM, DYM]}
+- {slot: 4, letters: [L, A, T, O], words: [LATO], expect_bonus: [LAT]}
+- {slot: 5, letters: [K, O, S, A], words: [KOSA, OSA], expect_bonus: [KOS, SOK]}
+- {slot: 6, letters: [W, O, D, A], words: [WODA, DWA]}
+- {slot: 7, letters: [K, U, R, A], words: [KURA], expect_bonus: [KUR]}
+- {slot: 8, letters: [R, Y, B, A], words: [RYBA], expect_bonus: [RYB]}
+- {slot: 9, letters: [M, O, S, T], words: [MOST]}
+- {slot: 10, letters: [P, I, E, S], words: [PIES], expect_bonus: [PSI]}
+- {slot: 11, letters: [K, W, I, A, T], words: [KWIAT]}
+- {slot: 12, letters: [K, L, A, S, A], words: [KLASA, SALA, LAS]}
+- {slot: 13, letters: [Ż, A, B, K, A], words: [ŻABKA, ŻABA]}
+- {slot: 14, letters: [K, U, L, K, A], words: [KULKA, KULA]}
+- {slot: 15, letters: [T, O, R, B, A], words: [TORBA, TOR, BAR]}
+# Slots 16–30: easy everyday vocabulary; repeated tiles and Polish diacritics.
+- {slot: 16, letters: [K, A, W, A], words: [KAWA]}
+- {slot: 17, letters: [M, A, P, A], words: [MAPA]}
+- {slot: 18, letters: [N, O, G, A], words: [NOGA]}
+- {slot: 19, letters: [R, Ę, K, A], words: [RĘKA]}
+- {slot: 20, letters: [O, K, N, O], words: [OKNO]}
+- {slot: 21, letters: [A, U, T, O], words: [AUTO]}
+- {slot: 22, letters: [P, T, A, K], words: [PTAK]}
+- {slot: 23, letters: [O, W, O, C], words: [OWOC]}
+- {slot: 24, letters: [U, C, H, O], words: [UCHO]}
+- {slot: 25, letters: [G, Ó, R, A], words: [GÓRA]}
+- {slot: 26, letters: [P, I, Ł, K, A], words: [PIŁKA]}
+- {slot: 27, letters: [L, A, L, K, A], words: [LALKA]}
+- {slot: 28, letters: [R, Z, E, K, A], words: [RZEKA]}
+- {slot: 29, letters: [M, A, M, A], words: [MAMA]}
+- {slot: 30, letters: [T, A, T, A], words: [TATA]}
+# Slots 31–45: easy-plus puzzles; familiar base forms with more intersections.
+- {slot: 31, letters: [L, A, M, P, A], words: [LAMPA, PALMA, LAMA]}
+- {slot: 32, letters: [D, R, O, G, A], words: [DROGA, GAD]}
+- {slot: 33, letters: [T, R, A, W, A], words: [TRAWA, WARTA]}
+- {slot: 34, letters: [M, O, R, Z, E], words: [MORZE, ZERO]}
+- {slot: 35, letters: [Z, E, B, R, A], words: [ZEBRA]}
+- {slot: 36, letters: [B, A, N, A, N], words: [BANAN]}
+- {slot: 37, letters: [D, Y, N, I, A], words: [DYNIA]}
+- {slot: 38, letters: [K, O, C, Y, K], words: [KOCYK, KOC]}
+- {slot: 39, letters: [S, K, L, E, P], words: [SKLEP, LEP]}
+- {slot: 40, letters: [M, L, E, K, O], words: [MLEKO, LEK]}
+- {slot: 41, letters: [M, A, S, Ł, O], words: [MASŁO]}
+- {slot: 42, letters: [C, H, L, E, B], words: [CHLEB, ECH]}
+- {slot: 43, letters: [M, O, T, Y, L], words: [MOTYL, LOT]}
+- {slot: 44, letters: [K, O, T, L, E, T], words: [KOTLET]}
+- {slot: 45, letters: [R, O, W, E, R], words: [ROWER]}
+# Slots 46–65: medium puzzle complexity, still familiar vocabulary (not hard lexicon).
+- {slot: 46, letters: [S, Z, K, O, Ł, A], words: [SZKOŁA]}
+- {slot: 47, letters: [Ż, Y, R, A, F, A], words: [ŻYRAFA, RAFA]}
+- {slot: 48, letters: [M, A, L, I, N, A], words: [MALINA, LINA, MINA]}
+- {slot: 49, letters: [S, E, R, N, I, K], words: [SERNIK, SER, REKIN]}
+- {slot: 50, letters: [D, E, S, Z, C, Z], words: [DESZCZ]}
+- {slot: 51, letters: [C, H, M, U, R, A], words: [CHMURA, MUR]}
+- {slot: 52, letters: [D, R, Z, E, W, O], words: [DRZEWO]}
+- {slot: 53, letters: [S, Ł, O, Ń, C, E], words: [SŁOŃCE]}
+- {slot: 54, letters: [C, Y, T, R, Y, N, A], words: [CYTRYNA]}
+- {slot: 55, letters: [C, U, K, I, E, R], words: [CUKIER]}
+- {slot: 56, letters: [H, E, R, B, A, T, A], words: [HERBATA, HERB, BAT]}
+- {slot: 57, letters: [K, A, R, T, O, N], words: [KARTON, TON]}
+- {slot: 58, letters: [P, L, E, C, A, K], words: [PLECAK]}
+- {slot: 59, letters: [C, Z, A, P, K, A], words: [CZAPKA, PACZKA]}
+- {slot: 60, letters: [K, R, E, D, K, A], words: [KREDKA, KADR]}
+- {slot: 61, letters: [K, R, O, P, K, A], words: [KROPKA, KORA, KARP]}
+- {slot: 62, letters: [G, R, U, S, Z, K, A], words: [GRUSZKA, KURS]}
+- {slot: 63, letters: [R, A, K, I, E, T, A], words: [RAKIETA, TARKA]}
+- {slot: 64, letters: [K, A, N, A, P, K, A], words: [KANAPKA, KANAPA, PAN]}
+- {slot: 65, letters: [P, A, R, A, S, O, L], words: [PARASOL, ROSA, PAS]}
