@@ -1,6 +1,8 @@
 extends CanvasLayer
 ## Debug-only observer; no gameplay decisions or physical touch latency claims.
 
+signal window_closed(record: Dictionary)
+
 const METRICS: Script = preload("res://features/debug/performance_metrics.gd")
 const PL: Translation = preload("res://locale/debug.pl.translation")
 const EN: Translation = preload("res://locale/debug.en.translation")
@@ -12,6 +14,7 @@ var _wheel: LetterWheelView
 var _label: Label
 var _timer: Timer
 var _active: bool = true
+var _window_open: bool = false
 var _translations: Array[Translation] = []
 
 
@@ -46,12 +49,14 @@ func _ready() -> void:
 
 
 func _screen_changed(_screen: int) -> void:
+	_close_window("navigation")
 	_detach()
 	_metrics.reset()
 	_label.reparent(self)
 	var screen: LevelScreen = _navigation.mounted_screen() as LevelScreen
 	if screen != null:
 		_wheel = screen.wheel
+		_window_open = true
 		_label.reparent(screen.body)
 		screen.body.move_child(_label, 2)
 	_attach()
@@ -67,6 +72,7 @@ func _detach() -> void:
 	if is_instance_valid(_wheel):
 		_wheel.configure_diagnostics()
 	_wheel = null
+	_window_open = false
 
 
 func _probe_input() -> void:
@@ -78,12 +84,16 @@ func _probe_drawn() -> void:
 
 
 func _post_draw() -> void:
-	if _active:
+	if _active and is_instance_valid(_wheel):
 		_metrics.frame_post_draw(_clock.monotonic_usec())
 
 
 ## @api Foreground transition starts a separate sample window.
 func set_foreground(active: bool) -> void:
+	if active == _active:
+		return
+	if _active:
+		_close_window("background")
 	_active = active
 	_metrics.reset()
 	if is_instance_valid(_wheel):
@@ -129,6 +139,7 @@ func _notification(what: int) -> void:
 
 
 func _exit_tree() -> void:
+	_close_window("exit")
 	_detach()
 	if is_instance_valid(_label):
 		_label.queue_free()
@@ -141,3 +152,14 @@ func _exit_tree() -> void:
 	for copy: Translation in _translations:
 		TranslationServer.remove_translation(copy)
 	_translations.clear()
+
+
+func _close_window(reason: String) -> void:
+	if not _window_open:
+		return
+	var stats: Dictionary = snapshot()
+	if stats.frame_intervals + stats.samples + stats.pending + stats.dropped == 0:
+		return
+	var record: Dictionary = {"schema_version": 1, "reason": reason, "stats": stats}
+	print("WOW_PERF_V1 " + JSON.stringify(record))
+	window_closed.emit(record)

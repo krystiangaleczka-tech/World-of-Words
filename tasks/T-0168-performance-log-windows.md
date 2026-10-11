@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: ready
+status: done
 depends_on: [T-0167]
 touch:
   - game/features/debug/performance_overlay.gd
@@ -35,3 +35,11 @@ Real injected-clock Nav/Save/Content + wheel forced draw: emitted navigation sna
 
 ## Acceptance
 All behavior and tests; full make check, scope/count, fresh independent review and final-head green CI before sequential squash merge. No human/device/FUN GATE approval invented.
+
+## Outcome
+Fresh independent review approved 87e156272907bee31550ee009a9f8fb6445abc3d.
+Final full make check:260GUT /13171assertions,311pipeline,142tools,65levels.
+Four focused tests/49assertions and nine actual engine JSON lines verified.
+Initial new-test foreground assumptions failed; fixed fresh gesture and canvas
+processing before forced draw. Interim broad run interrupted before GUT; final
+full run passes. Scope four files,count453 vs449. Final-head CI required.
