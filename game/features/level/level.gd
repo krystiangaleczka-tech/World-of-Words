@@ -256,9 +256,9 @@ func _load_board() -> void:
 	controller.configure(board, progress, _event_bus, not diagnostic_play)
 	if _rng == null:
 		_rng = RandomNumberGenerator.new()
-		_rng.seed = hash(board.get_level().get_id())
+		_rng.randomize()
 	board_view.set_board(board)
-	wheel.set_letters(board.get_level().get_letters())
+	wheel.set_letters(board.get_level().get_letters(), _rng)
 	if _slot == progress.current_slot():
 		progress.bind_board(board)
 	wheel.set_locked(board.is_complete())
