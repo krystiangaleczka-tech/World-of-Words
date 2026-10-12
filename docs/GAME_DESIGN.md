@@ -312,13 +312,58 @@ Day boundaries follow decision 0003.
 - Levels 1–15 are hand-made (letters + words in YAML, `CONTENT.md`) and follow
   `PRODUCT.md#first-10-minutes-timeline`. Opus gives a second opinion on them (FR-ONB-02).
 
-| Slots | Content intent |
-|---|---|
-| 1 | 3 letters, 1–2 short common words; the tutorial hand shows the gesture |
-| 2 | 3 letters, several words |
-| 3–4 | 4 letters; repeats likely, so ALREADY_FOUND is seen naturally |
-| 5 | Contains one obvious bonus word (first BONUS feedback, meter appears) |
-| 6–15 | Gradual growth to 5 letters; no landmark |
+| Slot | Teaching/content intent | Feature/copy treatment at canonical defaults |
+|---|---|---|
+| 1 | Three letters; one or two short common answers; discover swipe and release | Only board/preview/wheel; TutorialHand + level.tutorial.connect until first accepted word; no input blocker |
+| 2 | Three letters, several answers; see that tile order can change | Shuffle from unlocks.shuffle_slot; IconButton(shuffle) + onboarding.coach.shuffle |
+| 3 | Four letters; repeat an already found answer naturally | ALREADY_FOUND feedback, no penalty; no new controls |
+| 4 | Four letters; consolidate drag/backtrack/release | No new prompt or forced tool use; cancellation never submits |
+| 5 | Include an obvious optional extra word | BonusMeter after first bonus at unlocks.bonus_meter_slot; onboarding.coach.bonus; bonus never required to complete |
+| 6 | Consolidate required vs bonus words, grow toward five letters | No new gameplay coach; after completion, iOS ATT at consent.att_after_slot with UMP IDFA explainer |
+| 7 | Optional one-cell Hint on an approachable board | Hint/coins/Shop from unlocks.hint_slot; durable onboarding Hint grant; HintButton(hint) + onboarding.coach.hint; coins pill no coach |
+| 8 | Practise independently with four/five letters | Optional Hint; never force spend or rewarded viewing; no repeated coach |
+| 9 | Consolidate tool choice and word discovery | Quiet play; no new feature or monetization prompt |
+| 10 | Introduce location/postcard progress | Home/Journey from unlocks.journey_slot; after completion Continue first visits Home; onboarding.coach.journey on first eligible Journey NavTab |
+| 11 | Keep the main loop clear after Home discovery | Resume/Play returns to current campaign; existing postcard progress, no new coach |
+| 12 | Explain optional whole-word Reveal | HintButton(reveal) + onboarding.coach.reveal from unlocks.reveal_slot; optional x2 ad-badge button from unlocks.double_reward_slot has no coach; postcard piece is progress feedback |
+| 13 | Consolidate independent play with up to five letters | Existing controls; no added unlock or forced purchase |
+| 14 | Consolidate solving and completing a location | No landmark or new mechanic; ordinary completion feedback |
+| 15 | Finish the P2 teaching sequence, continue normal campaign | No Daily/streak in P2; unlocks.daily_slot is the P3 hook, not a P2 feature |
+
+The table is a teaching specification for future T-0305 authoring, not a claim that the current
+65-slot prototype matches it. Every onboarding answer must use the licensed source/curator rules;
+validate formability, geometry, familiarity and solvability through the existing pipeline. No forced
+bonus/tool use, exact word list or newly generated pack is supplied by this planning task.
+
+- Slot values above describe canonical defaults; runtime availability must read config keys and persist
+  unlocks. "At slot N" remains when N becomes current; one-time Home introduction happens after
+  completing slot10. Returning launch/navigation follows the existing DESIGN flows.
+- After slot1, show UMP only where required; it resolves before ads SDK initialization. After slot6 on
+  iOS, use the UMP IDFA explainer then system ATT; no custom pre-prompt or ad request before ATT resolves.
+  These are completion-boundary actions, not first-launch prompts or gameplay-blocking coach marks.
+- TutorialHand never intercepts input. It ends on the first accepted LEVEL/BONUS word; invalid,
+  ignored or canceled attempts do not qualify. Reopen/first-word ownership must be defined and tested
+  in the future onboarding/save contracts, not inferred from an animation.
+- A coach mark is only the existing target's highlighted state plus one inline CAPTION, dismissed by
+  any tap or after Motion.TOAST_HOLD x2. No scrim, arrows, overlay or new component. Only an eligible
+  visible target receives it; once-per-feature state survives navigation/restart. Queue eligible
+  coaching rather than overlapping it with consent/another coach/completion feedback. Exact
+  persistence/failure ownership is frozen by T-0229/T-0290 before implementation.
+- Canonical onboarding.max_prompts_per_session caps other non-gameplay offers/rating/notices.
+  Only consent/ATT and coach marks have the existing explicit exemption; do not silently exempt new
+  prompts. This budget never blocks an explicit gameplay action or navigation. Prompt classification,
+  reset and ad-policy integration need tests in T-0260/T-0290.
+- Coach copy keys/treatments are proposed in docs/qa/T-0201-onboarding-plan.md; actual locale resources,
+  TutorialHand/component composition and first15 levels remain their own implementation tasks.
+
+### P2 UI versus content language input
+
+Chris selected Q15 on 2026-10-12: EN UI is a debug-only option for closed testers until EN level
+content exists. Campaign content stays PL; do not load an absent EN manifest or create a fresh EN
+campaign merely because UI language changes. UI locale and content-language ownership need explicit
+contracts before wiring the selector. P2 release/runtime language behavior is not changed here;
+EN content/production language selection stays in its later approved wave.
+
 
 - First launch goes straight into level 1: no login, offer, daily, notification or rating prompt
   (FR-ONB-01).
