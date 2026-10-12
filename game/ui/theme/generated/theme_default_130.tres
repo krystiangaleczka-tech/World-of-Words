@@ -1,17 +1,28 @@
 [gd_resource type="Theme" format=3]
 
+[ext_resource type="FontVariation" path="res://assets/fonts/inter_bold.tres" id="font_bold"]
+[ext_resource type="FontVariation" path="res://assets/fonts/inter_extrabold.tres" id="font_extrabold"]
+[ext_resource type="FontVariation" path="res://assets/fonts/inter_numeric.tres" id="font_numeric"]
+[ext_resource type="FontVariation" path="res://assets/fonts/inter_regular.tres" id="font_regular"]
+[ext_resource type="FontVariation" path="res://assets/fonts/inter_semibold.tres" id="font_semibold"]
+
 [resource]
 resource_name = "Ceramic_default_130"
+default_font = ExtResource("font_regular")
 default_font_size = 55
 Body/base_type = &"Label"
 Body/colors/font_color = Color(0.15686275, 0.24313726, 0.20784314, 1)
 Body/font_sizes/font_size = 55
+Body/fonts/font = ExtResource("font_regular")
+Button/fonts/font = ExtResource("font_semibold")
 Caption/base_type = &"Label"
 Caption/colors/font_color = Color(0.15686275, 0.24313726, 0.20784314, 1)
 Caption/font_sizes/font_size = 42
+Caption/fonts/font = ExtResource("font_semibold")
 Display/base_type = &"Label"
 Display/colors/font_color = Color(0.15686275, 0.24313726, 0.20784314, 1)
 Display/font_sizes/font_size = 114
+Display/fonts/font = ExtResource("font_extrabold")
 Elevation/colors/HIGH_COLOR = Color(0, 0, 0, 0.2)
 Elevation/colors/LOW_COLOR = Color(0.15686275, 0.24313726, 0.20784314, 0.12156863)
 Elevation/colors/MID_COLOR = Color(0, 0, 0, 0.16078432)
@@ -24,12 +35,15 @@ Elevation/constants/MID_OFFSET_Y = 8
 Elevation/constants/NONE = 0
 Label/colors/font_color = Color(0.15686275, 0.24313726, 0.20784314, 1)
 Label/font_sizes/font_size = 55
+Label/fonts/font = ExtResource("font_regular")
 LabelText/base_type = &"Label"
 LabelText/colors/font_color = Color(0.15686275, 0.24313726, 0.20784314, 1)
 LabelText/font_sizes/font_size = 52
+LabelText/fonts/font = ExtResource("font_semibold")
 Numeric/base_type = &"Label"
 Numeric/colors/font_color = Color(0.15686275, 0.24313726, 0.20784314, 1)
 Numeric/font_sizes/font_size = 52
+Numeric/fonts/font = ExtResource("font_numeric")
 Palette/colors/BG = Color(0.9647059, 0.9490196, 0.9137255, 1)
 Palette/colors/BONUS = Color(0.53333336, 0.38431373, 0.14901961, 1)
 Palette/colors/CELL_EMPTY = Color(0.8901961, 0.87058824, 0.8235294, 1)
@@ -52,6 +66,7 @@ Palette/colors/TILE_SELECTED = Color(0.1882353, 0.39215687, 0.3254902, 1)
 Preview/base_type = &"Label"
 Preview/colors/font_color = Color(0.15686275, 0.24313726, 0.20784314, 1)
 Preview/font_sizes/font_size = 64
+Preview/fonts/font = ExtResource("font_extrabold")
 Radius/constants/FULL = 999
 Radius/constants/L = 44
 Radius/constants/M = 28
@@ -65,12 +80,15 @@ Space/constants/XXL = 96
 Subtitle/base_type = &"Label"
 Subtitle/colors/font_color = Color(0.15686275, 0.24313726, 0.20784314, 1)
 Subtitle/font_sizes/font_size = 62
+Subtitle/fonts/font = ExtResource("font_bold")
 TileLetter/base_type = &"Label"
 TileLetter/colors/font_color = Color(0.15686275, 0.24313726, 0.20784314, 1)
 TileLetter/font_sizes/font_size = 84
+TileLetter/fonts/font = ExtResource("font_extrabold")
 Title/base_type = &"Label"
 Title/colors/font_color = Color(0.15686275, 0.24313726, 0.20784314, 1)
 Title/font_sizes/font_size = 78
+Title/fonts/font = ExtResource("font_bold")
 Type/constants/BODY_WEIGHT = 400
 Type/constants/CAPTION_WEIGHT = 600
 Type/constants/CELL_LETTER_RATIO_WEIGHT = 800
@@ -90,3 +108,12 @@ Type/font_sizes/PREVIEW = 64
 Type/font_sizes/SUBTITLE = 62
 Type/font_sizes/TILE_LETTER = 84
 Type/font_sizes/TITLE = 78
+Type/fonts/BODY = ExtResource("font_regular")
+Type/fonts/CAPTION = ExtResource("font_semibold")
+Type/fonts/DISPLAY = ExtResource("font_extrabold")
+Type/fonts/LABEL = ExtResource("font_semibold")
+Type/fonts/NUMERIC = ExtResource("font_numeric")
+Type/fonts/PREVIEW = ExtResource("font_extrabold")
+Type/fonts/SUBTITLE = ExtResource("font_bold")
+Type/fonts/TILE_LETTER = ExtResource("font_extrabold")
+Type/fonts/TITLE = ExtResource("font_bold")

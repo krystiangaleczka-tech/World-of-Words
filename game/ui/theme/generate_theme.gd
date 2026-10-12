@@ -1,8 +1,15 @@
 @tool
 class_name CeramicThemeGenerator
 extends EditorScript
-## @api Rebuild inactive theme foundations and CSS from Tokens; no project activation.
+## @api Rebuild Ceramic themes, pinned Inter variations and CSS from Tokens.
 
+const OPTICAL_SIZE: int = 14
+const FONT_NAMES: Dictionary = {
+	Tokens.Type.BODY_WEIGHT: "regular",
+	Tokens.Type.LABEL_WEIGHT: "semibold",
+	Tokens.Type.TITLE_WEIGHT: "bold",
+	Tokens.Type.TILE_LETTER_WEIGHT: "extrabold",
+}
 const TOKEN_SOURCE: GDScript = preload("res://ui/tokens.gd")
 const PERCENTS: Array[int] = [100, 115, 130]
 const GROUPS: Array[String] = [
@@ -60,6 +67,9 @@ static func build_theme(high_contrast: bool, text_percent: int) -> Theme:
 	assert(text_percent in PERCENTS)
 	var theme: Theme = Theme.new()
 	theme.resource_name = "Ceramic_%s_%d" % ["hc" if high_contrast else "default", text_percent]
+	theme.default_font = _font_resource(Tokens.Type.BODY_WEIGHT)
+	theme.set_font(&"font", &"Label", theme.default_font)
+	theme.set_font(&"font", &"Button", _font_resource(Tokens.Type.LABEL_WEIGHT))
 	theme.default_font_size = roundi(Tokens.Type.BODY * text_percent / 100.0)
 	var palette: Dictionary = constants("PaletteHC" if high_contrast else "Palette")
 	for token: String in palette:
@@ -76,6 +86,9 @@ static func build_theme(high_contrast: bool, text_percent: int) -> Theme:
 		theme.set_font_size(StringName(token), &"Type", size)
 		var variation: StringName = StringName(VARIATIONS[token])
 		theme.set_type_variation(variation, &"Label")
+		var font: FontVariation = _font_resource(typography[token + "_WEIGHT"], token == "NUMERIC")
+		theme.set_font(StringName(token), &"Type", font)
+		theme.set_font(&"font", variation, font)
 		theme.set_font_size(&"font_size", variation, size)
 		theme.set_color(&"font_color", variation, palette["TEXT"])
 	theme.set_font_size(&"font_size", &"Label", theme.default_font_size)
@@ -88,6 +101,54 @@ static func build_theme(high_contrast: bool, text_percent: int) -> Theme:
 			elif values[token] is int:
 				theme.set_constant(StringName(token), StringName(group), values[token])
 	return theme
+
+
+static func _font_resource(weight: int, numeric: bool = false) -> FontVariation:
+	var name: String = "numeric" if numeric else str(FONT_NAMES[weight])
+	return load("res://assets/fonts/inter_%s.tres" % name) as FontVariation
+
+
+static func _generate_fonts() -> Error:
+	# Project themes load before first import: use an import-independent generated FontFile.
+	var data_font: FontFile = FontFile.new()
+	data_font.data = FileAccess.get_file_as_bytes("res://assets/fonts/Inter.ttf")
+	var base_path: String = "res://assets/fonts/Inter.res"
+	var base_error: Error = ResourceSaver.save(data_font, base_path, ResourceSaver.FLAG_COMPRESS)
+	if base_error != OK:
+		return base_error
+	var base_font: FontFile = (
+		ResourceLoader.load(base_path, "FontFile", ResourceLoader.CACHE_MODE_IGNORE) as FontFile
+	)
+	var notice: Resource = Resource.new()
+	notice.set_meta(&"ofl_notice", FileAccess.get_file_as_string("res://assets/fonts/OFL.txt"))
+	var notice_error: Error = ResourceSaver.save(notice, "res://assets/fonts/font_license.tres")
+	if notice_error != OK:
+		return notice_error
+	var server: TextServer = TextServerManager.get_primary_interface()
+	for name: String in ["regular", "semibold", "bold", "extrabold", "numeric"]:
+		var font: FontVariation = FontVariation.new()
+		font.base_font = base_font
+		var weight: int = (
+			Tokens.Type.NUMERIC_WEIGHT if name == "numeric" else int(FONT_NAMES.find_key(name))
+		)
+		font.variation_opentype = {
+			server.name_to_tag("wght"): weight,
+			server.name_to_tag("opsz"): OPTICAL_SIZE,
+		}
+		var features: Dictionary = {
+			server.name_to_tag("cv08"): 1,
+			server.name_to_tag("cv05"): 1,
+		}
+		if name == "numeric":
+			features[server.name_to_tag("tnum")] = 1
+			features[server.name_to_tag("pnum")] = 0
+		font.opentype_features = features
+		var font_path: String = "res://assets/fonts/inter_%s.tres" % name
+		base_font.set_id_for_path(font_path, "1_inter")
+		var error: Error = ResourceSaver.save(font, font_path)
+		if error != OK:
+			return error
+	return OK
 
 
 static func css_text() -> String:
@@ -135,17 +196,22 @@ static func generate(
 	theme_dir: String = "res://ui/theme/generated",
 	css_path: String = "res://../docs/design/tokens.css"
 ) -> Error:
-	var result: Error = DirAccess.make_dir_recursive_absolute(
-		ProjectSettings.globalize_path(theme_dir)
-	)
+	var result: Error = _generate_fonts()
+	if result != OK:
+		return result
+	result = DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(theme_dir))
 	if result != OK:
 		return result
 	for high_contrast: bool in [false, true]:
 		for percent: int in PERCENTS:
 			var name: String = "theme_%s_%d.tres" % ["hc" if high_contrast else "default", percent]
-			result = ResourceSaver.save(
-				build_theme(high_contrast, percent), theme_dir.path_join(name)
-			)
+			var path: String = theme_dir.path_join(name)
+			for font_name: String in ["regular", "semibold", "bold", "extrabold", "numeric"]:
+				var font: FontVariation = (
+					load("res://assets/fonts/inter_%s.tres" % font_name) as FontVariation
+				)
+				font.set_id_for_path(path, "font_" + font_name)
+			result = ResourceSaver.save(build_theme(high_contrast, percent), path)
 			if result != OK:
 				return result
 	var file: FileAccess = FileAccess.open(css_path, FileAccess.WRITE)

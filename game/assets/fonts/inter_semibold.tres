@@ -1,0 +1,14 @@
+[gd_resource type="FontVariation" format=3]
+
+[ext_resource type="FontFile" path="res://assets/fonts/Inter.res" id="1_inter"]
+
+[resource]
+base_font = ExtResource("1_inter")
+variation_opentype = {
+1869640570: 14,
+2003265652: 600
+}
+opentype_features = {
+1668689973: 1,
+1668689976: 1
+}
