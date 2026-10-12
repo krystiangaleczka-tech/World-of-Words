@@ -114,6 +114,11 @@ class Motion:
 	const COUNT_UP_MAX: int = 900
 
 
+class Action:
+	const PRESS_SCALE: float = 0.96
+	const OUTLINE_WIDTH: int = 3
+
+
 class Touch:
 	const MIN_TARGET: int = 144
 	const TILE_HIT_RATIO: float = 1.35
