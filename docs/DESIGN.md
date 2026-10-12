@@ -57,33 +57,39 @@ No production screen is built before step 4 for the components it uses. Phase 1 
 
 ## Tokens
 
-**All values in this section are provisional until the visual-direction task.** Units: px at the 1080x1920 design resolution (3 px per dp on the 360 dp-wide COMPACT reference phone, about 2.6 px per dp on a 412 dp-wide phone), ms for durations. Touch sizes are computed for the 360 dp case so they hold on the smallest supported phone.
+**Ceramic v1: owner-approved values, transcribed by T-0206.** Source: T-0204
+`c4c85a4` and T-0205 `5eaa29c`. On 2026-10-12 Chris explicitly authorized this bounded
+token implementation before T-0205 closure and accepted its 450px wheel floor.
+T-0203 is the scheduling dependency under that exception; no original FUN/device/Opus/
+Q10/Q14 gate is marked complete. The exception covers T-0206 only.
+
+Units: px at the 1080x1920 design resolution (3 px per dp on the 360 dp-wide COMPACT reference phone, about 2.6 px per dp on a 412 dp-wide phone), ms for durations. Touch sizes are computed for the 360 dp case so they hold on the smallest supported phone.
 
 ### Palette
 
 Semantic names only (never `blue_500`). `PaletteHC` mirrors every name for high contrast.
 
-| Token | Purpose | v0 | HC v0 |
+| Token | Purpose | v1 | HC v1 |
 |---|---|---|---|
-| `Palette.BG` | screen background | `#F6F1E7` | `#FFFFFF` |
-| `Palette.SURFACE` | cards, sheets, top bar | `#FFFFFF` | `#FFFFFF` |
-| `Palette.SURFACE_ALT` | wheel disc, list row pressed, tracks | `#EDE5D6` | `#E6E6E6` |
-| `Palette.PRIMARY` | primary button, selected tiles, accents | `#2F6F62` | `#00473D` |
+| `Palette.BG` | screen background | `#F6F2E9` | `#FFFFFF` |
+| `Palette.SURFACE` | cards, sheets, top bar | `#FFFEFA` | `#FFFFFF` |
+| `Palette.SURFACE_ALT` | wheel disc, list row pressed, tracks | `#E9E5D9` | `#E6E6E6` |
+| `Palette.PRIMARY` | primary button, selected tiles, accents | `#306453` | `#00473D` |
 | `Palette.ON_PRIMARY` | text/icons on PRIMARY | `#FFFFFF` | `#FFFFFF` |
-| `Palette.TEXT` | body text, tile letters | `#1F2A30` | `#000000` |
-| `Palette.TEXT_MUTED` | secondary text, disabled labels | `#5E6A70` | `#333333` |
-| `Palette.SUCCESS` | word found accent, success toasts | `#2E8B57` | `#1B5E20` |
-| `Palette.BONUS` | bonus word, bonus meter | `#C8902E` | `#7A4F00` |
-| `Palette.ERROR` | invalid word tint, failed states | `#C0453A` | `#9B1C12` |
-| `Palette.TILE` | wheel tile fill | `#FFFDF8` | `#FFFFFF` |
-| `Palette.TILE_SELECTED` | tile in current chain | `#2F6F62` | `#00473D` |
-| `Palette.LINE` | swipe line | `#3E8C7C` | `#00473D` |
-| `Palette.CELL_EMPTY` | unrevealed grid cell | `#E3DBCB` | `#CFCFCF` |
-| `Palette.CELL_FILLED` | revealed cell fill | `#FFFFFF` | `#FFFFFF` |
-| `Palette.CELL_HINTED` | cell revealed by hint (not yet by word) | `#F3E2B8` | `#FFE08A` |
-| `Palette.COIN` | coin icon and coin count accent | `#E0A526` | `#7A4F00` |
-| `Palette.SCRIM` *(addition)* | dim layer behind sheets | `#1F2A3066` | `#000000A0` |
-| `Palette.STROKE` *(addition)* | borders, dividers, cell outline | `#D8CFBF` | `#000000` |
+| `Palette.TEXT` | body text, tile letters | `#283E35` | `#000000` |
+| `Palette.TEXT_MUTED` | secondary text, disabled labels | `#62695E` | `#333333` |
+| `Palette.SUCCESS` | word found accent, success toasts | `#306453` | `#1B5E20` |
+| `Palette.BONUS` | bonus word, bonus meter | `#886226` | `#7A4F00` |
+| `Palette.ERROR` | invalid word tint, failed states | `#A33F35` | `#9B1C12` |
+| `Palette.TILE` | wheel tile fill | `#FFFEFA` | `#FFFFFF` |
+| `Palette.TILE_SELECTED` | tile in current chain | `#306453` | `#00473D` |
+| `Palette.LINE` | swipe line | `#306453` | `#00473D` |
+| `Palette.CELL_EMPTY` | unrevealed grid cell | `#E3DED2` | `#CFCFCF` |
+| `Palette.CELL_FILLED` | revealed cell fill | `#FFFEFA` | `#FFFFFF` |
+| `Palette.CELL_HINTED` | cell revealed by hint (not yet by word) | `#F0E2BC` | `#FFE08A` |
+| `Palette.COIN` | coin icon and coin count accent | `#886226` | `#7A4F00` |
+| `Palette.SCRIM` *(addition)* | dim layer behind sheets | `#283E3566` | `#000000A0` |
+| `Palette.STROKE` *(addition)* | borders, dividers, cell outline | `#B9B5A5` | `#000000` |
 
 HC rules: text contrast >= 7:1 on its background, cell and tile outlines always drawn (`STROKE`, 2 px -> 4 px), no information carried by tint alone. No dark theme in MVP (Later).
 
@@ -108,11 +114,11 @@ Sizes for text scale 100 %. `CELL_LETTER` is geometric (ratio of cell size), nev
 
 - `Space` (multiples of 8): `XS` 8, `S` 16, `M` 32, `L` 48, `XL` 64, `XXL` 96. Gaps between siblings use one step; screen padding `M`.
 - `Radius`: `S` 16 (cells, small chips), `M` 28 (cards, tiles), `L` 44 (sheet top corners), `FULL` 999 (pills, buttons), `CELL_RATIO` 0.18 *(addition)*: cell radius = cell side x ratio.
-- `Elevation` (StyleBoxFlat shadow size, offset y, colour): `NONE` 0; `LOW` 8, 4, `#0000001F` (tiles, cards); `MID` 16, 8, `#00000029` (pills, toasts); `HIGH` 32, 12, `#00000033` (sheets). Cells use no shadow.
+- `Elevation` (StyleBoxFlat shadow size, offset y, colour): `NONE` 0; `LOW` 8, 4, `#283E351F` (tiles, cards); `MID` 16, 8, `#00000029` (pills, toasts); `HIGH` 32, 12, `#00000033` (sheets). Cells use no shadow.
 
 ### Motion and Ease
 
-| Token | v0 ms | Use |
+| Token | v1 ms | Use |
 |---|---|---|
 | `Motion.INSTANT` | 0 | state swaps; reduced-motion target |
 | `Motion.FAST` | 120 | press feedback, pops, toast in/out |
@@ -132,7 +138,7 @@ Sizes for text scale 100 %. `CELL_LETTER` is geometric (ratio of cell size), nev
 
 ### Touch and Layout
 
-| Token | v0 | Meaning |
+| Token | v1 | Meaning |
 |---|---|---|
 | `Touch.MIN_TARGET` | 144 | min tappable size: 48 dp at 360 dp width |
 | `Touch.TILE_HIT_RATIO` | 1.35 | wheel hit radius = tile radius x ratio |
@@ -142,21 +148,26 @@ Sizes for text scale 100 %. `CELL_LETTER` is geometric (ratio of cell size), nev
 | `Layout.MAX_CONTENT_WIDTH` | 1080 | content column cap (TABLET) |
 | `Layout.TOP_BAR_H` | 144 (all classes) | top bar height (holds a `Touch.MIN_TARGET` IconButton) |
 | `Layout.WHEEL_WIDTH_RATIO` | REGULAR 0.66, COMPACT 0.62, TABLET 0.66 | wheel diameter / content width; leaves >= `Touch.MIN_TARGET` + `Space.M` beside the wheel for corner buttons |
-| `Layout.WHEEL_MIN` / `WHEEL_MAX` | 560 / 800 | wheel diameter clamp |
+| `Layout.WHEEL_MIN` / `WHEEL_MAX` | 450 / 800 | wheel diameter clamp |
 | `Layout.GRID_MIN_RATIO` | 0.42 | grid area >= this share of body height; else wheel shrinks |
 | `Layout.CELL_MIN` / `CELL_MAX` | 64 / 150 | cell side clamp (pipeline keeps grids within CELL_MIN on COMPACT) |
 | `Layout.SHEET_MAX_RATIO` | 0.85 | max sheet height / screen height |
 
+Retained P1 Layout additions: `WHEEL_RING_RATIO` 0.35, `TILE_RADIUS_RATIO` 0.12,
+`LINE_WIDTH` 18, `TILE_SELECTED_SCALE` 1.12, `HINT_DOT_RATIO` 0.06 and `SHAKE_OFFSET` 16.
+At the accepted wheel floor 450, tile hit diameter = 450 x 0.12 x 2 x 1.35 = 145.8,
+above `Touch.MIN_TARGET` 144. This does not change the final screen layout algorithms.
+
 ### tokens.gd shape
 
 ```gdscript
-# game/ui/tokens.gd  — single source of truth. Values provisional (v0).
+# game/ui/tokens.gd  — single source of truth. Ceramic v1 values.
 class_name Tokens
 extends RefCounted
 
 class Palette:
-	const BG := Color("#F6F1E7")
-	const PRIMARY := Color("#2F6F62")  # ... every name from DESIGN.md#palette
+	const BG := Color("#F6F2E9")
+	const PRIMARY := Color("#306453")  # ... every name from DESIGN.md#palette
 
 class PaletteHC:
 	const BG := Color("#FFFFFF")  # ... same names, high-contrast values
@@ -183,11 +194,27 @@ static func dur(ms: int) -> float:
 	return 0.0 if reduced_motion and ms > Motion.FAST else ms / 1000.0
 ```
 
+Type size constants retain their integer API. Each also has a typed `<NAME>_WEIGHT`
+constant (including `CELL_LETTER_RATIO_WEIGHT`) with the table weight as 400/600/700/800.
+Elevation has integer `NONE`, `LOW`, `MID`, `HIGH` sizes plus `<LEVEL>_OFFSET_Y` and
+`<LEVEL>_COLOR` constants matching the values above. No font assets are imported here.
+
 Reading rules: Control-based components read colours, font sizes and margins from the active theme (`get_theme_color(&"TILE", &"Palette")`, theme type variations) so high contrast and text scaling switch everything at once; they refresh on `NOTIFICATION_THEME_CHANGED`. `Tokens.*` constants are read directly only for motion, touch and layout values, by the theme generator, and in Phase 1.
 
 ### Tokens CSS mirror
 
 Mockups use CSS custom properties with a mechanical name mapping: `Group.NAME` -> `--Group-NAME` (case kept, dot becomes dash): `Palette.TILE_SELECTED` -> `--Palette-TILE_SELECTED`, `Space.M` -> `--Space-M`, `Motion.BASE` -> `--Motion-BASE` (value `240ms`), `Type.TITLE` -> `--Type-TITLE-size` / `--Type-TITLE-weight`. Mockup px = design px / 2.6 (CSS px on a phone), stated once in the mockup's `:root`. After step 2 of the pipeline the generator also writes `docs/design/tokens.css` so later mockups start from current values.
+
+The complete v1 mirror is `docs/design/tokens.css`. Lengths use `--Token-unit` =
+`calc(1px / 2.6)`; ratios are dimensionless and Motion values use ms. Type sizes/weights
+map to `--Type-<NAME>-size` / `--Type-<NAME>-weight`, including the geometric
+`--Type-CELL_LETTER_RATIO`. All PaletteHC names also have `--PaletteHC-<NAME>` entries;
+`[data-hc="true"]` remaps every active `--Palette-*` name to its HC counterpart.
+`Radius.FULL` is a design length, also converted by 2.6. Elevation fields keep mechanical
+names: `--Elevation-LOW`, `--Elevation-LOW_OFFSET_Y`, `--Elevation-LOW_COLOR` (and MID/HIGH).
+Ease Vector2i values are stored as the two Godot enum integers, e.g. `--Ease-OUT: 7 1`;
+these are metadata for consumers, not CSS `animation-timing-function` values. T-0207's
+future generator must preserve this mirror contract. No Mock-* fixture helpers are copied.
 
 ## Typography
 

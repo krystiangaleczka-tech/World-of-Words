@@ -1,30 +1,30 @@
 class_name Tokens
 extends RefCounted
-## @api Provisional P1 design constants; final accepted styling belongs to T-0206.
+## @api Ceramic v1 constants; owner-approved T-0205 values, transcribed in T-0206.
 
 static var reduced_motion: bool = false
 
 
 class Palette:
-	const BG: Color = Color("#F6F1E7")
-	const SURFACE: Color = Color("#FFFFFF")
-	const SURFACE_ALT: Color = Color("#EDE5D6")
-	const PRIMARY: Color = Color("#2F6F62")
+	const BG: Color = Color("#F6F2E9")
+	const SURFACE: Color = Color("#FFFEFA")
+	const SURFACE_ALT: Color = Color("#E9E5D9")
+	const PRIMARY: Color = Color("#306453")
 	const ON_PRIMARY: Color = Color("#FFFFFF")
-	const TEXT: Color = Color("#1F2A30")
-	const TEXT_MUTED: Color = Color("#5E6A70")
-	const SUCCESS: Color = Color("#2E8B57")
-	const BONUS: Color = Color("#C8902E")
-	const ERROR: Color = Color("#C0453A")
-	const TILE: Color = Color("#FFFDF8")
-	const TILE_SELECTED: Color = Color("#2F6F62")
-	const LINE: Color = Color("#3E8C7C")
-	const CELL_EMPTY: Color = Color("#E3DBCB")
-	const CELL_FILLED: Color = Color("#FFFFFF")
-	const CELL_HINTED: Color = Color("#F3E2B8")
-	const COIN: Color = Color("#E0A526")
-	const SCRIM: Color = Color("#1F2A3066")
-	const STROKE: Color = Color("#D8CFBF")
+	const TEXT: Color = Color("#283E35")
+	const TEXT_MUTED: Color = Color("#62695E")
+	const SUCCESS: Color = Color("#306453")
+	const BONUS: Color = Color("#886226")
+	const ERROR: Color = Color("#A33F35")
+	const TILE: Color = Color("#FFFEFA")
+	const TILE_SELECTED: Color = Color("#306453")
+	const LINE: Color = Color("#306453")
+	const CELL_EMPTY: Color = Color("#E3DED2")
+	const CELL_FILLED: Color = Color("#FFFEFA")
+	const CELL_HINTED: Color = Color("#F0E2BC")
+	const COIN: Color = Color("#886226")
+	const SCRIM: Color = Color("#283E3566")
+	const STROKE: Color = Color("#B9B5A5")
 
 
 class PaletteHC:
@@ -61,6 +61,17 @@ class Type:
 	const PREVIEW: int = 64
 	const CELL_LETTER_RATIO: float = 0.62
 
+	const DISPLAY_WEIGHT: int = 800
+	const TITLE_WEIGHT: int = 700
+	const SUBTITLE_WEIGHT: int = 700
+	const BODY_WEIGHT: int = 400
+	const LABEL_WEIGHT: int = 600
+	const CAPTION_WEIGHT: int = 600
+	const NUMERIC_WEIGHT: int = 700
+	const TILE_LETTER_WEIGHT: int = 800
+	const PREVIEW_WEIGHT: int = 800
+	const CELL_LETTER_RATIO_WEIGHT: int = 800
+
 
 class Space:
 	const XS: int = 8
@@ -77,6 +88,19 @@ class Radius:
 	const L: int = 44
 	const FULL: int = 999
 	const CELL_RATIO: float = 0.18
+
+
+class Elevation:
+	const NONE: int = 0
+	const LOW: int = 8
+	const LOW_OFFSET_Y: int = 4
+	const LOW_COLOR: Color = Color("#283E351F")
+	const MID: int = 16
+	const MID_OFFSET_Y: int = 8
+	const MID_COLOR: Color = Color("#00000029")
+	const HIGH: int = 32
+	const HIGH_OFFSET_Y: int = 12
+	const HIGH_COLOR: Color = Color("#00000033")
 
 
 class Motion:
@@ -103,13 +127,13 @@ class Layout:
 	const TOP_BAR_H: int = 144
 	const WHEEL_WIDTH_RATIO: float = 0.66
 	const WHEEL_COMPACT_RATIO: float = 0.62
-	const WHEEL_MIN: int = 560
+	const WHEEL_MIN: int = 450
 	const WHEEL_MAX: int = 800
 	const GRID_MIN_RATIO: float = 0.42
 	const CELL_MIN: int = 64
 	const CELL_MAX: int = 150
 	const SHEET_MAX_RATIO: float = 0.85
-	# Provisional P1 additions: ring/tile geometry, connector, selection and feedback cues.
+	# Retained P1 contract: ring/tile geometry, connector, selection and feedback cues.
 	const WHEEL_RING_RATIO: float = 0.35
 	const TILE_RADIUS_RATIO: float = 0.12
 	const LINE_WIDTH: int = 18

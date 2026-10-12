@@ -8,17 +8,18 @@ risk: high
 executor: sol
 think: med
 ui: high
-status: blocked
-depends_on: [T-0205]
+status: review
+depends_on: [T-0203]
 touch:
   - game/ui/tokens.gd
   - game/tests/unit/ui/test_tokens.gd
   - game/tests/unit/ui/test_p1_tokens.gd
   - game/tests/unit/ui/test_v1_tokens.gd
+  - game/tests/unit/ui/test_v1_tokens.gd.uid
   - docs/design/tokens.css
   - docs/DESIGN.md
   - tasks/T-0206-final-tokens.md
-revision: 1
+revision: 2
 ---
 
 ## Goal
@@ -57,7 +58,10 @@ Verified on main ab67ff04b72b47b13cfab6cf34b4dd8aa19c8d1b, 2026-10-12:
 3. Retain the canonical Type sizes, Space, Radius, Motion, Touch and Ease values unless
    the accepted reference explicitly changes them. Record the complete v1 values and
    provenance in DESIGN, including any approved Layout delta; no inferred adjustments.
-4. Preserve the Type integer size API and duration behavior. Add no font resources,
+4. Preserve the Type integer size API and duration behavior. Add typed Type.*_WEIGHT
+   constants for the documented weights and Elevation size/offset/colour constants;
+   these are explicit contract additions required by the complete theme/CSS handoff.
+   Add no font resources,
    singleton, settings state or new player-facing text. Font-family/feature implementation
    remains T-0208; its accepted Inter decision is an input, not an asset import here.
 5. Add docs/design/tokens.css with the complete semantic mirror of the final constants:
@@ -69,13 +73,13 @@ Verified on main ab67ff04b72b47b13cfab6cf34b4dd8aa19c8d1b, 2026-10-12:
    Some existing P1 views consume Tokens directly and will pick up new palette values;
    final wheel/board/composition styling remains T-0222/T-0223/T-0276.
 
-### Unresolved source values (S4)
+### Accepted source values (owner disposition)
 T-0205 tokens.css retains WHEEL_MIN=560, but screens.css overrides it to450 for inline
 coach captions; README explicitly labels450 a proposal. DESIGN and current Godot use560.
-Chris must select the accepted v1 value before item3 is implemented. At450 the existing
+Chris approved450 on 2026-10-12 after the explicit exception/geometry question. At450 the existing
 hit-diameter formula gives145.8 >=144; browser evidence does not certify native layout.
-Preview-strip Space.XS in T-0205 also requires an explicit adoption disposition for later
-screen styling; this task cannot silently change screen code.
+Preview-strip Space.XS is accepted as part of the T-0205 values for later screen styling;
+this task does not change screen code.
 
 ### UX rules (DESIGN.md#rules-quote-these-into-ui-tasks)
 - R-UI-1: A screen task may not create a component; missing component/state -> S4.
@@ -118,3 +122,14 @@ Prepared this blocked specification on fresh main; no runtime files changed. Dra
 records the blocker. Options: finish/merge the prerequisite and accept geometry, or Chris
 explicitly authorizes bounded ordering plus selected v1 geometry. Existing documentation
 ordering exception0010 does not authorize this runtime task. Await disposition.
+
+2026-10-12 — resolved by explicit owner reply “tak” to the question approving T-0205
+Ceramic values (including WHEEL_MIN450) and bounded Godot/CSS implementation before
+T-0205 closure. Scheduling dependency is T-0203 (done); design input remains pinned
+T-0205 5eaa29cab67aa3e5dc03bf5d9e396d1c449b992b. No merging or completion of prerequisite
+device/Opus/Q10/Q14 gates is implied. This exception authorizes T-0206 only. Preflight
+against the unchanged main source above passes; proceed under revision2.
+
+Implementation evidence: make check PASS (278 GUT,311 pipeline,370 tools tests, registries,
+65 content levels). New test UID is the generated companion of the explicitly specified
+test script. Fresh review/CI and device screenshot acceptance remain review-time gates.
