@@ -322,7 +322,11 @@ Goal: decide whether the core is worth building on. Exit: Chris's go / fix core 
 | T-0142 | Opus P0+P1 architecture check on a context pack: layering, autoload list, Platform adapter interfaces, LevelData + manifest schema, save v1→v2 migration chain, BoardState and LevelController APIs, pipeline stage contracts (before P2 contracts build on them) | docs | docs | T-0118, T-0127 | GATE | OPUS | high | none | low | dp05 §2 |
 | T-0143 | FUN GATE (Chris): go / fix core (Sol plans a fix wave from P1 reserve IDs, then rerun T-0141) / stop | docs | docs | T-0141, T-0142, T-0138 | GATE | HUMAN | — | high | high | dp11 §4, PRODUCT.md#goals-and-non-goals |
 
+| T-0185 | Freeze owner-authorized P2 documentation ordering (decision 0010) and E11 detailed wave | docs | docs | T-0184 | GATE | SOL | high | none | med | decisions/0010, owner instruction 2026-10-12 |
+
 ## Phase 2 — Vertical Slice
+
+Decision 0010 permits T-0200..T-0203 documentation/review before open FUN GATE by explicit owner instruction. Human results and unrelated visual/runtime prerequisites remain pending.
 
 Planned rows; Sol re-plans per wave. Order inside the phase: decisions → visual foundation → contracts
 (save v3, economy, meta, analytics, monetization) → platform integrations (serial) → level integration
@@ -334,9 +338,9 @@ onboarding plan decided by Chris after one Opus session.
 
 | ID | Title | Type | Area | Depends | Lane | Exec | Think | UI | Risk | Refs |
 |---|---|---|---|---|---|---|---|---|---|---|
-| T-0200 | GAME_DESIGN P2: economy intents (units of intent), stars rule (Q2), bonus chest, ad policy keys, P2 IAP catalog; consent and unlock keys exactly as in PRODUCT.md (UMP after slot 1, ATT after slot 6) | docs | docs | T-0143 | DOC | SOL | high | low | med | GAME_DESIGN.md#economy-intents, PRODUCT.md#monetization, PRODUCT.md#open-questions, dp03 §6.2, PRODUCT.md#first-10-minutes-timeline |
+| T-0200 | GAME_DESIGN P2: economy intents (units of intent), stars rule (Q2), bonus chest, ad policy keys, P2 IAP catalog; consent and unlock keys exactly as in PRODUCT.md (UMP after slot 1, ATT after slot 6) | docs | docs | T-0185 | DOC | SOL | high | low | med | GAME_DESIGN.md#economy-intents, PRODUCT.md#monetization, PRODUCT.md#open-questions, dp03 §6.2, PRODUCT.md#first-10-minutes-timeline |
 | T-0201 | GAME_DESIGN#onboarding: 15-level teaching plan on the PRODUCT.md unlock timeline, coach-mark copy keys (`onboarding.coach.<feature>`), prompt budget | docs | docs | T-0200 | DOC | SOL | high | med | med | FR-ONB-01..05, DESIGN.md#feature-unlock-gating, DESIGN.md#flow-first-launch, PRODUCT.md#first-10-minutes-timeline |
-| T-0202 | Opus second opinion: economy intents, monetization rules, onboarding plan (one session) | docs | docs | T-0201 | DOC | OPUS | high | med | med | dp05 §2, dp05 §3, PRODUCT.md#principles |
+| T-0202 | Independent second opinion (Opus or owner-selected substitute per decision 0010): economy intents, monetization rules, onboarding plan | docs | docs | T-0201 | DOC | SOL+HUMAN | high | med | med | dp05 §2, dp05 §3, PRODUCT.md#principles |
 | T-0203 | Chris decides intents, Q2, Q7, Q15 and the onboarding plan; Sol applies to GAME_DESIGN and lists config defaults | docs | docs | T-0202 | DOC | SOL+HUMAN | med | low | med | PRODUCT.md#open-questions |
 
 ### E12 Visual direction, tokens and build setup
