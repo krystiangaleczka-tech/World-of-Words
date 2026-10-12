@@ -1,10 +1,11 @@
-# 0011 — Font proposal after T-0205 verification
+# 0011 — Inter font choice after T-0205 verification
 
-- Status: **proposed, awaiting Chris's visual adoption** (2026-10-12).
-- Scope: documentation references only. Supersedes no earlier accepted decision.
+- Status: **accepted by Chris for further work** (2026-10-12); native device verification remains pending.
+- Scope: chosen font for documentation references and the later T-0206/T-0208 handoff.
+  This task adds no runtime font resources. Supersedes no earlier accepted decision.
 - Selected visual direction: Ceramic, owner choice recorded in T-0204 c4c85a4.
 
-## Proposal
+## Decision
 Use **Inter as one family** for UI, wheel/cells and numbers: weights 400/600/700/800,
 fixed default optical size 14, `cv08=1` (uppercase I with serif) and `cv05=1` (lowercase
 l with tail). Numeric styles also enable `tnum=1`, with proportional figures disabled.
@@ -35,11 +36,14 @@ permit bundling subject to their terms; retain notices and reserved-name conditi
 No project dependency or runtime font resource is added here.
 
 ## Handoff
-After owner adoption, T-0206 records the chosen type values; T-0208 imports unmodified
+T-0206 records the chosen type values; T-0208 imports unmodified
 font assets, includes licences and creates FontVariation resources. Set OpenType
 features explicitly there, retain fixed opsz=14 unless separately reviewed, and verify
 Godot glyph rendering/tnum and all theme variants. A browser/HarfBuzz PASS is not an
 Android/iOS font-import or native a11y PASS. Physical font specimens remain pending.
 
 ## Owner disposition
-Pending. A proposed font decision does not authorize runtime adoption by itself.
+2026-10-12: after seeing the PL/DE comparison specimen and the question whether Inter
+should be the font for further work, Chris replied **“Tak — wybieram Inter”**.
+This accepts the family and its documented settings for the handoff. It does not certify
+physical-device readability, close Q10/Q14, or bypass later task/runtime validation gates.

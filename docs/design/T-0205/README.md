@@ -1,6 +1,6 @@
 # T-0205 — Ceramic screen references
 
-Status: **documentation proposals, awaiting Chris's phone/font/Q10/Q14 review**.
+Status: **documentation references; Inter selected by Chris; phone/Q10/Q14 review pending**.
 Source main ab67ff0; Ceramic input is T-0204 c4c85a4. T-0204's device evidence remains open.
 The owner requested the next task and supplied the additional mockup. This bounded docs
 continuation does not close FUN/device gates or adopt P2 runtime settings.
@@ -37,8 +37,10 @@ not hard-coded real prices, and Remove Forced Ads retains the honest title/body.
 ## Tokens and geometry
 Tokens retain Group.NAME -> --Group-NAME and the design-px/2.6 conversion. Palette/shapes
 inherit the selected Ceramic proposal. --Mock-* values are browser fixture helpers only.
-The font candidate is Inter at fixed optical size14, cv08/cv05 alternates, with tnum for
-numbers. These are preview settings, not an accepted production font/theme.
+Chris selected Inter on 2026-10-12 after viewing the PL/DE specimen: “Tak — wybieram
+Inter”. The handoff uses fixed optical size14, cv08/cv05 alternates and numeric tnum.
+Runtime font/theme import and physical-device readability checks remain later-task work.
+The screenshots retain the pre-selection candidate wording as the comparison evidence.
 
 Compact coach captions add space beside their targets. The proposed wheel floor is 450
 design px instead of the T-0204 560px placeholder, and preview padding uses Space.XS. At that
@@ -48,7 +50,7 @@ This is a visible geometry proposal for later accepted-token transcription, not 
 runtime change. The same semantic minimum is used in all Level fixtures and the tests.
 
 ## Font, iPad and art handoff
-- [Font decision0011](../../decisions/0011-fonts.md): proposed Inter as one family; Nunito's
+- [Font decision0011](../../decisions/0011-fonts.md): owner-selected Inter as one family; Nunito's
   default tabular digits do not establish an explicit tnum feature. Unmodified font binaries,
   OFL notices and exact pinned URLs/hashes ship with these offline previews.
 - [Font specimen](specimen.html): PL/DE, punctuation, I/l/1 and diacritics at tile size.
@@ -88,6 +90,6 @@ and the machine-readable font/browser reports. Full make check PASS:275 GUT,311 
 370 tools tests, registries and65 campaign levels. Final-head CI and fresh review belong in PR.
 No unexecuted test, device screenshot, physical iPad observation, store review result or native
 typography/a11y PASS is inferred.
-Before done: Chris reviews phone references and the font/art choices; Q10 receives an explicit
+Before done: Chris reviews phone references, native font readability and art choices; Q10 receives an explicit
 owner/native follow-up disposition. These mockups do not make T-0206+ runtime work ready while
 those decisions and the original gates remain open.

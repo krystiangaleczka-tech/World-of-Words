@@ -106,3 +106,9 @@ explicitly choosing Ceramic. This authorizes preparation and execution of this b
 roadmap documentation task by Codex/Sol. T-0203 is its scheduling dependency while unmerged
 T-0204 remains a pinned design input; its missing device evidence is preserved. This does not
 extend decision 0010 to runtime work or claim an Opus review. No roadmap or old decision changes.
+
+## Owner review record
+2026-10-12: Chris saw the PL/DE specimen and selected Inter for further work:
+“Tak — wybieram Inter”. Decision 0011 records that selection. Physical phone/iPad
+evidence, native font readability, Q10/Q14 dispositions and required Opus review remain
+open; task status stays review. No runtime resources or settings were changed.
