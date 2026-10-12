@@ -13,3 +13,8 @@ gallery.page.controls,Przyciski,Controls
 gallery.page.wheel,Koło,Wheel
 gallery.page.board,Siatka,Board
 gallery.page.debug,Diagnostyka,Debug
+gallery.page.scaffold,Rama ekranu,Screen frame
+gallery.scaffold.title,Świat słów,World of Words
+gallery.scaffold.body,Bezpieczny obszar treści,Safe content area
+gallery.scaffold.footer,Dolny wiersz,Bottom row
+gallery.scaffold.overflow,Nagłówek nie mieści się w podglądzie,Header does not fit this preview
