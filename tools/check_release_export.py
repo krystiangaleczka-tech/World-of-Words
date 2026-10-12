@@ -13,6 +13,8 @@ import sys
 import zipfile
 from pathlib import Path
 
+from wow_tools.build_versioning import collect_build_versioning
+
 ROOT = Path(__file__).resolve().parents[1]
 FORBIDDEN = ("features/debug/", "ui/gallery/", "tests/", "addons/gut/")
 REQUIRED = (
@@ -164,9 +166,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--report", type=Path)
     args = parser.parse_args(argv)
     try:
+        build_versioning: dict[str, str] | None = None
         if args.export:
+            build_versioning = collect_build_versioning(ROOT, "android-release-resources")
             export_release(args.archive, args.godot)
         report = inspect_export(args.archive)
+        if build_versioning is not None:
+            report["build_versioning"] = build_versioning
         if args.report:
             args.report.parent.mkdir(parents=True, exist_ok=True)
             args.report.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

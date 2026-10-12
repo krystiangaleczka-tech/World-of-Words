@@ -222,6 +222,7 @@ jobs:
           path: |
             builds/world-of-words-debug.apk
             builds/android-debug-verification.txt
+            builds/build-versioning.json
           if-no-files-found: error
           retention-days: 14
 
@@ -249,5 +250,6 @@ jobs:
           path: |
             builds/android-release-content.zip
             builds/android-release-inspection.json
+            builds/build-versioning.json
           if-no-files-found: error
           retention-days: 14

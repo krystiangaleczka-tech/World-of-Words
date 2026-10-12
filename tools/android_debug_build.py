@@ -12,6 +12,8 @@ import tempfile
 import zipfile
 from pathlib import Path
 
+from wow_tools.build_versioning import collect_build_versioning
+
 VERSION = "4.7.2.stable"
 PACKAGE = "org.worldofwords.prototype.debug"
 PERMISSIONS = {"android.permission.VIBRATE", "android.permission.INTERNET"}
@@ -57,7 +59,13 @@ def run(command: list[str], env: dict[str, str]) -> str:
 
 
 def build(
-    root: Path, output: Path, godot: str, sdk: Path, java: Path, templates: Path | None
+    root: Path,
+    output: Path,
+    godot: str,
+    sdk: Path,
+    java: Path,
+    templates: Path | None,
+    metadata: dict[str, str],
 ) -> None:
     if not sdk.is_dir() or not (java / "bin/keytool").is_file():
         raise ValueError("An installed Android SDK and JDK are required")
@@ -174,6 +182,9 @@ def build(
         )
         (output.parent / "android-debug-verification.txt").write_text(
             f"Godot: {version}\nDebug package: {PACKAGE}\nSDK: 24 minimum / 36 target\n"
+            f"Task: {metadata['task_id']} — {metadata['task_name']}\n"
+            f"Build date/time: {metadata['built_at']}\n"
+            f"Build kind: {metadata['build_kind']}\n"
             "Permissions: INTERNET,VIBRATE\nOrientation: portrait\n"
             "Signature: verified public disposable debug key\n"
             "Packaged boot/audio/debug route: verified with headless cue sink\n"
@@ -192,13 +203,19 @@ def main() -> int:
     args = parser.parse_args()
     if args.android_sdk is None or args.java_home is None:
         parser.error("set ANDROID_HOME/JAVA_HOME or pass --android-sdk/--java-home")
+    root = Path(__file__).resolve().parents[1]
+    try:
+        metadata = collect_build_versioning(root, "android-debug")
+    except ValueError as exc:
+        parser.error(str(exc))
     build(
-        Path(__file__).resolve().parents[1],
+        root,
         args.output.resolve(),
         args.godot,
         args.android_sdk.resolve(),
         args.java_home.resolve(),
         args.templates,
+        metadata,
     )
     return 0
 

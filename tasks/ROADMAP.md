@@ -310,6 +310,7 @@ Goal: tools to judge the prototype on a phone. Exit: debug APK from CI on the re
 | T-0137 | Android export preset + android-build CI job (debug APK artifact); release export excludes debug feature tag, debug and gallery scenes; Android permissions `VIBRATE` and `INTERNET` enabled in both presets [HS] | infra | infra | T-0136, T-0022, T-0051 | H | CHEAP | high | none | high | FR-PLAT-02, FR-DEBUG-06 |
 | T-0138 | CI step: inspect the release export file list; fail if debug code or screens are present [HS] | infra | ci | T-0137, T-0134 | H | CHEAP | low | none | high | FR-DEBUG-06 |
 | T-0144 | Level P1 wiring: P1 cues via `Audio.play` on tile, word, bonus, invalid and complete; every Level string from the locale CSV | feat | level.flow | T-0118, T-0132, T-0133 | FLOW | CHEAP | low | low | low | FR-AUDIO-01, FR-LOC-02, DESIGN.md#level-p1-provisional |
+| T-0150 | Require task ID, task name and build timestamp on every Android export; attach a versioning record to each artifact | infra | infra | T-0137, T-0138 | H | SOL | high | none | high | T-0137, T-0138 |
 
 ### E10 Fun gate
 Goal: decide whether the core is worth building on. Exit: Chris's go / fix core / stop decision.
