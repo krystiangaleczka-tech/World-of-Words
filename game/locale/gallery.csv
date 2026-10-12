@@ -1,0 +1,15 @@
+keys,pl,en
+gallery.shell.provisional,Próbki P1 — końcowe stany komponentów powstaną w kolejnych zadaniach,P1 samples — final component states follow in later tasks
+gallery.shell.contrast,Wysoki kontrast,High contrast
+gallery.shell.motion,Ograniczony ruch,Reduced motion
+gallery.shell.insets,Sztuczne marginesy,Fake insets
+gallery.samples.pangram,ZAŻÓŁĆ GĘŚLĄ JAŹŃ,THE QUICK BROWN FOX
+gallery.samples.restore,Przywróć zakupy,Restore purchases
+gallery.samples.numeric,0 · 9 999 · 99 999,0 · 9 999 · 99 999
+gallery.samples.wheel,Koło: 8 liter — próbka P1,Wheel: 8 letters — P1 sample
+gallery.samples.grid,Siatka 10 × 10 — sztuczna geometria,Grid 10 × 10 — synthetic geometry
+gallery.page.samples,Próbki,Samples
+gallery.page.controls,Przyciski,Controls
+gallery.page.wheel,Koło,Wheel
+gallery.page.board,Siatka,Board
+gallery.page.debug,Diagnostyka,Debug
