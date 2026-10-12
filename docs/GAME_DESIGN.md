@@ -1,7 +1,8 @@
 # GAME_DESIGN.md — game rules and intents
 
-- Status: P1 baseline with P2 intent proposal (T-0200, 2026-10-12). T-0202 reviews the P2 proposal;
-  T-0203 records final E11 disposition. Decision 0010 permits this planning before open FUN GATE.
+- Status: P1 baseline; P2 planning direction accepted in T-0203 (2026-10-12), following the
+  independent Astra PASS in T-0202 and Chris’s instruction to proceed. Implementation, calibration
+  and human evidence remain separate. Decision 0010 authorized this documentation checkpoint.
 - Owns: the rules behind every `rules: GAME_DESIGN.md#…` reference in `PRODUCT.md`, and the default
   value, type and range of every config key.
 - Does not own: requirement IDs, key **names**, event names, IAP product IDs (all canonical in
@@ -147,8 +148,8 @@ Consent and ATT are resolved before any ad can be offered.
   or items were used (FR-META-01).
 - Stars are progress, not currency: never spent, never removed (FR-META-08).
 - The daily puzzle awards no stars.
-- Q2 owner input (2026-10-12): fixed one star regardless of hints, with no no-hint bonus.
-  T-0202 reviews this input and T-0203 records final E11 disposition; see [Open questions](#open-questions).
+- Q2 accepted (T-0203, 2026-10-12): fixed one star regardless of hints, with no no-hint bonus.
+  The registry range does not authorize a no-hint modifier.
 
 ## Postcards
 
@@ -174,10 +175,13 @@ Consent and ATT are resolved before any ad can be offered.
 ## Economy intents
 
 Design in intent units first, numbers second (design pass 03 §6.2). Intents are Chris's decision with
-an Opus second opinion; the numbers below are starting values that `econ_sim` checks.
+an independent second opinion (owner-selected Astra for T-0202); the numbers below remain
+starting hypotheses for future `econ_sim` checks.
 
-**P2 intent proposal** (T-0200; final disposition in T-0203):
-1. A player who never watches ads or pays can afford a Hint about once every 4 levels.
+**Accepted P2 planning intents** (T-0203):
+1. Base completion income alone funds one Hint about every four completions (25 × 4 = 100).
+   This is not total early supply or measured consumption: onboarding items, bonus discovery,
+   optional ads and IAP must be separate simulation scenarios, including inventory and wallet.
 2. A rewarded Hint or the rewarded free-coins Shop offer is worth about one Hint. Rewarded x2 on
    Level complete doubles only the base level reward; it is a separate convenience, not this Hint target.
 3. The bonus chest opens about every two sessions and is worth about one Hint.
@@ -211,14 +215,14 @@ an Opus second opinion; the numbers below are starting values that `econ_sim` ch
 
 ## P2 economy scope and ownership
 
-This is a documentation proposal, not implemented P2 behavior. T-0200..T-0203 run under
+This is the accepted documentation direction, not implemented P2 behavior. T-0200..T-0203 run under
 [decision 0010](decisions/0010-p2-planning-order.md); human FUN/device/word-review evidence is separate.
 
 - P2 sources: durable campaign completion, bonus chest, explicit rewarded Hint/free-coins/double
   placements, one-time onboarding Hint grant, and the approved P2 IAP catalog. Daily/streak rewards,
   larger coin packs and the starter pack remain P3. Store prices/amount approval (Q6) is separate.
 - P2 sinks: Hint and Reveal. Shuffle stays free; no purchase/ad is required to solve or progress.
-  Stars/postcard pieces are earned progress, not spendable currency; Q2 proposes the owner-selected
+  Stars/postcard pieces are earned progress, not spendable currency; Q2 applies the owner-selected
   fixed-star rule independent of Hint/Reveal use.
 - Intent targets are calibration hypotheses. Existing config defaults are starting values, not results
   of `econ_sim`, phone tests or soft-launch calibration. Bonus cadence depends on observed sessions;
@@ -232,6 +236,14 @@ This is a documentation proposal, not implemented P2 behavior. T-0200..T-0203 ru
   callback. Late/duplicate callbacks cannot manufacture another grant. No reward for merely closing
   or failing an ad. IAP validates provider transaction identity/verification, commits grant plus processed
   identity, then consumes/finishes; recovery and restore need independent native proof.
+- Reload must show either the old state or exactly one complete operation. Future transaction
+  specifications must serialize competing owners, separate pending/committed reads, reject stale
+  content/boards, recover ambiguous commits and lost success notifications, and retain processed IDs
+  beyond ordinary journal trimming. Progress must respect Economy and Save section ownership.
+- T-0261/T-0271/native QA must prove rewarded callback correlation and verified store identity
+  (`purchaseToken` / StoreKit `Transaction.id`, not `orderId`). Grant plus durable processed identity
+  precedes finish/consume/acknowledge. Fake tests cannot prove provider recovery after process death;
+  missing rewarded proof needs an explicit provider limitation/failure policy, never an invented grant.
 - Historical found bonuses preserved by T-0147 are compatibility records, not economic grant authority.
   Current validated eligibility and persisted operations determine new bonus credit; content changes,
   re-addition, restart and completion must not grant twice.
@@ -239,21 +251,27 @@ This is a documentation proposal, not implemented P2 behavior. T-0200..T-0203 ru
   before attaching money to the P1 screen-local Progress and shared Save behavior. No schema/API is
   invented here, and no present P1 transaction guarantee is inferred.
 
-### P2 consent and collection policy input
+### P2 consent and collection policy
 
 Chris selected on 2026-10-12: remote transmission disabled until the appropriate consent; analytics
 may queue locally before that decision; crash SDK stays disabled pending legal/provider configuration
-verification. T-0202 reviews this input; T-0203 records final E11 disposition.
+verification. T-0203 accepts this development policy after the T-0202 review.
 
 - Keep UMP after `consent.ump_after_slot` and iOS ATT after `consent.att_after_slot`, with the existing
   IDFA explainer and no custom pre-prompt. UMP resolution precedes ads SDK initialization; on iOS,
-  no ad request occurs before ATT resolves. Denial retains the documented non-personalized-ad path.
+  no ad request occurs before ATT resolves. ATT denial alone permits only a non-tracking ad path
+  whose other required purpose permissions and provider conditions are satisfied. Unresolved or denied
+  required permission keeps the affected SDK/request/telemetry path disabled.
 - Consent for one purpose does not authorize another. UMP/ATT outcomes alone do not prove analytics
   or crash permission. Native/provider tasks must verify purpose/region mappings and send/drop the
   bounded local analytics queue according to the appropriate decision, including denial.
 - No external crash collection or SDK initialization before the separate Q7 verification is complete;
   do not infer that P2 documentation proves legitimate interest, SDK behavior or legal compliance.
   Offline development logging is distinct from sending user data to a provider.
+- T-0250/T-0261 and native tasks must inventory collection purposes and actual pre-decision network
+  requests (consent information, config, ads, purchases, analytics, crashes). Q7 is not proof that all
+  network traffic is silent; telemetry cannot hide in another purpose. Test unknown/granted/denied/
+  not-required/revoked decisions, startup collection, refresh, queue send/drop and offline retry.
 - Preserve the exact provider choices in decision 0009. No SDKs, consent screens, store products,
   credentials or permissions are installed/created by this planning wave.
 
@@ -314,7 +332,7 @@ Day boundaries follow decision 0003.
 
 | Slot | Teaching/content intent | Feature/copy treatment at canonical defaults |
 |---|---|---|
-| 1 | Three letters; one or two short common answers; discover swipe and release | Only board/preview/wheel; TutorialHand + level.tutorial.connect until first accepted word; no input blocker |
+| 1 | Three letters; one or two short common answers; discover swipe and release | Only board/preview/wheel; TutorialHand hides on first touch; level.tutorial.connect until first accepted word; no input blocker |
 | 2 | Three letters, several answers; see that tile order can change | Shuffle from unlocks.shuffle_slot; IconButton(shuffle) + onboarding.coach.shuffle |
 | 3 | Four letters; repeat an already found answer naturally | ALREADY_FOUND feedback, no penalty; no new controls |
 | 4 | Four letters; consolidate drag/backtrack/release | No new prompt or forced tool use; cancellation never submits |
@@ -327,7 +345,7 @@ Day boundaries follow decision 0003.
 | 11 | Keep the main loop clear after Home discovery | Resume/Play returns to current campaign; existing postcard progress, no new coach |
 | 12 | Explain optional whole-word Reveal | HintButton(reveal) + onboarding.coach.reveal from unlocks.reveal_slot; optional x2 ad-badge button from unlocks.double_reward_slot has no coach; postcard piece is progress feedback |
 | 13 | Consolidate independent play with up to five letters | Existing controls; no added unlock or forced purchase |
-| 14 | Consolidate solving and completing a location | No landmark or new mechanic; ordinary completion feedback |
+| 14 | Consolidate solving and progress toward completing a location | No landmark or new mechanic; location endpoint remains manifest-driven |
 | 15 | Finish the P2 teaching sequence, continue normal campaign | No Daily/streak in P2; unlocks.daily_slot is the P3 hook, not a P2 feature |
 
 The table is a teaching specification for future T-0305 authoring, not a claim that the current
@@ -341,9 +359,11 @@ bonus/tool use, exact word list or newly generated pack is supplied by this plan
 - After slot1, show UMP only where required; it resolves before ads SDK initialization. After slot6 on
   iOS, use the UMP IDFA explainer then system ATT; no custom pre-prompt or ad request before ATT resolves.
   These are completion-boundary actions, not first-launch prompts or gameplay-blocking coach marks.
-- TutorialHand never intercepts input. It ends on the first accepted LEVEL/BONUS word; invalid,
+- TutorialHand never intercepts input and hides on first touch. The first accepted player-solved
+  LEVEL/BONUS word permanently completes teaching; Hint/debug completion does not qualify. Invalid,
   ignored or canceled attempts do not qualify. Reopen/first-word ownership must be defined and tested
-  in the future onboarding/save contracts, not inferred from an animation.
+  in T-0290/T-0291 and save contracts, including canceled/invalid attempts and persistence failure;
+  animation visibility and durable completion are distinct states.
 - A coach mark is only the existing target's highlighted state plus one inline CAPTION, dismissed by
   any tap or after Motion.TOAST_HOLD x2. No scrim, arrows, overlay or new component. Only an eligible
   visible target receives it; once-per-feature state survives navigation/restart. Queue eligible
@@ -352,13 +372,16 @@ bonus/tool use, exact word list or newly generated pack is supplied by this plan
 - Canonical onboarding.max_prompts_per_session caps other non-gameplay offers/rating/notices.
   Only consent/ATT and coach marks have the existing explicit exemption; do not silently exempt new
   prompts. This budget never blocks an explicit gameplay action or navigation. Prompt classification,
-  reset and ad-policy integration need tests in T-0260/T-0290.
+  reset and ad-policy integration need one shared classification table and tests in T-0260/T-0290.
+  Automatic stuck offers and interstitials gain no implicit exemption from inline styling or ad
+  placement. Test zero/used cap, interruption, background/restart, purchase grace/entitlements and
+  explicit user actions; the cap is not a quota.
 - Coach copy keys/treatments are proposed in docs/qa/T-0201-onboarding-plan.md; actual locale resources,
   TutorialHand/component composition and first15 levels remain their own implementation tasks.
 
-### P2 UI versus content language input
+### P2 UI versus content language decision
 
-Chris selected Q15 on 2026-10-12: EN UI is a debug-only option for closed testers until EN level
+Chris selected Q15 on 2026-10-12, accepted in T-0203: EN UI is a debug-only option for closed testers until EN level
 content exists. Campaign content stays PL; do not load an absent EN manifest or create a fresh EN
 campaign merely because UI language changes. UI locale and content-language ownership need explicit
 contracts before wiring the selector. P2 release/runtime language behavior is not changed here;
@@ -465,11 +488,9 @@ on the merged config; if it fails, the whole remote payload is rejected and defa
 Drafts for Chris. Each needs his decision before the epic that uses it is planned
 (`PRODUCT.md#open-questions`).
 
-- **Q2 Stars per level.**
-  - A: always `meta.stars.per_level` (1).
-  - B: +1 star for a level finished without Hint or Reveal.
-  - Recommendation: A. B makes paid hints feel like a penalty and pushes players to grind instead of
-    using a hint. Needed by the P2 meta epic.
+- **Q2 decided (T-0203):** always one star, independent of Hint/Reveal. The alternative no-hint
+  bonus is rejected. Q7 and Q15 are accepted development policies in the sections above; legal/native
+  verification and production EN content remain separate. Provenance: `docs/qa/T-0203-owner-decisions.md`.
 - **Q3 Monthly calendar catch-up.**
   - A: none; a missed day loses the month's postcard.
   - B: missed days of the current month stay playable until the month ends, each unlocked by a
