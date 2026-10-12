@@ -112,6 +112,7 @@ class Motion:
 	const CELEBRATE: int = 1200
 	const TOAST_HOLD: int = 1600
 	const COUNT_UP_MAX: int = 900
+	const COUNT_UP_STEP: int = 20
 
 
 class Action:

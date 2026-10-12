@@ -1,3 +1,6 @@
 keys,pl,en
 ui.badge.new,NOWE,NEW
 ui.badge.locked,Zablokowane,Locked
+ui.currency.coins,Monety,Coins
+ui.currency.stars,Gwiazdy,Stars
+ui.progress.complete,Ukończono,Complete

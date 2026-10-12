@@ -83,6 +83,7 @@
   --Motion-BASE: 240ms;
   --Motion-CELEBRATE: 1200ms;
   --Motion-COUNT_UP_MAX: 900ms;
+  --Motion-COUNT_UP_STEP: 20ms;
   --Motion-FAST: 120ms;
   --Motion-INSTANT: 0ms;
   --Motion-SLOW: 420ms;
