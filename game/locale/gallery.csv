@@ -54,3 +54,8 @@ gallery.content.offline,Brak połączenia,No connection
 gallery.content.error,Wystąpił błąd,Something went wrong
 gallery.content.empty,Jeszcze nic tutaj nie ma,Nothing here yet
 gallery.content.unavailable,Obecnie niedostępne,Currently unavailable
+gallery.page.settingscontrols,Przełączniki i nawigacja,Toggles and navigation
+gallery.settings.sound,Dźwięki gry,Game sounds
+gallery.settings.music,Muzyka w tle,Background music
+gallery.settings.tab,Przykładowa kolekcja,Sample collection
+gallery.settings.locked,Poziom 15,Level 15
