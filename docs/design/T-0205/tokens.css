@@ -1,0 +1,34 @@
+/* Selected Ceramic proposal from T-0204 c4c85a4. Mockup CSS px = design px / 2.6. */
+:root {
+  --Mock-unit: calc(1px / 2.6); --Mock-text-scale: 1; --Mock-top: 0px; --Mock-bottom: 0px; --Mock-wheel-space: var(--Space-L);
+  --Palette-BG: #F6F2E9; --Palette-SURFACE: #FFFEFA; --Palette-SURFACE_ALT: #E9E5D9;
+  --Palette-PRIMARY: #306453; --Palette-ON_PRIMARY: #FFFFFF; --Palette-TEXT: #283E35; --Palette-TEXT_MUTED: #62695E;
+  --Palette-SUCCESS: #306453; --Palette-BONUS: #886226; --Palette-ERROR: #A33F35; --Palette-TILE: #FFFEFA;
+  --Palette-TILE_SELECTED: #306453; --Palette-LINE: #306453; --Palette-CELL_EMPTY: #E3DED2;
+  --Palette-CELL_FILLED: #FFFEFA; --Palette-CELL_HINTED: #F0E2BC; --Palette-COIN: #886226;
+  --Palette-STROKE: #B9B5A5; --Palette-SCRIM: #283E3566;
+  --Type-TITLE-size: calc(60 * var(--Mock-unit)); --Type-TITLE-weight: 700;
+  --Type-LABEL-size: calc(40 * var(--Mock-unit)); --Type-LABEL-weight: 600;
+  --Type-CAPTION-size: calc(32 * var(--Mock-unit)); --Type-CAPTION-weight: 600;
+  --Type-NUMERIC-size: calc(40 * var(--Mock-unit)); --Type-NUMERIC-weight: 700;
+  --Type-TILE_LETTER-size: calc(84 * var(--Mock-unit)); --Type-TILE_LETTER-weight: 800;
+  --Type-PREVIEW-size: calc(64 * var(--Mock-unit)); --Type-PREVIEW-weight: 800; --Type-CELL_LETTER_RATIO: .62;
+  --Space-XS: calc(8 * var(--Mock-unit)); --Space-S: calc(16 * var(--Mock-unit)); --Space-M: calc(32 * var(--Mock-unit));
+  --Space-L: calc(48 * var(--Mock-unit)); --Space-XL: calc(64 * var(--Mock-unit)); --Space-XXL: calc(96 * var(--Mock-unit));
+  --Radius-S: calc(16 * var(--Mock-unit)); --Radius-M: calc(28 * var(--Mock-unit)); --Radius-FULL: 999px; --Radius-CELL_RATIO: .18;
+  --Elevation-LOW: 0 calc(4 * var(--Mock-unit)) calc(8 * var(--Mock-unit)) #283E351F;
+  --Motion-FAST: 120ms; --Motion-BASE: 240ms; --Ease-OUT: cubic-bezier(.215,.61,.355,1);
+  --Touch-MIN_TARGET: calc(144 * var(--Mock-unit)); --Touch-TILE_HIT_RATIO: 1.35;
+  --Layout-MAX_CONTENT_WIDTH: calc(1080 * var(--Mock-unit)); --Layout-TOP_BAR_H: var(--Touch-MIN_TARGET);
+  --Layout-WHEEL_WIDTH_RATIO: .66; --Layout-WHEEL_MIN: calc(560 * var(--Mock-unit)); --Layout-WHEEL_MAX: calc(800 * var(--Mock-unit));
+  --Layout-WHEEL_COMPACT_RATIO: .62; --Layout-TABLET_MAX_ASPECT: 1.65; --Layout-COMPACT_MAX_ASPECT: 1.95;
+  --Layout-GRID_MIN_RATIO: .42; --Layout-CELL_MIN: calc(64 * var(--Mock-unit)); --Layout-CELL_MAX: calc(150 * var(--Mock-unit));
+  --Layout-WHEEL_RING_RATIO: .35; --Layout-TILE_RADIUS_RATIO: .12; --Layout-LINE_WIDTH: calc(18 * var(--Mock-unit));
+  --Layout-TILE_SELECTED_SCALE: 1.12; --Mock-font: ui-rounded, "Trebuchet MS", system-ui, sans-serif;
+}
+[data-hc="true"] {
+  --Palette-BG: #FFFFFF; --Palette-SURFACE: #FFFFFF; --Palette-SURFACE_ALT: #E6E6E6; --Palette-PRIMARY: #00473D;
+  --Palette-ON_PRIMARY: #FFFFFF; --Palette-TEXT: #000000; --Palette-TEXT_MUTED: #333333; --Palette-TILE: #FFFFFF;
+  --Palette-TILE_SELECTED: #00473D; --Palette-LINE: #00473D; --Palette-CELL_EMPTY: #CFCFCF; --Palette-CELL_FILLED: #FFFFFF;
+  --Palette-CELL_HINTED: #FFE08A; --Palette-BONUS: #7A4F00; --Palette-COIN: #7A4F00; --Palette-STROKE: #000000;
+}
