@@ -16,6 +16,7 @@ if (document.body.classList.contains('comparison')) {
   const query = new URLSearchParams(location.search), root = document.documentElement;
   root.dataset.direction = directions.includes(query.get('direction')) ? query.get('direction') : 'ceramic';
   root.dataset.hc = String(query.get('hc') === '1');
+  root.dataset.eight = String(query.get('eight') === '1');
   root.style.setProperty('--Mock-text-scale', query.get('large') === '1' ? '1.3' : '1');
   if (query.get('insets') === '1') { root.style.setProperty('--Mock-top', '44px'); root.style.setProperty('--Mock-bottom', '34px'); }
   if (query.get('pseudo') === '1') {

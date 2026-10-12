@@ -47,6 +47,8 @@
   --Palette-TILE_SELECTED: #00473D; --Palette-LINE: #00473D; --Palette-CELL_EMPTY: #CFCFCF; --Palette-CELL_FILLED: #FFFFFF;
   --Palette-CELL_HINTED: #FFE08A; --Palette-BONUS: #7A4F00; --Palette-COIN: #7A4F00; --Palette-STROKE: #000000;
 }
+/* Eight-letter proposal: keep enlarged selected tile corners clear of their neighbours. */
+[data-eight="true"] { --Layout-TILE_RADIUS_RATIO: .105; }
 * { box-sizing: border-box; } body { margin: 0; background: var(--Palette-BG); color: var(--Palette-TEXT); font-family: var(--Mock-font); }
 svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .symbols { position: absolute; width: 0; height: 0; } h1,h2,p { margin: 0; } b,small,.bonus { font-variant-numeric: tabular-nums; }

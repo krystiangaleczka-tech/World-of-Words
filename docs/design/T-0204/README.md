@@ -37,6 +37,9 @@ This is proposed geometry for review. Safe insets affect the actual layout class
 Standalone previews accept `direction=ceramic|paper|mist` and optional `hc=1`, `large=1`,
 `pseudo=1`, `eight=1`, `insets=1`. No saved preference, network request, audio or motion.
 The HC override preserves the existing token names; geometric letters remain unscaled at130%.
+Eight-letter mode proposes TILE_RADIUS_RATIO 0.105 (five-letter mode 0.12), keeping enlarged
+selected rectangles clear of neighbouring tiles. This is an unaccepted mockup value; the
+runtime geometry decision belongs to the later accepted-token/component tasks.
 No Godot component, theme, font, registry or locale file is changed. HTML labels carry the
 intended production key where applicable; icon aria labels describe the static fixture.
 
@@ -57,7 +60,9 @@ The runner opens local `file:` URLs and blocks external requests. It checks each
 and injected 44px/34px safe insets (288 cases), then three live resizes. Assertions cover scroll,
 safe-content bounds, fractional grid fitting, grid share, wheel/cell minimums, touch targets,
 button/tile hit-circle separation, displayed text/icon contrast including alpha, non-colour
-cues, token resolution, resource/console errors and deterministic comparison links.
+cues (painted hint dot, visible outlines, visible chain joining selected centres), pairwise
+tile separation, actual review-mode effects, token resolution, resource/console errors and
+deterministic comparison links.
 
 ## Evidence and open gates
 
@@ -70,6 +75,7 @@ stress and PSEUDO stress HC for each direction/viewport) and a comparison screen
 
 Browser checks exposed and corrected a too-small currency touch target, slightly insufficient
 grid share, fractional-pixel grid clipping and reduced contrast on the preview's dot cue.
+Eight-letter tile sizing also keeps selected corners from overlapping their neighbours.
 These corrections only affect the documentation mockups.
 
 Full local `make check` PASS: 275 GUT tests, 311 pipeline tests, 370 tools tests, registries and

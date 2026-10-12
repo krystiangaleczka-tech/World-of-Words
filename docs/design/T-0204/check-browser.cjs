@@ -24,6 +24,18 @@ function inspect(tokenRefs) {
   const number = name => Number(css.getPropertyValue(`--${name}`));
   const check = (ok, message) => { if (!ok) failures.push(message); };
   const screen = rect('.screen'), screenStyle = getComputedStyle(document.querySelector('.screen'));
+  const query = new URLSearchParams(location.search), hc = query.get('hc') === '1';
+  const scale = query.get('large') === '1' ? 1.3 : 1;
+  check(root.dataset.hc === String(hc), 'HC flag ignored');
+  if(hc) check(css.getPropertyValue('--Palette-BG').trim() === '#FFFFFF' && css.getPropertyValue('--Palette-TEXT').trim() === '#000000', 'HC palette ignored');
+  check(Math.abs(parseFloat(getComputedStyle(document.querySelector('.currency b')).fontSize)-px('Type-NUMERIC-size')*scale)<.1, 'text scale ignored');
+  check(Math.abs(parseFloat(getComputedStyle(document.querySelector('.tile')).fontSize)-px('Type-TILE_LETTER-size'))<.1, 'geometric tile text scaled');
+  check(Math.abs(parseFloat(getComputedStyle(document.querySelector('.word-preview')).fontSize)-px('Type-PREVIEW-size'))<.1, 'geometric preview text scaled');
+  check(document.querySelector('h1').textContent === (query.get('pseudo') === '1' ? '⟦Pózíóm aa 12⟧' : 'Poziom 12'), 'pseudo flag ignored');
+  check(Math.abs(parseFloat(screenStyle.paddingTop)-(query.get('insets') === '1' ? 44 : px('Space-S')))<.1, 'top inset ignored');
+  check(Math.abs(parseFloat(screenStyle.paddingBottom)-(query.get('insets') === '1' ? 34 : px('Space-S')))<.1, 'bottom inset ignored');
+  const aspect = (innerHeight-parseFloat(screenStyle.paddingTop)-parseFloat(screenStyle.paddingBottom))/innerWidth;
+  check(root.dataset.layout === (aspect<number('Layout-TABLET_MAX_ASPECT') ? 'TABLET' : aspect<number('Layout-COMPACT_MAX_ASPECT') ? 'COMPACT' : 'REGULAR'), 'incorrect layout class');
   const top = screen.top + parseFloat(screenStyle.paddingTop), bottom = screen.bottom - parseFloat(screenStyle.paddingBottom);
   const left = screen.left + parseFloat(screenStyle.paddingLeft), right = screen.right - parseFloat(screenStyle.paddingRight);
   const inside = (r, area) => r.left >= area.left-.1 && r.right <= area.right+.1 && r.top >= area.top-.1 && r.bottom <= area.bottom+.1;
@@ -54,9 +66,26 @@ function inspect(tokenRefs) {
       check(distance >= radius, `${button.className} intersects ${tile.textContent} hit circle`);
     }
   }
-  check(getComputedStyle(document.querySelector('.cell.hinted'), '::after').content !== 'none', 'hint dot missing');
-  check(getComputedStyle(document.querySelector('.tile.selected')).outlineStyle !== 'none', 'selection outline missing');
-  check(document.querySelector('.chain polyline').getAttribute('points').split(' ').length === 2, 'selection chain missing');
+  const visible = node => {const s=getComputedStyle(node); return s.display!=='none' && s.visibility==='visible' && Number(s.opacity)>0;};
+  const painted = color => color!=='none' && color!=='transparent' && !/^rgba\([^)]*,\s*0(?:\.0+)?\)$/.test(color);
+  const tileNodes = [...document.querySelectorAll('.tile')];
+  tileNodes.forEach((tile,i)=>tileNodes.slice(i+1).forEach(other=>{
+    const a=tile.getBoundingClientRect(), b=other.getBoundingClientRect();
+    check(a.right<=b.left || b.right<=a.left || a.bottom<=b.top || b.bottom<=a.top, `visible tiles ${tile.textContent}/${other.textContent} overlap`);
+  }));
+  const hinted = document.querySelector('.cell.hinted'), dot = getComputedStyle(hinted,'::after');
+  check(visible(hinted) && dot.content!=='none' && parseFloat(dot.width)>0 && parseFloat(dot.height)>0 && dot.display!=='none' && dot.visibility==='visible' && Number(dot.opacity)>0 && painted(dot.backgroundColor), 'hint dot missing');
+  for(const tile of document.querySelectorAll('.tile.selected')) {
+    const s=getComputedStyle(tile);
+    check(visible(tile) && s.outlineStyle!=='none' && parseFloat(s.outlineWidth)>0 && painted(s.outlineColor), 'selection outline missing');
+  }
+  const chain = document.querySelector('.chain'), polyline = chain.querySelector('polyline'), stroke=getComputedStyle(polyline);
+  check(visible(chain) && visible(polyline) && painted(stroke.stroke) && parseFloat(stroke.strokeWidth)>0 && polyline.points.numberOfItems===2, 'selection chain missing');
+  const selected = [...document.querySelectorAll('.tile.selected')];
+  if(polyline.points.numberOfItems===2) selected.forEach((tile,i)=>{
+    const point=polyline.points.getItem(i), actual=new DOMPoint(point.x,point.y).matrixTransform(polyline.getScreenCTM()), t=tile.getBoundingClientRect();
+    check(Math.hypot(actual.x-(t.left+t.right)/2,actual.y-(t.top+t.bottom)/2)<.1, 'selection chain misses tile centre');
+  });
   // Alpha-composite ancestor backgrounds and foreground opacity before WCAG luminance.
   const rgba = value => value.match(/[\d.]+/g).map(Number);
   const blend = (front, back) => front.slice(0,3).map((v,i)=>v*(front[3] ?? 1)+back[i]*(1-(front[3] ?? 1)));
