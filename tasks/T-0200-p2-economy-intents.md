@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: low
-status: ready
+status: done
 depends_on: [T-0185]
 touch:
   - docs/GAME_DESIGN.md
@@ -34,3 +34,6 @@ Review canonical key/ID/default consistency, P2 vs P3 exclusions, proposed choic
 
 ## Acceptance
 Specified work, bounded touch scope, full make check, fresh independent review and final-head successful12jobCI before sequential squash merge. No human test or legal/SDK evidence fabricated.
+
+## Outcome
+Documented P2 intent proposal, placement-specific rewarded targets, P2/P3 catalog, actual owner policy inputs and mandatory durable ownership/native verification boundaries. Canonical keys/default files and runtime unchanged. Fresh independent review APPROVE on c8e9a344708062c48bd608f03c64268ab1b84358. Full check: 275 GUT /13332 assertions,311 pipeline,370 tools,65 levels; scope3files/count536 unchanged. Final-head successful12jobCI before merge; final E11 disposition awaits T0202/203.

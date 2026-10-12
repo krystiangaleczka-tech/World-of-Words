@@ -1,7 +1,7 @@
 # GAME_DESIGN.md — game rules and intents
 
-- Status: v1 draft (T-0006, 2026-10-02). Chris approves it with docs v1 (T-0011) after the Opus second
-  opinion (T-0010).
+- Status: P1 baseline with P2 intent proposal (T-0200, 2026-10-12). T-0202 reviews the P2 proposal;
+  T-0203 records final E11 disposition. Decision 0010 permits this planning before open FUN GATE.
 - Owns: the rules behind every `rules: GAME_DESIGN.md#…` reference in `PRODUCT.md`, and the default
   value, type and range of every config key.
 - Does not own: requirement IDs, key **names**, event names, IAP product IDs (all canonical in
@@ -86,10 +86,11 @@ Placement on screen (one power-up per wheel corner) is owned by `DESIGN.md`.
 level data); the word counts as found.
 
 **Paying** (P2, FR-HINT-03, FR-HINT-05):
-- An owned item is used first; otherwise coins are spent. The cost is charged exactly once per use,
-  through `Economy.spend`, before the cell is revealed. A failed spend reveals nothing. Spend and reveal
-  are one state change followed by one synchronous `Save.flush()`, so a kill never loses a paid hint
-  (T-0010 F3).
+- An owned item is used first; otherwise coins are spent through the Economy owner. Debit, reveal,
+  related progress and operation identity must form one validated candidate committed durably before
+  success or the reveal is published. A failed commit publishes neither a paid reveal nor a debit as
+  successful; retry/restart must resolve the same operation without double charging (T-0010 F3,
+  Astra Q1/Q4). A shared dirty Save followed by a flush is not sufficient proof of this P2 guarantee.
 - Cannot pay: the button opens the hint options (rewarded ad for `economy.reward.rewarded_hint` Hint
   items if available, or the Shop); never a dead button (`DESIGN.md#flow-stuck-player`).
 - In P1, Hint is free and unlimited, and Reveal does not exist yet.
@@ -146,7 +147,8 @@ Consent and ATT are resolved before any ad can be offered.
   or items were used (FR-META-01).
 - Stars are progress, not currency: never spent, never removed (FR-META-08).
 - The daily puzzle awards no stars.
-- Q2 (extra star for no hints) is open; see [Open questions](#open-questions).
+- Q2 owner input (2026-10-12): fixed one star regardless of hints, with no no-hint bonus.
+  T-0202 reviews this input and T-0203 records final E11 disposition; see [Open questions](#open-questions).
 
 ## Postcards
 
@@ -174,11 +176,12 @@ Consent and ATT are resolved before any ad can be offered.
 Design in intent units first, numbers second (design pass 03 §6.2). Intents are Chris's decision with
 an Opus second opinion; the numbers below are starting values that `econ_sim` checks.
 
-**Intents** (proposed for Chris in T-0011):
+**P2 intent proposal** (T-0200; final disposition in T-0203):
 1. A player who never watches ads or pays can afford a Hint about once every 4 levels.
-2. One rewarded ad is worth about one Hint.
+2. A rewarded Hint or the rewarded free-coins Shop offer is worth about one Hint. Rewarded x2 on
+   Level complete doubles only the base level reward; it is a separate convenience, not this Hint target.
 3. The bonus chest opens about every two sessions and is worth about one Hint.
-4. A daily puzzle is worth about one Hint.
+4. A daily puzzle is worth about one Hint in P3; it is not a P2 source.
 5. Reveal costs about 2.5 Hints.
 6. Coins are never required to progress (FR-ECON-07): every level is solvable without power-ups.
 
@@ -205,6 +208,54 @@ an Opus second opinion; the numbers below are starting values that `econ_sim` ch
 |---|---|---|
 | Hint without item | `economy.price.hint` | 100 coins |
 | Reveal without item | `economy.price.reveal` | 250 coins |
+
+## P2 economy scope and ownership
+
+This is a documentation proposal, not implemented P2 behavior. T-0200..T-0203 run under
+[decision 0010](decisions/0010-p2-planning-order.md); human FUN/device/word-review evidence is separate.
+
+- P2 sources: durable campaign completion, bonus chest, explicit rewarded Hint/free-coins/double
+  placements, one-time onboarding Hint grant, and the approved P2 IAP catalog. Daily/streak rewards,
+  larger coin packs and the starter pack remain P3. Store prices/amount approval (Q6) is separate.
+- P2 sinks: Hint and Reveal. Shuffle stays free; no purchase/ad is required to solve or progress.
+  Stars/postcard pieces are earned progress, not spendable currency; Q2 proposes the owner-selected
+  fixed-star rule independent of Hint/Reveal use.
+- Intent targets are calibration hypotheses. Existing config defaults are starting values, not results
+  of `econ_sim`, phone tests or soft-launch calibration. Bonus cadence depends on observed sessions;
+  the stated two-session target has not been demonstrated by the prototype.
+- The existing Progress autoload must become the authoritative P2 domain owner. A screen may bind a
+  view, but pending economic completion/debit state must outlive screen destruction and restart.
+- Progress, wallet/items, bonus meter, one-time grants and processed operation records must be part of
+  one validated durable candidate. Publish UI success/effects/analytics only afterward. Events carries
+  effects, never correctness. Reject duplicates/stale boards and define failed-commit/retry ownership.
+- Rewarded offers correlate the active offer/placement and grant once only on the reward-earned
+  callback. Late/duplicate callbacks cannot manufacture another grant. No reward for merely closing
+  or failing an ad. IAP validates provider transaction identity/verification, commits grant plus processed
+  identity, then consumes/finishes; recovery and restore need independent native proof.
+- Historical found bonuses preserved by T-0147 are compatibility records, not economic grant authority.
+  Current validated eligibility and persisted operations determine new bonus credit; content changes,
+  re-addition, restart and completion must not grant twice.
+- Define/test these contracts in T-0229/T-0232/T-0241/T-0242/T-0261/T-0271/T-0278/T-0280/T-0281
+  before attaching money to the P1 screen-local Progress and shared Save behavior. No schema/API is
+  invented here, and no present P1 transaction guarantee is inferred.
+
+### P2 consent and collection policy input
+
+Chris selected on 2026-10-12: remote transmission disabled until the appropriate consent; analytics
+may queue locally before that decision; crash SDK stays disabled pending legal/provider configuration
+verification. T-0202 reviews this input; T-0203 records final E11 disposition.
+
+- Keep UMP after `consent.ump_after_slot` and iOS ATT after `consent.att_after_slot`, with the existing
+  IDFA explainer and no custom pre-prompt. UMP resolution precedes ads SDK initialization; on iOS,
+  no ad request occurs before ATT resolves. Denial retains the documented non-personalized-ad path.
+- Consent for one purpose does not authorize another. UMP/ATT outcomes alone do not prove analytics
+  or crash permission. Native/provider tasks must verify purpose/region mappings and send/drop the
+  bounded local analytics queue according to the appropriate decision, including denial.
+- No external crash collection or SDK initialization before the separate Q7 verification is complete;
+  do not infer that P2 documentation proves legitimate interest, SDK behavior or legal compliance.
+  Offline development logging is distinct from sending user data to a provider.
+- Preserve the exact provider choices in decision 0009. No SDKs, consent screens, store products,
+  credentials or permissions are installed/created by this planning wave.
 
 ## Bonus chest
 
