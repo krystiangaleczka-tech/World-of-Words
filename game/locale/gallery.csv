@@ -33,3 +33,6 @@ gallery.actions.cancel,Nie teraz,Not now
 gallery.actions.sublabel,Przywróć zakupy i kontynuuj,Restore purchases and continue
 gallery.page.icons,Ikony i oznaczenia,Icons and badges
 gallery.icons.badges,Oznaczenia liczby i stanu,Count and state badges
+gallery.page.currency,Waluty i postęp,Currency and progress
+gallery.currency.progress,Postęp kolekcji,Collection progress
+gallery.currency.replay,Odtwórz animację,Replay animation

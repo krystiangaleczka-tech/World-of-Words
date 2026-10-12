@@ -128,6 +128,7 @@ Sizes for text scale 100 %. `CELL_LETTER` is geometric (ratio of cell size), nev
 | `Motion.CELEBRATE` *(addition)* | 1200 | max time from last word to Level complete layer |
 | `Motion.TOAST_HOLD` *(addition)* | 1600 | toast visible time |
 | `Motion.COUNT_UP_MAX` *(addition)* | 900 | coin count-up cap |
+| `Motion.COUNT_UP_STEP` | 20 | count-up milliseconds per displayed unit |
 
 | Token | Godot mapping |
 |---|---|
@@ -403,7 +404,7 @@ All values tunable by Chris on device by editing `tokens.gd`; the table defines 
 | Shuffle | tiles `position` along arc to new slots, all together, `BASE`, `IN_OUT`; wheel locked meanwhile | `tick` | `shuffle` |
 | Level complete | cell wave: each cell `scale` 1.0 -> 1.12 -> 1.0, `FAST`, delay (row + col) x `STAGGER`; then Level complete layer (`modulate:a` + `position:y` +48 -> 0, `SLOW`, `OUT`); total <= `CELEBRATE` | `success` | `level_complete` |
 | Reward burst | `RewardBurst` particles lifetime `SLOW`; icon `scale` 0 -> 1, `FAST`, `SPRING` | `soft` | `reward` |
-| Coin count-up | label value old -> new over min(`SLOW` + 20 ms x delta, `COUNT_UP_MAX`), `OUT`, tabular digits; pill pop at end `FAST`, `SPRING` | — | `coin_tick` (max 10 ticks) |
+| Coin count-up | label value old -> new over min(`SLOW` + `COUNT_UP_STEP` x abs(delta), `COUNT_UP_MAX`), `OUT`, tabular digits; pill pop at end `FAST`, `SPRING` | — | `coin_tick` (max 10 ticks) |
 | Button press | `scale` 1.0 -> 0.96 -> 1.0, `FAST`, `OUT` | — | `ui_tap` |
 | Screen transition | out: `modulate:a` 1 -> 0, `FAST`, `IN`; in: `modulate:a` 0 -> 1 + `position:y` +48 -> 0, `BASE`, `OUT` | — | — |
 | Sheet open / close | scrim `modulate:a` 0 -> 1, `BASE`; panel `position:y` offscreen -> rest, `BASE`, `OUT`; close `FAST`, `IN` | — | `sheet_open` / `sheet_close` |
