@@ -90,3 +90,9 @@ to prepare this bounded visual proposal in place of the planned Opus session.
 T-0203 is the scheduling dependency for this exception; the roadmap's original T-0143
 gate remains open for runtime work. No existing decision or roadmap is rewritten.
 The exception does not select a visual direction or fabricate device evidence.
+
+## Owner direction choice
+2026-10-12: Chris explicitly answered "Ceramika — ciepłe tło, zielony akcent" to the
+T-0204 phone-choice question. Ceramic is the selected direction for T-0205. No physical-device
+screenshots were provided; status remains review until that acceptance evidence is recorded.
+No runtime token, font, economy or gate values are changed by this selection.

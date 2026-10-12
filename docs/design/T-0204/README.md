@@ -1,7 +1,13 @@
 # T-0204 — Level visual directions
 
-Status: **three proposals, awaiting Chris's phone choice**. Nothing here is an accepted
-reference or runtime design. Source: `ab67ff04b72b47b13cfab6cf34b4dd8aa19c8d1b`.
+Status: **Ceramic selected by Chris on 2026-10-12; physical-device screenshots pending**.
+This is the chosen visual direction, with provisional fonts and untranscribed runtime values.
+Source: `ab67ff04b72b47b13cfab6cf34b4dd8aa19c8d1b`.
+
+Owner provenance: Chris explicitly answered "Ceramika — ciepłe tło, zielony akcent" to the
+T-0204 phone-choice question. This records taste approval; no physical-device screenshot or
+device-test PASS is inferred. Paper and Mist remain comparison alternatives, not selected
+directions. T-0205 continues from Ceramic; runtime transcription waits for T-0206.
 
 ## Open and compare
 
@@ -83,6 +89,6 @@ Full local `make check` PASS: 275 GUT tests, 311 pipeline tests, 370 tools tests
 jobs; final-head CI results belong in the PR. [Side-by-side preview](evidence/comparison_DESKTOP_PL_default.png)
 and [machine-readable report](evidence/browser-results.json) are browser evidence, not device evidence.
 
-Before T-0204 can be done: Chris opens the options on his phone, selects one (or requests a
-specific mix), records actual device screenshots and confirms the reference. T-0206 must use
-that explicit selection; current palette values must not be silently treated as approved.
+Before T-0204 can be done: Chris supplies actual device screenshots and confirms the reference
+on his phone. The direction choice is recorded above; physical-device evidence remains open.
+T-0206 must use the Ceramic direction after T-0205, including that task's font and screen decisions.
