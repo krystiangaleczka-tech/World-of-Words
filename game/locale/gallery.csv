@@ -45,3 +45,12 @@ gallery.overlays.busy,Panel w trakcie pracy,Busy sheet
 gallery.overlays.info,Przykładowa informacja,Sample information
 gallery.overlays.success,Przykładowa akcja ukończona,Sample action complete
 gallery.overlays.error,Przykładowa akcja niedostępna,Sample action unavailable
+gallery.page.content,Treść i stany,Content and states
+gallery.content.title,Przykładowa kolekcja,Sample collection
+gallery.content.subtitle,Przywróć zakupy i kontynuuj spokojnie,Restore purchases and continue at your pace
+gallery.content.locked,Ukończ kolejny poziom aby odblokować,Complete the next level to unlock
+gallery.content.action,Kontynuuj,Continue
+gallery.content.offline,Brak połączenia,No connection
+gallery.content.error,Wystąpił błąd,Something went wrong
+gallery.content.empty,Jeszcze nic tutaj nie ma,Nothing here yet
+gallery.content.unavailable,Obecnie niedostępne,Currently unavailable
