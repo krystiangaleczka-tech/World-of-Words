@@ -2,11 +2,11 @@ extends GutTest
 
 
 func test_design_values_match() -> void:
-	assert_eq(Tokens.Palette.BG, Color("#F6F1E7"))
-	assert_eq(Tokens.Palette.PRIMARY, Color("#2F6F62"))
-	assert_eq(Tokens.Palette.TEXT, Color("#1F2A30"))
-	assert_eq(Tokens.Palette.TEXT_MUTED, Color("#5E6A70"))
-	assert_eq(Tokens.Palette.ERROR, Color("#C0453A"))
+	assert_eq(Tokens.Palette.BG, Color("#F6F2E9"))
+	assert_eq(Tokens.Palette.PRIMARY, Color("#306453"))
+	assert_eq(Tokens.Palette.TEXT, Color("#283E35"))
+	assert_eq(Tokens.Palette.TEXT_MUTED, Color("#62695E"))
+	assert_eq(Tokens.Palette.ERROR, Color("#A33F35"))
 	assert_eq(
 		[Tokens.Type.TITLE, Tokens.Type.BODY, Tokens.Type.LABEL, Tokens.Type.CAPTION],
 		[60, 42, 40, 32]
