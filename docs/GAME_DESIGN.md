@@ -70,7 +70,10 @@ Shuffle rules (FR-WHEEL-08, design pass 06 §4):
   one: retry the permutation up to 10 times, then rotate by one position.
 - If all letters are equal, the order may stay the same.
 - Changes nothing but tile positions: board, economy and progress are untouched.
-- The shuffled order is not saved; a resumed level shows the initial order (T-0010 F9).
+- The wheel order is not saved. Each opened/resumed level starts with a fresh random
+  position permutation (owner request, T-0191); saved words/hints/progress stay intact.
+  Seeded review/test injection reproduces the presentation; a prior random order can recur
+  by chance. This replaces the original fixed initial presentation, without changing save fields.
 
 Placement on screen (one power-up per wheel corner) is owned by `DESIGN.md`.
 

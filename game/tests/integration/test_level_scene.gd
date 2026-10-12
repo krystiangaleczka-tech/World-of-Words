@@ -171,3 +171,25 @@ func test_responsive_scene_layout() -> void:
 			screen.wheel.global_position.y + screen.wheel.size.y,
 			dimensions.y - Tokens.Space.M + 0.001
 		)
+
+
+func test_initial_wheel_uses_injected_rng_without_persisting_presentation() -> void:
+	_slot(2)
+	var writes: int = _storage.writes
+	var first: LevelScreen = _new_scene()
+	var second: LevelScreen = _new_scene()
+	for screen: LevelScreen in [first, second]:
+		var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+		rng.seed = 42
+		screen.configure(_save, _content, 2, _bus)
+		screen.configure_rng(rng)
+		add_child_autofree(screen)
+	assert_eq(first.wheel.tile_order(), second.wheel.tile_order())
+	assert_ne(first.wheel.tile_order(), PackedInt32Array([0, 1, 2, 3]))
+	assert_false(first.wheel.is_locked())
+	assert_eq(
+		first.controller.get_board().get_level().get_letters(),
+		_content.level_for_slot(2).get_letters()
+	)
+	assert_eq_deep(first.controller.get_board().to_dict(), second.controller.get_board().to_dict())
+	assert_eq(_storage.writes, writes)

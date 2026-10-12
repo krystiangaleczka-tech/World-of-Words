@@ -50,7 +50,7 @@ func _ready() -> void:
 
 
 ## @api Replace content. Only the supported 3–8 tile range is accepted.
-func set_letters(letters: PackedStringArray) -> void:
+func set_letters(letters: PackedStringArray, initial_rng: RandomNumberGenerator = null) -> void:
 	_cancel_shuffle()
 	_end_pointer(_owner, true, false)
 	for tile: LetterTile in _tiles:
@@ -63,6 +63,9 @@ func set_letters(letters: PackedStringArray) -> void:
 	_order.resize(_letters.size())
 	for index: int in _letters.size():
 		_order[index] = index
+	if initial_rng != null:
+		_order = Shuffle.permute(_order, _letters, initial_rng)
+	for index: int in _letters.size():
 		var tile: LetterTile = LetterTile.new()
 		tile.index = index
 		tile.letter = _letters[index]
