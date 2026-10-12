@@ -1,0 +1,457 @@
+{
+  "candidates": [
+    {
+      "font": "Nunito",
+      "source_commit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "font_sha256": "bb55a5ca5c2042335b3991af27c4d0705d0ef41cac6164ac737fd8f2a1e85207",
+      "runtime": "hb-shape (HarfBuzz) 12.3.2",
+      "required_chars": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ąćęłńóśźżĄĆĘŁŃÓŚŹŻäöüßÄÖÜẞáéíúÁÉÍÚ„”–….,:;!?'-()[]/ +×·",
+      "missing": [],
+      "weight_axes": {
+        "wght": [
+          200.0,
+          200.0,
+          1000.0
+        ]
+      },
+      "tnum_feature": false,
+      "feature_tags": [
+        "aalt",
+        "calt",
+        "case",
+        "ccmp",
+        "ccmp",
+        "dnom",
+        "frac",
+        "liga",
+        "locl",
+        "locl",
+        "locl",
+        "locl",
+        "locl",
+        "locl",
+        "numr",
+        "onum",
+        "ordn",
+        "salt",
+        "sinf",
+        "ss01",
+        "ss02",
+        "subs",
+        "sups"
+      ],
+      "tabular_advances": {
+        "400": [
+          600,
+          600,
+          600,
+          600,
+          600,
+          600,
+          600,
+          600,
+          600,
+          600
+        ],
+        "600": [
+          600,
+          600,
+          600,
+          600,
+          600,
+          600,
+          600,
+          600,
+          600,
+          600
+        ],
+        "700": [
+          600,
+          600,
+          600,
+          600,
+          600,
+          600,
+          600,
+          600,
+          600,
+          600
+        ],
+        "800": [
+          600,
+          600,
+          600,
+          600,
+          600,
+          600,
+          600,
+          600,
+          600,
+          600
+        ]
+      },
+      "proportional_advances_700": [
+        600,
+        600,
+        600,
+        600,
+        600,
+        600,
+        600,
+        600,
+        600,
+        600
+      ],
+      "licence": "OFL-1.1",
+      "disambiguation_cv08_cv05": {},
+      "status": "REJECTED for explicit tnum: default tabular digits, no tnum feature"
+    },
+    {
+      "font": "Inter",
+      "source_commit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+      "font_sha256": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031",
+      "runtime": "hb-shape (HarfBuzz) 12.3.2",
+      "required_chars": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ąćęłńóśźżĄĆĘŁŃÓŚŹŻäöüßÄÖÜẞáéíúÁÉÍÚ„”–….,:;!?'-()[]/ +×·",
+      "missing": [],
+      "weight_axes": {
+        "opsz": [
+          14.0,
+          14.0,
+          32.0
+        ],
+        "wght": [
+          100.0,
+          400.0,
+          900.0
+        ]
+      },
+      "tnum_feature": true,
+      "feature_tags": [
+        "aalt",
+        "calt",
+        "case",
+        "ccmp",
+        "cv01",
+        "cv02",
+        "cv03",
+        "cv04",
+        "cv05",
+        "cv06",
+        "cv07",
+        "cv08",
+        "cv09",
+        "cv10",
+        "cv11",
+        "cv12",
+        "cv13",
+        "cv14",
+        "dlig",
+        "dnom",
+        "frac",
+        "locl",
+        "locl",
+        "locl",
+        "numr",
+        "ordn",
+        "pnum",
+        "salt",
+        "sinf",
+        "ss01",
+        "ss02",
+        "ss03",
+        "ss04",
+        "ss05",
+        "ss06",
+        "ss07",
+        "ss08",
+        "subs",
+        "sups",
+        "tnum",
+        "zero"
+      ],
+      "tabular_advances": {
+        "400": [
+          1328,
+          1328,
+          1328,
+          1328,
+          1328,
+          1328,
+          1328,
+          1328,
+          1328,
+          1328
+        ],
+        "600": [
+          1325,
+          1325,
+          1325,
+          1325,
+          1325,
+          1325,
+          1325,
+          1325,
+          1325,
+          1325
+        ],
+        "700": [
+          1324,
+          1324,
+          1324,
+          1324,
+          1324,
+          1324,
+          1324,
+          1324,
+          1324,
+          1324
+        ],
+        "800": [
+          1322,
+          1322,
+          1322,
+          1322,
+          1322,
+          1322,
+          1322,
+          1322,
+          1322,
+          1322
+        ]
+      },
+      "proportional_advances_700": [
+        1381,
+        883,
+        1290,
+        1322,
+        1385,
+        1274,
+        1330,
+        1162,
+        1333,
+        1330
+      ],
+      "licence": "OFL-1.1",
+      "disambiguation_cv08_cv05": {
+        "400": {
+          "normal": [
+            {
+              "g": "I",
+              "cl": 0,
+              "dx": 0,
+              "dy": 0,
+              "ax": 550,
+              "ay": 0
+            },
+            {
+              "g": "l",
+              "cl": 1,
+              "dx": 0,
+              "dy": 0,
+              "ax": 496,
+              "ay": 0
+            },
+            {
+              "g": "one",
+              "cl": 2,
+              "dx": 0,
+              "dy": 0,
+              "ax": 833,
+              "ay": 0
+            }
+          ],
+          "alternate": [
+            {
+              "g": "I.1",
+              "cl": 0,
+              "dx": 0,
+              "dy": 0,
+              "ax": 903,
+              "ay": 0
+            },
+            {
+              "g": "l.ss02",
+              "cl": 1,
+              "dx": 0,
+              "dy": 0,
+              "ax": 564,
+              "ay": 0
+            },
+            {
+              "g": "one",
+              "cl": 2,
+              "dx": 0,
+              "dy": 0,
+              "ax": 833,
+              "ay": 0
+            }
+          ]
+        },
+        "600": {
+          "normal": [
+            {
+              "g": "I",
+              "cl": 0,
+              "dx": 0,
+              "dy": 0,
+              "ax": 567,
+              "ay": 0
+            },
+            {
+              "g": "l",
+              "cl": 1,
+              "dx": 0,
+              "dy": 0,
+              "ax": 536,
+              "ay": 0
+            },
+            {
+              "g": "one",
+              "cl": 2,
+              "dx": 0,
+              "dy": 0,
+              "ax": 866,
+              "ay": 0
+            }
+          ],
+          "alternate": [
+            {
+              "g": "I.1",
+              "cl": 0,
+              "dx": 0,
+              "dy": 0,
+              "ax": 952,
+              "ay": 0
+            },
+            {
+              "g": "l.ss02",
+              "cl": 1,
+              "dx": 0,
+              "dy": 0,
+              "ax": 610,
+              "ay": 0
+            },
+            {
+              "g": "one",
+              "cl": 2,
+              "dx": 0,
+              "dy": 0,
+              "ax": 866,
+              "ay": 0
+            }
+          ]
+        },
+        "700": {
+          "normal": [
+            {
+              "g": "I",
+              "cl": 0,
+              "dx": 0,
+              "dy": 0,
+              "ax": 575,
+              "ay": 0
+            },
+            {
+              "g": "l",
+              "cl": 1,
+              "dx": 0,
+              "dy": 0,
+              "ax": 555,
+              "ay": 0
+            },
+            {
+              "g": "one",
+              "cl": 2,
+              "dx": 0,
+              "dy": 0,
+              "ax": 883,
+              "ay": 0
+            }
+          ],
+          "alternate": [
+            {
+              "g": "I.1",
+              "cl": 0,
+              "dx": 0,
+              "dy": 0,
+              "ax": 976,
+              "ay": 0
+            },
+            {
+              "g": "l.ss02",
+              "cl": 1,
+              "dx": 0,
+              "dy": 0,
+              "ax": 633,
+              "ay": 0
+            },
+            {
+              "g": "one",
+              "cl": 2,
+              "dx": 0,
+              "dy": 0,
+              "ax": 883,
+              "ay": 0
+            }
+          ]
+        },
+        "800": {
+          "normal": [
+            {
+              "g": "I",
+              "cl": 0,
+              "dx": 0,
+              "dy": 0,
+              "ax": 585,
+              "ay": 0
+            },
+            {
+              "g": "l",
+              "cl": 1,
+              "dx": 0,
+              "dy": 0,
+              "ax": 580,
+              "ay": 0
+            },
+            {
+              "g": "one",
+              "cl": 2,
+              "dx": 0,
+              "dy": 0,
+              "ax": 904,
+              "ay": 0
+            }
+          ],
+          "alternate": [
+            {
+              "g": "I.1",
+              "cl": 0,
+              "dx": 0,
+              "dy": 0,
+              "ax": 1006,
+              "ay": 0
+            },
+            {
+              "g": "l.ss02",
+              "cl": 1,
+              "dx": 0,
+              "dy": 0,
+              "ax": 661,
+              "ay": 0
+            },
+            {
+              "g": "one",
+              "cl": 2,
+              "dx": 0,
+              "dy": 0,
+              "ax": 904,
+              "ay": 0
+            }
+          ]
+        }
+      },
+      "status": "PASS; owner adoption pending"
+    }
+  ],
+  "recommendation": "Inter, one family; owner adoption pending"
+}

@@ -1,0 +1,50 @@
+{
+  "google_fonts_commit": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+  "files": {
+    "Nunito.ttf": {
+      "url": "https://raw.githubusercontent.com/google/fonts/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/nunito/Nunito%5Bwght%5D.ttf",
+      "sha256": "bb55a5ca5c2042335b3991af27c4d0705d0ef41cac6164ac737fd8f2a1e85207"
+    },
+    "OFL.txt": {
+      "url": "https://raw.githubusercontent.com/google/fonts/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/nunito/OFL.txt",
+      "sha256": "580df76c95a1ec5ab878ceb25bb3d85c6a076804e9c970c8c6972aea775fdf65"
+    },
+    "owner_reference": {
+      "provided_path": "/Users/krystiangaleczka/Documents/World of Words/docs/design/T-0204-level-mockup.html",
+      "sha256": "ac52c48befd87d3313c82805afd34aa55b901d64f62396155426490a728338f9",
+      "role": "Supplementary input; does not replace owner-selected Ceramic."
+    },
+    "Inter.ttf": {
+      "url": "https://raw.githubusercontent.com/google/fonts/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/inter/Inter%5Bopsz,wght%5D.ttf",
+      "sha256": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031"
+    },
+    "Inter-OFL.txt": {
+      "url": "https://raw.githubusercontent.com/google/fonts/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/inter/OFL.txt",
+      "sha256": "5b9321a4298cfeb6b34354164a1c3afc3db114569984c502b9b35d988fd58c57"
+    }
+  },
+  "lucide": {
+    "commit": "70562c1ee1c4fdcf736fe97bc893fb8511927934",
+    "source": "https://raw.githubusercontent.com/lucide-icons/lucide/70562c1ee1c4fdcf736fe97bc893fb8511927934/icons/",
+    "licence": "https://raw.githubusercontent.com/lucide-icons/lucide/70562c1ee1c4fdcf736fe97bc893fb8511927934/LICENSE",
+    "icons": [
+      "house",
+      "settings",
+      "arrow-left",
+      "shuffle",
+      "lightbulb",
+      "sparkles",
+      "coins",
+      "star",
+      "lock",
+      "play",
+      "check",
+      "hand",
+      "route",
+      "video",
+      "x",
+      "map-pinned",
+      "gift"
+    ]
+  }
+}
