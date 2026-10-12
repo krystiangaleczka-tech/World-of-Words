@@ -18,7 +18,7 @@ touch:
   - game/tests/unit/ui/test_theme_generator.gd
   - game/tests/integration/test_theme_font_activation.gd*
   - tasks/T-0208-theme-font-activation.md
-revision: 1
+revision: 2
 ---
 
 ## Goal
@@ -53,7 +53,7 @@ changing exports, native integrations or the final Level component styling.
    does not include raw .txt. This ships the notice without changing export settings.
    Do not add Nunito, dependencies or SDKs.
 2. Extend the existing generator to create five external FontVariation resources: regular400,
-   semibold600, bold700, extrabold800 and numeric700. Base is Inter.ttf; fixed opsz14,
+   semibold600, bold700, extrabold800 and numeric700. Base is a generated Inter.res FontFile containing exactly the unchanged Inter.ttf bytes; fixed opsz14,
    cv08=1/cv05=1 for all; numeric also tnum=1/pnum=0. Do not use simulated emboldening.
    Variation coordinates/features use the pinned TextServer's OpenType tag representation.
 3. Bind theme.default_font and Label/font to regular; Button/font to semibold. Bind each
@@ -116,5 +116,11 @@ S11 export/signing/native permission changes are included or inferred.
 
 Implementation evidence: make check PASS (288 GUT,311 pipeline,370 tools, registries and
 65 content levels). Native PL/DE/shaping and desktop theme/Level previews inspected;
-13 generated font/theme/licence/CSS outputs are byte-identical across two processes.
+14 generated base-font/variation/theme/licence/CSS outputs are byte-identical across two processes.
 Physical phone/iPhone, Back/silent-switch and battery evidence remain pending.
+
+Revision2: CI exposed first-import ordering: project custom theme loads before TTF import
+cache exists on a fresh checkout. Generate an import-independent compressed FontFile
+Inter.res containing exact source TTF data and point variations at it. Verify its embedded
+bytes hash, native shaping, deterministic regeneration and a completely empty-cache import.
+No Makefile/CI/export change or weakened error guard. All resources remain generated.

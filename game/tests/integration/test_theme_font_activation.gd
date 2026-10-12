@@ -46,7 +46,11 @@ func test_pinned_font_and_shipped_notice() -> void:
 	assert_eq(
 		notice.get_meta(&"ofl_notice"), FileAccess.get_file_as_string("res://assets/fonts/OFL.txt")
 	)
-	var base: FontFile = load("res://assets/fonts/Inter.ttf") as FontFile
+	var base: FontFile = load("res://assets/fonts/Inter.res") as FontFile
+	var digest: HashingContext = HashingContext.new()
+	digest.start(HashingContext.HASH_SHA256)
+	digest.update(base.data)
+	assert_eq(digest.finish().hex_encode(), FileAccess.get_sha256("res://assets/fonts/Inter.ttf"))
 	var supported: String = base.get_supported_chars()
 	for letter: String in "ąćęłńóśźż ĄĆĘŁŃÓŚŹŻ äöüß ÄÖÜẞ „”–…0123456789":
 		assert_true(letter in supported, "Native font coverage: " + letter)
@@ -57,7 +61,7 @@ func test_all_variations_have_native_axes_and_features() -> void:
 	for name: String in NAMES:
 		var font: FontVariation = _font(name)
 		assert_not_null(font)
-		assert_eq(font.base_font.resource_path, "res://assets/fonts/Inter.ttf")
+		assert_eq(font.base_font.resource_path, "res://assets/fonts/Inter.res")
 		assert_eq(font.variation_opentype.get(server.name_to_tag("wght")), NAMES[name])
 		assert_eq(font.variation_opentype.get(server.name_to_tag("opsz")), 14)
 		assert_eq(font.variation_embolden, 0.0)

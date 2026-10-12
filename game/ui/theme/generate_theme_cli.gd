@@ -10,5 +10,5 @@ func _initialize() -> void:
 		printerr("Theme generation failed: %s" % error_string(result))
 		quit(1)
 		return
-	print("Theme generation: five Inter fonts, six Ceramic themes and CSS mirror written")
+	print("Theme generation: standalone Inter base, five variations, six themes and CSS written")
 	quit(0)

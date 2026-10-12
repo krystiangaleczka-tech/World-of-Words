@@ -3,7 +3,6 @@ class_name CeramicThemeGenerator
 extends EditorScript
 ## @api Rebuild Ceramic themes, pinned Inter variations and CSS from Tokens.
 
-const BASE_FONT: FontFile = preload("res://assets/fonts/Inter.ttf")
 const OPTICAL_SIZE: int = 14
 const FONT_NAMES: Dictionary = {
 	Tokens.Type.BODY_WEIGHT: "regular",
@@ -110,6 +109,16 @@ static func _font_resource(weight: int, numeric: bool = false) -> FontVariation:
 
 
 static func _generate_fonts() -> Error:
+	# Project themes load before first import: use an import-independent generated FontFile.
+	var data_font: FontFile = FontFile.new()
+	data_font.data = FileAccess.get_file_as_bytes("res://assets/fonts/Inter.ttf")
+	var base_path: String = "res://assets/fonts/Inter.res"
+	var base_error: Error = ResourceSaver.save(data_font, base_path, ResourceSaver.FLAG_COMPRESS)
+	if base_error != OK:
+		return base_error
+	var base_font: FontFile = (
+		ResourceLoader.load(base_path, "FontFile", ResourceLoader.CACHE_MODE_IGNORE) as FontFile
+	)
 	var notice: Resource = Resource.new()
 	notice.set_meta(&"ofl_notice", FileAccess.get_file_as_string("res://assets/fonts/OFL.txt"))
 	var notice_error: Error = ResourceSaver.save(notice, "res://assets/fonts/font_license.tres")
@@ -118,7 +127,7 @@ static func _generate_fonts() -> Error:
 	var server: TextServer = TextServerManager.get_primary_interface()
 	for name: String in ["regular", "semibold", "bold", "extrabold", "numeric"]:
 		var font: FontVariation = FontVariation.new()
-		font.base_font = BASE_FONT
+		font.base_font = base_font
 		var weight: int = (
 			Tokens.Type.NUMERIC_WEIGHT if name == "numeric" else int(FONT_NAMES.find_key(name))
 		)
@@ -135,7 +144,7 @@ static func _generate_fonts() -> Error:
 			features[server.name_to_tag("pnum")] = 0
 		font.opentype_features = features
 		var font_path: String = "res://assets/fonts/inter_%s.tres" % name
-		BASE_FONT.set_id_for_path(font_path, "1_inter")
+		base_font.set_id_for_path(font_path, "1_inter")
 		var error: Error = ResourceSaver.save(font, font_path)
 		if error != OK:
 			return error

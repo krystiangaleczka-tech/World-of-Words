@@ -8,7 +8,10 @@ OFL.txt is the full pinned SIL OFL licence (SHA256
 Keep the notices with the font; future Settings Licences must expose them.
 Owner selection is recorded in T-0205 decision0011 at5eaa29c; that draft source remains pinned.
 
-The theme generator creates inter_regular/semibold/bold/extrabold/numeric.tres.
+The theme generator creates Inter.res (a compressed FontFile with exactly the unchanged
+TTF bytes) and inter_regular/semibold/bold/extrabold/numeric.tres. The standalone base
+lets the project theme load before the first TTF import on a fresh checkout. Do not edit
+Inter.res; source hash/native glyph tests verify it.
 Weights400/600/700/800, optical size14, cv08/cv05 alternate I/l glyphs; numeric700
 also sets tnum1 and pnum0. No synthetic emboldening. Do not edit these .tres by hand.
 Run the command in game/ui/theme/README.md from the repo root. The generator also

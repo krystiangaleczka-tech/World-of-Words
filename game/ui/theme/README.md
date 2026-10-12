@@ -9,7 +9,8 @@ godot --headless --path game --script res://ui/theme/generate_theme_cli.gd
 
 In the editor, open generate_theme.gd and use Run in the Script Editor. EditorScript
 cannot serve as the CLI MainLoop, so the SceneTree adapter calls the same generator.
-Both now write five generated Inter FontVariation resources under game/assets/fonts,
+Both now write the standalone Inter.res FontFile and five Inter FontVariation resources
+under game/assets/fonts,
 six generated/theme_<default|hc>_<100|115|130>.tres resources and replace
 docs/design/tokens.css at the repository root from the typed Tokens constants. Do not edit outputs.
 
