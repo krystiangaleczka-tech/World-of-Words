@@ -13,7 +13,7 @@ skip = @echo "SKIP $@: $(1)"
 .PHONY: check test lint fmt fmt-check run import pipeline-test tools-test content-validate \
         registries context review board plan
 
-check: fmt-check lint import test pipeline-test tools-test registries content-validate
+check: fmt-check lint import test pipeline-test tools-test registries content-validate ui-check theme-check
 	@echo "make check: OK"
 
 import:
@@ -67,3 +67,11 @@ board:
 
 plan:
 	$(if $(wildcard tools/tasks.py),$(UV) run python tools/tasks.py plan,$(call skip,tools/tasks.py not written yet (T-0019)))
+
+.PHONY: ui-check theme-check
+ui-check:
+	$(UV) run python tools/check_tokens.py
+	$(UV) run python tools/check_strings.py
+
+theme-check:
+	$(UV) run python tools/check_theme.py --godot $(GODOT)
