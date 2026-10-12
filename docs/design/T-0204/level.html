@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="pl">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Level · makieta kierunku wizualnego</title>
+<link rel="stylesheet" href="level.css"><script src="preview.js" defer></script>
+<body class="level-page">
+<svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+<symbol id="home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10H3Z M9 20v-7h6v7"/></symbol>
+<symbol id="settings" viewBox="0 0 24 24"><path d="m9 3-1 3-3 1 1 3-2 2 2 2-1 3 3 1 1 3h6l1-3 3-1-1-3 2-2-2-2 1-3-3-1-1-3Z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="shuffle" viewBox="0 0 24 24"><path d="M3 6h3c5 0 7 12 12 12h3m-4-4 4 4-4 4 M3 18h3c2 0 3-2 4-4m4-4c1-2 2-4 4-4h3m-4-4 4 4-4 4"/></symbol>
+<symbol id="hint" viewBox="0 0 24 24"><path d="M8 17c0-3-3-4-3-8a7 7 0 0 1 14 0c0 4-3 5-3 8Z M9 21h6 M12 17v-6m-3-2 3 2 3-2"/></symbol>
+<symbol id="reveal" viewBox="0 0 24 24"><path d="m12 2 2.5 7.5L22 12l-7.5 2.5L12 22l-2.5-7.5L2 12l7.5-2.5Z"/></symbol>
+<symbol id="chest" viewBox="0 0 24 24"><path d="M3 10V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v13H3V10h18 M10 9h4v5h-4Z"/></symbol>
+<symbol id="coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m12 7 3 5-3 5-3-5Z"/></symbol>
+</defs></svg>
+<main class="screen" aria-label="Statyczna makieta ekranu gry">
+<header class="topbar"><span class="control" role="img" aria-label="Ekran główny" data-icon="home"></span><h1 data-key="level.hud.level_n">Poziom 12</h1><span class="currency" aria-label="Monety: 240"><span data-icon="coin"></span><b>240</b></span><span class="control" role="img" aria-label="Ustawienia" data-icon="settings"></span></header>
+<div class="body">
+<section class="board-area" aria-label="Plansza: LAS odkryte, LATO i STO częściowo odkryte"><div class="board"></div></section>
+<div class="bonus" aria-label="Słowa bonusowe: 3 z 10"><span data-icon="chest"></span><span class="bonus-track"><i></i></span><span>3 / 10</span></div>
+<div class="preview-strip"><span class="word-preview" aria-label="Zaznaczone litery L, A">LA<span class="selection-mark" aria-hidden="true"> ·</span></span></div>
+<div class="wheel-area"><div class="wheel" role="img" aria-label="Koło liter L, A, T, O, S; zaznaczone L i A"><svg class="chain" aria-hidden="true"><polyline/></svg><div class="tiles"></div></div>
+<span class="control corner shuffle" role="img" aria-label="Pomieszaj litery" data-icon="shuffle"></span>
+<span class="control corner hint" role="img" aria-label="Podpowiedź: 3 dostępne"><span data-icon="hint"></span><small>3</small></span>
+<span class="control corner reveal" role="img" aria-label="Odkryj słowo: 250 monet"><span data-icon="reveal"></span><small><span data-icon="coin"></span>250</small></span></div>
+</div></main>
+<noscript>Ta makieta wymaga JavaScript do narysowania przykładowej planszy. Otwórz index.html w przeglądarce.</noscript>
+</body></html>
