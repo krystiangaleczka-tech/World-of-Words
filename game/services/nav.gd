@@ -62,6 +62,7 @@ func configure(save: SAVE_SCRIPT, config: CONFIG_SCRIPT, content: CONTENT_SCRIPT
 ## @api Boot sequence: Save, Config, Content manifest, then Level for the saved slot.
 ## Screens mount under host. Any failure emits boot_failed and leaves Nav on BOOT.
 func start(host: Node, content_root: String = "res://content") -> Error:
+	OS.low_processor_usage_mode = true
 	_discard_mounted()
 	_screen = Screen.BOOT
 	_level_slot = 0
@@ -157,6 +158,7 @@ func _discard_mounted() -> void:
 
 
 func _enter(screen: Screen) -> void:
+	OS.low_processor_usage_mode = screen != Screen.LEVEL
 	_discard_mounted()
 	var path: String = SCENES.get(screen, "")
 	if is_instance_valid(_host):

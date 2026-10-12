@@ -32,7 +32,7 @@ func test_all_six_saved_themes_match_token_contract() -> void:
 			_assert_contract(expected, high_contrast, percent)
 			_assert_contract(saved, high_contrast, percent)
 			assert_eq(saved.resource_name, expected.resource_name)
-			assert_null(saved.default_font, "Inter binding is deferred to T-0208")
+			assert_is(saved.default_font, FontVariation, "Inter bound by T-0208")
 
 
 func test_variants_are_independent_and_padding_is_unscaled() -> void:
