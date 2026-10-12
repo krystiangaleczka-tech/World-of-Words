@@ -5,3 +5,6 @@ ui.currency.coins,Monety,Coins
 ui.currency.stars,Gwiazdy,Stars
 ui.progress.complete,Ukończono,Complete
 ui.sheet.close,Zamknij,Close
+ui.toggle.on,Włączone,On
+ui.toggle.off,Wyłączone,Off
+ui.nav.selected,Wybrane,Selected
