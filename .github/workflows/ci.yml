@@ -175,6 +175,21 @@ jobs:
       - name: Run tools tests
         run: make tools-test
 
+  ui-guards:
+    name: UI literals + generated theme
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check UI tokens and translated copy
+        run: make ui-check
+      - name: Verify clean-cache generated theme outputs
+        run: make theme-check
+
   registries:
     name: registries
     runs-on: ubuntu-24.04
@@ -203,7 +218,7 @@ jobs:
 
   android-build:
     name: Android prototype debug APK
-    needs: [format, lint, registries, content-validate, godot-test]
+    needs: [format, lint, registries, content-validate, godot-test, ui-guards]
     runs-on: ubuntu-24.04
     container:
       image: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
@@ -227,7 +242,7 @@ jobs:
 
   release-inspection:
     name: Android release resource inspection
-    needs: [format, lint, godot-test]
+    needs: [format, lint, godot-test, ui-guards]
     runs-on: ubuntu-24.04
     container:
       image: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
