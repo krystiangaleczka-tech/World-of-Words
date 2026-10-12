@@ -29,23 +29,53 @@ and production icon selection belong to T-0205.
 `level.css` states the one design-pixel conversion. CSS mirrors keep the exact case in
 `Group.NAME -> --Group-NAME`; type size/weight split follows DESIGN. `--Mock-*` helpers belong
 only to browser review (computed cell/wheel geometry, text scale and simulated safe insets).
-COMPACT uses Space.S wheel-area padding. Other layouts reduce that padding to Space.S only
-if necessary to preserve the minimum grid share. This is proposed geometry for review.
+COMPACT uses Space.S wheel-area padding. The wheel first shrinks towards WHEEL_MIN to keep
+GRID_MIN_RATIO; other layouts reduce padding to Space.S if the minimum wheel still cannot
+fit that budget. Cell fitting uses fractional browser geometry, avoiding subpixel clipping.
+This is proposed geometry for review. Safe insets affect the actual layout class, so the
+360x640 reference becomes TABLET with the injected 44px/34px insets; the report records it.
 Standalone previews accept `direction=ceramic|paper|mist` and optional `hc=1`, `large=1`,
 `pseudo=1`, `eight=1`, `insets=1`. No saved preference, network request, audio or motion.
 The HC override preserves the existing token names; geometric letters remain unscaled at130%.
 No Godot component, theme, font, registry or locale file is changed. HTML labels carry the
 intended production key where applicable; icon aria labels describe the static fixture.
 
+## Repeatable browser checks
+
+`check-browser.cjs` uses an already installed Playwright runtime and Chromium. It adds no
+repository dependency. Point the two environment variables to that existing installation:
+
+```sh
+BROWSER_TEST_MODULE=/absolute/path/to/playwright-core \
+BROWSER_EXECUTABLE=/absolute/path/to/chromium \
+node docs/design/T-0204/check-browser.cjs
+```
+
+Use `BROWSER_OUTPUT=/temporary/path` to keep a repeat run outside the tracked evidence folder.
+The runner opens local `file:` URLs and blocks external requests. It checks each direction at
+360x640, 390x844 and 768x1024 with all 32 combinations of HC, 130% text, PSEUDO, eight letters
+and injected 44px/34px safe insets (288 cases), then three live resizes. Assertions cover scroll,
+safe-content bounds, fractional grid fitting, grid share, wheel/cell minimums, touch targets,
+button/tile hit-circle separation, displayed text/icon contrast including alpha, non-colour
+cues, token resolution, resource/console errors and deterministic comparison links.
+
 ## Evidence and open gates
 
-JavaScript syntax and local references are checked. Browser rendering/screenshot and touch-circle
-assertions require a usable Chromium runtime: the current sandbox denies local socket operations
-(`sandbox_host_linux.cc`, Operation not permitted); the permission-assisted run was interrupted.
-No browser/device screenshots or visual PASS is claimed. Existing repository checks run through
-CI (decision0006); actual results belong in the PR, not inferred from unchanged runtime files.
-Test matrix: 360x640 COMPACT,390x844 REGULAR,768x1024 TABLET; PL/PSEUDO,130%,HC,eight
-letters,44px top/34px bottom injected insets. Physical-device evidence remains Chris's.
+2026-10-12: Chromium 150.0.7871.24, **291 cases PASS**, no console/resource errors and no
+external requests. Lowest displayed contrast: **4.848:1**, HC **7.129:1**. Minimum corner-button
+clearance from a tile hit circle (including selected visual enlargement): **13.891 CSS px**.
+Minimum grid share: **0.420028**. The previous sandbox limitation no longer applies.
+The evidence folder contains the full JSON report, 27 Level screenshots (PL default, PSEUDO
+stress and PSEUDO stress HC for each direction/viewport) and a comparison screenshot.
+
+Browser checks exposed and corrected a too-small currency touch target, slightly insufficient
+grid share, fractional-pixel grid clipping and reduced contrast on the preview's dot cue.
+These corrections only affect the documentation mockups.
+
+Full local `make check` PASS: 275 GUT tests, 311 pipeline tests, 370 tools tests, registries and
+65 campaign levels. Task metadata: 138 tasks PASS. The original PR head also passed all 12 CI
+jobs; final-head CI results belong in the PR. [Side-by-side preview](evidence/comparison_DESKTOP_PL_default.png)
+and [machine-readable report](evidence/browser-results.json) are browser evidence, not device evidence.
 
 Before T-0204 can be done: Chris opens the options on his phone, selects one (or requests a
 specific mix), records actual device screenshots and confirms the reference. T-0206 must use

@@ -38,20 +38,28 @@ if (document.body.classList.contains('comparison')) {
   probe.style.cssText = 'position:fixed;visibility:hidden;pointer-events:none';
   document.body.append(probe);
   const px = name => { probe.style.width = `var(--${name})`; return probe.getBoundingClientRect().width; };
-  const size = Object.fromEntries(['Layout-WHEEL_MIN','Layout-WHEEL_MAX','Layout-CELL_MAX','Space-XS'].map(name=>[name,px(name)]));
+  const size = Object.fromEntries(['Layout-WHEEL_MIN','Layout-WHEEL_MAX','Layout-CELL_MAX','Space-XS','Space-S','Space-L'].map(name=>[name,px(name)]));
   probe.remove();
   function layout() {
     const screen = document.querySelector('.screen'), body = document.querySelector('.body');
-    const safe = getComputedStyle(screen), width = body.clientWidth;
+    const safe = getComputedStyle(screen), width = body.getBoundingClientRect().width;
     const aspect = (innerHeight-parseFloat(safe.paddingTop)-parseFloat(safe.paddingBottom))/innerWidth;
     const compact = aspect >= number('Layout-TABLET_MAX_ASPECT') && aspect < number('Layout-COMPACT_MAX_ASPECT');
+    root.dataset.layout = aspect < number('Layout-TABLET_MAX_ASPECT') ? 'TABLET' : compact ? 'COMPACT' : 'REGULAR';
     const ratio = number(compact ? 'Layout-WHEEL_COMPACT_RATIO' : 'Layout-WHEEL_WIDTH_RATIO');
-    const wheel = Math.min(size['Layout-WHEEL_MAX'], Math.max(size['Layout-WHEEL_MIN'], width * ratio));
+    const minWheel = size['Layout-WHEEL_MIN'];
+    const requestedWheel = Math.min(size['Layout-WHEEL_MAX'], Math.max(minWheel, width * ratio));
+    const height = body.getBoundingClientRect().height;
+    const fixed = document.querySelector('.bonus').getBoundingClientRect().height + document.querySelector('.preview-strip').getBoundingClientRect().height;
+    const budget = height * (1-number('Layout-GRID_MIN_RATIO')) - fixed;
+    let padding = size[compact ? 'Space-S' : 'Space-L'];
+    // Shrink towards WHEEL_MIN first; the review-only compact fallback preserves grid share.
+    if (budget - padding*2 < minWheel) padding = size['Space-S'];
+    const wheel = Math.min(requestedWheel, Math.max(minWheel, budget-padding*2));
     root.style.setProperty('--Mock-wheel', `${wheel}px`);
-    root.style.setProperty('--Mock-wheel-space', compact ? 'var(--Space-S)' : 'var(--Space-L)');
+    root.style.setProperty('--Mock-wheel-space', `${padding}px`);
     const area = document.querySelector('.board-area');
-    if (area.clientHeight < body.clientHeight * number('Layout-GRID_MIN_RATIO')) root.style.setProperty('--Mock-wheel-space', 'var(--Space-S)');
-    const gap = size['Space-XS'], cell = Math.min(size['Layout-CELL_MAX'], (width-gap*4)/5, (area.clientHeight-gap*3)/4);
+    const gap = size['Space-XS'], cell = Math.min(size['Layout-CELL_MAX'], (width-gap*4)/5, (area.getBoundingClientRect().height-gap*3)/4);
     root.style.setProperty('--Mock-cell', `${Math.max(0,cell)}px`);
     const ring = number('Layout-WHEEL_RING_RATIO');
     const coords = positions.map(({angle}) => [wheel*(.5+Math.cos(angle)*ring),wheel*(.5+Math.sin(angle)*ring)]);
