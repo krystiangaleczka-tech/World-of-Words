@@ -8,3 +8,8 @@ ui.sheet.close,Zamknij,Close
 ui.toggle.on,Włączone,On
 ui.toggle.off,Wyłączone,Off
 ui.nav.selected,Wybrane,Selected
+ui.bonus.title,Słowa bonusowe,Bonus words
+ui.bonus.open,Otwórz,Open
+ui.hint.hint,Podpowiedź,Hint
+ui.hint.reveal,Odkryj słowo,Reveal word
+ui.bonus.already,Już znalezione,Already found

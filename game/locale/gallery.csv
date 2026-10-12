@@ -59,3 +59,14 @@ gallery.settings.sound,Dźwięki gry,Game sounds
 gallery.settings.music,Muzyka w tle,Background music
 gallery.settings.tab,Przykładowa kolekcja,Sample collection
 gallery.settings.locked,Poziom 15,Level 15
+gallery.page.powerups,Bonus i podpowiedzi,Bonus and power-ups
+gallery.powerups.replay,Odtwórz animacje,Replay animations
+gallery.powerups.normal,Gotowy,Ready
+gallery.powerups.filling,Napełnianie,Filling
+gallery.powerups.full,Pełny,Full
+gallery.powerups.already,Już znalezione,Already found
+gallery.powerups.highlighted,Wyróżniony,Highlighted
+gallery.powerups.count,Użycia,Uses
+gallery.powerups.price,Cena,Price
+gallery.powerups.disabled,Niedostępny,Unavailable
+gallery.powerups.loading,Ładowanie,Loading

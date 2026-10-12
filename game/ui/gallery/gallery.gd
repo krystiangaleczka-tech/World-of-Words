@@ -19,6 +19,7 @@ const PAGES: Dictionary[StringName, String] = {
 	&"Actions": "res://ui/gallery/actions.tscn",
 	&"Icons": "res://ui/gallery/icons.tscn",
 	&"Currency": "res://ui/gallery/currency.tscn",
+	&"Powerups": "res://ui/gallery/powerups.tscn",
 	&"SettingsControls": "res://ui/gallery/settings_controls.tscn",
 	&"Content": "res://ui/gallery/content.tscn",
 	&"Overlays": "res://ui/gallery/overlays.tscn"

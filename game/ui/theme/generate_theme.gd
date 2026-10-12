@@ -39,7 +39,8 @@ const RATIOS: Array[String] = [
 	"TILE_RADIUS_RATIO",
 	"TILE_SELECTED_SCALE",
 	"HINT_DOT_RATIO",
-	"PRESS_SCALE"
+	"PRESS_SCALE",
+	"ALREADY_SCALE"
 ]
 const VARIATIONS: Dictionary = {
 	"DISPLAY": "Display",

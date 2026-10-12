@@ -116,6 +116,7 @@ class Motion:
 
 
 class Action:
+	const ALREADY_SCALE: float = 1.06
 	const PRESS_SCALE: float = 0.96
 	const OUTLINE_WIDTH: int = 3
 
