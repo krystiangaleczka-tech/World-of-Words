@@ -18,7 +18,8 @@ const PAGES: Dictionary[StringName, String] = {
 	&"Scaffold": "res://ui/gallery/scaffold.tscn",
 	&"Actions": "res://ui/gallery/actions.tscn",
 	&"Icons": "res://ui/gallery/icons.tscn",
-	&"Currency": "res://ui/gallery/currency.tscn"
+	&"Currency": "res://ui/gallery/currency.tscn",
+	&"Overlays": "res://ui/gallery/overlays.tscn"
 }
 const PSEUDO: String = "internationalization/pseudolocalization/"
 const OPTIONS: Dictionary[String, Variant] = {

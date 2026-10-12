@@ -36,3 +36,12 @@ gallery.icons.badges,Oznaczenia liczby i stanu,Count and state badges
 gallery.page.currency,Waluty i postęp,Currency and progress
 gallery.currency.progress,Postęp kolekcji,Collection progress
 gallery.currency.replay,Odtwórz animację,Replay animation
+gallery.page.overlays,Panele i komunikaty,Sheets and toasts
+gallery.overlays.title,Przykładowy panel,Sample sheet
+gallery.overlays.close,Zamknij,Close
+gallery.overlays.body,Przywróć zakupy i kontynuuj spokojnie,Restore purchases and continue at your pace
+gallery.overlays.open,Otwórz panel,Open sheet
+gallery.overlays.busy,Panel w trakcie pracy,Busy sheet
+gallery.overlays.info,Przykładowa informacja,Sample information
+gallery.overlays.success,Przykładowa akcja ukończona,Sample action complete
+gallery.overlays.error,Przykładowa akcja niedostępna,Sample action unavailable
