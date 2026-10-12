@@ -18,3 +18,16 @@ gallery.scaffold.title,Świat słów,World of Words
 gallery.scaffold.body,Bezpieczny obszar treści,Safe content area
 gallery.scaffold.footer,Dolny wiersz,Bottom row
 gallery.scaffold.overflow,Nagłówek nie mieści się w podglądzie,Header does not fit this preview
+gallery.page.actions,Akcje,Actions
+gallery.actions.primary,Główna akcja,Primary action
+gallery.actions.secondary,Dodatkowa akcja,Secondary action
+gallery.actions.text,Akcja tekstowa,Text action
+gallery.actions.normal,Gotowy,Ready
+gallery.actions.pressed,Naciśnięty,Pressed
+gallery.actions.disabled,Niedostępny,Unavailable
+gallery.actions.loading,Ładowanie,Loading
+gallery.actions.highlighted,Wyróżniony,Highlighted
+gallery.actions.play,Zagraj w kolejny poziom,Play the next level
+gallery.actions.ad,Obejrzyj reklamę i odbierz nagrodę,Watch an ad to receive a reward
+gallery.actions.cancel,Nie teraz,Not now
+gallery.actions.sublabel,Przywróć zakupy i kontynuuj,Restore purchases and continue

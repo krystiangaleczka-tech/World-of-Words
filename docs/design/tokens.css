@@ -91,6 +91,8 @@
   --Touch-DRAG_SLOP: calc(12 * var(--Token-unit));
   --Touch-MIN_TARGET: calc(144 * var(--Token-unit));
   --Touch-TILE_HIT_RATIO: 1.35;
+  --Action-OUTLINE_WIDTH: calc(3 * var(--Token-unit));
+  --Action-PRESS_SCALE: 0.96;
   --Layout-CELL_MAX: calc(150 * var(--Token-unit));
   --Layout-CELL_MIN: calc(64 * var(--Token-unit));
   --Layout-COMPACT_MAX_ASPECT: 1.95;

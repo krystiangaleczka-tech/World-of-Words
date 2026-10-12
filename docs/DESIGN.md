@@ -292,6 +292,8 @@ Location: `game/ui/components/<Name>.tscn` + `<Name>.gd` (`class_name <Name>`). 
 ### PrimaryButton
 **Purpose:** the single main action of a screen ("Continue", "Play"). **Params:** `text_key`, `icon: Texture2D?`, `sublabel_key?` (e.g. price). **States:** normal, pressed (scale 0.96, `Motion.FAST`), disabled (`TEXT_MUTED` on `SURFACE_ALT`), loading (spinner replaces icon, label kept, input ignored), highlighted (slow pulse, max 3 cycles). **Tokens:** `PRIMARY`, `ON_PRIMARY`, `Type.LABEL`, `Radius.FULL`, `Elevation.LOW`, min height `Touch.MIN_TARGET`. **Behaviour:** emits `pressed` once; ignores repeat taps while loading. **Don't:** two per screen; use for destructive or ad actions. **Phase:** P1 (plain), P2.
 
+Action tokens: `Action.PRESS_SCALE` = 0.96 (press feedback); `Action.OUTLINE_WIDTH` = 3 design px (secondary outline).
+
 ### SecondaryButton
 **Purpose:** alternative actions ("x2 with ad", "Restore purchases"). **Params/states:** as PrimaryButton, plus `badge: StringName` (`ad` shows a video icon so ad actions are never hidden). **Tokens:** `SURFACE`, `PRIMARY` text and 3 px `STROKE`/`PRIMARY` outline. **Phase:** P2.
 
