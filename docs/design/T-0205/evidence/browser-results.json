@@ -1704,7 +1704,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 18.923380183243083,
-      "gridShare": 0.5184275184275184,
+      "gridShare": 0.4582582582582583,
       "layout": "COMPACT"
     },
     {
@@ -1716,7 +1716,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 18.923380183243083,
-      "gridShare": 0.5184275184275184,
+      "gridShare": 0.4582582582582583,
       "layout": "COMPACT"
     },
     {
@@ -1728,7 +1728,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 18.923380183243083,
-      "gridShare": 0.5184275184275184,
+      "gridShare": 0.4498771498771499,
       "layout": "COMPACT"
     },
     {
@@ -1741,7 +1741,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 18.923380183243083,
-      "gridShare": 0.5184275184275184,
+      "gridShare": 0.4498771498771499,
       "layout": "COMPACT"
     },
     {
@@ -1753,7 +1753,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 18.923380183243083,
-      "gridShare": 0.5184275184275184,
+      "gridShare": 0.4582582582582583,
       "layout": "COMPACT"
     },
     {
@@ -1766,7 +1766,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 18.923380183243083,
-      "gridShare": 0.5184275184275184,
+      "gridShare": 0.4582582582582583,
       "layout": "COMPACT"
     },
     {
@@ -1779,7 +1779,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 18.923380183243083,
-      "gridShare": 0.5184275184275184,
+      "gridShare": 0.4498771498771499,
       "layout": "COMPACT"
     },
     {
@@ -1793,7 +1793,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 18.923380183243083,
-      "gridShare": 0.5184275184275184,
+      "gridShare": 0.4498771498771499,
       "layout": "COMPACT"
     },
     {
@@ -1804,8 +1804,8 @@
       },
       "failures": [],
       "minContrast": 4.917975795181207,
-      "clearance": 14.752749616569155,
-      "gridShare": 0.42946582778188996,
+      "clearance": 24.70534299198096,
+      "gridShare": 0.41996669133974834,
       "layout": "TABLET"
     },
     {
@@ -1817,8 +1817,8 @@
       },
       "failures": [],
       "minContrast": 7.12853243805487,
-      "clearance": 14.752749616569155,
-      "gridShare": 0.42946582778188996,
+      "clearance": 24.70534299198096,
+      "gridShare": 0.41996669133974834,
       "layout": "TABLET"
     },
     {
@@ -1830,8 +1830,8 @@
       },
       "failures": [],
       "minContrast": 4.917975795181207,
-      "clearance": 14.752749616569155,
-      "gridShare": 0.42946582778188996,
+      "clearance": 26.56135470641378,
+      "gridShare": 0.41996669133974834,
       "layout": "TABLET"
     },
     {
@@ -1844,8 +1844,8 @@
       },
       "failures": [],
       "minContrast": 7.12853243805487,
-      "clearance": 14.752749616569155,
-      "gridShare": 0.42946582778188996,
+      "clearance": 26.56135470641378,
+      "gridShare": 0.41996669133974834,
       "layout": "TABLET"
     },
     {
@@ -1857,8 +1857,8 @@
       },
       "failures": [],
       "minContrast": 4.917975795181207,
-      "clearance": 14.752749616569155,
-      "gridShare": 0.42946582778188996,
+      "clearance": 24.70534299198096,
+      "gridShare": 0.41996669133974834,
       "layout": "TABLET"
     },
     {
@@ -1871,8 +1871,8 @@
       },
       "failures": [],
       "minContrast": 7.12853243805487,
-      "clearance": 14.752749616569155,
-      "gridShare": 0.42946582778188996,
+      "clearance": 24.70534299198096,
+      "gridShare": 0.41996669133974834,
       "layout": "TABLET"
     },
     {
@@ -1885,8 +1885,8 @@
       },
       "failures": [],
       "minContrast": 4.917975795181207,
-      "clearance": 14.752749616569155,
-      "gridShare": 0.42946582778188996,
+      "clearance": 26.56135470641378,
+      "gridShare": 0.41996669133974834,
       "layout": "TABLET"
     },
     {
@@ -1900,8 +1900,8 @@
       },
       "failures": [],
       "minContrast": 7.12853243805487,
-      "clearance": 14.752749616569155,
-      "gridShare": 0.42946582778188996,
+      "clearance": 26.56135470641378,
+      "gridShare": 0.41996669133974834,
       "layout": "TABLET"
     },
     {
@@ -3774,7 +3774,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 22.502801507245778,
-      "gridShare": 0.6021817010828,
+      "gridShare": 0.5578231292517006,
       "layout": "REGULAR"
     },
     {
@@ -3786,7 +3786,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 22.502801507245778,
-      "gridShare": 0.6021817010828,
+      "gridShare": 0.5578231292517006,
       "layout": "REGULAR"
     },
     {
@@ -3798,7 +3798,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 22.502801507245778,
-      "gridShare": 0.6021817010828,
+      "gridShare": 0.5516443263696011,
       "layout": "REGULAR"
     },
     {
@@ -3811,7 +3811,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 22.502801507245778,
-      "gridShare": 0.6021817010828,
+      "gridShare": 0.5516443263696011,
       "layout": "REGULAR"
     },
     {
@@ -3823,7 +3823,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 22.502801507245778,
-      "gridShare": 0.6021817010828,
+      "gridShare": 0.5578231292517006,
       "layout": "REGULAR"
     },
     {
@@ -3836,7 +3836,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 22.502801507245778,
-      "gridShare": 0.6021817010828,
+      "gridShare": 0.5578231292517006,
       "layout": "REGULAR"
     },
     {
@@ -3849,7 +3849,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 22.502801507245778,
-      "gridShare": 0.6021817010828,
+      "gridShare": 0.5516443263696011,
       "layout": "REGULAR"
     },
     {
@@ -3863,7 +3863,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 22.502801507245778,
-      "gridShare": 0.6021817010828,
+      "gridShare": 0.5516443263696011,
       "layout": "REGULAR"
     },
     {
@@ -3875,7 +3875,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 22.502801507245778,
-      "gridShare": 0.565391380826737,
+      "gridShare": 0.5169305189094108,
       "layout": "REGULAR"
     },
     {
@@ -3888,7 +3888,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 22.502801507245778,
-      "gridShare": 0.565391380826737,
+      "gridShare": 0.5169305189094108,
       "layout": "REGULAR"
     },
     {
@@ -3901,7 +3901,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 22.502801507245778,
-      "gridShare": 0.565391380826737,
+      "gridShare": 0.5101802990325418,
       "layout": "REGULAR"
     },
     {
@@ -3915,7 +3915,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 22.502801507245778,
-      "gridShare": 0.565391380826737,
+      "gridShare": 0.5101802990325418,
       "layout": "REGULAR"
     },
     {
@@ -3928,7 +3928,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 22.502801507245778,
-      "gridShare": 0.565391380826737,
+      "gridShare": 0.5169305189094108,
       "layout": "REGULAR"
     },
     {
@@ -3942,7 +3942,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 22.502801507245778,
-      "gridShare": 0.565391380826737,
+      "gridShare": 0.5169305189094108,
       "layout": "REGULAR"
     },
     {
@@ -3956,7 +3956,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 22.502801507245778,
-      "gridShare": 0.565391380826737,
+      "gridShare": 0.5101802990325418,
       "layout": "REGULAR"
     },
     {
@@ -3971,7 +3971,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 22.502801507245778,
-      "gridShare": 0.565391380826737,
+      "gridShare": 0.5101802990325418,
       "layout": "REGULAR"
     },
     {
@@ -5844,7 +5844,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 29.10076400023729,
-      "gridShare": 0.6595431820409764,
+      "gridShare": 0.6235336404927622,
       "layout": "TABLET"
     },
     {
@@ -5856,7 +5856,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 29.10076400023729,
-      "gridShare": 0.6595431820409764,
+      "gridShare": 0.6235336404927622,
       "layout": "TABLET"
     },
     {
@@ -5868,7 +5868,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 29.10076400023729,
-      "gridShare": 0.6595431820409764,
+      "gridShare": 0.6185177923732967,
       "layout": "TABLET"
     },
     {
@@ -5881,7 +5881,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 29.10076400023729,
-      "gridShare": 0.6595431820409764,
+      "gridShare": 0.6185177923732967,
       "layout": "TABLET"
     },
     {
@@ -5893,7 +5893,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 29.10076400023729,
-      "gridShare": 0.6595431820409764,
+      "gridShare": 0.6235336404927622,
       "layout": "TABLET"
     },
     {
@@ -5906,7 +5906,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 29.10076400023729,
-      "gridShare": 0.6595431820409764,
+      "gridShare": 0.6235336404927622,
       "layout": "TABLET"
     },
     {
@@ -5919,7 +5919,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 29.10076400023729,
-      "gridShare": 0.6595431820409764,
+      "gridShare": 0.6185177923732967,
       "layout": "TABLET"
     },
     {
@@ -5933,7 +5933,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 29.10076400023729,
-      "gridShare": 0.6595431820409764,
+      "gridShare": 0.6185177923732967,
       "layout": "TABLET"
     },
     {
@@ -5945,7 +5945,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 29.10076400023729,
-      "gridShare": 0.634421052631579,
+      "gridShare": 0.5957543859649123,
       "layout": "TABLET"
     },
     {
@@ -5958,7 +5958,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 29.10076400023729,
-      "gridShare": 0.634421052631579,
+      "gridShare": 0.5957543859649123,
       "layout": "TABLET"
     },
     {
@@ -5971,7 +5971,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 29.10076400023729,
-      "gridShare": 0.634421052631579,
+      "gridShare": 0.5903684210526315,
       "layout": "TABLET"
     },
     {
@@ -5985,7 +5985,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 29.10076400023729,
-      "gridShare": 0.634421052631579,
+      "gridShare": 0.5903684210526315,
       "layout": "TABLET"
     },
     {
@@ -5998,7 +5998,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 29.10076400023729,
-      "gridShare": 0.634421052631579,
+      "gridShare": 0.5957543859649123,
       "layout": "TABLET"
     },
     {
@@ -6012,7 +6012,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 29.10076400023729,
-      "gridShare": 0.634421052631579,
+      "gridShare": 0.5957543859649123,
       "layout": "TABLET"
     },
     {
@@ -6026,7 +6026,7 @@
       "failures": [],
       "minContrast": 4.917975795181207,
       "clearance": 29.10076400023729,
-      "gridShare": 0.634421052631579,
+      "gridShare": 0.5903684210526315,
       "layout": "TABLET"
     },
     {
@@ -6041,7 +6041,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 29.10076400023729,
-      "gridShare": 0.634421052631579,
+      "gridShare": 0.5903684210526315,
       "layout": "TABLET"
     },
     {
@@ -6329,7 +6329,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 29.10076400023729,
-      "gridShare": 0.48695095528855625,
+      "gridShare": 0.4251280283632066,
       "layout": "TABLET"
     },
     {
@@ -6419,7 +6419,7 @@
       "failures": [],
       "minContrast": 7.12853243805487,
       "clearance": 29.10076400023729,
-      "gridShare": 0.48695095528855625,
+      "gridShare": 0.4251280283632066,
       "layout": "TABLET"
     },
     {

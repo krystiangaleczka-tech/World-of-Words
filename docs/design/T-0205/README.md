@@ -29,6 +29,7 @@ canonical unlocks, hint-dot treatment, or this task's catalog and translation-ke
 All values and synthetic location names are illustrative display snapshots. No balance,
 manifest, locale or registry changes. data-key/data-label-key contain proposed/canonical copy
 mappings; coach/tutorial PL strings follow T-0201's approved teaching-plan proposals.
+Hint3 and Reveal1 are illustrative inventory snapshots, not new grants or config defaults.
 The complete screen's star fixture implements the accepted rule in GAME_DESIGN, not a
 runtime award. Slot-based presence matches PRODUCT/DESIGN. Store prices are placeholders,
 not hard-coded real prices, and Remove Forced Ads retains the honest title/body.
@@ -73,13 +74,15 @@ It checks each screen at 360x640,390x844,768x1024 across all16 combinations of H
 exercise tutorial normal/reduced first-touch and all five coach dismissals/unblocked input.
 Menus and Sheet scroll internally; Level screens fit without scrolling. Screenshot animation
 is disabled for deterministic capture. Font shaping checks used weights and actual features;
-no project dependency is added. Repository checks and browser results are recorded below/PR.
+no project dependency is added. Assertions also enforce visible stamp dimensions/stroke,
+count Badges, accessibility-key mappings and two-line coach/action labels clear of tile hit circles.
+Repository checks and browser results are recorded below/PR.
 
 ## Evidence and acceptance
 2026-10-12: Chromium 150.0.7871.24, **501 layout cases PASS** plus tutorial normal/reduced
 first-touch and five coach dismissals/input checks. No console/resource errors or external
 requests. Lowest text/icon contrast 4.918:1; HC 7.129:1. Minimum corner/tile
-hit-circle clearance 14.753 CSS px; grid share 0.419967. Source-reference hash is checked.
+hit-circle clearance 15.526 CSS px; grid share 0.419967 (fractional browser-pixel tolerance). Source-reference hash is checked.
 The evidence folder includes60 screen references, the comparison, three PL/DE font specimens
 and the machine-readable font/browser reports. Full make check PASS:275 GUT,311 pipeline,
 370 tools tests, registries and65 campaign levels. Final-head CI and fresh review belong in PR.

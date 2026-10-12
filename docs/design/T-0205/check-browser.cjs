@@ -34,8 +34,15 @@ function inspect(tokenRefs){
   for(const node of main.querySelectorAll('.icon,.pill,.action,.tab')){
     const r=rect(node);check(r.width+.1>=min&&r.height+.1>=min,`small target ${node.className}`);
     check(Boolean(node.getAttribute('aria-label')),`missing accessible label ${node.className}`);
+    if(node.matches('[data-component="IconButton"],[data-component="HintButton"],[data-component="CurrencyPill"]'))check(Boolean(node.dataset.labelKey),`missing accessible key ${node.className}`);
     const clip=node.closest('.content');
     if(!clip || contained(r,rect(clip)))check(r.left>=rect(main).left-.1&&r.right<=rect(main).right+.1,`target horizontal overflow ${node.className}`);
+  }
+  for(const node of main.querySelectorAll('[aria-label][data-component]'))check(Boolean(node.dataset.labelKey),'accessible component lacks key mapping');
+  for(const label of main.querySelectorAll('.action [data-key],.tab [data-key]')){
+    const range=document.createRange();range.selectNodeContents(label);
+    const lines=new Set([...range.getClientRects()].map(r=>Math.round(r.top*10)));
+    check(lines.size<=2,`action label exceeds two lines ${label.dataset.key}`);
   }
   check(main.querySelectorAll('[data-component="PrimaryButton"]').length<=1,'multiple primary actions');
   for(const name of tokenRefs)check(css.getPropertyValue(name).trim().length>0,`unresolved ${name}`);
@@ -57,7 +64,12 @@ function inspect(tokenRefs){
   }
   if(screen==='complete'){check(main.querySelectorAll('[data-ad="true"]').length===1,'x2 lacks ad badge');check(main.querySelector('.rewards .pill').textContent.trim()==='1','Q2 star rule');}
   if(screen==='home'||screen==='journey_coach'){check(main.querySelectorAll('[data-component="NavTab"]').length===1,'unbuilt tabs shown');}
-  if(screen==='journey'){for(const state of ['locked','current','complete'])check(Boolean(main.querySelector(`.card.${state} .card-label svg`)),`missing ${state} shape cue`);check(Boolean(main.querySelector('.card.complete .postcard .stamp svg')),'complete postcard stamp missing');}
+  if(screen==='journey'){
+    for(const state of ['locked','current','complete'])check(Boolean(main.querySelector(`.card.${state} .card-label svg`)),`missing ${state} shape cue`);
+    const stamp=main.querySelector('.card.complete .postcard .stamp'),glyph=stamp?.querySelector('svg');
+    check(Boolean(glyph),'complete postcard stamp missing');
+    if(glyph){const s=getComputedStyle(glyph);check(rect(glyph).width<=24.1&&rect(glyph).height<=24.1&&s.stroke!=='none'&&parseFloat(s.strokeWidth)>0&&s.display!=='none'&&s.visibility==='visible'&&Number(s.opacity)>0,'complete stamp not a visible icon');check(contained(rect(stamp),rect(stamp.closest('.postcard'))),'stamp outside postcard');}
+  }
   let clearance=null,gridShare=null;
   const body=main.querySelector('.level-body');
   if(body){
@@ -73,12 +85,17 @@ function inspect(tokenRefs){
       check(radius*2+.1>=min,'tile hit target too small');
       check(Math.abs(parseFloat(getComputedStyle(tile).fontSize)-px('Type-TILE_LETTER-size'))<.1,'geometric text scaled');
       for(const button of main.querySelectorAll('.corner')){const b=rect(button),x=(t.left+t.right)/2,y=(t.top+t.bottom)/2,d=Math.hypot(x-Math.max(b.left,Math.min(x,b.right)),y-Math.max(b.top,Math.min(y,b.bottom)));clearance=Math.min(clearance,d-radius);check(d>=radius,'corner intersects tile hit circle');}
+      for(const caption of main.querySelectorAll('.coach-caption')){const b=rect(caption),x=(t.left+t.right)/2,y=(t.top+t.bottom)/2,d=Math.hypot(x-Math.max(b.left,Math.min(x,b.right)),y-Math.max(b.top,Math.min(y,b.bottom)));check(d>=radius,'coach caption intersects tile hit circle');}
     }
     const slot=Number(root.dataset.slot);
     check(Boolean(main.querySelector('[data-target="shuffle"]'))===(slot>=2),'shuffle gating');
     check(Boolean(main.querySelector('[data-component="BonusMeter"]'))===(slot>=5),'bonus gating');
     check(Boolean(main.querySelector('[data-target="hint"]'))===(slot>=7),'hint gating');
     check(Boolean(main.querySelector('[data-target="reveal"]'))===(slot>=12),'reveal gating');
+    for(const node of main.querySelectorAll('[data-component="HintButton"]')){
+      const badge=node.querySelector('[data-component="Badge"]');check(Boolean(badge),'hint/reveal count presentation missing');
+      if(badge){const s=getComputedStyle(badge);check(rect(badge).width>0&&rect(badge).height>0&&s.display!=='none'&&s.visibility==='visible'&&Number(s.opacity)>0,'hint/reveal count hidden');}
+    }
     check(Boolean(main.querySelector('.pill'))===(slot>=7),'coin gating');
     if(slot===1){check(!main.querySelector('.icon,.pill,.corner,.bonus'),'slot-1 gated controls');check(Boolean(main.querySelector('[data-key="level.tutorial.connect"]')),'tutorial caption missing');}
     else check(!main.querySelector('[data-component="TutorialHand"]'),'hand reused for coach mark');
@@ -87,6 +104,8 @@ function inspect(tokenRefs){
     check(Boolean(main.querySelector('.highlighted'))&&Boolean(main.querySelector('.coach-caption')),'coach shape/caption absent');
     check(!main.querySelector('.scrim,.tutorial-arrow'),'coach overlay or arrow');
     check(getComputedStyle(main.querySelector('.coach-caption')).pointerEvents==='none','coach blocks input');
+    const caption=main.querySelector('.coach-caption');
+    check(rect(caption).height<=parseFloat(getComputedStyle(caption).lineHeight)*2+.1,'coach caption exceeds two lines');
   }
   return {failures,minContrast,clearance,gridShare,layout:root.dataset.layout||null};
 }
