@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: low
-status: ready
+status: done
 depends_on: [T-0202]
 touch:
   - docs/GAME_DESIGN.md
@@ -34,3 +34,11 @@ Verify explicit decision provenance, proposals vs approved rules, review finding
 
 ## Acceptance
 Specified work, bounded touch scope, full make check, fresh independent review and final-head successful12jobCI before sequential squash merge. No human test or legal/SDK evidence fabricated.
+
+## Owner disposition
+
+After the T-0202 PASS Chris instructed “Nie pytaj o pozwolenie ja decyduje Rób kolejne 5 taskow”. Apply the reviewed direction and earlier explicit Q2/Q7/Q15 choices; do not ask again. Source and bounded D1–D5 dispositions are recorded in the QA report.
+
+## Outcome
+
+Owner choices and D1–D5 dispositions applied. Config table unchanged. Fresh independent review APPROVE on `6bbf9eab4a82a9f03f6bc06c6034da0d45213528`. Full make check: 275 GUT/13332 assertions,311 pipeline,370 tools,65 levels PASS; scope3files. Final-head successful12jobCI required before merge.
