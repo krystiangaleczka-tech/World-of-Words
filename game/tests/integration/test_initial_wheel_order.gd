@@ -48,10 +48,13 @@ func test_duplicate_tiles_keep_identity_and_input_is_ready_immediately() -> void
 		var tile: LetterTile = wheel.get_child(index) as LetterTile
 		assert_eq(tile.index, index)
 		assert_eq(tile.letter, letters[index])
+	watch_signals(wheel)
 	wheel.pointer_begin(1, wheel.tile_position(0))
 	wheel.pointer_move(1, wheel.tile_position(1))
-	assert_eq(wheel.current_chain(), PackedInt32Array([0, 1]))
-	wheel.pointer_end(1, true)
+	wheel.pointer_move(1, wheel.tile_position(2))
+	assert_eq(wheel.current_chain(), PackedInt32Array([0, 1, 2]))
+	wheel.pointer_end(1, false)
+	assert_signal_emitted_with_parameters(wheel, "word_attempted", [PackedInt32Array([0, 1, 2])])
 
 
 func test_null_invalid_and_uniform_initialization() -> void:
