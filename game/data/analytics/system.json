@@ -1,0 +1,40 @@
+{
+  "settings_changed": {
+    "params": {
+      "setting": "string"
+    },
+    "description": "Named setting durably changed; no arbitrary setting value"
+  },
+  "save_corrupted": {
+    "params": {
+      "schema_version": "int"
+    },
+    "description": "No valid save recovered; version is zero if unknown"
+  },
+  "save_migrated": {
+    "params": {
+      "from_version": "int",
+      "to_version": "int"
+    },
+    "description": "Save schema upgraded without retroactive grants"
+  },
+  "remote_config_applied": {
+    "params": {
+      "config_version": "string"
+    },
+    "description": "Validated remote configuration activated"
+  },
+  "experiment_assigned": {
+    "params": {
+      "experiment_id": "string",
+      "bucket": "int"
+    },
+    "description": "Deterministic experiment bucket assigned"
+  },
+  "content_version_loaded": {
+    "params": {
+      "content_version": "int"
+    },
+    "description": "Validated content version loaded"
+  }
+}

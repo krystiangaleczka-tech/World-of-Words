@@ -1,0 +1,30 @@
+{
+  "ad_offer_shown": {
+    "params": {
+      "placement": "string",
+      "ad_format": "string"
+    },
+    "description": "Ad placement offered; format is rewarded or interstitial"
+  },
+  "ad_shown": {
+    "params": {
+      "placement": "string",
+      "ad_format": "string"
+    },
+    "description": "Ad displayed after permitted initialization"
+  },
+  "ad_reward_earned": {
+    "params": {
+      "placement": "string"
+    },
+    "description": "Provider reward-earned callback received"
+  },
+  "ad_failed": {
+    "params": {
+      "placement": "string",
+      "ad_format": "string",
+      "error_code": "string"
+    },
+    "description": "Ad unavailable/failed; bounded provider code, never exception text"
+  }
+}

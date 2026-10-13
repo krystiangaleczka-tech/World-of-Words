@@ -4,7 +4,7 @@
   "type": "object",
   "minProperties": 1,
   "propertyNames": {
-    "pattern": "^[a-z][a-z0-9_]*$"
+    "pattern": "^(?!(?:firebase_|google_|ga_))(?!(?:ad_activeview|ad_click|ad_exposure|ad_query|ad_reward|adunit_exposure|app_clear_data|app_exception|app_install|app_remove|app_store_refund|app_update|app_upgrade|dynamic_link_app_open|dynamic_link_app_update|dynamic_link_first_open|error|firebase_campaign|firebase_in_app_message_action|firebase_in_app_message_dismiss|firebase_in_app_message_impression|first_open|first_visit|notification_dismiss|notification_foreground|notification_open|notification_receive|notification_send|os_update|session_start|user_engagement|screen_view|ad_impression)$)[a-z][a-z0-9_]{0,39}(?![\\s\\S])"
   },
   "additionalProperties": {
     "type": "object",
@@ -21,7 +21,7 @@
       "params": {
         "type": "object",
         "propertyNames": {
-          "pattern": "^[a-z][a-z0-9_]*$"
+          "pattern": "^(?!(?:firebase_|google_|ga_))(?!(?:cid|currency|customer_id|customerid|dclid|gclid|session_id|sessionid|sfmc_id|sid|srsltid|uid|user_id|userid)$)[a-z][a-z0-9_]{0,39}(?![\\s\\S])"
         },
         "additionalProperties": {
           "enum": [

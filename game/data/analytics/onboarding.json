@@ -1,0 +1,15 @@
+{
+  "onboarding_step": {
+    "params": {
+      "step": "int"
+    },
+    "description": "Reached onboarding step"
+  },
+  "feature_unlocked": {
+    "params": {
+      "feature": "string",
+      "slot": "int"
+    },
+    "description": "Durably unlocked feature at campaign slot"
+  }
+}

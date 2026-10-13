@@ -1,0 +1,35 @@
+{
+  "shop_opened": {
+    "params": {
+      "origin": "string"
+    },
+    "description": "Shop opened from a named UI origin"
+  },
+  "iap_purchase_started": {
+    "params": {
+      "product_id": "string"
+    },
+    "description": "Store purchase requested for canonical product"
+  },
+  "iap_purchase_completed": {
+    "params": {
+      "product_id": "string",
+      "price_micros": "int",
+      "price_currency": "string"
+    },
+    "description": "Purchase durably granted; provider price in millionths and ISO currency, no receipt/token"
+  },
+  "iap_purchase_failed": {
+    "params": {
+      "product_id": "string",
+      "error_code": "string"
+    },
+    "description": "Purchase failed/cancelled; bounded provider code only"
+  },
+  "iap_restore_completed": {
+    "params": {
+      "restored_count": "int"
+    },
+    "description": "Nonconsumable restore completed; no provider transaction identity"
+  }
+}

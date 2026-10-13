@@ -2,6 +2,24 @@ class_name AnalyticsRegistry
 extends RefCounted
 ## @api Event definitions and strict payload validation; no tracking or I/O.
 
+const EVENT_NAME_PATTERN: String = (
+	"^(?!(?:firebase_|google_|ga_))(?!(?:ad_activeview|ad_click|ad_exposure"
+	+ "|ad_query|ad_reward|adunit_exposure|app_clear_data|app_exception|app_i"
+	+ "nstall|app_remove|app_store_refund|app_update|app_upgrade|dynamic_link"
+	+ "_app_open|dynamic_link_app_update|dynamic_link_first_open|error|fireba"
+	+ "se_campaign|firebase_in_app_message_action|firebase_in_app_message_dis"
+	+ "miss|firebase_in_app_message_impression|first_open|first_visit|notific"
+	+ "ation_dismiss|notification_foreground|notification_open|notification_r"
+	+ "eceive|notification_send|os_update|session_start|user_engagement|scree"
+	+ "n_view|ad_impression)$)[a-z][a-z0-9_]{0,39}(?![\\s\\S])"
+)
+
+const PARAM_NAME_PATTERN: String = (
+	"^(?!(?:firebase_|google_|ga_))(?!(?:cid|currency|customer_id|customeri"
+	+ "d|dclid|gclid|session_id|sessionid|sfmc_id|sid|srsltid|uid|user_id|use"
+	+ "rid)$)[a-z][a-z0-9_]{0,39}(?![\\s\\S])"
+)
+
 var _events: Dictionary[StringName, Dictionary] = {}
 
 
@@ -10,11 +28,13 @@ func append_document(document: Dictionary) -> Error:
 	if document.is_empty():
 		return ERR_INVALID_DATA
 	var names: RegEx = RegEx.new()
-	names.compile("^[a-z][a-z0-9_]*$")
+	names.compile(EVENT_NAME_PATTERN)
+	var param_names: RegEx = RegEx.new()
+	param_names.compile(PARAM_NAME_PATTERN)
 	for key: Variant in document:
 		if not key is String or names.search(key) == null or _events.has(StringName(key)):
 			return ERR_INVALID_DATA
-		if not _valid_definition(document[key], names):
+		if not _valid_definition(document[key], param_names):
 			return ERR_INVALID_DATA
 	for key: String in document:
 		_events[StringName(key)] = document[key].duplicate(true)

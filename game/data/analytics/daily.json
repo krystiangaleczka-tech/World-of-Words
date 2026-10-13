@@ -1,0 +1,49 @@
+{
+  "daily_start": {
+    "params": {
+      "date": "string",
+      "level_id": "string"
+    },
+    "description": "P3 daily puzzle entered; local calendar date"
+  },
+  "daily_complete": {
+    "params": {
+      "date": "string",
+      "duration_ms": "int"
+    },
+    "description": "P3 daily puzzle completed; elapsed milliseconds"
+  },
+  "calendar_month_complete": {
+    "params": {
+      "month": "string"
+    },
+    "description": "P3 local calendar month completed"
+  },
+  "streak_updated": {
+    "params": {
+      "date": "string",
+      "length": "int"
+    },
+    "description": "P3 streak updated for local day"
+  },
+  "streak_freeze_used": {
+    "params": {
+      "date": "string"
+    },
+    "description": "P3 streak freeze consumed for local day"
+  },
+  "streak_broken": {
+    "params": {
+      "date": "string",
+      "length": "int"
+    },
+    "description": "P3 previous streak ended"
+  },
+  "streak_repaired": {
+    "params": {
+      "date": "string",
+      "length": "int"
+    },
+    "description": "P3 streak durably repaired"
+  }
+}

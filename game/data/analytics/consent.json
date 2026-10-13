@@ -1,0 +1,16 @@
+{
+  "consent_result": {
+    "params": {
+      "analytics_allowed": "bool",
+      "ads_allowed": "bool",
+      "status": "string"
+    },
+    "description": "Resolved consent decisions; status is a bounded provider code"
+  },
+  "att_result": {
+    "params": {
+      "status": "string"
+    },
+    "description": "Resolved ATT authorization status code"
+  }
+}
