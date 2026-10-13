@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0230]
 touch:
   - game/core/economy/economy_ledger.gd*
