@@ -11,3 +11,9 @@ signal already_found(word: String)
 signal invalid_word(word: String)
 signal level_completed(slot: int)
 signal hint_used
+
+## @api Publish copied transaction and wallet values only after durable Economy success.
+## Side effects only; listeners must not control the transaction.
+signal economy_changed(
+	operation: StringName, reason: StringName, amounts: Dictionary, snapshot: Dictionary
+)

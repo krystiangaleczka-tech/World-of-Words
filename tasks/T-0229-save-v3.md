@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: xhigh
 ui: none
-status: review
+status: done
 depends_on: [T-0203]
 touch:
   - game/services/save/save_schema.gd
