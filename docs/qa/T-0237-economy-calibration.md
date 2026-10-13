@@ -1,6 +1,6 @@
 # T-0237 Owner review: bonus chest calibration
 
-Status: awaiting owner decision. No economy values changed.
+Status: owner approved retaining threshold10 ("10, ok"). No economy values changed.
 
 ## Comparable scenario
 
@@ -29,5 +29,16 @@ chest100 and rewarded100 retain one-Hint coin equivalents. No change to these va
 - 10: retain current starting values until bonus/session discovery is observed on device.
 
 No option is evidence that retention, total affordability or actual chest cadence is established.
-The recorded T-0203 historical baseline remains unchanged. Applying either disposition waits for
-explicit owner answer to the pending question. T-0236 is merged; dependency status reconciled.
+The recorded T-0203 historical baseline remains unchanged. Owner disposition is recorded below. T-0236 is merged; dependency status reconciled.
+
+## Accepted disposition
+
+Chris chose 10; retain current defaults until actual session/bonus discovery evidence supports
+retuning. The synthetic two-session hypothesis does not justify reducing chest frequency now.
+No config, gameplay, Save, historical decision or existing test changes are required.
+
+## Validation
+
+Full make check passed after disposition: 451 Godot, 311 pipeline and 488 tools tests.
+Twenty-one simulator tests pass; shipped P2 defaults include bonus threshold10.
+No config files changed. Task metadata and scope checks passed. Independent review remains required.

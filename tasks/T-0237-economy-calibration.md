@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: blocked
+status: review
 depends_on: [T-0236]
 touch:
   - game/data/config/bonus.json
@@ -49,8 +49,8 @@ Run existing test_p2_config and simulator tests, deterministic before/after repo
 scope/task metadata and CI simulation artifacts for any config change. No test weakening.
 
 ## Approval gate
-Owner question pending: threshold20 versus retaining10 until actual session data. No balance
-change is applied until answered. Reviewable comparison is docs/qa/T-0237-economy-calibration.md.
+Owner answered "10, ok": retain threshold10 pending observed session data. All prices/rewards
+remain unchanged. Reviewable comparison is docs/qa/T-0237-economy-calibration.md.
 
 ## Rollback
 Config rollback only; no live wallet migration or credit deletion.
