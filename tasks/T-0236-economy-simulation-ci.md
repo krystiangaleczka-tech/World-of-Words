@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: low
 ui: none
-status: blocked
+status: review
 depends_on: [T-0235]
 touch:
   - .github/workflows/ci.yml
@@ -68,3 +68,8 @@ S9: two local make check attempts stopped in Godot import: first a thread propag
 then invalid autoload resource paths from generated import cache. No game/project/export code
 changed. Stop and request owner disposition: rebuild generated worktree cache and retry, or
 use fresh Linux CI to diagnose before another local run. Draft PR records both failures.
+
+S9 owner disposition: authorized backing up generated worktree cache and one further make check.
+
+S9 resolved: cache backed up; authorized retry passed full make check. GitHub economy job passed
+and all four downloaded artifacts match local model byte-for-byte. No game source edits.
