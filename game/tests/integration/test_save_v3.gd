@@ -51,18 +51,18 @@ func test_goldens_complete_chain_and_independent_defaults() -> void:
 	var source: Dictionary = _fixture(2)
 	var snapshot: Dictionary = source.duplicate(true)
 	var result: Dictionary = MigrateV2ToV3.migrate(source)
-	assert_eq_deep(SaveSchema.canonical(result), SaveSchema.canonical(_fixture(3)))
-	assert_eq_deep(SaveMigrations.new().upgrade(_fixture(1)), result)
+	assert_eq_deep(SaveSchemaV3.canonical(result), SaveSchemaV3.canonical(_fixture(3)))
+	assert_eq_deep(SaveMigrations.new().upgrade(_fixture(1)), MigrateV3ToV4.migrate(result))
 	assert_eq_deep(source, snapshot)
-	assert_true(SaveSchema.is_valid(result))
+	assert_true(SaveSchemaV3.is_valid(result))
 	var meta: Dictionary = result["meta"]
 	assert_eq_deep(
-		SaveSchema.fresh(meta["install_id"], meta["created_at"], meta["app_version"]),
-		SaveSchema.canonical(result)
+		SaveSchemaV3.fresh(meta["install_id"], meta["created_at"], meta["app_version"]),
+		SaveSchemaV3.canonical(result)
 	)
 	result["meta"]["coach_marks_seen"].append("changed")
 	assert_eq(source["progress"]["coach_marks_seen"], [])
-	assert_eq(SaveSchema.fresh(meta["install_id"], "", "")["meta"]["coach_marks_seen"], [])
+	assert_eq(SaveSchemaV3.fresh(meta["install_id"], "", "")["meta"]["coach_marks_seen"], [])
 
 
 func test_earned_items_wallet_transactions_and_languages_never_decrease() -> void:
@@ -155,7 +155,7 @@ func test_partial_legacy_cap_keys_preserved_and_timestamp_conflicts_rejected() -
 
 
 func test_bad_v2_shapes_and_versions_rejected_before_defaults() -> void:
-	for section: StringName in SaveSchema.SECTIONS:
+	for section: StringName in SaveSchemaV3.SECTIONS:
 		var source: Dictionary = _fixture(2)
 		source.erase(str(section))
 		assert_eq(MigrateV2ToV3.migrate(source), {})
@@ -175,7 +175,7 @@ func test_numeric_roundtrip_and_invalid_p2_values() -> void:
 	var source: Dictionary = _fixture(3)
 	source["monetization"]["last_purchase_slot"] = 9
 	source["progress"]["by_lang"]["pl"]["location_pieces"] = {"forest": 3}
-	var result: Dictionary = SaveSchema.canonical(JSON.parse_string(JSON.stringify(source)))
+	var result: Dictionary = SaveSchemaV3.canonical(JSON.parse_string(JSON.stringify(source)))
 	assert_typeof(result["economy"]["bonus_counter"], TYPE_INT)
 	assert_typeof(result["meta"]["onboarding_step"], TYPE_INT)
 	assert_typeof(result["monetization"]["last_purchase_slot"], TYPE_INT)
@@ -185,17 +185,17 @@ func test_numeric_roundtrip_and_invalid_p2_values() -> void:
 		for field: String in ["coins", "bonus_counter"]:
 			var bad: Dictionary = source.duplicate(true)
 			bad["economy"][field] = value
-			assert_false(SaveSchema.is_valid(bad))
+			assert_false(SaveSchemaV3.is_valid(bad))
 		var bad: Dictionary = source.duplicate(true)
 		bad["economy"]["items"]["hint"] = value
-		assert_false(SaveSchema.is_valid(bad))
+		assert_false(SaveSchemaV3.is_valid(bad))
 		bad = source.duplicate(true)
 		bad["monetization"]["shop_coins_ads"]["count"] = value
-		assert_false(SaveSchema.is_valid(bad))
+		assert_false(SaveSchemaV3.is_valid(bad))
 	for values: Array in [["duplicate", "duplicate"], [""], [42]]:
 		var bad: Dictionary = source.duplicate(true)
 		bad["monetization"]["processed_transactions"] = values
-		assert_false(SaveSchema.is_valid(bad))
+		assert_false(SaveSchemaV3.is_valid(bad))
 
 
 func test_migrated_save_flush_retry_backup_and_reload_preserve_wallet() -> void:
@@ -215,7 +215,7 @@ func test_migrated_save_flush_retry_backup_and_reload_preserve_wallet() -> void:
 	storage.stop = false
 	assert_eq(service.flush(), OK)
 	assert_eq_deep(storage.read_document(".bak"), JSON.parse_string(JSON.stringify(source)))
-	assert_eq(storage.read_document()["schema_version"], 3.0)
+	assert_eq(storage.read_document()["schema_version"], float(SaveSchema.VERSION))
 	var restored: SAVE_SCRIPT = _save(SaveStorage.new(PATH))
 	assert_eq(restored.load(), OK)
 	assert_eq_deep(restored.get_section(&"economy"), service.get_section(&"economy"))

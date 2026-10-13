@@ -1,6 +1,6 @@
 class_name SaveMigrations
 extends RefCounted
-## @api Ordered pure migration chain. The default v3 chain includes built-in v1 and v2 migrations.
+## @api Ordered pure migration chain. Default v4 includes all three historical upgrades.
 
 var _target: int
 var _steps: Dictionary[int, Callable] = {}
@@ -12,6 +12,7 @@ func _init(target: int = -1) -> void:
 	if target == -1:
 		_steps[1] = MigrateV1ToV2.migrate
 		_steps[2] = MigrateV2ToV3.migrate
+		_steps[3] = MigrateV3ToV4.migrate
 
 
 ## @api Register migrate_vN_to_vN1; duplicate, invalid and out-of-range steps are rejected.

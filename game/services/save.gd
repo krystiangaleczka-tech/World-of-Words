@@ -1,5 +1,5 @@
 extends ServiceStub
-## @api Save v3. Other services use only their own section; settings/meta belong to Save.
+## @api Save v4 with lossless v3 compatibility; section ownership remains unchanged.
 
 signal setting_changed(key: StringName)
 signal backup_restored
@@ -10,6 +10,7 @@ var _migrations: SaveMigrations = SaveMigrations.new()
 var _id_factory: Callable = SaveSchema.new_install_id
 var _data: Dictionary = {}
 var _loaded: bool = false
+var _compat_v3: bool = false
 var _dirty: bool = false
 var _primary_valid: bool = false
 var _loaded_temp: bool = false
@@ -33,12 +34,17 @@ func load() -> Error:
 	for suffix: String in ["", ".tmp", ".bak"]:
 		var source: Dictionary = _storage.read_document(suffix)
 		var candidate: Dictionary = _migrations.upgrade(source)
-		if SaveSchema.is_valid(candidate):
-			_data = SaveSchema.canonical(candidate)
+		if not SaveSchema.is_valid(candidate):
+			var legacy: Dictionary = _legacy_candidate(source)
+			if not legacy.is_empty():
+				candidate = legacy
+				_compat_v3 = true
+		if _valid_document(candidate):
+			_data = _canonical_document(candidate)
 			_loaded = true
 			_primary_valid = suffix.is_empty()
 			_loaded_temp = suffix == ".tmp"
-			_dirty = not _primary_valid or source.get("schema_version") != SaveSchema.VERSION
+			_dirty = not _primary_valid or source.get("schema_version") != _data["schema_version"]
 			if not _primary_valid:
 				backup_restored.emit()
 			return OK
@@ -66,6 +72,38 @@ func is_loaded() -> bool:
 	return _loaded
 
 
+## @api Version adaptation only; ready does not certify any P2/atomic commit capability.
+func migration_state() -> String:
+	if not _loaded:
+		return "unconfigured"
+	return "needs_migration" if _compat_v3 else "ready"
+
+
+func _legacy_candidate(source: Dictionary) -> Dictionary:
+	var legacy: Dictionary = source.duplicate(true)
+	if legacy.get("schema_version") == 1:
+		legacy = MigrateV1ToV2.migrate(legacy)
+	if legacy.get("schema_version") == 2:
+		legacy = MigrateV2ToV3.migrate(legacy)
+	return legacy if SaveSchemaV3.is_valid(legacy) else {}
+
+
+func _valid_document(data: Dictionary) -> bool:
+	return SaveSchemaV3.is_valid(data) if _compat_v3 else SaveSchema.is_valid(data)
+
+
+func _canonical_document(data: Dictionary) -> Dictionary:
+	return SaveSchemaV3.canonical(data) if _compat_v3 else SaveSchema.canonical(data)
+
+
+func _fresh_document(install_id: String, created_at: String, app_version: String) -> Dictionary:
+	return (
+		SaveSchemaV3.fresh(install_id, created_at, app_version)
+		if _compat_v3
+		else SaveSchema.fresh(install_id, created_at, app_version)
+	)
+
+
 ## @api Explicit debug reset of gameplay only; identity, settings and purchases are preserved.
 ## Persist before publishing new memory. Existing storage recovery semantics apply on failure.
 func debug_reset() -> Error:
@@ -74,7 +112,7 @@ func debug_reset() -> Error:
 	if not _loaded:
 		return ERR_UNCONFIGURED
 	var meta: Dictionary = _data["meta"]
-	var candidate: Dictionary = SaveSchema.fresh(
+	var candidate: Dictionary = _fresh_document(
 		str(meta["install_id"]), str(meta["created_at"]), str(meta["app_version"])
 	)
 	for section: String in ["meta", "settings", "monetization"]:
@@ -85,7 +123,7 @@ func debug_reset() -> Error:
 	if error != OK:
 		flush_failed.emit(error)
 		return error
-	_data = SaveSchema.canonical(candidate)
+	_data = _canonical_document(candidate)
 	_dirty = false
 	_primary_valid = true
 	_publish_settings()
@@ -108,9 +146,9 @@ func set_section(section: StringName, values: Dictionary) -> Error:
 		return ERR_INVALID_PARAMETER
 	var candidate: Dictionary = _data.duplicate(true)
 	candidate[str(section)] = values.duplicate(true)
-	if not SaveSchema.is_valid(candidate):
+	if not _valid_document(candidate):
 		return ERR_INVALID_DATA
-	_data = SaveSchema.canonical(candidate)
+	_data = _canonical_document(candidate)
 	_dirty = true
 	return OK
 
@@ -129,9 +167,9 @@ func set_setting(key: StringName, value: Variant) -> Error:
 		return ERR_INVALID_PARAMETER
 	var candidate: Dictionary = _data.duplicate(true)
 	candidate["settings"][str(key)] = value
-	if not SaveSchema.is_valid(candidate):
+	if not _valid_document(candidate):
 		return ERR_INVALID_DATA
-	_data = SaveSchema.canonical(candidate)
+	_data = _canonical_document(candidate)
 	_dirty = true
 	_pending_settings[key] = true
 	return flush()

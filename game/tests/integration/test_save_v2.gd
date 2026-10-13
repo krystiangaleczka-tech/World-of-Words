@@ -44,7 +44,7 @@ func _fixture(version: int) -> Dictionary:
 	var data: Dictionary = JSON.parse_string(
 		FileAccess.get_file_as_string("res://tests/fixtures/save/v%d.json" % version)
 	)
-	return MigrateV2ToV3.migrate(data) if version == 2 else data
+	return SaveMigrations.new().upgrade(data) if version == 2 else data
 
 
 func _write(data: Dictionary) -> void:
@@ -117,7 +117,7 @@ func test_golden_migration_and_preservation() -> void:
 	for language: String in expected["progress"]["by_lang"]:
 		var state: Dictionary = expected["progress"]["by_lang"][language]
 		state["highest_completed_slot"] = state["completed_slot"]
-	assert_eq_deep(v2, MigrateV2ToV3.migrate(expected))
+	assert_eq_deep(v2, SaveMigrations.new().upgrade(expected))
 	assert_eq_deep(v1, original)
 	var canonical: Dictionary = SaveSchema.canonical(v2)
 	assert_eq_deep(canonical["root_extension"], original["root_extension"])
