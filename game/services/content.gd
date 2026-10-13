@@ -12,6 +12,7 @@ const PACK_PATH: String = "packs/"
 var _language: String = ""
 var _directory: String = ""
 var _content_version: int = 0
+var _manifest_hash: String = ""
 var _slots: int = 0
 var _packs: Array[Dictionary] = []
 var _cached_file: String = ""
@@ -26,7 +27,8 @@ func load_manifest(language: String, root: String = "res://content") -> Error:
 	var path: String = directory.path_join("manifest.json")
 	if not FileAccess.file_exists(path):
 		return ERR_FILE_NOT_FOUND
-	var data: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	var accepted_bytes: PackedByteArray = FileAccess.get_file_as_bytes(path)
+	var data: Variant = JSON.parse_string(accepted_bytes.get_string_from_utf8())
 	if not data is Dictionary:
 		return ERR_PARSE_ERROR
 	var manifest: Dictionary = data
@@ -44,6 +46,10 @@ func load_manifest(language: String, root: String = "res://content") -> Error:
 	var catalog: ContentCatalog = ContentCatalog.from_manifest(manifest)
 	if catalog == null:
 		return ERR_INVALID_DATA
+	var hash: HashingContext = HashingContext.new()
+	hash.start(HashingContext.HASH_SHA256)
+	hash.update(accepted_bytes)
+	_manifest_hash = hash.finish().hex_encode()
 	_catalog = catalog
 	_language = language
 	_directory = directory
@@ -202,3 +208,8 @@ static func _positive(value: Variant) -> int:
 	if number != floorf(number) or number < 1:
 		return 0
 	return int(number)
+
+
+## @api Identity of the exact accepted manifest; failed loads retain the prior identity.
+func manifest_hash() -> String:
+	return _manifest_hash

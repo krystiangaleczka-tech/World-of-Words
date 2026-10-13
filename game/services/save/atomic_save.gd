@@ -457,3 +457,20 @@ func _commit_validation(
 	if not _approved(transaction, progress, economy):
 		return _result(ERR_INVALID_DATA, "pending" if _started else "rejected")
 	return {}
+
+
+func receipt_publishing() -> bool:
+	return _notifying and not _writing and _lease == null
+
+
+func publish_receipt(receipt: Dictionary) -> Error:
+	if blocked() or _writing:
+		return ERR_BUSY
+	if not validates_receipt(receipt):
+		return ERR_INVALID_DATA
+	if not is_instance_valid(_economy):
+		return ERR_UNCONFIGURED
+	_notifying = true
+	var error: Error = _economy.accept_commit(receipt.duplicate(true))
+	_notifying = false
+	return error
