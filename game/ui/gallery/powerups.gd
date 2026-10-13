@@ -1,5 +1,6 @@
 extends ScreenScaffold
 
+var _bonus_preview: WordPreview
 var _filling: BonusMeter
 var _already: BonusMeter
 var _counted: HintButton
@@ -15,6 +16,9 @@ func _ready() -> void:
 	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	column.add_theme_constant_override("separation", Tokens.Space.M)
 	scroll.add_child(column)
+	_bonus_preview = WordPreview.new()
+	column.add_child(_bonus_preview)
+	_bonus_preview.bonus_arrived.connect(_on_bonus_arrived)
 	for state: String in ["normal", "filling", "full", "already", "highlighted"]:
 		var caption: Label = CatalogSurface.label(&"Caption")
 		caption.text = tr("gallery.powerups." + state)
@@ -54,7 +58,18 @@ func _ready() -> void:
 
 func _replay() -> void:
 	_filling.set_count(0, false)
-	_filling.set_count(10)
+	_bonus_preview.show_result(AttemptResult.new(AttemptResult.Kind.BONUS, "KOT"))
+	_bonus_preview.fly_bonus(_filling)
 	_already.pulse_already()
 	_counted.set_amounts(1, 99999, false)
 	_counted.set_amounts(3, 99999)
+
+
+func _on_bonus_arrived(target: Control) -> void:
+	if target == _filling:
+		_filling.set_count(10)
+
+
+func _exit_tree() -> void:
+	if _bonus_preview != null and _bonus_preview.bonus_arrived.is_connected(_on_bonus_arrived):
+		_bonus_preview.bonus_arrived.disconnect(_on_bonus_arrived)

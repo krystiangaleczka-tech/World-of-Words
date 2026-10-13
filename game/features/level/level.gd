@@ -99,6 +99,7 @@ func _ready() -> void:
 	controller.persistence_failed.connect(_on_persistence_failed)
 	wheel.chain_changed.connect(_on_chain)
 	wheel.word_attempted.connect(_on_attempt)
+	wheel.short_released.connect(_on_short_release)
 	wheel.tile_added.connect(_on_tile)
 	_load_board()
 	_refresh_hud()
@@ -297,6 +298,13 @@ func _on_attempt(tiles: PackedInt32Array) -> void:
 	controller.submit(tiles)
 
 
+func _on_short_release(tiles: PackedInt32Array) -> void:
+	var board: BoardState = controller.get_board()
+	if board != null:
+		preview.set_building(board.get_level().spell(tiles))
+		preview.fade_short()
+
+
 func _on_chain(tiles: PackedInt32Array) -> void:
 	_refresh_actions()
 	var board: BoardState = controller.get_board()
@@ -328,11 +336,15 @@ func _on_result(result: AttemptResult) -> void:
 		board_view.fly_word(
 			result.cells_to_reveal, preview.get_global_transform() * (preview.size / 2), whole_word
 		)
+	elif result.kind == AttemptResult.Kind.BONUS:
+		preview.fly_bonus(bonus_label)
 	elif result.kind == AttemptResult.Kind.ALREADY_FOUND:
 		var level: LevelData = controller.get_board().get_level()
 		for index: int in level.word_count():
 			if level.word(index) == result.word:
 				board_view.highlight_word(level.word_cells(index))
+		if result.word in controller.get_board().bonus_words():
+			preview.pulse_already_target(bonus_label)
 
 
 func _on_completed() -> void:
@@ -457,6 +469,7 @@ func _exit_tree() -> void:
 	if is_instance_valid(wheel):
 		wheel.chain_changed.disconnect(_on_chain)
 		wheel.word_attempted.disconnect(_on_attempt)
+		wheel.short_released.disconnect(_on_short_release)
 		wheel.tile_added.disconnect(_on_tile)
 	if is_instance_valid(controller):
 		controller.state_changed.disconnect(_on_state_changed)

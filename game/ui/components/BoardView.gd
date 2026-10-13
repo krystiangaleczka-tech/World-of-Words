@@ -9,6 +9,7 @@ var _flight: Tween
 var _wave: Tween
 var _flight_cells: Array[Vector2i] = []
 var _flash_cells: Array[Vector2i] = []
+var _flight_nominal: float = 0
 var _motion_speed: float = 1.0
 var _wave_pending: bool = false
 var _board: BoardState
@@ -73,17 +74,55 @@ func cell_global_position(cell: Vector2i) -> Vector2:
 
 ## @api Present a word reveal, clearing hint markers on completed words.
 func reveal_word(cells: Array[Vector2i]) -> void:
+	_cancel_board_motion()
+	var requested: Array[Vector2i] = []
 	for cell: Vector2i in cells:
-		reveal_cell(cell, false)
-	# AttemptResult lists only newly revealed cells, excluding existing hints.
-	if _board == null:
+		if _cells.has(cell) and cell not in requested:
+			requested.append(cell)
+	var reveals: Array[Vector2i] = []
+	var flashes: Array[Vector2i] = []
+	if _board != null:
+		var level: LevelData = _board.get_level()
+		for index: int in level.word_count():
+			if level.word(index) not in _board.found_words():
+				continue
+			var word_cells: Array[Vector2i] = level.word_cells(index)
+			var affected: bool = false
+			for cell: Vector2i in word_cells:
+				if cell in requested or _cells[cell].state != GridCell.State.FILLED:
+					affected = true
+			if not affected:
+				continue
+			for cell: Vector2i in word_cells:
+				if cell not in flashes:
+					flashes.append(cell)
+				if (
+					(cell in requested or _cells[cell].state != GridCell.State.FILLED)
+					and cell not in reveals
+				):
+					reveals.append(cell)
+	for cell: Vector2i in requested:
+		if cell not in reveals:
+			reveals.append(cell)
+		if cell not in flashes:
+			flashes.append(cell)
+	_flight_cells = reveals.duplicate()
+	_flash_cells = flashes
+	for index: int in reveals.size():
+		_cells[reveals[index]].reveal(false, index * Tokens.dur(Tokens.Motion.STAGGER) * 2)
+	if reveals.is_empty() or Tokens.reduced_motion or not is_inside_tree():
 		return
-	var level: LevelData = _board.get_level()
-	for index: int in level.word_count():
-		if level.word(index) in _board.found_words():
-			for cell: Vector2i in level.word_cells(index):
-				if _cells[cell].state != GridCell.State.FILLED:
-					_cells[cell].reveal(false)
+	var reveal_time: float = (
+		(reveals.size() - 1) * Tokens.dur(Tokens.Motion.STAGGER) * 2
+		+ Tokens.dur(Tokens.Motion.BASE)
+	)
+	_flight_nominal = reveal_time + Tokens.dur(Tokens.Motion.BASE)
+	_flight = create_tween()
+	_flight.tween_interval(reveal_time)
+	_flight.tween_callback(_flash_word)
+	_flight.tween_interval(Tokens.dur(Tokens.Motion.BASE))
+	_flight.tween_callback(_finish_flight)
+	set_process(true)
 
 
 ## @api Present one reveal without changing gameplay state.
@@ -105,12 +144,7 @@ func highlight_word(cells: Array[Vector2i]) -> void:
 func play_wave() -> void:
 	if _flight != null:
 		_wave_pending = true
-		var flight_duration: float = (
-			maxf(0, (_flight_cells.size() - 1) * Tokens.dur(Tokens.Motion.STAGGER))
-			+ Tokens.dur(Tokens.Motion.BASE) * 2
-			+ Tokens.dur(Tokens.Motion.FAST)
-		)
-		var remaining: float = maxf(0, flight_duration - _flight.get_total_elapsed_time())
+		var remaining: float = maxf(0, _flight_nominal - _flight.get_total_elapsed_time())
 		_motion_speed = maxf(
 			1,
 			(
@@ -130,7 +164,7 @@ func play_wave() -> void:
 		_wave.kill()
 		_wave = null
 	for cell: Vector2i in _cells:
-		_cells[cell].highlight(_wave_delay(cell))
+		_cells[cell].wave(_wave_delay(cell))
 	if Tokens.reduced_motion or not is_inside_tree():
 		wave_finished.emit()
 		return
@@ -166,6 +200,8 @@ func _wave_delay(cell: Vector2i) -> float:
 
 
 func _finish_wave() -> void:
+	if _wave != null:
+		_wave.kill()
 	_wave = null
 	_motion_speed = 1
 	for coordinate: Vector2i in _cells:
@@ -303,6 +339,11 @@ func fly_word(cells: Array[Vector2i], origin: Vector2, whole_word: Array[Vector2
 		for cell: Vector2i in cells:
 			_cells[cell].fade_filled()
 		return OK
+	_flight_nominal = (
+		maxf(0, (cells.size() - 1) * Tokens.dur(Tokens.Motion.STAGGER))
+		+ Tokens.dur(Tokens.Motion.BASE) * 2
+		+ Tokens.dur(Tokens.Motion.FAST)
+	)
 	var local_origin: Vector2 = get_global_transform().affine_inverse() * origin
 	var font_size: int = get_theme_font_size(&"font_size", &"Preview")
 	_flight = create_tween().set_parallel(true)
@@ -378,6 +419,8 @@ func _flash_word() -> void:
 
 
 func _finish_flight() -> void:
+	if _flight != null:
+		_flight.kill()
 	_flight = null
 	var pending: bool = _wave_pending
 	_wave_pending = false

@@ -4,6 +4,7 @@ extends Control
 
 signal chain_changed(indices: PackedInt32Array)
 signal word_attempted(indices: PackedInt32Array)
+signal short_released(indices: PackedInt32Array)
 signal tile_added(index: int)
 
 const MOUSE_ID: int = -2
@@ -276,6 +277,11 @@ func _end_pointer(id: int, canceled: bool, observed_input: bool) -> void:
 	var attempt: PackedInt32Array = (
 		current_chain() if not canceled and _length >= 3 else PackedInt32Array()
 	)
+	var short: PackedInt32Array = (
+		current_chain()
+		if not canceled and _length > 0 and _length < LevelData.MIN_TILES
+		else PackedInt32Array()
+	)
 	_owner = -1
 	_length = 0
 	for tile: LetterTile in _tiles:
@@ -284,6 +290,8 @@ func _end_pointer(id: int, canceled: bool, observed_input: bool) -> void:
 	chain_changed.emit(current_chain())
 	if not attempt.is_empty():
 		word_attempted.emit(attempt)
+	elif not short.is_empty():
+		short_released.emit(short)
 
 
 func _visit(hit: int) -> void:
