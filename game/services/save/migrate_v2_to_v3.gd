@@ -13,10 +13,10 @@ static func migrate(source: Dictionary) -> Dictionary:
 	var version: Variant = source.get("schema_version")
 	if not (version is int or version is float) or version != 2:
 		return {}
-	for section: StringName in SaveSchema.SECTIONS:
+	for section: StringName in SaveSchemaV3.SECTIONS:
 		if not source.get(str(section)) is Dictionary:
 			return {}
-		for field: String in SaveSchema.TEMPLATE[str(section)]:
+		for field: String in SaveSchemaV3.TEMPLATE[str(section)]:
 			if field not in ADDED.get(str(section), []) and not source[str(section)].has(field):
 				return {}
 	if not source["progress"].get("by_lang") is Dictionary:
@@ -26,7 +26,7 @@ static func migrate(source: Dictionary) -> Dictionary:
 	for section: String in ADDED:
 		for field: String in ADDED[section]:
 			if not result[section].has(field):
-				var value: Variant = SaveSchema.TEMPLATE[section][field]
+				var value: Variant = SaveSchemaV3.TEMPLATE[section][field]
 				result[section][field] = (
 					value.duplicate(true) if value is Dictionary or value is Array else value
 				)
@@ -34,7 +34,7 @@ static func migrate(source: Dictionary) -> Dictionary:
 		var state: Variant = result["progress"]["by_lang"][language]
 		if not state is Dictionary:
 			return {}
-		for field: String in SaveSchema.LANGUAGE_STATE:
+		for field: String in SaveSchemaV3.LANGUAGE_STATE:
 			if field in ["postcards", "unlocked"]:
 				if not state.has(field):
 					state[field] = []
@@ -64,7 +64,7 @@ static func migrate(source: Dictionary) -> Dictionary:
 		result["monetization"]["shop_coins_ads"] = {"date": null, "count": 0}
 		if not cap.is_empty():
 			result["monetization"]["shop_coins_ads"]["legacy"] = cap.duplicate(true)
-	return result if SaveSchema.is_valid(result) else {}
+	return result if SaveSchemaV3.is_valid(result) else {}
 
 
 static func _canonical_cap(cap: Dictionary) -> bool:

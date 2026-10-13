@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0241, T-0233, T-0229]
 touch:
   - docs/qa/T-0330-atomic-save-economy-contract.md

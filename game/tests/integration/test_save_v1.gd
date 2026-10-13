@@ -283,9 +283,10 @@ func test_migration_chain_preserves_golden_source_and_rejects_missing_or_invalid
 	assert_eq(chain.register_step(2, to_v3), OK)
 	assert_eq(chain.upgrade(golden), {}, "Missing future step remains rejected")
 	var to_future: Callable = func(data: Dictionary) -> Dictionary:
-		data["schema_version"] = SaveSchema.VERSION + 1
+		data["schema_version"] = int(data["schema_version"]) + 1
 		return data
-	assert_eq(chain.register_step(3, to_future), OK)
+	for version: int in range(3, SaveSchema.VERSION + 1):
+		assert_eq(chain.register_step(version, to_future), OK)
 	var upgraded: Dictionary = chain.upgrade(golden)
 	assert_eq(upgraded["schema_version"], SaveSchema.VERSION + 1)
 	assert_eq(golden["schema_version"], 1.0)

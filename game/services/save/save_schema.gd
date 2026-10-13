@@ -1,8 +1,8 @@
 class_name SaveSchema
 extends RefCounted
-## @api Save v3 structural contract. Content-specific board validation belongs to BoardState.
+## @api Save v4 structural contract. Content-specific board validation belongs to BoardState.
 
-const VERSION: int = 3
+const VERSION: int = 4
 const LANGUAGE_STATE: Dictionary = {
 	"current_slot": 1,
 	"completed_slot": 0,
@@ -10,6 +10,7 @@ const LANGUAGE_STATE: Dictionary = {
 	"stars": 0,
 	"level_state": null,
 	"location_pieces": {},
+	"location_stars": {},
 	"postcards": [],
 	"unlocked": []
 }
@@ -26,14 +27,15 @@ const SETTINGS: Array[StringName] = [
 	&"language"
 ]
 const TEMPLATE: Dictionary = {
-	"schema_version": 3,
+	"schema_version": 4,
 	"meta":
 	{
 		"install_id": "",
 		"created_at": "",
 		"app_version": "",
 		"coach_marks_seen": [],
-		"onboarding_step": 0
+		"onboarding_step": 0,
+		"atomic": {"lineage": 0, "revision": 0, "processed": {}}
 	},
 	"settings":
 	{
@@ -111,6 +113,7 @@ static func is_valid(data: Dictionary) -> bool:
 		or not _json_safe(data)
 		or not _valid_progress(data["progress"])
 		or not _valid_p2(data)
+		or not _valid_atomic(data["meta"]["atomic"])
 	):
 		return false
 	var uuid: RegEx = RegEx.new()
@@ -132,9 +135,13 @@ static func _canonical(template: Variant, value: Variant) -> Variant:
 			if key == "by_lang":
 				for language: String in value[key]:
 					result[key][language] = _canonical(LANGUAGE_STATE, value[key][language])
-			elif key in ["location_pieces", "items"]:
+			elif key in ["location_pieces", "location_stars", "items"]:
 				for location: String in value[key]:
 					result[key][location] = int(value[key][location])
+			elif key == "processed":
+				for operation: String in value[key]:
+					for field: String in ["lineage", "revision", "slot"]:
+						result[key][operation][field] = int(value[key][operation][field])
 			elif key in ["last_interstitial_time", "last_purchase_slot"] and value[key] != null:
 				result[key] = int(value[key])
 			else:
@@ -203,6 +210,8 @@ static func _valid_progress(progress: Dictionary) -> bool:
 				or not _count(state["location_pieces"][location])
 			):
 				return false
+		if not _valid_local_stars(state):
+			return false
 		if not _valid_board_snapshot(state["level_state"]):
 			return false
 	return true
@@ -302,4 +311,64 @@ static func _valid_p2(data: Dictionary) -> bool:
 		return false
 	if cap["date"] != null and (not cap["date"] is String or cap["date"].is_empty()):
 		return false
+	return true
+
+
+static func _valid_local_stars(state: Dictionary) -> bool:
+	var total: int = 0
+	for location: Variant in state["location_stars"]:
+		var count: Variant = state["location_stars"][location]
+		if not location is String or location.is_empty() or not _count(count):
+			return false
+		if count > state["stars"] - total:
+			return false
+		total += int(count)
+	return true
+
+
+static func _valid_atomic(atomic: Dictionary) -> bool:
+	if atomic.size() != 3 or not _count(atomic["lineage"]) or not _count(atomic["revision"]):
+		return false
+	for key: String in atomic["processed"]:
+		if not _valid_proof(key, atomic["processed"][key], atomic):
+			return false
+	return true
+
+
+static func _valid_proof(key: String, value: Variant, atomic: Dictionary) -> bool:
+	if not value is Dictionary or value.size() != 11:
+		return false
+	for field: String in ["operation_id", "request_hash", "language", "context_hash"]:
+		if not value.get(field) is String or value[field].is_empty():
+			return false
+	for field: String in ["lineage", "revision", "slot"]:
+		if not _count(value.get(field)):
+			return false
+	if (
+		value["lineage"] != atomic["lineage"]
+		or value["revision"] < 1
+		or value["revision"] > atomic["revision"]
+		or value["slot"] < 1
+	):
+		return false
+	if value["language"] != value["language"].strip_edges():
+		return false
+	var identity: String = "campaign_complete:%s:%d" % [value["language"], int(value["slot"])]
+	if value["operation_id"] != identity or key != "%d:%s" % [int(value["lineage"]), identity]:
+		return false
+	var hash_pattern: RegEx = RegEx.new()
+	hash_pattern.compile("^[0-9a-f]{64}$")
+	if (
+		hash_pattern.search(value["request_hash"]) == null
+		or hash_pattern.search(value["context_hash"]) == null
+	):
+		return false
+	for field: String in ["committed_snapshot", "delta", "economy_snapshot"]:
+		if not value.get(field) is Dictionary:
+			return false
+	if not value.get("notifications") is Array:
+		return false
+	for notification: Variant in value["notifications"]:
+		if not notification is Dictionary:
+			return false
 	return true
