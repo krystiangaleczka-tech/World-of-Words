@@ -16,7 +16,9 @@ touch:
   - game/tests/integration/test_economy_contract.gd*
   - docs/qa/T-0232-economy-service-contract.md
   - tasks/T-0232-economy-service-contract.md
-revision: 1
+  - tasks/T-0229-save-v3.md
+  - tasks/T-0231-economy-ledger.md
+revision: 2
 ---
 
 ## Goal
@@ -76,3 +78,6 @@ bonus settlement orchestration, gameplay integration, save migrations and platfo
 
 ## Rollback
 Revert unused stubs and signal; no runtime wallet or persisted data changed.
+
+## Escalation log
+S2 resolved by owner: allowlisted the two status-only dependency files in revision 2.
