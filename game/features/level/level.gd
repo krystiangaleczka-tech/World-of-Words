@@ -83,6 +83,8 @@ func _ready() -> void:
 	progress = PROGRESS_SCRIPT.new()
 	add_child(progress)
 	_area.resized.connect(_layout_play_area)
+	preview.minimum_size_changed.connect(_layout_play_area)
+	layout_class_changed.connect(_on_layout_class_changed)
 	controller.state_changed.connect(_on_state_changed)
 	controller.result_ready.connect(_on_result)
 	controller.completed.connect(_on_completed)
@@ -323,13 +325,6 @@ func _layout_play_area() -> void:
 	if available.x <= 0 or available.y <= 0:
 		return
 	var width: float = minf(available.x, Tokens.Layout.MAX_CONTENT_WIDTH)
-	var left: float = (available.x - width) / 2.0
-	var ratio: float = (
-		Tokens.Layout.WHEEL_COMPACT_RATIO
-		if layout_class == &"COMPACT"
-		else Tokens.Layout.WHEEL_WIDTH_RATIO
-	)
-	var preview_height: float = preview.get_combined_minimum_size().y
 	_actions.vertical = (
 		(
 			shuffle_button.get_combined_minimum_size().x
@@ -339,36 +334,28 @@ func _layout_play_area() -> void:
 		> width
 	)
 	_action_spacer.visible = not _actions.vertical
-	var actions_height: float = _actions.get_combined_minimum_size().y
-	var gaps: float = Tokens.Space.S * 3.0
-	var diameter: float = minf(
-		width, clampf(width * ratio, Tokens.Layout.WHEEL_MIN, Tokens.Layout.WHEEL_MAX)
+	var rectangles: Dictionary[StringName, Rect2] = BoardView.play_area_rects(
+		available,
+		layout_class,
+		preview.get_combined_minimum_size().y,
+		_actions.get_combined_minimum_size().y
 	)
-	diameter = maxf(
-		0.0,
-		minf(
-			diameter,
-			(
-				available.y * (1.0 - Tokens.Layout.GRID_MIN_RATIO)
-				- preview_height
-				- actions_height
-				- gaps
-			)
-		)
-	)
-	var board_height: float = maxf(
-		0.0, available.y - diameter - preview_height - actions_height - gaps
-	)
-	if diameter <= 0:
+	if rectangles.is_empty() or rectangles[&"wheel"].size.x <= 0:
+		wheel.visible = false
 		return
-	board_view.position = Vector2(left, 0)
-	board_view.size = Vector2(width, board_height)
-	preview.position = Vector2(left, board_height + Tokens.Space.S)
-	preview.size = Vector2(width, preview_height)
-	_actions.position = Vector2(left, preview.position.y + preview_height + Tokens.Space.S)
-	_actions.size = Vector2(width, actions_height)
-	wheel.position = Vector2((available.x - diameter) / 2.0, available.y - diameter)
-	wheel.size = Vector2.ONE * diameter
+	wheel.visible = true
+	board_view.position = rectangles[&"board"].position
+	board_view.size = rectangles[&"board"].size
+	preview.position = rectangles[&"preview"].position
+	preview.size = rectangles[&"preview"].size
+	_actions.position = rectangles[&"actions"].position
+	_actions.size = rectangles[&"actions"].size
+	wheel.position = rectangles[&"wheel"].position
+	wheel.size = rectangles[&"wheel"].size
+
+
+func _on_layout_class_changed(_value: StringName) -> void:
+	_layout_play_area()
 
 
 func _notification(what: int) -> void:
@@ -387,6 +374,10 @@ func _notification(what: int) -> void:
 
 
 func _exit_tree() -> void:
+	if is_instance_valid(preview) and preview.minimum_size_changed.is_connected(_layout_play_area):
+		preview.minimum_size_changed.disconnect(_layout_play_area)
+	if layout_class_changed.is_connected(_on_layout_class_changed):
+		layout_class_changed.disconnect(_on_layout_class_changed)
 	if is_instance_valid(continue_button):
 		continue_button.pressed.disconnect(_on_continue)
 	if is_instance_valid(hint_button):
