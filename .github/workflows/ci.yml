@@ -266,3 +266,45 @@ jobs:
             builds/android-release-inspection.json
           if-no-files-found: error
           retention-days: 14
+
+  economy-sim:
+    name: Economy simulation report
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Detect economy simulation changes
+        id: economy_changes
+        shell: bash
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          base="${PR_BASE_SHA:-${BEFORE_SHA:-}}"
+          python3 tools/econ_sim_ci.py --base "$base" --head "$GITHUB_SHA" >> "$GITHUB_OUTPUT"
+      - name: Skip unchanged economy inputs
+        if: steps.economy_changes.outputs.changed != 'true'
+        run: |
+          echo "SKIP economy-sim: no relevant config or simulator changes"
+      - name: Generate readable economy reports
+        if: steps.economy_changes.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p builds/economy
+          python3 tools/econ_sim.py --json builds/economy/default.json --markdown builds/economy/default.md
+          python3 tools/econ_sim.py --no-onboarding --bonus-per-level 0 --json builds/economy/base-only.json --markdown builds/economy/base-only.md
+          echo "Base-only saver has only completion income; other policies still assume their requested ads." >> "$GITHUB_STEP_SUMMARY"
+          for report in builds/economy/default.md builds/economy/base-only.md; do
+            cat "$report"
+            cat "$report" >> "$GITHUB_STEP_SUMMARY"
+          done
+      - uses: actions/upload-artifact@v4
+        if: steps.economy_changes.outputs.changed == 'true'
+        with:
+          name: economy-simulation
+          path: builds/economy/
+          if-no-files-found: error
+          retention-days: 14

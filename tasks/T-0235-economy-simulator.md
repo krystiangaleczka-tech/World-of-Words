@@ -8,7 +8,7 @@ risk: medium
 executor: cheap
 think: med
 ui: none
-status: review
+status: done
 depends_on: [T-0234]
 touch:
   - tools/econ_sim.py
