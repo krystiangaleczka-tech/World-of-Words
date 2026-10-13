@@ -1,0 +1,13 @@
+{
+  "bonus.chest.words_required": {
+    "default": 10,
+    "type": "int",
+    "range": [
+      1,
+      100
+    ],
+    "description": "Bonus chest words required",
+    "owner": "Sol",
+    "remote": false
+  }
+}

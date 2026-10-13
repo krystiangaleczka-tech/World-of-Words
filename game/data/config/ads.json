@@ -1,0 +1,84 @@
+{
+  "ads.interstitial.first_slot": {
+    "default": 16,
+    "type": "int",
+    "range": [
+      1,
+      200
+    ],
+    "description": "Ads interstitial first slot",
+    "owner": "Chris",
+    "remote": false
+  },
+  "ads.interstitial.min_levels_between": {
+    "default": 4,
+    "type": "int",
+    "range": [
+      1,
+      20
+    ],
+    "description": "Ads interstitial min levels between",
+    "owner": "Sol",
+    "remote": false
+  },
+  "ads.interstitial.min_seconds_between": {
+    "default": 180,
+    "type": "int",
+    "range": [
+      30,
+      1800
+    ],
+    "description": "Ads interstitial min seconds between",
+    "owner": "Sol",
+    "remote": false
+  },
+  "ads.interstitial.session_grace_seconds": {
+    "default": 120,
+    "type": "int",
+    "range": [
+      0,
+      1800
+    ],
+    "description": "Ads interstitial session grace seconds",
+    "owner": "Sol",
+    "remote": false
+  },
+  "ads.interstitial.purchase_grace_levels": {
+    "default": 10,
+    "type": "int",
+    "range": [
+      0,
+      100
+    ],
+    "description": "Ads interstitial purchase grace levels",
+    "owner": "Sol",
+    "remote": false
+  },
+  "ads.rewarded.hint.enabled": {
+    "default": true,
+    "type": "bool",
+    "range": null,
+    "description": "Ads rewarded hint enabled",
+    "owner": "Chris",
+    "remote": false
+  },
+  "ads.rewarded.double.enabled": {
+    "default": true,
+    "type": "bool",
+    "range": null,
+    "description": "Ads rewarded double enabled",
+    "owner": "Chris",
+    "remote": false
+  },
+  "ads.rewarded.shop_coins.daily_cap": {
+    "default": 3,
+    "type": "int",
+    "range": [
+      0,
+      20
+    ],
+    "description": "Ads rewarded shop coins daily cap",
+    "owner": "Sol",
+    "remote": false
+  }
+}

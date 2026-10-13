@@ -1,0 +1,112 @@
+{
+  "economy.reward.level_complete": {
+    "default": 25,
+    "type": "int",
+    "range": [
+      0,
+      1000
+    ],
+    "description": "Economy reward level complete",
+    "owner": "Sol",
+    "remote": false
+  },
+  "economy.reward.double_multiplier": {
+    "default": 2,
+    "type": "int",
+    "range": [
+      1,
+      5
+    ],
+    "description": "Economy reward double multiplier",
+    "owner": "Sol",
+    "remote": false
+  },
+  "economy.reward.bonus_chest": {
+    "default": 100,
+    "type": "int",
+    "range": [
+      0,
+      5000
+    ],
+    "description": "Economy reward bonus chest",
+    "owner": "Sol",
+    "remote": false
+  },
+  "economy.reward.rewarded_hint": {
+    "default": 1,
+    "type": "int",
+    "range": [
+      1,
+      5
+    ],
+    "description": "Economy reward rewarded hint",
+    "owner": "Sol",
+    "remote": false
+  },
+  "economy.reward.rewarded_coins": {
+    "default": 100,
+    "type": "int",
+    "range": [
+      0,
+      5000
+    ],
+    "description": "Economy reward rewarded coins",
+    "owner": "Sol",
+    "remote": false
+  },
+  "economy.reward.daily": {
+    "default": 100,
+    "type": "int",
+    "range": [
+      0,
+      5000
+    ],
+    "description": "Economy reward daily",
+    "owner": "Sol",
+    "remote": false
+  },
+  "economy.grant.onboarding_hints": {
+    "default": 3,
+    "type": "int",
+    "range": [
+      0,
+      20
+    ],
+    "description": "Economy grant onboarding hints",
+    "owner": "Chris",
+    "remote": false
+  },
+  "economy.price.hint": {
+    "default": 100,
+    "type": "int",
+    "range": [
+      1,
+      10000
+    ],
+    "description": "Economy price hint",
+    "owner": "Sol",
+    "remote": false
+  },
+  "economy.price.reveal": {
+    "default": 250,
+    "type": "int",
+    "range": [
+      1,
+      10000
+    ],
+    "description": "Economy price reveal",
+    "owner": "Sol",
+    "remote": false
+  },
+  "economy.journal.max_entries": {
+    "default": 200,
+    "type": "int",
+    "range": [
+      50,
+      2000
+    ],
+    "description": "Economy journal max entries",
+    "owner": "Sol",
+    "remote": false
+  }
+}
