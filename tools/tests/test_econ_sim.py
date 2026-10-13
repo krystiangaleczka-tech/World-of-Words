@@ -181,3 +181,12 @@ def test_cumulative_integer_overflow_rejected():
     values["economy.reward.level_complete"] = 2**53 - 1
     with pytest.raises(ValueError, match="safe integer"):
         simulate(values, Options(levels=2))
+
+
+def test_each_policy_has_a_complete_markdown_table():
+    text = render(simulate(defaults(), Options(levels=12)))
+    for name in ("saver", "hinter", "ad_watcher"):
+        section = text.split("## " + name + "\n")[1].split("\n## ")[0]
+        assert "| Policy | Slot | Coins | Hint items | Chests | Denied tools |\n" in section
+        assert "|---|---:|---:|---:|---:|---:|\n" in section
+        assert f"| {name} | 12 |" in section

@@ -199,10 +199,16 @@ def render(report: dict) -> str:
         "",
         "Intent ratios: `" + json.dumps(report["intent_ratios"], sort_keys=True) + "`",
         "",
-        "| Policy | Slot | Coins | Hint items | Chests | Denied tools |",
-        "|---|---:|---:|---:|---:|---:|",
     ]
     for name, policy in report["policies"].items():
+        lines.extend(
+            [
+                f"## {name}",
+                "",
+                "| Policy | Slot | Coins | Hint items | Chests | Denied tools |",
+                "|---|---:|---:|---:|---:|---:|",
+            ]
+        )
         for row in policy["rows"]:
             if row["slot"] % report["assumptions"]["session_levels"] == 0 or row == policy["final"]:
                 lines.append(
