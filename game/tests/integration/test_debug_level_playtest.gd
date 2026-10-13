@@ -101,6 +101,7 @@ func test_earlier_slot_shuffle_return_words_hints_and_completion_preserve_save()
 	assert_eq(screen.preview.feedback_kind(), AttemptResult.Kind.ALREADY_FOUND)
 	assert_true(screen.controller.hint())
 	_attempt(screen, PackedInt32Array([2, 1, 0, 3]))
+	_settle_motion()
 	assert_true(screen.completion_layer.visible)
 	assert_signal_not_emitted(screen.controller, "persistence_failed")
 	screen.progress.notification(NOTIFICATION_APPLICATION_PAUSED)
@@ -122,6 +123,7 @@ func test_future_slot_can_be_completed_without_advancing_campaign() -> void:
 	var screen: LevelScreen = _open_second_slot()
 	_attempt(screen, PackedInt32Array([0, 1, 2]))
 	_attempt(screen, PackedInt32Array([2, 1, 0, 3]))
+	_settle_motion()
 	assert_true(screen.completion_layer.visible)
 	assert_eq(_storage.writes, writes)
 	assert_eq_deep(_storage.document, original)
@@ -139,6 +141,7 @@ func test_current_slot_still_requires_durable_save_and_retry() -> void:
 	assert_false(screen.completion_layer.visible)
 	_storage.fail = false
 	assert_not_null(screen.controller.submit(PackedInt32Array([0, 1, 2])))
+	_settle_motion()
 	assert_true(screen.completion_layer.visible)
 	assert_eq(int(_storage.document["progress"]["by_lang"]["pl"]["current_slot"]), 2)
 
@@ -160,3 +163,9 @@ func test_busy_configure_cannot_switch_mode_and_idle_configure_defaults_to_persi
 	watch_signals(controller)
 	assert_null(controller.submit(PackedInt32Array([0, 1, 2])))
 	assert_signal_emitted_with_parameters(controller, "persistence_failed", [ERR_UNCONFIGURED])
+
+
+func _settle_motion() -> void:
+	for phase: int in 4:
+		for tween: Tween in get_tree().get_processed_tweens():
+			tween.custom_step(10)

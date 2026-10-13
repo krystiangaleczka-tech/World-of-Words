@@ -152,6 +152,8 @@ class Layout:
 	const TILE_RADIUS_RATIO: float = 0.12
 	const LINE_WIDTH: int = 18
 	const TILE_SELECTED_SCALE: float = 1.12
+	const LANDING_SCALE: float = 1.1
+	const WORD_FLASH_SCALE: float = 1.25
 	const HINT_DOT_RATIO: float = 0.06
 	const SHAKE_OFFSET: int = 16
 
