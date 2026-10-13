@@ -5,6 +5,8 @@ signal completed(slot: int)
 
 const SAVE_SCRIPT: Script = preload("res://services/save.gd")
 const CONTENT_SCRIPT: Script = preload("res://services/content.gd")
+const CONFIG_SCRIPT: Script = preload("res://services/config.gd")
+const EVENTS_SCRIPT: Script = preload("res://services/events.gd")
 
 var _save: SAVE_SCRIPT
 var _content: CONTENT_SCRIPT
@@ -226,3 +228,41 @@ func _matches_content(level: LevelData) -> bool:
 		):
 			return false
 	return true
+
+
+## @api P2 remains unavailable until a real atomic coordinator and legacy policy are implemented.
+## Contract stub is inert and does not replace P1 dependencies or pending state.
+func configure_p2(
+	_config: CONFIG_SCRIPT, _port: ProgressCommitPort, _events: EVENTS_SCRIPT
+) -> Error:
+	return ERR_UNAVAILABLE
+
+
+## @api Must be true before using P2 views; contract stub never certifies readiness.
+func p2_ready() -> bool:
+	return false
+
+
+## @api Committed domain view for one language; empty while unavailable.
+func language_progress(_language: String = "") -> Dictionary:
+	return {}
+
+
+## @api Committed per-language star total; unavailable is zero, not an inferred legacy grant.
+func stars(_language: String = "") -> int:
+	return 0
+
+
+## @api Previously committed or newly durable feature ID; unavailable is false.
+func is_feature_unlocked(_feature: StringName, _language: String = "") -> bool:
+	return false
+
+
+## @api Copied committed location/card state; no pack loading or legacy backfill in the stub.
+func location_state(_id: StringName, _language: String = "") -> Dictionary:
+	return {}
+
+
+## @api Copied committed region state; empty before P2 readiness.
+func region_state(_id: StringName, _language: String = "") -> Dictionary:
+	return {}

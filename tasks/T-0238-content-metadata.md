@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0203]
 touch:
   - pipeline/schema/manifest.schema.json
