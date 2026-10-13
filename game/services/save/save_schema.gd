@@ -1,15 +1,17 @@
 class_name SaveSchema
 extends RefCounted
-## @api Save v2 structural contract. Content-specific board validation belongs to BoardState.
+## @api Save v3 structural contract. Content-specific board validation belongs to BoardState.
 
-const VERSION: int = 2
+const VERSION: int = 3
 const LANGUAGE_STATE: Dictionary = {
 	"current_slot": 1,
 	"completed_slot": 0,
 	"highest_completed_slot": 0,
 	"stars": 0,
 	"level_state": null,
-	"location_pieces": {}
+	"location_pieces": {},
+	"postcards": [],
+	"unlocked": []
 }
 const SECTIONS: Array[StringName] = [
 	&"meta", &"settings", &"progress", &"economy", &"daily", &"monetization"
@@ -24,8 +26,15 @@ const SETTINGS: Array[StringName] = [
 	&"language"
 ]
 const TEMPLATE: Dictionary = {
-	"schema_version": 2,
-	"meta": {"install_id": "", "created_at": "", "app_version": ""},
+	"schema_version": 3,
+	"meta":
+	{
+		"install_id": "",
+		"created_at": "",
+		"app_version": "",
+		"coach_marks_seen": [],
+		"onboarding_step": 0
+	},
 	"settings":
 	{
 		"sfx_volume": 1.0,
@@ -38,7 +47,7 @@ const TEMPLATE: Dictionary = {
 	},
 	"progress":
 	{"by_lang": {"pl": LANGUAGE_STATE}, "unlocked": [], "coach_marks_seen": [], "bonus_meter": 0},
-	"economy": {"coins": 0, "items": {"hint": 0, "reveal": 0}, "journal": []},
+	"economy": {"coins": 0, "items": {"hint": 0, "reveal": 0}, "journal": [], "bonus_counter": 0},
 	"daily":
 	{
 		"completed_days": [],
@@ -56,7 +65,10 @@ const TEMPLATE: Dictionary = {
 		"last_interstitial": null,
 		"levels_since_interstitial": 0,
 		"levels_since_purchase": null,
-		"shop_coins_ads": {}
+		"shop_coins_ads": {"date": null, "count": 0},
+		"last_interstitial_time": null,
+		"last_purchase_slot": null,
+		"consent_state": {}
 	}
 }
 
@@ -64,7 +76,9 @@ const TEMPLATE: Dictionary = {
 ## @api Build an independent clean document with injected identity, time and build version.
 static func fresh(install_id: String, created_at: String, app_version: String) -> Dictionary:
 	var data: Dictionary = TEMPLATE.duplicate(true)
-	data["meta"] = {"install_id": install_id, "created_at": created_at, "app_version": app_version}
+	data["meta"].merge(
+		{"install_id": install_id, "created_at": created_at, "app_version": app_version}, true
+	)
 	return data
 
 
@@ -96,6 +110,7 @@ static func is_valid(data: Dictionary) -> bool:
 		not _matches(TEMPLATE, data)
 		or not _json_safe(data)
 		or not _valid_progress(data["progress"])
+		or not _valid_p2(data)
 	):
 		return false
 	var uuid: RegEx = RegEx.new()
@@ -117,6 +132,11 @@ static func _canonical(template: Variant, value: Variant) -> Variant:
 			if key == "by_lang":
 				for language: String in value[key]:
 					result[key][language] = _canonical(LANGUAGE_STATE, value[key][language])
+			elif key in ["location_pieces", "items"]:
+				for location: String in value[key]:
+					result[key][location] = int(value[key][location])
+			elif key in ["last_interstitial_time", "last_purchase_slot"] and value[key] != null:
+				result[key] = int(value[key])
 			else:
 				result[key] = _canonical(template[key], value[key])
 		return result
@@ -161,7 +181,11 @@ static func _matches(template: Variant, value: Variant) -> bool:
 
 
 static func _valid_progress(progress: Dictionary) -> bool:
-	if progress["bonus_meter"] < 0:
+	if (
+		not _count(progress["bonus_meter"])
+		or not _strings(progress["coach_marks_seen"])
+		or not _strings(progress["unlocked"])
+	):
 		return false
 	for language: String in progress["by_lang"]:
 		var state: Dictionary = progress["by_lang"][language]
@@ -169,6 +193,15 @@ static func _valid_progress(progress: Dictionary) -> bool:
 			return false
 		for key: String in ["completed_slot", "highest_completed_slot", "stars"]:
 			if state[key] < 0:
+				return false
+		if not _strings(state["postcards"]) or not _strings(state["unlocked"]):
+			return false
+		for location: Variant in state["location_pieces"]:
+			if (
+				not location is String
+				or location.is_empty()
+				or not _count(state["location_pieces"][location])
+			):
 				return false
 		if not _valid_board_snapshot(state["level_state"]):
 			return false
@@ -220,4 +253,53 @@ static func _json_safe(value: Variant) -> bool:
 		return is_finite(float(value)) and abs(float(value)) <= 9007199254740991.0
 	else:
 		return value == null or value is String or value is bool
+	return true
+
+
+static func _count(value: Variant) -> bool:
+	return _matches(0, value) and value >= 0 and value <= 9007199254740991
+
+
+static func _strings(values: Array) -> bool:
+	var seen: Dictionary[String, bool] = {}
+	for value: Variant in values:
+		if not value is String or value.is_empty() or seen.has(value):
+			return false
+		seen[value] = true
+	return true
+
+
+static func _valid_p2(data: Dictionary) -> bool:
+	var economy: Dictionary = data["economy"]
+	for field: String in ["coins", "bonus_counter"]:
+		if not _count(economy[field]):
+			return false
+	for item: Variant in economy["items"]:
+		if not item is String or item.is_empty() or not _count(economy["items"][item]):
+			return false
+	for entry: Variant in economy["journal"]:
+		if not entry is Dictionary:
+			return false
+	var meta: Dictionary = data["meta"]
+	if not _strings(meta["coach_marks_seen"]) or not _count(meta["onboarding_step"]):
+		return false
+	var settings: Dictionary = data["settings"]
+	for volume: String in ["sfx_volume", "music_volume"]:
+		if settings[volume] < 0 or settings[volume] > 1:
+			return false
+	if settings["text_scale"] < 0 or settings["text_scale"] > 2:
+		return false
+	var monetization: Dictionary = data["monetization"]
+	if not _strings(monetization["processed_transactions"]):
+		return false
+	if not _count(monetization["levels_since_interstitial"]):
+		return false
+	for field: String in ["last_interstitial_time", "last_purchase_slot"]:
+		if monetization[field] != null and not _count(monetization[field]):
+			return false
+	var cap: Dictionary = monetization["shop_coins_ads"]
+	if not _count(cap["count"]):
+		return false
+	if cap["date"] != null and (not cap["date"] is String or cap["date"].is_empty()):
+		return false
 	return true

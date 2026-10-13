@@ -1,6 +1,6 @@
 class_name SaveMigrations
 extends RefCounted
-## @api Ordered pure migration chain. The default v2 chain includes the built-in v1 migration.
+## @api Ordered pure migration chain. The default v3 chain includes built-in v1 and v2 migrations.
 
 var _target: int
 var _steps: Dictionary[int, Callable] = {}
@@ -9,8 +9,9 @@ var _steps: Dictionary[int, Callable] = {}
 ## Explicit targets are caller-owned chains, including custom future-version tests.
 func _init(target: int = -1) -> void:
 	_target = SaveSchema.VERSION if target == -1 else target
-	if target == -1 and _target == 2:
+	if target == -1:
 		_steps[1] = MigrateV1ToV2.migrate
+		_steps[2] = MigrateV2ToV3.migrate
 
 
 ## @api Register migrate_vN_to_vN1; duplicate, invalid and out-of-range steps are rejected.
