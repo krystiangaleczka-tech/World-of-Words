@@ -16,6 +16,7 @@ var _slots: int = 0
 var _packs: Array[Dictionary] = []
 var _cached_file: String = ""
 var _cached_levels: Array[LevelData] = []
+var _catalog: ContentCatalog
 var _check_hashes: bool = OS.is_debug_build()
 
 
@@ -40,6 +41,10 @@ func load_manifest(language: String, root: String = "res://content") -> Error:
 	var packs: Array[Dictionary] = _read_packs(manifest.get("packs"), slots)
 	if version < 1 or slots < 1 or packs.is_empty():
 		return ERR_INVALID_DATA
+	var catalog: ContentCatalog = ContentCatalog.from_manifest(manifest)
+	if catalog == null:
+		return ERR_INVALID_DATA
+	_catalog = catalog
 	_language = language
 	_directory = directory
 	_content_version = version
@@ -80,6 +85,26 @@ func level_for_slot(slot: int) -> LevelData:
 				return null
 			return _cached_levels[slot - int(pack["first"])]
 	return null
+
+
+## @api Independent ordered regions, or [] before a manifest loads.
+func regions() -> Array[Dictionary]:
+	return _catalog.regions() if _catalog != null else []
+
+
+## @api Independent location metadata; legacy campaign uses a virtual campaign location.
+func location_for_slot(slot: int) -> Dictionary:
+	return _catalog.location_for_slot(slot) if _catalog != null else {}
+
+
+## @api Independent region metadata, or {} before load/outside the campaign.
+func region_for_slot(slot: int) -> Dictionary:
+	return _catalog.region_for_slot(slot) if _catalog != null else {}
+
+
+## @api Sparse manifest landmark flag without pack I/O; absent/out-of-range is false.
+func is_landmark(slot: int) -> bool:
+	return _catalog != null and _catalog.is_landmark(slot)
 
 
 func _read_packs(value: Variant, slots: int) -> Array[Dictionary]:

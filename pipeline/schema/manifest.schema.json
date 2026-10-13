@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:world-of-words:manifest:v1",
-  "title": "P1 Polish content manifest",
+  "title": "P1-compatible Polish manifest with additive 1.1 metadata",
   "type": "object",
   "required": [
     "schema_version",
@@ -69,6 +69,155 @@
     },
     "daily": {
       "type": "null"
+    },
+    "regions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name_key",
+          "first",
+          "last"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$(?![\\s\\S])"
+          },
+          "name_key": {
+            "type": "string",
+            "pattern": "^journey\\.region\\.[a-z][a-z0-9_]*$(?![\\s\\S])"
+          },
+          "first": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "last": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        }
+      }
+    },
+    "locations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "region",
+          "name_key",
+          "first",
+          "last",
+          "postcard",
+          "pieces"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$(?![\\s\\S])"
+          },
+          "region": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$(?![\\s\\S])"
+          },
+          "name_key": {
+            "type": "string",
+            "pattern": "^journey\\.location\\.[a-z][a-z0-9_]*$(?![\\s\\S])"
+          },
+          "first": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "last": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "postcard": {
+            "type": "string",
+            "pattern": "^postcards/[a-z0-9_-]+\\.webp$(?![\\s\\S])"
+          },
+          "pieces": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        }
+      }
+    },
+    "landmarks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "slot",
+          "landmark"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "slot": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "landmark": {
+            "type": "boolean"
+          }
+        }
+      }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "regions"
+        ]
+      },
+      "then": {
+        "required": [
+          "regions",
+          "locations",
+          "landmarks"
+        ]
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "locations"
+        ]
+      },
+      "then": {
+        "required": [
+          "regions",
+          "locations",
+          "landmarks"
+        ]
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "landmarks"
+        ]
+      },
+      "then": {
+        "required": [
+          "regions",
+          "locations",
+          "landmarks"
+        ]
+      }
+    }
+  ]
 }

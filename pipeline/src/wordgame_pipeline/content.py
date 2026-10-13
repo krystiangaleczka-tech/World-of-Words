@@ -13,6 +13,7 @@ from .config import LanguageConfig, TierRules, canonical_bytes, parse_json
 from .ingest.source import load_pin as source_pin
 from .stages import P1_STAGES, _write_atomic, read_artifact
 from .validate import SchemaRegistry, validate_level
+from .validate.manifest import validate_manifest_metadata
 
 
 def digest(raw: bytes) -> str:
@@ -42,6 +43,7 @@ def bundle(directory: Path, registry: SchemaRegistry) -> tuple[list[dict], bytes
     raw = (directory / "manifest.json").read_bytes()
     manifest = parse_json(raw.decode("utf-8"))
     registry.validate_schema("manifest", manifest)
+    validate_manifest_metadata(manifest)
     if canonical_bytes(manifest) != raw:
         raise ValueError("Manifest must be canonical JSON")
     expected = {"manifest.json"} | {p["file"] for p in manifest["packs"]}
