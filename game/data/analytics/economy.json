@@ -1,0 +1,28 @@
+{
+  "economy_grant": {
+    "params": {
+      "reason": "string",
+      "coins": "int",
+      "hint": "int",
+      "reveal": "int"
+    },
+    "description": "Committed grant; nonnegative integer component amounts"
+  },
+  "economy_spend": {
+    "params": {
+      "reason": "string",
+      "coins": "int",
+      "hint": "int",
+      "reveal": "int"
+    },
+    "description": "Committed spend; nonnegative integer component amounts"
+  },
+  "bonus_chest_opened": {
+    "params": {
+      "slot": "int",
+      "chests": "int",
+      "coins": "int"
+    },
+    "description": "Completion-boundary chest count and configured coin payout"
+  }
+}

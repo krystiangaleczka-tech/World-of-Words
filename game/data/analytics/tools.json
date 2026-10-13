@@ -1,0 +1,29 @@
+{
+  "hint_used": {
+    "params": {
+      "slot": "int",
+      "payment": "string"
+    },
+    "description": "Hint applied; payment is item, coins or rewarded"
+  },
+  "reveal_used": {
+    "params": {
+      "slot": "int",
+      "payment": "string"
+    },
+    "description": "Whole-word Reveal applied; payment is item or coins"
+  },
+  "shuffle_used": {
+    "params": {
+      "slot": "int"
+    },
+    "description": "Wheel positions shuffled"
+  },
+  "hint_stuck_offer_shown": {
+    "params": {
+      "slot": "int",
+      "trigger": "string"
+    },
+    "description": "Once-per-level hint offer; trigger is idle or invalid_streak"
+  }
+}

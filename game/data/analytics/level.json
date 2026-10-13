@@ -1,0 +1,54 @@
+{
+  "level_start": {
+    "params": {
+      "slot": "int",
+      "level_id": "string"
+    },
+    "description": "Entered campaign level"
+  },
+  "level_complete": {
+    "params": {
+      "slot": "int",
+      "level_id": "string",
+      "duration_ms": "int",
+      "hints_used": "int",
+      "reveals_used": "int",
+      "bonus_words": "int",
+      "stars": "int"
+    },
+    "description": "Durably completed level; elapsed milliseconds and earned statistics"
+  },
+  "word_found": {
+    "params": {
+      "slot": "int",
+      "level_id": "string",
+      "word": "string"
+    },
+    "description": "New required word found"
+  },
+  "bonus_word_found": {
+    "params": {
+      "slot": "int",
+      "level_id": "string",
+      "word": "string"
+    },
+    "description": "New eligible bonus word found"
+  },
+  "invalid_word_submitted": {
+    "params": {
+      "language": "string",
+      "slot": "int",
+      "letters": "string"
+    },
+    "description": "Submitted letter string for dictionary repair; language and slot captured at attempt"
+  },
+  "already_found_word": {
+    "params": {
+      "slot": "int",
+      "level_id": "string",
+      "word": "string",
+      "kind": "string"
+    },
+    "description": "Repeated required or bonus word; kind is level or bonus"
+  }
+}

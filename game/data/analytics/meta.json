@@ -1,0 +1,28 @@
+{
+  "stars_earned": {
+    "params": {
+      "slot": "int",
+      "stars": "int"
+    },
+    "description": "Durably earned stars at completion"
+  },
+  "postcard_piece_revealed": {
+    "params": {
+      "location_id": "string",
+      "pieces": "int"
+    },
+    "description": "Durably revealed postcard piece count"
+  },
+  "location_complete": {
+    "params": {
+      "location_id": "string"
+    },
+    "description": "Location postcard durably completed"
+  },
+  "region_complete": {
+    "params": {
+      "region_id": "string"
+    },
+    "description": "Region durably completed"
+  }
+}
