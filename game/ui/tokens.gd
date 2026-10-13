@@ -115,6 +115,13 @@ class Motion:
 	const COUNT_UP_STEP: int = 20
 
 
+class Reward:
+	const PARTICLE_COUNT: int = 24
+	const SPREAD_DEGREES: float = 180.0
+	const SPEED_MIN: float = 96.0
+	const SPEED_MAX: float = 192.0
+
+
 class Action:
 	const ALREADY_SCALE: float = 1.06
 	const PRESS_SCALE: float = 0.96
