@@ -96,7 +96,9 @@ func _init() -> void:
 
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_RESIZED:
+	if what == NOTIFICATION_THEME_CHANGED:
+		queue_redraw()
+	elif what == NOTIFICATION_RESIZED:
 		pivot_offset = size / 2.0
 		queue_redraw()
 
@@ -106,12 +108,16 @@ func _draw() -> void:
 	if side <= 0:
 		return
 	var highlighted: bool = state == State.HIGHLIGHTED
-	_style.bg_color = Tokens.Palette.CELL_EMPTY
+	_style.bg_color = get_theme_color(&"CELL_EMPTY", &"Palette")
 	if state == State.HINTED:
-		_style.bg_color = Tokens.Palette.CELL_HINTED
+		_style.bg_color = get_theme_color(&"CELL_HINTED", &"Palette")
 	elif state != State.EMPTY:
-		_style.bg_color = Tokens.Palette.CELL_FILLED
-	_style.border_color = Tokens.Palette.PRIMARY if highlighted else Tokens.Palette.STROKE
+		_style.bg_color = get_theme_color(&"CELL_FILLED", &"Palette")
+	_style.border_color = (
+		get_theme_color(&"PRIMARY", &"Palette")
+		if highlighted
+		else get_theme_color(&"STROKE", &"Palette")
+	)
 	# A highlighted inset outline remains visible without relying on colour alone.
 	_style.set_border_width_all(
 		(
@@ -124,7 +130,7 @@ func _draw() -> void:
 	draw_style_box(_style, Rect2(Vector2.ZERO, size))
 	if state == State.EMPTY:
 		return
-	var font: Font = get_theme_default_font()
+	var font: Font = get_theme_font(&"font", &"TileLetter")
 	var font_size: int = int(side * Tokens.Type.CELL_LETTER_RATIO)
 	if font_size <= 0:
 		return
@@ -137,8 +143,12 @@ func _draw() -> void:
 		HORIZONTAL_ALIGNMENT_LEFT,
 		-1,
 		font_size,
-		Color(Tokens.Palette.TEXT, _letter_alpha)
+		Color(get_theme_color(&"TEXT", &"Palette"), _letter_alpha)
 	)
 	if state == State.HINTED:
 		var radius: float = side * Tokens.Layout.HINT_DOT_RATIO
-		draw_circle(Vector2(size.x / 2.0, size.y - radius * 2.0), radius, Tokens.Palette.TEXT)
+		draw_circle(
+			Vector2(size.x / 2.0, size.y - radius * 2.0),
+			radius,
+			get_theme_color(&"TEXT", &"Palette")
+		)

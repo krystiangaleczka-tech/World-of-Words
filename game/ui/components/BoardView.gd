@@ -123,3 +123,65 @@ func _layout_cells() -> void:
 	for cell: Vector2i in _cells:
 		_cells[cell].position = origin + Vector2(cell) * (side + gap)
 		_cells[cell].size = Vector2.ONE * side
+
+
+## @api Shared final layout. Empty for invalid inputs; tiny valid rectangles remain bounded.
+static func play_area_rects(
+	available: Vector2, layout: StringName, preview_height: float, actions_height: float = 0
+) -> Dictionary[StringName, Rect2]:
+	var result: Dictionary[StringName, Rect2] = {}
+	if (
+		layout not in [&"COMPACT", &"REGULAR", &"TABLET"]
+		or not available.is_finite()
+		or available.x <= 0
+		or available.y <= 0
+		or not is_finite(preview_height)
+		or preview_height < 0
+		or not is_finite(actions_height)
+		or actions_height < 0
+	):
+		return result
+	var width: float = minf(available.x, Tokens.Layout.MAX_CONTENT_WIDTH)
+	var left: float = (available.x - width) / 2
+	var gap: float = Tokens.Space.XS if layout == &"COMPACT" else Tokens.Space.S
+	var overhead: float = preview_height + actions_height + gap * 3 + Tokens.Space.L * 2
+	# Scale structural overhead only for impossible tiny hosts; normal classes use exact tokens.
+	var compression: float = minf(1, available.y / maxf(overhead, 1))
+	preview_height *= compression
+	actions_height *= compression
+	gap *= compression
+	var padding: float = Tokens.Space.L * compression
+	var ratio: float = (
+		Tokens.Layout.WHEEL_COMPACT_RATIO
+		if layout == &"COMPACT"
+		else Tokens.Layout.WHEEL_WIDTH_RATIO
+	)
+	var diameter: float = minf(
+		width, clampf(width * ratio, Tokens.Layout.WHEEL_MIN, Tokens.Layout.WHEEL_MAX)
+	)
+	diameter = maxf(
+		0,
+		minf(
+			diameter,
+			(
+				available.y * (1 - Tokens.Layout.GRID_MIN_RATIO)
+				- preview_height
+				- actions_height
+				- gap * 3
+				- padding * 2
+			)
+		)
+	)
+	var board_height: float = maxf(
+		0, available.y - diameter - preview_height - actions_height - gap * 3 - padding * 2
+	)
+	result[&"board"] = Rect2(Vector2(left, 0), Vector2(width, board_height))
+	result[&"preview"] = Rect2(Vector2(left, board_height + gap), Vector2(width, preview_height))
+	result[&"actions"] = Rect2(
+		Vector2(left, board_height + preview_height + gap * 2), Vector2(width, actions_height)
+	)
+	result[&"wheel"] = Rect2(
+		Vector2((available.x - diameter) / 2, available.y - padding - diameter),
+		Vector2.ONE * diameter
+	)
+	return result
