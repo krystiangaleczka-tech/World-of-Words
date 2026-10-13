@@ -314,3 +314,12 @@ func _reset_atomic(candidate: Dictionary) -> bool:
 	atomic.lineage += 1
 	atomic.processed = {}
 	return SaveSchema.is_valid(candidate)
+
+
+## @api Replayed side effects use the same Save-wide barrier; this never mutates persistence.
+func publish_receipt(receipt: Dictionary) -> Error:
+	return _atomic.publish_receipt(receipt)
+
+
+func receipt_publishing() -> bool:
+	return _atomic.receipt_publishing()

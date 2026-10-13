@@ -1,3 +1,5 @@
+# gdlint: disable=max-public-methods
+# P1/P2 compatibility APIs and the explicit typed owner boundary are separately scoped.
 extends AtomicSaveOwner
 ## @api Owns per-language campaign progress and restoration from Save snapshots.
 
@@ -13,6 +15,9 @@ var _content: CONTENT_SCRIPT
 var _bound_board: BoardState
 var _bound_language: String = ""
 var _pending: Dictionary[String, int] = {}
+var _atomic_config: CONFIG_SCRIPT
+var _intent: Dictionary = {}
+var _approvals: Dictionary = {}
 
 
 ## @api Supply loaded Save and Content services before using campaign progress.
@@ -23,6 +28,9 @@ func configure(save: SAVE_SCRIPT, content: CONTENT_SCRIPT) -> void:
 	_pending.clear()
 	_save = save
 	_content = content
+	_atomic_config = null
+	_intent.clear()
+	_approvals.clear()
 
 
 ## @api Read live saved progress. Missing language starts at slot 1; unready services return 0.
@@ -276,3 +284,214 @@ func region_state(_id: StringName, _language: String = "") -> Dictionary:
 
 func atomic_has_pending() -> bool:
 	return not _pending.is_empty()
+
+
+## @api Explicit owner preparation only; does not enable the P2 service or rewire P1.
+func configure_atomic(config: CONFIG_SCRIPT) -> Error:
+	if atomic_has_pending() or (is_instance_valid(_save) and _save.writes_blocked()):
+		return ERR_BUSY
+	if not is_instance_valid(config):
+		return ERR_UNCONFIGURED
+	_atomic_config = config
+	_intent.clear()
+	_approvals.clear()
+	return OK if _atomic_rules() != null else ERR_UNCONFIGURED
+
+
+func atomic_available() -> bool:
+	return (
+		_is_ready()
+		and _save.migration_state() == "ready"
+		and _atomic_rules() != null
+		and (
+			(
+				ProgressSaveAdapter
+				. read(_save.committed_view(), _save_language(), _content, _atomic_rules())
+				. error
+			)
+			== OK
+		)
+	)
+
+
+## @api Build one intent from the current completed bound board; commands are only a proposal.
+func completion_request(commands: Array[Dictionary]) -> Dictionary:
+	if not atomic_available() or _save.writes_blocked() or atomic_has_pending():
+		return {}
+	if _bound_board == null or not _bound_board.is_complete() or not _valid_board(_bound_board):
+		return {}
+	var view: Dictionary = _save.committed_view()
+	var language: String = _save_language()
+	var slot: int = _bound_board.get_level().get_slot()
+	var before: Dictionary = view.sections.progress.by_lang.get(language, SaveSchema.LANGUAGE_STATE)
+	var change: Dictionary = ProgressSaveAdapter.completion(
+		view, language, _content, _atomic_rules()
+	)
+	if change.is_empty():
+		return {}
+	var request: Dictionary = {
+		"operation_id": "campaign_complete:%s:%d" % [language, slot],
+		"kind": "campaign_complete",
+		"language": language,
+		"context":
+		{
+			"content_version": _content.content_version(),
+			"manifest_hash": _content.manifest_hash(),
+			"level_id": _bound_board.get_level().get_id(),
+			"slot": slot,
+			"expected_current_slot": before.current_slot,
+			"expected_highest_completed_slot": before.highest_completed_slot,
+			"board_hash": AtomicRequest.hash_value(_bound_board.to_dict()),
+			"expected_progress_hash": AtomicRequest.hash_value(ProgressSaveAdapter.domain(before))
+		},
+		"progress_candidate": change.snapshot,
+		"economy_commands": commands.duplicate(true),
+		"delta": change.delta
+	}
+	if not AtomicRequest.valid(request):
+		return {}
+	_intent = {
+		"request": request.duplicate(true),
+		"board": _bound_board,
+		"config": _atomic_values(),
+		"lineage": view.lineage,
+		"revision": view.revision
+	}
+	return request.duplicate(true)
+
+
+func prepare_completion(transaction: SaveTransaction) -> ProgressPrepared:
+	var rejected: ProgressPrepared = ProgressPrepared.new()
+	if not atomic_context_valid(transaction):
+		rejected.error = ERR_INVALID_DATA
+		return rejected
+	for value: ProgressPrepared in _approvals:
+		if validates_prepared(value, transaction):
+			return value
+	_approvals.clear()
+	var request: Dictionary = transaction.request()
+	var view: Dictionary = transaction.committed_view()
+	var change: Dictionary = ProgressSaveAdapter.completion(
+		view, request.language, _content, _atomic_rules()
+	)
+	if (
+		change.is_empty()
+		or change.snapshot != request.progress_candidate
+		or change.delta != request.delta
+	):
+		rejected.error = ERR_INVALID_DATA
+		return rejected
+	var section: Dictionary = view.sections.progress.duplicate(true)
+	var state: Dictionary = (
+		section.by_lang.get(request.language, SaveSchema.LANGUAGE_STATE).duplicate(true)
+	)
+	for field: String in ["current_slot", "stars", "location_stars", "location_pieces", "unlocked"]:
+		state[field] = change.snapshot[field]
+	state.postcards = change.snapshot.completed_locations
+	state.highest_completed_slot = request.context.slot
+	state.completed_slot = maxi(int(state.completed_slot), int(request.context.slot))
+	state.level_state = null
+	section.by_lang[request.language] = state
+	var value: ProgressPrepared = ProgressPrepared.new()
+	value.error = OK
+	_approvals[value] = {
+		"transaction": transaction,
+		"save": _save,
+		"hash": AtomicRequest.hash_value(request),
+		"payload":
+		{
+			"section": section.duplicate(true),
+			"delta": change.delta.duplicate(true),
+			"notifications": []
+		}
+	}
+	return value
+
+
+func validates_prepared(value: RefCounted, transaction: SaveTransaction) -> bool:
+	return (
+		value is ProgressPrepared
+		and value.error == OK
+		and _approvals.has(value)
+		and _approvals[value].save == _save
+		and _approvals[value].transaction == transaction
+		and atomic_context_valid(transaction)
+		and _approvals[value].hash == AtomicRequest.hash_value(transaction.request())
+	)
+
+
+func prepared_payload(value: RefCounted, transaction: SaveTransaction) -> Dictionary:
+	return (
+		_approvals[value].payload.duplicate(true) if validates_prepared(value, transaction) else {}
+	)
+
+
+func atomic_context_valid(transaction: SaveTransaction) -> bool:
+	if (
+		not is_instance_valid(_save)
+		or not _save.validates_transaction(transaction)
+		or _intent.is_empty()
+	):
+		return false
+	var request: Dictionary = transaction.request()
+	var view: Dictionary = transaction.committed_view()
+	var board: BoardState = _intent.board
+	return (
+		request == _intent.request
+		and view.lineage == _intent.lineage
+		and view.revision == _intent.revision
+		and _atomic_values() == _intent.config
+		and board != null
+		and board.is_complete()
+		and _is_ready()
+		and _matches_content(board.get_level())
+		and request.language == _save_language()
+		and board.get_level().get_slot() == request.context.slot
+		and request.context.content_version == _content.content_version()
+		and request.context.manifest_hash == _content.manifest_hash()
+		and request.context.board_hash == AtomicRequest.hash_value(board.to_dict())
+	)
+
+
+func _atomic_rules() -> ProgressRules:
+	return ProgressRules.from_config(_atomic_values())
+
+
+func _atomic_values() -> Dictionary:
+	if not is_instance_valid(_atomic_config):
+		return {}
+	var keys: Array[String] = [
+		"meta.stars.per_level", "meta.postcard.pieces", "meta.postcard.piece_star_cost"
+	]
+	for feature: String in ProgressRules.FEATURES:
+		keys.append("unlocks." + feature + "_slot")
+	var values: Dictionary = {}
+	for key: String in keys:
+		if not _atomic_config.has_key(StringName(key)):
+			return {}
+		values[key] = _atomic_config.get_int(StringName(key))
+	return values
+
+
+func atomic_save_matches(save: SAVE_SCRIPT) -> bool:
+	return is_instance_valid(_save) and _save == save
+
+
+## @api Explicit adapter read for the real port; ordinary P2 reads remain inactive.
+func read_atomic(language: String, context: Dictionary) -> Dictionary:
+	var unavailable: Dictionary = {
+		"error": ERR_UNAVAILABLE, "state": "unavailable", "snapshot": {}, "receipt": {}
+	}
+	if not is_instance_valid(_save) or not _save.is_loaded() or _atomic_rules() == null:
+		return unavailable
+	if not is_instance_valid(_content) or not _content.is_loaded():
+		return unavailable
+	if not AtomicRequest.closed(context, ["content_version", "manifest_hash"]):
+		return unavailable
+	if (
+		not context.content_version is int
+		or context.content_version != _content.content_version()
+		or context.manifest_hash != _content.manifest_hash()
+	):
+		return unavailable
+	return ProgressSaveAdapter.read(_save.committed_view(), language, _content, _atomic_rules())
