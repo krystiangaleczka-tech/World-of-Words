@@ -1,0 +1,24 @@
+{
+  "consent.ump_after_slot": {
+    "default": 1,
+    "type": "int",
+    "range": [
+      1,
+      20
+    ],
+    "description": "Consent ump after slot",
+    "owner": "Chris",
+    "remote": false
+  },
+  "consent.att_after_slot": {
+    "default": 6,
+    "type": "int",
+    "range": [
+      1,
+      20
+    ],
+    "description": "Consent att after slot",
+    "owner": "Chris",
+    "remote": false
+  }
+}

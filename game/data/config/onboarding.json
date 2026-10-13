@@ -1,0 +1,13 @@
+{
+  "onboarding.max_prompts_per_session": {
+    "default": 1,
+    "type": "int",
+    "range": [
+      0,
+      5
+    ],
+    "description": "Onboarding max prompts per session",
+    "owner": "Chris",
+    "remote": false
+  }
+}
