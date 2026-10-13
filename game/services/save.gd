@@ -1,3 +1,5 @@
+# gdlint: disable=max-public-methods
+# Save retains its P1 APIs alongside the explicitly scoped typed transaction boundary.
 extends ServiceStub
 ## @api Save v4 with lossless v3 compatibility; section ownership remains unchanged.
 
@@ -5,6 +7,7 @@ signal setting_changed(key: StringName)
 signal backup_restored
 signal flush_failed(error: Error)
 
+var _atomic: AtomicSave = AtomicSave.new()
 var _storage: SaveStorage = SaveStorage.new()
 var _migrations: SaveMigrations = SaveMigrations.new()
 var _id_factory: Callable = SaveSchema.new_install_id
@@ -21,6 +24,7 @@ var _pending_settings: Dictionary[StringName, bool] = {}
 func configure(storage: SaveStorage, id_factory: Callable = Callable()) -> void:
 	assert(not _loaded and storage != null)
 	_storage = storage
+	_atomic.configure(_storage, _atomic_publish)
 	if id_factory.is_valid():
 		_id_factory = id_factory
 
@@ -30,6 +34,7 @@ func configure(storage: SaveStorage, id_factory: Callable = Callable()) -> void:
 func load() -> Error:
 	if _loaded:
 		return OK
+	_atomic.configure(_storage, _atomic_publish)
 	assert(get_clock() != null, "Save requires an injected Clock before load")
 	for suffix: String in ["", ".tmp", ".bak"]:
 		var source: Dictionary = _storage.read_document(suffix)
@@ -41,6 +46,7 @@ func load() -> Error:
 				_compat_v3 = true
 		if _valid_document(candidate):
 			_data = _canonical_document(candidate)
+			_atomic.observe(_data)
 			_loaded = true
 			_primary_valid = suffix.is_empty()
 			_loaded_temp = suffix == ".tmp"
@@ -59,6 +65,7 @@ func load() -> Error:
 	if not SaveSchema.is_valid(_data):
 		_data = {}
 		return ERR_INVALID_DATA
+	_atomic.observe(_data)
 	_loaded = true
 	_dirty = true
 	if existing:
@@ -107,6 +114,8 @@ func _fresh_document(install_id: String, created_at: String, app_version: String
 ## @api Explicit debug reset of gameplay only; identity, settings and purchases are preserved.
 ## Persist before publishing new memory. Existing storage recovery semantics apply on failure.
 func debug_reset() -> Error:
+	if writes_blocked():
+		return ERR_BUSY
 	if not OS.is_debug_build():
 		return ERR_UNAVAILABLE
 	if not _loaded:
@@ -117,6 +126,8 @@ func debug_reset() -> Error:
 	)
 	for section: String in ["meta", "settings", "monetization"]:
 		candidate[section] = (_data[section] as Dictionary).duplicate(true)
+	if not _compat_v3 and not _reset_atomic(candidate):
+		return ERR_INVALID_DATA
 	var error: Error = _prepare_write()
 	if error == OK:
 		error = _storage.commit(JSON.stringify(candidate, "", true, true), _primary_valid)
@@ -124,6 +135,7 @@ func debug_reset() -> Error:
 		flush_failed.emit(error)
 		return error
 	_data = _canonical_document(candidate)
+	_atomic.observe(_data)
 	_dirty = false
 	_primary_valid = true
 	_publish_settings()
@@ -141,6 +153,8 @@ func get_section(section: StringName) -> Dictionary:
 ## @api Replace an owner section after structural validation; flush only on meaningful events.
 ## meta/settings changes must use Save-owned accessors, not another service.
 func set_section(section: StringName, values: Dictionary) -> Error:
+	if writes_blocked():
+		return ERR_BUSY
 	assert(_loaded)
 	if section not in [&"progress", &"economy", &"daily", &"monetization"]:
 		return ERR_INVALID_PARAMETER
@@ -162,6 +176,8 @@ func get_setting(key: StringName) -> Variant:
 ## @api Persist a structurally valid setting immediately; signal only after successful flush.
 ## On I/O error the value stays dirty; any successful retry publishes pending keys.
 func set_setting(key: StringName, value: Variant) -> Error:
+	if writes_blocked():
+		return ERR_BUSY
 	assert(_loaded)
 	if key not in SaveSchema.SETTINGS:
 		return ERR_INVALID_PARAMETER
@@ -177,14 +193,21 @@ func set_setting(key: StringName, value: Variant) -> Error:
 
 ## @api Synchronous durable write; success is required before a caller finishes a transaction.
 func flush() -> Error:
+	if writes_blocked():
+		return ERR_BUSY
 	if not _loaded:
 		return ERR_UNCONFIGURED
 	if not _dirty:
 		return OK
+	var candidate: Dictionary = _data.duplicate(true)
+	if not _compat_v3 and not _bump_revision(candidate):
+		return ERR_INVALID_DATA
 	var error: Error = _prepare_write()
 	if error == OK:
-		error = _storage.commit(JSON.stringify(_data, "", true, true), _primary_valid)
+		error = _storage.commit(JSON.stringify(candidate, "", true, true), _primary_valid)
 	if error == OK:
+		_data = _canonical_document(candidate)
+		_atomic.observe(_data)
 		_dirty = false
 		_primary_valid = true
 		_publish_settings()
@@ -219,3 +242,75 @@ func request_flush() -> Error:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_PAUSED and _loaded:
 		request_flush()
+
+
+## @api Durable copied sections, independent of P1's dirty staging document.
+func committed_view() -> Dictionary:
+	return _atomic.view()
+
+
+## @api Boot-only binding; typed base plus concrete script ancestry prevents circular preloads.
+func configure_atomic(progress: AtomicSaveOwner, economy: AtomicSaveOwner) -> Error:
+	return ERR_ALREADY_IN_USE if _loaded else _atomic.bind(progress, economy)
+
+
+## @api Shared lease/notification barrier for every owner writer.
+func writes_blocked() -> bool:
+	return _atomic.blocked()
+
+
+func validates_transaction(transaction: SaveTransaction) -> bool:
+	return _atomic.validates(transaction)
+
+
+func validates_progress(value: ProgressPrepared, transaction: SaveTransaction) -> bool:
+	return _atomic.validates_progress(value, transaction)
+
+
+func validates_receipt(receipt: Dictionary) -> bool:
+	return _atomic.validates_receipt(receipt)
+
+
+func begin_transaction(request: Dictionary) -> Dictionary:
+	return _atomic.begin(request, _dirty)
+
+
+func commit_transaction(
+	transaction: SaveTransaction, progress: ProgressPrepared, economy: EconomyPrepared
+) -> Dictionary:
+	return _atomic.commit(transaction, progress, economy)
+
+
+func recover_transaction(operation_id: String, request_hash: String) -> Dictionary:
+	if _dirty and not writes_blocked():
+		return {"error": ERR_BUSY, "state": "pending", "view": committed_view(), "receipt": {}}
+	return _atomic.recover(operation_id, request_hash)
+
+
+func abort_transaction(transaction: SaveTransaction) -> Error:
+	return _atomic.abort(transaction)
+
+
+func _atomic_publish(document: Dictionary, suffix: String) -> void:
+	_compat_v3 = document.schema_version == 3
+	_data = _canonical_document(document)
+	_primary_valid = suffix.is_empty()
+	_loaded_temp = suffix == ".tmp"
+	_dirty = not _primary_valid
+
+
+func _bump_revision(candidate: Dictionary) -> bool:
+	var prior: int = int(committed_view().revision)
+	if prior >= ProgressSnapshot.MAX_SAFE_COUNT:
+		return false
+	candidate.meta.atomic.revision = prior + 1
+	return SaveSchema.is_valid(candidate)
+
+
+func _reset_atomic(candidate: Dictionary) -> bool:
+	var atomic: Dictionary = candidate.meta.atomic
+	if atomic.lineage >= ProgressSnapshot.MAX_SAFE_COUNT or not _bump_revision(candidate):
+		return false
+	atomic.lineage += 1
+	atomic.processed = {}
+	return SaveSchema.is_valid(candidate)

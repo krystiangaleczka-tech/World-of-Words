@@ -104,6 +104,9 @@ func test_confirmed_reset_returns_to_level_one() -> void:
 	assert_eq(nav.level_slot(), 1)
 	assert_true(nav.mounted_screen() is LevelScreen)
 	assert_eq(save.get_section(&"economy")["coins"], 0)
+	prior[&"meta"].atomic.lineage += 1
+	prior[&"meta"].atomic.revision += 1
+	prior[&"meta"].atomic.processed = {}
 	for section: StringName in [&"meta", &"settings", &"monetization"]:
 		assert_eq_deep(save.get_section(section), prior[section])
 	assert_eq(SaveStorage.new(PATH).read_document()["economy"]["coins"], 0)

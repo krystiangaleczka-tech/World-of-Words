@@ -78,6 +78,9 @@ func test_reset_preserves_identity_settings_and_transactions() -> void:
 		preserved[section] = save.get_section(section)
 	assert_eq(save.debug_reset(), OK)
 	_assert_fresh_gameplay(save)
+	preserved[&"meta"].atomic.lineage += 1
+	preserved[&"meta"].atomic.revision += 1
+	preserved[&"meta"].atomic.processed = {}
 	for section: StringName in preserved:
 		assert_eq_deep(save.get_section(section), preserved[section])
 	assert_true(save.is_loaded())
