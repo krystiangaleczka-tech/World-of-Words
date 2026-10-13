@@ -44,8 +44,14 @@ func _init() -> void:
 	_line.resize(LevelData.MAX_TILES + 1)
 
 
+func _enter_tree() -> void:
+	if is_node_ready() and not resized.is_connected(_layout_tiles):
+		resized.connect(_layout_tiles)
+
+
 func _ready() -> void:
-	resized.connect(_layout_tiles)
+	if not resized.is_connected(_layout_tiles):
+		resized.connect(_layout_tiles)
 	_layout_tiles()
 
 
@@ -69,6 +75,7 @@ func set_letters(letters: PackedStringArray, initial_rng: RandomNumberGenerator 
 		var tile: LetterTile = LetterTile.new()
 		tile.index = index
 		tile.letter = _letters[index]
+		tile.disabled = is_locked()
 		_tiles.append(tile)
 		add_child(tile)
 	_layout_tiles()
@@ -77,6 +84,7 @@ func set_letters(letters: PackedStringArray, initial_rng: RandomNumberGenerator 
 ## @api Lock input and cancel any current gesture without submitting.
 func set_locked(locked: bool) -> void:
 	_locked = locked
+	_sync_disabled()
 	if locked:
 		_end_pointer(_owner, true, false)
 
@@ -116,6 +124,7 @@ func shuffle(rng: RandomNumberGenerator) -> bool:
 		_layout_tiles()
 		return true
 	_shuffling = true
+	_sync_disabled()
 	_shuffle_generation += 1
 	var generation: int = _shuffle_generation
 	var diameter: float = minf(size.x, size.y)
@@ -169,6 +178,12 @@ func _finish_shuffle(generation: int) -> void:
 	for tile_id: int in _tiles.size():
 		_tiles[tile_id].position = _centers[tile_id] - _tiles[tile_id].size / 2.0
 	_shuffling = false
+	_sync_disabled()
+
+
+func _sync_disabled() -> void:
+	for tile: LetterTile in _tiles:
+		tile.disabled = is_locked()
 
 
 func _cancel_shuffle() -> void:
@@ -177,6 +192,7 @@ func _cancel_shuffle() -> void:
 		_shuffle_tween.kill()
 		_shuffle_tween = null
 	_shuffling = false
+	_sync_disabled()
 
 
 func _layout_tiles() -> void:
@@ -197,10 +213,14 @@ func _layout_tiles() -> void:
 
 
 func _draw() -> void:
-	draw_circle(size / 2.0, minf(size.x, size.y) / 2.0, Tokens.Palette.SURFACE_ALT)
+	draw_circle(size / 2.0, minf(size.x, size.y) / 2.0, get_theme_color(&"SURFACE_ALT", &"Palette"))
 	for segment: int in maxi(line_point_count() - 1, 0):
 		draw_line(
-			_line[segment], _line[segment + 1], Tokens.Palette.LINE, Tokens.Layout.LINE_WIDTH, true
+			_line[segment],
+			_line[segment + 1],
+			get_theme_color(&"LINE", &"Palette"),
+			Tokens.Layout.LINE_WIDTH,
+			true
 		)
 
 	if _diagnostic_drawn.is_valid():
