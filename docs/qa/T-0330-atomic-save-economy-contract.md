@@ -25,15 +25,32 @@ callers. Save binds its identity to the issuing instance, revision, lineage and 
 ```gdscript
 # Save, appended APIs
 func committed_view() -> Dictionary
-func begin_transaction(operation_id: String, request_hash: String) -> Dictionary
-func commit_transaction(transaction: SaveTransaction, prepared: Dictionary) -> Dictionary
+func configure_atomic(progress: PROGRESS_SCRIPT, economy: ECONOMY_SCRIPT) -> Error
+func migration_state() -> String
+func validates_transaction(transaction: SaveTransaction) -> bool
+func validates_progress(value: ProgressPrepared, transaction: SaveTransaction) -> bool
+func begin_transaction(request: Dictionary) -> Dictionary
+func commit_transaction(
+    transaction: SaveTransaction, progress: ProgressPrepared, economy: EconomyPrepared
+) -> Dictionary
 func recover_transaction(operation_id: String, request_hash: String) -> Dictionary
 func abort_transaction(transaction: SaveTransaction) -> Error
 
+# SaveTransaction, read-only deep copies; owners first check bound Save.validates_transaction.
+func request() -> Dictionary
+func committed_view() -> Dictionary
+
 # Economy, value preparation only; never mutates Save, wallet, journal or emits signals.
-func prepare_commands(commands: Array[Dictionary], before: Dictionary) -> Dictionary
+func prepare_commands(transaction: SaveTransaction, progress: ProgressPrepared) -> EconomyPrepared
+func validates_prepared(value: EconomyPrepared, transaction: SaveTransaction) -> bool
+func prepared_payload(value: EconomyPrepared, transaction: SaveTransaction) -> Dictionary
 # Validate durable owner-issued receipt, publish committed wallet/cache once; no grant/reapply.
 func accept_commit(receipt: Dictionary) -> Error
+
+# Progress, owner checks Board/Content/context and uses ProgressLedger.
+func prepare_completion(transaction: SaveTransaction) -> ProgressPrepared
+func validates_prepared(value: ProgressPrepared, transaction: SaveTransaction) -> bool
+func prepared_payload(value: ProgressPrepared, transaction: SaveTransaction) -> Dictionary
 
 # Pure additive migration, selected by SaveMigrations default v4 chain.
 static func migrate(source: Dictionary) -> Dictionary # MigrateV3ToV4
@@ -48,30 +65,65 @@ view:Dictionary,receipt:Dictionary}. Success state preparing has one lease and c
 replayed has no lease and an existing durable receipt. Same ID with a different request hash rejects.
 Hashes use canonical sorted-key JSON, normalized validated integers, SHA-256; no float/string coercion.
 The hash covers the complete original request including commands, delta, context and candidate.
+begin accepts the complete T-0241 request, validates its closed shape, calculates its hash itself and
+stores a deep immutable copy in the lease. Owners read that copy; callers cannot swap commands or
+baselines after begin. Only campaign_complete is supported by this initial coordinator contract.
 
-prepare_commands returns {error:Error,section:Dictionary,notifications:Array[Dictionary]}.
-A command is {operation:String,reason:String,amounts:Dictionary}; operation is grant or spend,
-reason is nonblank canonical owner-accepted reason and amounts follows WalletSnapshot rules.
-Whole ordered batch succeeds or returns error and empty section/notifications. Economy derives
-wallet, bounded journal and unchanged bonus_counter/extensions from before, using injected Clock.
-Untrusted supplied before must equal the lease's committed economy section before commit approval.
-No independent pending Economy request may be adopted or cleared as a joint operation.
+ProgressPrepared and EconomyPrepared are opaque RefCounted handles, not Dictionary values. A caller
+may instantiate a handle class, but only a matching registered owner can issue a valid handle. Each
+owner keeps a private issuance record keyed by object identity, bound to Save instance, lease identity,
+lineage/revision, full request hash and immutable candidate/notification values. No public constructor,
+setter, deserializer or supplied approval flag can create a valid issuance record.
+configure_atomic is boot-only before load, binds exactly one concrete Progress and Economy instance
+and cannot replace them after load. Typed SCRIPT aliases refer to services/progress.gd/economy.gd.
+Save calls those bound owners' validates_prepared methods at commit, checks both identities, and
+obtains copied payloads through the bound owners prepared_payload only after validation. Payloads
+are {section:Dictionary,delta:Dictionary,notifications:Array[Dictionary]}; Economy delta is {} and
+Progress notifications is []. Invalid handles return {}. Copies cannot mutate issuance records or
+replace handle payloads. Public validation methods are read-only predicates; Save validates_progress
+delegates to its bound Progress instance so Economy can check the supplied Progress approval.
+Save.validates_transaction checks its active private lease record; both owners require it before
+reading or preparing from a handle. Issued handles are invalidated after abort, resolution or reset; a
+second handle cannot authorize different content for the same lease. Forged/direct Save callers can
+begin a syntactically valid request but cannot commit arbitrary sections without BOTH owner approvals.
 
-prepared: {progress:Dictionary,economy:Dictionary,delta:Dictionary,notifications:Array[Dictionary]}.
-The coordinator obtains progress from Progress ownership and economy from Economy preparation;
-Save rejects missing/extra owner sections. Validate both owner candidates plus the entire document,
-and verify the lease's request, current board/completion proof, Content version/manifest/level/slot,
-language, expected progress hash and expected current/highest slot again immediately before write.
-A forged handle or arbitrary candidate is rejected: handles/owner approvals are instance-bound
-private capabilities, not booleans supplied by a caller. The coordinator constructs immutable
-owner-approved prepared values; generic Save commit must not certify game rules from a Dictionary.
-Only the trusted coordinator holds joint commit capability; no public callers can register owners.
+Economy prepare_commands reads the lease's committed economy section and original commands. A
+command is {operation:String,reason:String,amounts:Dictionary}; operation is grant or spend, reason
+and amounts follow canonical owner/WalletSnapshot rules. For campaign_complete, Economy verifies
+commands against the configured completion rewards and Progress-approved completed-board request;
+caller-chosen amounts/reasons cannot authorize a grant. Whole ordered batch succeeds or returns an
+invalid handle whose public error is non-OK. Valid handles expose error:OK and no mutable payload.
+Economy derives wallet, bounded journal and unchanged bonus_counter/extensions using injected Clock.
+Preparation mutates no Save state, wallet or journal and emits no signal. An independent pending
+Economy request cannot be adopted or cleared. Progress similarly returns a handle with public error,
+validating the original request against its current completed board, Content, language and ledger.
+Economy must call its bound Save.validates_progress before issuing its own approval for completion
+rewards; preparation records the approved Progress handle identity in the Economy issuance record.
+Save commit requires that same Progress handle, not another independently valid approval.
+
+The trusted injected coordinator first obtains Progress approval, then Economy approval, then calls
+Save commit with both opaque handles. Save assembles only their immutable progress/economy sections,
+delta and notifications plus its own revision/proof. Validate both owner candidates and full document,
+and revalidate current board/Content/language/context immediately before storage write through owners.
+A forged lease or handle, a handle issued by an unbound owner, changed payload or stale owner context
+rejects. No generic Dictionary commit API exists. Owners never certify arbitrary caller candidates
+solely because they are structurally valid. Tests directly call Save with forged/wrong-owner handles.
 
 ## Durable format and identities
 
 The separately implemented Save v4 adds meta.atomic = {lineage:0,revision:0,processed:{}};
 per-language location_stars defaults to {}. All old fields/extensions survive. meta.atomic is
 Save-owned and validated; collisions with an existing extension of that name reject migration.
+If any valid v3 document cannot be losslessly upgraded (including a meta.atomic collision), Save
+loads its original copied v3 document in compatibility mode using a frozen v3 validator/canonicalizer;
+migration_state returns needs_migration and atomic APIs return ERR_UNAVAILABLE. Do not continue
+to backup or create a fresh save solely because migration is blocked. Preserve the primary file
+until an explicit P1 write; P1 writes validate and persist v3, preserving the conflicting extension.
+Recovered valid v3 temp/backup follows the same compatibility mode and existing promotion rules.
+Reload/restart selects that document again; no automatic v4 conversion or replacement. Unreadable or
+structurally invalid v3 still uses the existing corrupt-save recovery policy. migration_state is ready
+only after a valid v4 document, and unconfigured before load. P2 semantic incompatibility after v4
+load is independently needs_migration at the Progress adapter and also retains P1.
 lineage/revision are nonnegative safe integers, with checked overflow. Successful durable mutations
 increment revision, including settings, independent Economy, progress writes and reset. A debug
 reset increments lineage, discards gameplay processed proofs and preserves current reset semantics
@@ -172,6 +224,8 @@ these specifications are prepared; this contract does not edit ROADMAP or author
 | test_p2_legacy_incompatible_state_remains_p1 | needs_migration, preserved data, no readiness |
 | test_historical_completed_slot_never_regrants | No proof needed to reject historical replay |
 | test_joint_candidate_owner_validation | Reject forgery, invalid wallet, delta/proof mismatch and overflow |
+| test_direct_save_forged_or_wrong_owner_handles | Reject structural dictionaries, manufactured handles and unbound owners |
+| test_v3_atomic_collision_reopen_preserves_p1 | Original v3 selected, needs_migration, P1 write/restart preserves extension |
 | test_competing_dirty_pending_and_reentrant_writers | Busy without staging; old/new committed views only |
 | test_each_storage_checkpoint_restart_old_or_one | All five boundaries; wallet/progress/proof consistency |
 | test_error_after_promotion_replays_without_grant | Ambiguous return resolves proof, one credit |
