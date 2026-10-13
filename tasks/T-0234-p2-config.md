@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: med
 ui: none
-status: review
+status: done
 depends_on: [T-0230]
 touch:
   - game/data/config/*.json
