@@ -8,10 +8,11 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: blocked
+status: review
 depends_on: [T-0203]
 touch:
   - pipeline/schema/manifest.schema.json
+  - pipeline/content-inputs/pl.json
   - pipeline/schema/README.md
   - pipeline/src/wordgame_pipeline/validate/manifest.py
   - pipeline/src/wordgame_pipeline/content.py
@@ -21,7 +22,7 @@ touch:
   - game/tests/integration/test_content_metadata.gd*
   - tasks/T-0238-content-metadata.md
   - docs/qa/T-0238-content-metadata.md
-revision: 1
+revision: 2
 ---
 
 ## Goal
@@ -78,3 +79,6 @@ S2: changing the manifest schema invalidates its hash in pipeline/content-inputs
 Full make check failed 26 provenance-dependent tests; new metadata/schema tests and GUT tests passed.
 Requested owner approval to refresh only this schema hash, preserving records/candidates and all
 65 shipped level bytes, then replay/check the campaign. No hash receipt update made yet.
+
+S2 resolved: owner approved refreshing only schema_sha256.manifest; campaign replay verifies
+65 levels and byte-identical shipped content. Other receipt fields remain unchanged.

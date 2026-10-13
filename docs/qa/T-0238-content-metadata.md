@@ -12,3 +12,12 @@ requested for mechanical hash refresh plus complete 65-level replay/byte-identit
 The contract defines pieces capacity and sparse {slot,landmark} records not detailed in CONTENT's
 illustrative example. Regional shipping remains T-0302. One helper/service/schema/validator changes;
 tests and schema metadata exceed the approximate line budget. Independent review required.
+
+## Resolved escalation and final validation
+
+Chris approved the receipt scope expansion ("10, ok"). Revision 2 refreshes only
+schema_sha256.manifest; all other receipt data is identical to the original. Complete offline
+campaign replay validates 65 levels. Every shipped game/content file remains byte-identical.
+
+Full make check now passes: 455 GUT, 329 pipeline and 488 tools tests. Scope/task checks pass.
+No existing tests were weakened or edited. Independent review and final-head CI remain required.
