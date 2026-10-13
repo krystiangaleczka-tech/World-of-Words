@@ -21,6 +21,7 @@ const GROUPS: Array[String] = [
 	"Elevation",
 	"Motion",
 	"Touch",
+	"Reward",
 	"Action",
 	"Layout",
 	"Ease"
@@ -40,7 +41,9 @@ const RATIOS: Array[String] = [
 	"TILE_SELECTED_SCALE",
 	"HINT_DOT_RATIO",
 	"PRESS_SCALE",
-	"ALREADY_SCALE"
+	"ALREADY_SCALE",
+	"SPREAD_DEGREES",
+	"PARTICLE_COUNT"
 ]
 const VARIATIONS: Dictionary = {
 	"DISPLAY": "Display",

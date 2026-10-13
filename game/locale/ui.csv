@@ -13,3 +13,9 @@ ui.bonus.open,Otwórz,Open
 ui.hint.hint,Podpowiedź,Hint
 ui.hint.reveal,Odkryj słowo,Reveal word
 ui.bonus.already,Już znalezione,Already found
+ui.reward.coins,Monety,Coins
+ui.reward.stars,Gwiazdy,Stars
+ui.reward.chest,Skrzynka,Chest
+ui.reward.piece,Fragment pocztówki,Postcard piece
+ui.postcard.complete,Ukończona,Complete
+ui.postcard.progress,Postęp pocztówki,Postcard progress
