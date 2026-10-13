@@ -17,3 +17,9 @@ signal hint_used
 signal economy_changed(
 	operation: StringName, reason: StringName, amounts: Dictionary, snapshot: Dictionary
 )
+
+## @api Durable per-language meta effects. Listeners never control completion or rewards.
+signal stars_earned(language: String, slot: int, stars: int)
+signal postcard_piece_revealed(language: String, location_id: String, pieces: int)
+signal location_complete(language: String, location_id: String)
+signal feature_unlocked(language: String, feature: StringName, slot: int)

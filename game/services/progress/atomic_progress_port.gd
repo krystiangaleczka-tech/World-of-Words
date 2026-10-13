@@ -182,3 +182,19 @@ func _snapshot(view: Dictionary, language: String) -> Dictionary:
 		return {}
 	var state: Dictionary = view.sections.progress.by_lang.get(language, SaveSchema.LANGUAGE_STATE)
 	return ProgressSaveAdapter.domain(state)
+
+
+func certifies(save: Node, progress: Node) -> bool:
+	return (
+		is_instance_valid(_save)
+		and is_instance_valid(_progress)
+		and is_instance_valid(_economy)
+		and _save == save
+		and _progress == progress
+		and _progress.atomic_save_matches(_save)
+		and _economy.atomic_save_matches(_save)
+	)
+
+
+func completion_commands(language: String, slot: int) -> Array[Dictionary]:
+	return _economy.completion_commands(language, slot) if is_available() and not _busy else []

@@ -295,8 +295,7 @@ func _resolve(document: Dictionary, proof: Dictionary, state: String) -> Diction
 	_clear()
 	_notifying = true
 	_publish.call(document.duplicate(true), "")
-	if is_instance_valid(_economy):
-		_economy.accept_commit(proof.duplicate(true))
+	_publish_receipt_owners(proof)
 	_notifying = false
 	return _result(OK, state, proof)
 
@@ -471,6 +470,15 @@ func publish_receipt(receipt: Dictionary) -> Error:
 	if not is_instance_valid(_economy):
 		return ERR_UNCONFIGURED
 	_notifying = true
-	var error: Error = _economy.accept_commit(receipt.duplicate(true))
+	var error: Error = _publish_receipt_owners(receipt)
 	_notifying = false
+	return error
+
+
+func _publish_receipt_owners(receipt: Dictionary) -> Error:
+	var error: Error = ERR_UNCONFIGURED
+	if is_instance_valid(_economy):
+		error = _economy.accept_commit(receipt.duplicate(true))
+	if is_instance_valid(_progress):
+		_progress.call("_accept_coordinated_commit", receipt.duplicate(true))
 	return error

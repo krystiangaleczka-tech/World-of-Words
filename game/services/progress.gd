@@ -14,16 +14,33 @@ var _save: SAVE_SCRIPT
 var _content: CONTENT_SCRIPT
 var _bound_board: BoardState
 var _bound_language: String = ""
+var _bound_lineage: int = -1
 var _pending: Dictionary[String, int] = {}
 var _atomic_config: CONFIG_SCRIPT
 var _intent: Dictionary = {}
 var _approvals: Dictionary = {}
+var _p2_port: ProgressCommitPort
+var _p2_config: CONFIG_SCRIPT
+var _p2_events: EVENTS_SCRIPT
+var _p2_request: Dictionary = {}
+var _p2_published: Dictionary = {}
+var _p2_busy: bool = false
+var _p2_notifying: bool = false
+var _p2_dispatching: bool = false
+var _p2_diagnostic: String = "unavailable"
 
 
 ## @api Supply loaded Save and Content services before using campaign progress.
 func configure(save: SAVE_SCRIPT, content: CONTENT_SCRIPT) -> void:
-	if is_instance_valid(_save) and _save.writes_blocked():
+	if _p2_busy or _p2_notifying or (is_instance_valid(_save) and _save.writes_blocked()):
 		return
+	if _save != save:
+		_p2_published.clear()
+	_p2_port = null
+	_p2_config = null
+	_p2_events = null
+	_p2_request.clear()
+	_p2_diagnostic = "unavailable"
 	unbind_board()
 	_pending.clear()
 	_save = save
@@ -35,6 +52,8 @@ func configure(save: SAVE_SCRIPT, content: CONTENT_SCRIPT) -> void:
 
 ## @api Read live saved progress. Missing language starts at slot 1; unready services return 0.
 func current_slot(language: String = "") -> int:
+	if _p2_port != null:
+		return int(language_progress(language).get("current_slot", 0))
 	if not _is_ready():
 		return 0
 	return int(_language_state(_save_language(language)).get("current_slot", 1))
@@ -42,6 +61,13 @@ func current_slot(language: String = "") -> int:
 
 ## @api Read live highest completion; missing language or unready services returns 0.
 func highest_completed_slot(language: String = "") -> int:
+	if _p2_port != null:
+		if language_progress(language).is_empty():
+			return 0
+		var state: Dictionary = _save.committed_view().sections.progress.by_lang.get(
+			_save_language(language), {}
+		)
+		return int(state.get("highest_completed_slot", 0))
 	if not _is_ready():
 		return 0
 	return int(_language_state(_save_language(language)).get("highest_completed_slot", 0))
@@ -86,6 +112,12 @@ func save_level(board: BoardState) -> Error:
 ## @api Advance exactly once; publish completion only after successful durable storage.
 ## After a failure retry this API even if another Save owner has already flushed the data.
 func complete_level(slot: int) -> Error:
+	if _p2_port != null:
+		return _complete_p2(slot)
+	return _complete_p1(slot)
+
+
+func _complete_p1(slot: int) -> Error:
 	if not _is_ready() or _save.writes_blocked():
 		return ERR_BUSY if is_instance_valid(_save) and _save.writes_blocked() else ERR_UNCONFIGURED
 	if slot < 1 or _content.level_for_slot(slot) == null:
@@ -126,6 +158,8 @@ func _advance(language: String, slot: int) -> Error:
 
 ## @api Own a board only while its screen is active, for application-pause persistence.
 func bind_board(board: BoardState) -> Error:
+	if _p2_port != null and (_p2_busy or _save.writes_blocked()):
+		return ERR_BUSY
 	if not _is_ready():
 		return ERR_UNCONFIGURED
 	if not _valid_board(board):
@@ -133,6 +167,7 @@ func bind_board(board: BoardState) -> Error:
 	unbind_board()
 	_bound_board = board
 	_bound_language = _save_language()
+	_bound_lineage = int(_save.committed_view().get("lineage", -1))
 	_save.setting_changed.connect(_on_setting_changed)
 	return OK
 
@@ -143,10 +178,14 @@ func unbind_board() -> void:
 		_save.setting_changed.disconnect(_on_setting_changed)
 	_bound_board = null
 	_bound_language = ""
+	_bound_lineage = -1
 
 
 func _notification(what: int) -> void:
 	if what != NOTIFICATION_APPLICATION_PAUSED or not _is_ready():
+		return
+	if _p2_port != null and not _p2_request.is_empty():
+		complete_level(int(_p2_request.context.slot))
 		return
 	if _save.writes_blocked():
 		return
@@ -179,6 +218,11 @@ func _valid_board(board: BoardState) -> bool:
 		board != null
 		and _matches_content(board.get_level())
 		and board.get_level().get_slot() == current_slot()
+		and (
+			_p2_port == null
+			or board != _bound_board
+			or _bound_lineage == _save.committed_view().lineage
+		)
 	)
 
 
@@ -244,41 +288,104 @@ func _matches_content(level: LevelData) -> bool:
 	return true
 
 
-## @api P2 remains unavailable until a real atomic coordinator and legacy policy are implemented.
-## Contract stub is inert and does not replace P1 dependencies or pending state.
-func configure_p2(
-	_config: CONFIG_SCRIPT, _port: ProgressCommitPort, _events: EVENTS_SCRIPT
-) -> Error:
-	return ERR_UNAVAILABLE
+## @api Explicit activation only after the real coordinator and historical adaptation certify it.
+func configure_p2(config: CONFIG_SCRIPT, port: ProgressCommitPort, events: EVENTS_SCRIPT) -> Error:
+	if not _real_port(port):
+		return ERR_UNAVAILABLE
+	if _p2_busy or _p2_notifying or not _p2_request.is_empty() or atomic_has_pending():
+		return ERR_BUSY
+	if (
+		not is_instance_valid(_save)
+		or not _save.is_loaded()
+		or _save.writes_blocked()
+		or config != _atomic_config
+		or not is_instance_valid(config)
+		or not is_instance_valid(events)
+		or not _is_ready()
+	):
+		return ERR_UNAVAILABLE
+	if not port.certifies(_save, self):
+		return ERR_UNAVAILABLE
+	var result: Dictionary = port.read_committed(_save_language(), _p2_context())
+	_p2_diagnostic = "needs_migration" if result.state == "needs_migration" else "unavailable"
+	if (
+		result.error != OK
+		or not port.is_available()
+		or ProgressSnapshot.from_dict(result.snapshot) == null
+	):
+		return ERR_UNAVAILABLE
+	_p2_port = port
+	_p2_config = config
+	_p2_events = events
+	_p2_diagnostic = "ready"
+	return OK
 
 
-## @api Must be true before using P2 views; contract stub never certifies readiness.
 func p2_ready() -> bool:
-	return false
+	return p2_state() == "ready"
 
 
-## @api Committed domain view for one language; empty while unavailable.
-func language_progress(_language: String = "") -> Dictionary:
+func p2_state() -> String:
+	if _p2_port == null:
+		return _p2_diagnostic
+	if not _p2_bindings_valid():
+		return "unavailable"
+	var result: Dictionary = _p2_port.read_committed(_save_language(), _p2_context())
+	if result.state == "needs_migration":
+		return "needs_migration"
+	return "ready" if result.error == OK and _p2_port.is_available() else "unavailable"
+
+
+## @api Persisted copied language domain only. No derived unlock writes or migration rewards.
+func language_progress(language: String = "") -> Dictionary:
+	if _p2_port == null or not _p2_bindings_valid():
+		return {}
+	var result: Dictionary = _p2_port.read_committed(_save_language(language), _p2_context())
+	return result.snapshot.duplicate(true) if result.error == OK else {}
+
+
+func stars(language: String = "") -> int:
+	return int(language_progress(language).get("stars", 0))
+
+
+func is_feature_unlocked(feature: StringName, language: String = "") -> bool:
+	return language_progress(language).get("unlocked", []).has(str(feature))
+
+
+## @api Campaign endpoint and durable postcard credits are independent.
+func location_state(id: StringName, language: String = "") -> Dictionary:
+	var snapshot: Dictionary = language_progress(language)
+	if snapshot.is_empty():
+		return {}
+	for location: Dictionary in ProgressSaveAdapter.metadata(_content).locations:
+		if location.id == str(id):
+			return {
+				"metadata": location.duplicate(true),
+				"stars": int(snapshot.location_stars.get(str(id), 0)),
+				"pieces": int(snapshot.location_pieces.get(str(id), 0)),
+				"piece_count": _atomic_rules().piece_count(),
+				"campaign_complete": snapshot.current_slot > location.last,
+				"postcard_complete": snapshot.completed_locations.has(str(id))
+			}
 	return {}
 
 
-## @api Committed per-language star total; unavailable is zero, not an inferred legacy grant.
-func stars(_language: String = "") -> int:
-	return 0
-
-
-## @api Previously committed or newly durable feature ID; unavailable is false.
-func is_feature_unlocked(_feature: StringName, _language: String = "") -> bool:
-	return false
-
-
-## @api Copied committed location/card state; no pack loading or legacy backfill in the stub.
-func location_state(_id: StringName, _language: String = "") -> Dictionary:
-	return {}
-
-
-## @api Copied committed region state; empty before P2 readiness.
-func region_state(_id: StringName, _language: String = "") -> Dictionary:
+func region_state(id: StringName, language: String = "") -> Dictionary:
+	var snapshot: Dictionary = language_progress(language)
+	if snapshot.is_empty():
+		return {}
+	for region: Dictionary in _content.regions():
+		if region.id == str(id):
+			var count: int = 0
+			for location: Dictionary in ProgressSaveAdapter.metadata(_content).locations:
+				if location.region == str(id):
+					count += int(snapshot.location_stars.get(location.id, 0))
+			return {
+				"metadata": region.duplicate(true),
+				"stars": count,
+				"unlocked": snapshot.current_slot >= region.first,
+				"campaign_complete": snapshot.current_slot > region.last
+			}
 	return {}
 
 
@@ -318,7 +425,12 @@ func atomic_available() -> bool:
 func completion_request(commands: Array[Dictionary]) -> Dictionary:
 	if not atomic_available() or _save.writes_blocked() or atomic_has_pending():
 		return {}
-	if _bound_board == null or not _bound_board.is_complete() or not _valid_board(_bound_board):
+	if (
+		_bound_board == null
+		or not _bound_board.is_complete()
+		or not _valid_board(_bound_board)
+		or _bound_lineage != _save.committed_view().lineage
+	):
 		return {}
 	var view: Dictionary = _save.committed_view()
 	var language: String = _save_language()
@@ -495,3 +607,195 @@ func read_atomic(language: String, context: Dictionary) -> Dictionary:
 	):
 		return unavailable
 	return ProgressSaveAdapter.read(_save.committed_view(), language, _content, _atomic_rules())
+
+
+func _complete_p2(slot: int) -> Error:
+	if _p2_busy or _p2_notifying:
+		return ERR_BUSY
+	if not _p2_request.is_empty():
+		if slot != _p2_request.context.slot:
+			return ERR_BUSY
+		return _run_p2_request()
+	if not p2_ready():
+		return ERR_UNAVAILABLE
+	if _save.writes_blocked():
+		return ERR_BUSY
+	return _start_p2_request(slot)
+
+
+func _start_p2_request(slot: int) -> Error:
+	if slot < 1 or _content.level_for_slot(slot) == null:
+		return ERR_INVALID_PARAMETER
+	if slot <= highest_completed_slot():
+		return OK
+	if (
+		slot != current_slot()
+		or _bound_board == null
+		or not _bound_board.is_complete()
+		or _bound_lineage != _save.committed_view().lineage
+	):
+		return ERR_INVALID_PARAMETER
+	var commands: Array[Dictionary] = _p2_port.completion_commands(_save_language(), slot)
+	_p2_request = completion_request(commands)
+	return ERR_INVALID_DATA if _p2_request.is_empty() else _run_p2_request()
+
+
+func _run_p2_request() -> Error:
+	var request: Dictionary = _p2_request.duplicate(true)
+	_p2_busy = true
+	var result: Dictionary = _p2_port.transact(request)
+	if result.error == OK:
+		if not _matches_completion_receipt(result.receipt, request):
+			_p2_busy = false
+			return ERR_INVALID_DATA
+		if not _p2_request.is_empty():
+			accept_commit(result.receipt)
+		_p2_request.clear()
+	elif result.state == "rejected":
+		_p2_request.clear()
+	_p2_busy = false
+	return result.error
+
+
+## @api Durable owner-issued notification only; never advances data or applies an economic command.
+func accept_commit(receipt: Dictionary) -> Error:
+	if _p2_port == null:
+		return ERR_UNAVAILABLE
+	if (
+		_p2_notifying
+		or (is_instance_valid(_save) and _save.receipt_publishing() and not _p2_dispatching)
+	):
+		return ERR_BUSY
+	if (
+		not is_instance_valid(_save)
+		or not _save.validates_receipt(receipt)
+		or not _valid_p2_receipt(receipt)
+	):
+		return ERR_INVALID_DATA
+	if not _save.receipt_publishing():
+		return _save.publish_receipt(receipt)
+	var key: String = "%d:%s" % [receipt.lineage, receipt.operation_id]
+	if _p2_published.has(key):
+		return OK
+	_p2_published[key] = true
+	if not _p2_request.is_empty() and receipt.request_hash == AtomicRequest.hash_value(_p2_request):
+		_p2_request.clear()
+	_p2_notifying = true
+	_publish_p2_effects(receipt)
+	_p2_notifying = false
+	return OK
+
+
+# Only the private Save coordinator enters this after the complete Economy batch.
+func _accept_coordinated_commit(receipt: Dictionary) -> Error:
+	if not is_instance_valid(_save) or not _save.receipt_publishing() or _p2_dispatching:
+		return ERR_BUSY
+	_p2_dispatching = true
+	var error: Error = accept_commit(receipt)
+	_p2_dispatching = false
+	return error
+
+
+func _publish_p2_effects(receipt: Dictionary) -> void:
+	var delta: Dictionary = receipt.delta
+	if _is_ready() and receipt.language == _save_language():
+		completed.emit(int(receipt.slot))
+	if not is_instance_valid(_p2_events):
+		return
+	_p2_events.stars_earned.emit(receipt.language, int(receipt.slot), int(delta.stars))
+	for id: String in delta.piece_delta:
+		_p2_events.postcard_piece_revealed.emit(receipt.language, id, int(delta.piece_delta[id]))
+	for id: String in delta.completed_locations:
+		_p2_events.location_complete.emit(receipt.language, id)
+	for feature: String in delta.unlocked:
+		_p2_events.feature_unlocked.emit(receipt.language, StringName(feature), int(receipt.slot))
+
+
+func _p2_bindings_valid() -> bool:
+	return (
+		is_instance_valid(_save)
+		and _save.is_loaded()
+		and _is_ready()
+		and _p2_config == _atomic_config
+		and is_instance_valid(_p2_config)
+		and is_instance_valid(_p2_events)
+		and _p2_port.certifies(_save, self)
+	)
+
+
+func _p2_context() -> Dictionary:
+	return {
+		"content_version": _content.content_version(), "manifest_hash": _content.manifest_hash()
+	}
+
+
+func _valid_p2_receipt(receipt: Dictionary) -> bool:
+	var delta: Dictionary = receipt.delta
+	if not AtomicRequest.closed(
+		delta,
+		["slot", "stars", "piece_delta", "completed_locations", "unlocked", "regions_unlocked"]
+	):
+		return false
+	var snapshot: ProgressSnapshot = ProgressSnapshot.from_dict(receipt.committed_snapshot)
+	if snapshot == null or not _delta_counts_valid(delta, receipt):
+		return false
+	var data: Dictionary = snapshot.snapshot()
+	if (
+		data.current_slot != receipt.slot + 1
+		or not delta.piece_delta is Dictionary
+		or not ProgressSnapshot.valid_ids(delta.regions_unlocked)
+	):
+		return false
+	for field: String in ["completed_locations", "unlocked"]:
+		if not _delta_ids_valid(delta[field], data[field]):
+			return false
+	for id: Variant in delta.piece_delta:
+		var count: Variant = delta.piece_delta[id]
+		if (
+			not ProgressSnapshot.valid_id(id)
+			or not (count is int or count is float)
+			or count < 1
+			or count > data.location_pieces.get(id, 0)
+			or floorf(float(count)) != float(count)
+		):
+			return false
+	return true
+
+
+func _delta_counts_valid(delta: Dictionary, receipt: Dictionary) -> bool:
+	return (
+		(delta.slot is int or delta.slot is float)
+		and (delta.stars is int or delta.stars is float)
+		and delta.slot == receipt.slot
+		and delta.stars == 1
+	)
+
+
+func _delta_ids_valid(values: Variant, persisted: Array) -> bool:
+	if not ProgressSnapshot.valid_ids(values):
+		return false
+	for id: String in values:
+		if not persisted.has(id):
+			return false
+	return true
+
+
+func _matches_completion_receipt(receipt: Dictionary, request: Dictionary) -> bool:
+	return (
+		_save.validates_receipt(receipt)
+		and receipt.get("operation_id") == request.operation_id
+		and receipt.get("request_hash") == AtomicRequest.hash_value(request)
+		and receipt.get("language") == request.language
+		and receipt.get("slot") == request.context.slot
+	)
+
+
+static func _real_port(port: ProgressCommitPort) -> bool:
+	if port == null:
+		return false
+	var script: Script = port.get_script()
+	while script != null:
+		if script.resource_path == "res://services/progress/atomic_progress_port.gd":
+			return true
+		script = script.get_base_script()
+	return false

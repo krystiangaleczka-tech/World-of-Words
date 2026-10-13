@@ -25,3 +25,12 @@ func recover(_operation_id: String, _context: Dictionary) -> Dictionary:
 
 func _unavailable() -> Dictionary:
 	return {"error": ERR_UNAVAILABLE, "state": "unavailable", "snapshot": {}, "receipt": {}}
+
+
+## @api Defaults cannot certify concrete Save/Progress ownership.
+func certifies(_save: Node, _progress: Node) -> bool:
+	return false
+
+
+func completion_commands(_language: String, _slot: int) -> Array[Dictionary]:
+	return []

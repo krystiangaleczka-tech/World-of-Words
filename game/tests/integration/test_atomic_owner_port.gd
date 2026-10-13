@@ -478,8 +478,8 @@ func test_independent_grant_spend_use_shared_builder_without_activating_p2() -> 
 	assert_eq(_b.economy.journal().size(), 2)
 	assert_eq(_b.economy.journal()[0].timestamp, 1790942400)
 	assert_false(_b.progress.p2_ready())
-	assert_eq(_b.progress.configure_p2(_b.config, _b.port, _b.events), ERR_UNAVAILABLE)
-	assert_eq(_b.progress.language_progress(), {})
+	assert_eq(_b.progress.configure_p2(_b.config, _b.port, _b.events), OK)
+	assert_eq_deep(_b.progress.language_progress(), ProgressSnapshot.new().snapshot())
 	assert_false(ProgressCommitPort.new().is_available())
 
 
