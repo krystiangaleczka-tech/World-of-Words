@@ -26,19 +26,32 @@ var _letter_alpha: float = 1.0:
 
 
 ## @api Reveal feedback; logical state is available immediately.
-func reveal(hinted: bool) -> void:
+func reveal(hinted: bool, delay: float = 0) -> void:
+	if not is_finite(delay) or delay < 0:
+		return
 	state = State.HINTED if hinted else State.FILLED
-	if Tokens.reduced_motion or not is_inside_tree():
+	if not is_inside_tree():
+		return
+	if Tokens.reduced_motion:
+		_letter_alpha = 0
+		_feedback = create_tween().set_speed_scale(_motion_speed)
+		_feedback.tween_property(self, "_letter_alpha", 1.0, Tokens.dur(Tokens.Motion.FAST))
+		_feedback.tween_callback(finish_motion)
+		return
+	if not is_inside_tree():
 		return
 	pivot_offset = size / 2.0
-	scale = Vector2.ONE / Tokens.Layout.TILE_SELECTED_SCALE
+	scale = Vector2.ONE * Tokens.Layout.HINT_START_SCALE
 	_letter_alpha = 0.0
 	set_process(true)
 	_feedback = create_tween().set_speed_scale(_motion_speed).set_parallel(true)
-	_feedback.tween_property(self, "_letter_alpha", 1.0, Tokens.dur(Tokens.Motion.FAST))
+	_feedback.tween_property(self, "_letter_alpha", 1.0, Tokens.dur(Tokens.Motion.BASE)).set_delay(
+		delay
+	)
 	(
 		_feedback
 		. tween_property(self, "scale", Vector2.ONE, Tokens.dur(Tokens.Motion.BASE))
+		. set_delay(delay)
 		. set_trans(Tokens.Ease.SPRING.x)
 		. set_ease(Tokens.Ease.SPRING.y)
 	)
@@ -47,7 +60,7 @@ func reveal(hinted: bool) -> void:
 
 
 ## @api Temporary highlight, preserving filled/hinted state through repeated calls.
-func highlight(delay: float = 0.0) -> void:
+func wave(delay: float = 0.0) -> void:
 	var previous: State = _base_state
 	state = previous
 	if previous == State.EMPTY or Tokens.reduced_motion or not is_inside_tree():
@@ -230,3 +243,34 @@ func set_motion_speed(speed_value: float) -> Error:
 	if _feedback != null:
 		_feedback.set_speed_scale(speed_value)
 	return OK
+
+
+## @api Already-found pulse distinct from the completion wave.
+func highlight(delay: float = 0) -> void:
+	if not is_finite(delay) or delay < 0:
+		return
+	var previous: State = _base_state
+	state = previous
+	if previous == State.EMPTY or Tokens.reduced_motion or not is_inside_tree():
+		return
+	_set_highlight()
+	pivot_offset = size / 2
+	_feedback = (
+		create_tween()
+		. set_speed_scale(_motion_speed)
+		. set_trans(Tokens.Ease.IN_OUT.x)
+		. set_ease(Tokens.Ease.IN_OUT.y)
+	)
+	_feedback.tween_interval(delay)
+	var half_fast: float = Tokens.dur(Tokens.Motion.FAST) / 2
+	for pulse: int in 2:
+		_feedback.tween_property(
+			self, "scale", Vector2.ONE * Tokens.Action.ALREADY_SCALE, half_fast
+		)
+		_feedback.tween_property(self, "scale", Vector2.ONE, half_fast)
+	_feedback.tween_callback(_finish_highlight.bind(previous))
+	set_process(true)
+
+
+func _ready() -> void:
+	set_process(false)

@@ -61,13 +61,14 @@ func test_interrupted_and_reduced_motion_feedback() -> void:
 	preview.position = Vector2(20, 30)
 	preview.show_result(AttemptResult.new(AttemptResult.Kind.LEVEL, "KOT"))
 	var pop: Tween = get_tree().get_processed_tweens().back() as Tween
-	assert_gt(preview.scale.x, 1.0)
-	pop.custom_step(Tokens.dur(Tokens.Motion.FAST))
+	assert_eq(preview.scale, Vector2.ONE)
+	pop.custom_step(Tokens.dur(Tokens.Motion.FAST) / 2)
+	assert_almost_eq(preview.scale.x, Tokens.Layout.PREVIEW_VALID_SCALE, 0.001)
 	preview.show_result(AttemptResult.new(AttemptResult.Kind.INVALID, "TOK"))
 	assert_false(pop.is_valid())
 	var shake: Tween = get_tree().get_processed_tweens().back() as Tween
 	shake.custom_step(Tokens.dur(Tokens.Motion.FAST) / 2.0)
-	assert_gt(preview.position.x, 20.0)
+	assert_gt(absf(preview.position.x - 20.0), 0.01)
 	preview.set_building("TO")
 	assert_false(shake.is_valid())
 	assert_almost_eq(preview.position.x, 20.0, 0.001)

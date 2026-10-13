@@ -57,7 +57,7 @@ func test_repeated_highlight_and_reduced_motion() -> void:
 	var cell: GridCell = _view.cell_node(_word[0])
 	_view.highlight_word([_word[0]])
 	var first: Tween = get_tree().get_processed_tweens().back()
-	first.custom_step(Tokens.dur(Tokens.Motion.FAST))
+	first.custom_step(Tokens.dur(Tokens.Motion.FAST) / 4)
 	assert_eq(cell.state, GridCell.State.HIGHLIGHTED)
 	assert_gt(cell.scale.x, 1.0)
 	_view.highlight_word([_word[0]])

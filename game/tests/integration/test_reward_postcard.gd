@@ -291,7 +291,7 @@ func test_reward_css_count_and_angle_are_unitless() -> void:
 	var css: String = CeramicThemeGenerator.css_text()
 	assert_true(css.contains("--Reward-PARTICLE_COUNT: 24;"))
 	assert_true(css.contains("--Reward-SPREAD_DEGREES: 180"))
-	assert_false(css.contains("calc(24 * var(--Token-unit))"))
+	assert_false(css.contains("--Reward-PARTICLE_COUNT: calc(24 * var(--Token-unit))"))
 
 
 func test_rewards_gallery_inventory_scroll_and_large_pseudo_fit() -> void:

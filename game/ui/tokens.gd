@@ -154,8 +154,12 @@ class Layout:
 	const TILE_SELECTED_SCALE: float = 1.12
 	const LANDING_SCALE: float = 1.1
 	const WORD_FLASH_SCALE: float = 1.25
+	const PREVIEW_VALID_SCALE: float = 1.08
+	const BONUS_FLIGHT_SCALE: float = 0.4
+	const HINT_START_SCALE: float = 0.6
+	const INVALID_CYCLES: int = 3
 	const HINT_DOT_RATIO: float = 0.06
-	const SHAKE_OFFSET: int = 16
+	const SHAKE_OFFSET: int = 24
 
 
 class Ease:

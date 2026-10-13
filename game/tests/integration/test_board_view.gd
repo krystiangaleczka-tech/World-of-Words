@@ -33,7 +33,7 @@ func test_shared_cells_and_visual_states() -> void:
 	assert_same(view.cell_node(Vector2i(2, 0)), shared)
 	assert_eq(shared.state, GridCell.State.FILLED)
 	view.play_wave()
-	assert_eq(shared.state, GridCell.State.HIGHLIGHTED)
+	assert_eq(shared.state, GridCell.State.FILLED, "Wave waits for ordered reveal and flash")
 	assert_eq(view.cell_node(Vector2i(2, 3)).state, GridCell.State.EMPTY)
 	view.refresh()
 	assert_eq(shared.state, GridCell.State.FILLED)
