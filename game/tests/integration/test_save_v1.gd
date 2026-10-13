@@ -270,7 +270,7 @@ func test_meaningful_flush_and_background_persist_without_per_frame_work() -> vo
 
 func test_migration_chain_preserves_golden_source_and_rejects_missing_or_invalid_steps() -> void:
 	var golden: Dictionary = _fixture()
-	var chain: SaveMigrations = SaveMigrations.new(3)
+	var chain: SaveMigrations = SaveMigrations.new(SaveSchema.VERSION + 1)
 	assert_eq(chain.upgrade(golden), {})
 	var to_v2: Callable = func(data: Dictionary) -> Dictionary:
 		data["schema_version"] = 2
@@ -281,8 +281,13 @@ func test_migration_chain_preserves_golden_source_and_rejects_missing_or_invalid
 		data["schema_version"] = 3
 		return data
 	assert_eq(chain.register_step(2, to_v3), OK)
+	assert_eq(chain.upgrade(golden), {}, "Missing future step remains rejected")
+	var to_future: Callable = func(data: Dictionary) -> Dictionary:
+		data["schema_version"] = SaveSchema.VERSION + 1
+		return data
+	assert_eq(chain.register_step(3, to_future), OK)
 	var upgraded: Dictionary = chain.upgrade(golden)
-	assert_eq(upgraded["schema_version"], 3)
+	assert_eq(upgraded["schema_version"], SaveSchema.VERSION + 1)
 	assert_eq(golden["schema_version"], 1.0)
 	assert_eq(upgraded["meta"]["install_id"], ID)
 	assert_eq(chain.register_step(1, Callable()), ERR_INVALID_PARAMETER)

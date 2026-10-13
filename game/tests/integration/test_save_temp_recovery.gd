@@ -167,7 +167,9 @@ func test_v1_temp_migrates_with_original_backup() -> void:
 	assert_eq(service.flush(), OK)
 	_assert_restored(4)
 	assert_eq(FileAccess.get_file_as_string(TEST_PATH + ".bak"), JSON.stringify(original))
-	assert_eq(SaveStorage.new(TEST_PATH).read_document()["schema_version"], 2.0)
+	assert_eq(
+		SaveStorage.new(TEST_PATH).read_document()["schema_version"], float(SaveSchema.VERSION)
+	)
 
 
 func test_debug_reset_failure_keeps_recovered_progress_and_retries() -> void:

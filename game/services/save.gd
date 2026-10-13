@@ -1,5 +1,5 @@
 extends ServiceStub
-## @api Save v2. Other services use only their own section; settings/meta belong to Save.
+## @api Save v3. Other services use only their own section; settings/meta belong to Save.
 
 signal setting_changed(key: StringName)
 signal backup_restored

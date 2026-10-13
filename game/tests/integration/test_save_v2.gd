@@ -41,12 +41,10 @@ func _clean_files() -> void:
 
 
 func _fixture(version: int) -> Dictionary:
-	return (
-		JSON.parse_string(
-			FileAccess.get_file_as_string("res://tests/fixtures/save/v%d.json" % version)
-		)
-		as Dictionary
+	var data: Dictionary = JSON.parse_string(
+		FileAccess.get_file_as_string("res://tests/fixtures/save/v%d.json" % version)
 	)
+	return MigrateV2ToV3.migrate(data) if version == 2 else data
 
 
 func _write(data: Dictionary) -> void:
@@ -86,6 +84,10 @@ func _snapshot() -> Dictionary:
 func test_golden_migration_and_preservation() -> void:
 	var v1: Dictionary = _fixture(1)
 	var original: Dictionary = v1.duplicate(true)
+	var historical: Dictionary = JSON.parse_string(
+		FileAccess.get_file_as_string("res://tests/fixtures/save/v2.json")
+	)
+	assert_eq_deep(JSON.parse_string(JSON.stringify(MigrateV1ToV2.migrate(v1))), historical)
 	var v2: Dictionary = SaveMigrations.new().upgrade(v1)
 	assert_eq_deep(SaveSchema.canonical(v2), SaveSchema.canonical(_fixture(2)))
 	assert_eq_deep(v1, original)
@@ -115,7 +117,7 @@ func test_golden_migration_and_preservation() -> void:
 	for language: String in expected["progress"]["by_lang"]:
 		var state: Dictionary = expected["progress"]["by_lang"][language]
 		state["highest_completed_slot"] = state["completed_slot"]
-	assert_eq_deep(v2, expected)
+	assert_eq_deep(v2, MigrateV2ToV3.migrate(expected))
 	assert_eq_deep(v1, original)
 	var canonical: Dictionary = SaveSchema.canonical(v2)
 	assert_eq_deep(canonical["root_extension"], original["root_extension"])
