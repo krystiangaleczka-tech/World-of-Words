@@ -22,8 +22,12 @@ daily levels forbid it. Repeated letter tiles are permitted. Eight tiles require
 
 P1 manifests have campaign packs. `daily` may be absent or null; its populated P3
 calendar contract is not defined here. Regions, locations and landmarks are absent
-in P1 and require the later manifest revision described in CONTENT. The documentation's
-extended manifest example illustrates future fields, not a valid P1 fixture.
+in shipped P1. T-0238 defines optional all-or-none regions/locations/landmarks as additive
+revision 1.1 while schema_version stays 1; actual regional content ships in T-0302.
+Location records also require positive pieces capacity. Sparse landmarks are {slot, landmark:bool}
+records; unspecified slots are false. The documentation example omits pieces and therefore is
+illustrative, not a complete new fixture. Runtime and pipeline enforce ordered coverage, unique
+IDs, region containment and unique/in-range landmark slots after structural schema checks.
 
 ## Structural validation is only one gate
 
