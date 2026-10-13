@@ -22,9 +22,9 @@ static func from_dict(source: Dictionary) -> ProgressSnapshot:
 	for key: String in KEYS:
 		if not source.has(key):
 			return null
-	if not valid_count(source["current_slot"]) or source["current_slot"] < 1:
+	if not _saved_count(source["current_slot"]) or source["current_slot"] < 1:
 		return null
-	if not valid_count(source["stars"]):
+	if not _saved_count(source["stars"]):
 		return null
 	var canonical: Dictionary = source.duplicate(true)
 	canonical["current_slot"] = int(source["current_slot"])
@@ -34,7 +34,7 @@ static func from_dict(source: Dictionary) -> ProgressSnapshot:
 		if not source[field] is Dictionary:
 			return null
 		for id: Variant in source[field]:
-			if not valid_id(id) or not valid_count(source[field][id]):
+			if not valid_id(id) or not _saved_count(source[field][id]):
 				return null
 			var count: int = int(source[field][id])
 			if field == "location_stars":
@@ -57,6 +57,10 @@ func snapshot() -> Dictionary:
 
 
 static func valid_count(value: Variant) -> bool:
+	return value is int and _saved_count(value)
+
+
+static func _saved_count(value: Variant) -> bool:
 	return (
 		(value is int or value is float)
 		and is_finite(float(value))

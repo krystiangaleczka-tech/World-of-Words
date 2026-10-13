@@ -129,3 +129,17 @@ func test_location_region_and_unconfigured_boundaries() -> void:
 	assert_eq(empty.unlocked_features(50, PackedStringArray()), PackedStringArray())
 	assert_false(empty.location_complete(20, 20))
 	assert_false(empty.region_unlocked(21, 21))
+
+
+func test_shared_counts_are_strict_outside_json_deserialization() -> void:
+	assert_true(ProgressSnapshot.valid_count(1))
+	assert_true(ProgressSnapshot.valid_count(ProgressSnapshot.MAX_SAFE_COUNT))
+	for value: Variant in [1.0, true, -1, "1", ProgressSnapshot.MAX_SAFE_COUNT + 1]:
+		assert_false(ProgressSnapshot.valid_count(value))
+	var source: Dictionary = ProgressSnapshot.new().snapshot()
+	source["stars"] = 1.0
+	source["location_stars"] = {"id": 1.0}
+	var decoded: ProgressSnapshot = ProgressSnapshot.from_dict(source)
+	assert_not_null(decoded)
+	assert_typeof(decoded.snapshot()["stars"], TYPE_INT)
+	assert_typeof(decoded.snapshot()["location_stars"]["id"], TYPE_INT)
