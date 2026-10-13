@@ -8,7 +8,7 @@ risk: medium
 executor: cheap
 think: med
 ui: none
-status: review
+status: done
 depends_on: [T-0239]
 touch:
   - game/core/progress/progress_ledger.gd*
