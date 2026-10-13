@@ -168,10 +168,9 @@ func test_backup_recovery_never_overwrites_valid_backup_with_corrupt_primary() -
 	assert_eq(service.load(), OK)
 	assert_eq(service.flush(), OK)
 	assert_eq_deep(SaveStorage.new(TEST_PATH).read_document(".bak"), golden)
-	assert_eq_deep(
-		SaveSchema.canonical(SaveStorage.new(TEST_PATH).read_document()),
-		SaveSchema.canonical(SaveMigrations.new().upgrade(golden))
-	)
+	var expected: Dictionary = SaveSchema.canonical(SaveMigrations.new().upgrade(golden))
+	expected.meta.atomic.revision = 1
+	assert_eq_deep(SaveSchema.canonical(SaveStorage.new(TEST_PATH).read_document()), expected)
 
 
 func test_each_atomic_write_boundary_recovers_last_committed_or_new_document() -> void:

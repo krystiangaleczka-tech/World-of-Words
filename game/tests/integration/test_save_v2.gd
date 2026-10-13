@@ -158,10 +158,9 @@ func test_migrated_primary_is_flushed() -> void:
 	storage.stop_at = &""
 	assert_eq(service.flush(), OK)
 	assert_eq(storage.commits, 2, "failed migration flush must remain dirty for retry")
-	assert_eq_deep(
-		SaveSchema.canonical(storage.read_document()),
-		SaveSchema.canonical(SaveMigrations.new().upgrade(v1))
-	)
+	var expected: Dictionary = SaveSchema.canonical(SaveMigrations.new().upgrade(v1))
+	expected.meta.atomic.revision = 1
+	assert_eq_deep(SaveSchema.canonical(storage.read_document()), expected)
 	assert_eq(FileAccess.get_file_as_string(TEST_PATH + ".bak"), original_text)
 	var next_storage: ObservedStorage = ObservedStorage.new(TEST_PATH)
 	var next_service: SAVE_SCRIPT = _save(next_storage)

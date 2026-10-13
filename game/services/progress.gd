@@ -1,4 +1,4 @@
-extends ServiceStub
+extends AtomicSaveOwner
 ## @api Owns per-language campaign progress and restoration from Save snapshots.
 
 signal completed(slot: int)
@@ -17,6 +17,8 @@ var _pending: Dictionary[String, int] = {}
 
 ## @api Supply loaded Save and Content services before using campaign progress.
 func configure(save: SAVE_SCRIPT, content: CONTENT_SCRIPT) -> void:
+	if is_instance_valid(_save) and _save.writes_blocked():
+		return
 	unbind_board()
 	_pending.clear()
 	_save = save
@@ -54,6 +56,8 @@ func restore_level(level: LevelData) -> BoardState:
 
 ## @api Persist a meaningful board mutation synchronously; a failed flush remains retryable.
 func save_level(board: BoardState) -> Error:
+	if is_instance_valid(_save) and _save.writes_blocked():
+		return ERR_BUSY
 	if not _is_ready():
 		return ERR_UNCONFIGURED
 	if not _valid_board(board):
@@ -74,8 +78,8 @@ func save_level(board: BoardState) -> Error:
 ## @api Advance exactly once; publish completion only after successful durable storage.
 ## After a failure retry this API even if another Save owner has already flushed the data.
 func complete_level(slot: int) -> Error:
-	if not _is_ready():
-		return ERR_UNCONFIGURED
+	if not _is_ready() or _save.writes_blocked():
+		return ERR_BUSY if is_instance_valid(_save) and _save.writes_blocked() else ERR_UNCONFIGURED
 	if slot < 1 or _content.level_for_slot(slot) == null:
 		return ERR_INVALID_PARAMETER
 	var language: String = _save_language()
@@ -135,6 +139,8 @@ func unbind_board() -> void:
 
 func _notification(what: int) -> void:
 	if what != NOTIFICATION_APPLICATION_PAUSED or not _is_ready():
+		return
+	if _save.writes_blocked():
 		return
 	var language: String = _save_language()
 	if _pending.has(language) and _flush_pending(language) != OK:
@@ -266,3 +272,7 @@ func location_state(_id: StringName, _language: String = "") -> Dictionary:
 ## @api Copied committed region state; empty before P2 readiness.
 func region_state(_id: StringName, _language: String = "") -> Dictionary:
 	return {}
+
+
+func atomic_has_pending() -> bool:
+	return not _pending.is_empty()

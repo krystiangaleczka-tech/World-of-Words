@@ -1,4 +1,4 @@
-extends ServiceStub
+extends AtomicSaveOwner
 ## @api Global wallet owner. Serialize requests and retry an unresolved request before another.
 
 const SAVE_SCRIPT: Script = preload("res://services/save.gd")
@@ -14,7 +14,7 @@ var _pending: Dictionary = {}
 
 ## @api Inject owners without I/O; cannot replace owners during unresolved work.
 func configure(save: SAVE_SCRIPT, config: CONFIG_SCRIPT, events: EVENTS_SCRIPT) -> void:
-	if _busy or not _pending.is_empty():
+	if _busy or not _pending.is_empty() or (is_instance_valid(_save) and _save.writes_blocked()):
 		return
 	_save = save
 	_config = config
@@ -58,6 +58,7 @@ func journal() -> Array[Dictionary]:
 func can_afford(items: Dictionary) -> bool:
 	return (
 		is_ready()
+		and not _save.writes_blocked()
 		and not _busy
 		and _pending.is_empty()
 		and _wallet(_visible_section()).can_afford(items)
@@ -75,7 +76,7 @@ func spend(sink: StringName, items: Dictionary) -> bool:
 
 
 func _transact(operation: StringName, reason: StringName, amounts: Dictionary) -> Error:
-	if _busy:
+	if _busy or (is_instance_valid(_save) and _save.writes_blocked()):
 		return ERR_BUSY
 	if not is_ready():
 		return ERR_UNCONFIGURED
@@ -161,3 +162,7 @@ func _visible_section() -> Dictionary:
 
 func _wallet(section: Dictionary) -> WalletSnapshot:
 	return WalletSnapshot.from_dict({"coins": section["coins"], "items": section["items"]})
+
+
+func atomic_has_pending() -> bool:
+	return _busy or not _pending.is_empty()
