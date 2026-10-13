@@ -104,6 +104,7 @@
   --Layout-COMPACT_MAX_ASPECT: 1.95;
   --Layout-GRID_MIN_RATIO: 0.42;
   --Layout-HINT_DOT_RATIO: 0.06;
+  --Layout-LANDING_SCALE: 1.1;
   --Layout-LINE_WIDTH: calc(18 * var(--Token-unit));
   --Layout-MAX_CONTENT_WIDTH: calc(1080 * var(--Token-unit));
   --Layout-SHAKE_OFFSET: calc(16 * var(--Token-unit));
@@ -117,6 +118,7 @@
   --Layout-WHEEL_MIN: calc(450 * var(--Token-unit));
   --Layout-WHEEL_RING_RATIO: 0.35;
   --Layout-WHEEL_WIDTH_RATIO: 0.66;
+  --Layout-WORD_FLASH_SCALE: 1.25;
   --Ease-IN: 7 0;
   --Ease-IN_OUT: 1 2;
   --Ease-OUT: 7 1;

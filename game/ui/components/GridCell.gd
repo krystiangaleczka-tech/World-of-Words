@@ -16,6 +16,7 @@ var state: State = State.EMPTY:
 		queue_redraw()
 
 var _style: StyleBoxFlat = StyleBoxFlat.new()
+var _motion_speed: float = 1.0
 var _feedback: Tween
 var _base_state: State = State.EMPTY
 var _letter_alpha: float = 1.0:
@@ -32,7 +33,8 @@ func reveal(hinted: bool) -> void:
 	pivot_offset = size / 2.0
 	scale = Vector2.ONE / Tokens.Layout.TILE_SELECTED_SCALE
 	_letter_alpha = 0.0
-	_feedback = create_tween().set_parallel(true)
+	set_process(true)
+	_feedback = create_tween().set_speed_scale(_motion_speed).set_parallel(true)
 	_feedback.tween_property(self, "_letter_alpha", 1.0, Tokens.dur(Tokens.Motion.FAST))
 	(
 		_feedback
@@ -40,6 +42,8 @@ func reveal(hinted: bool) -> void:
 		. set_trans(Tokens.Ease.SPRING.x)
 		. set_ease(Tokens.Ease.SPRING.y)
 	)
+
+	_feedback.chain().tween_callback(finish_motion)
 
 
 ## @api Temporary highlight, preserving filled/hinted state through repeated calls.
@@ -51,7 +55,8 @@ func highlight(delay: float = 0.0) -> void:
 	# Preserve the underlying state while showing the temporary highlight.
 	_set_highlight()
 	pivot_offset = size / 2.0
-	_feedback = create_tween()
+	set_process(true)
+	_feedback = create_tween().set_speed_scale(_motion_speed)
 	_feedback.tween_interval(delay)
 	(
 		_feedback
@@ -80,11 +85,13 @@ func _finish_highlight(previous: State) -> void:
 
 
 func _cancel_feedback() -> void:
+	set_process(false)
 	if _feedback != null and _feedback.is_valid():
 		_feedback.kill()
 	_feedback = null
 	scale = Vector2.ONE
 	_letter_alpha = 1.0
+	modulate = Color.WHITE
 
 
 func _exit_tree() -> void:
@@ -152,3 +159,74 @@ func _draw() -> void:
 			radius,
 			get_theme_color(&"TEXT", &"Palette")
 		)
+
+
+## @api Commit visual fill now, while the pooled letter is still in flight.
+func prepare_landing() -> void:
+	state = State.FILLED
+	_letter_alpha = 0.0
+
+
+## @api Filled glyph lands with a bounded FAST scale pop.
+func land() -> void:
+	state = State.FILLED
+	if Tokens.reduced_motion or not is_inside_tree():
+		return
+	_feedback = (
+		create_tween()
+		. set_speed_scale(_motion_speed)
+		. set_trans(Tokens.Ease.SPRING.x)
+		. set_ease(Tokens.Ease.SPRING.y)
+	)
+	var half_fast: float = Tokens.dur(Tokens.Motion.FAST) / 2
+	_feedback.tween_property(self, "scale", Vector2.ONE * Tokens.Layout.LANDING_SCALE, half_fast)
+	_feedback.tween_property(self, "scale", Vector2.ONE, half_fast)
+	_feedback.tween_callback(finish_motion)
+	set_process(true)
+
+
+## @api Brightness flash preserves the underlying revealed state.
+func flash() -> void:
+	finish_motion()
+	if state == State.EMPTY or Tokens.reduced_motion or not is_inside_tree():
+		return
+	_feedback = create_tween().set_speed_scale(_motion_speed).set_trans(Tokens.Ease.OUT.x).set_ease(
+		Tokens.Ease.OUT.y
+	)
+	var bright: Color = Color.WHITE * Tokens.Layout.WORD_FLASH_SCALE
+	bright.a = 1
+	var half_base: float = Tokens.dur(Tokens.Motion.BASE) / 2
+	_feedback.tween_property(self, "modulate", bright, half_base)
+	_feedback.tween_property(self, "modulate", Color.WHITE, half_base)
+	_feedback.tween_callback(finish_motion)
+	set_process(true)
+
+
+## @api Settle the logical state without introducing any additional effect.
+func finish_motion() -> void:
+	state = _base_state
+	modulate = Color.WHITE
+
+
+func _process(_delta: float) -> void:
+	if Tokens.reduced_motion:
+		finish_motion()
+
+
+## @api Reduced flight mapping: owned FAST fade in place, no scale motion.
+func fade_filled() -> void:
+	state = State.FILLED
+	modulate.a = 0
+	_feedback = create_tween().set_speed_scale(_motion_speed)
+	_feedback.tween_property(self, "modulate:a", 1.0, Tokens.dur(Tokens.Motion.FAST))
+	_feedback.tween_callback(finish_motion)
+
+
+## @api Presentation-only timing scale for the bounded completion sequence.
+func set_motion_speed(speed_value: float) -> Error:
+	if not is_finite(speed_value) or speed_value <= 0:
+		return ERR_INVALID_PARAMETER
+	_motion_speed = speed_value
+	if _feedback != null:
+		_feedback.set_speed_scale(speed_value)
+	return OK

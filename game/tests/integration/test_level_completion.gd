@@ -88,6 +88,13 @@ func _finish(screen: LevelScreen) -> void:
 	var level: LevelData = screen.controller.get_board().get_level()
 	for index: int in level.word_count():
 		screen.controller.submit(_tiles(level, level.word(index)))
+	_settle_motion()
+
+
+func _settle_motion() -> void:
+	for phase: int in 4:
+		for tween: Tween in get_tree().get_processed_tweens():
+			tween.custom_step(10)
 
 
 func _tiles(level: LevelData, word: String) -> PackedInt32Array:
@@ -180,6 +187,7 @@ func test_failed_persistence_and_navigation_retry() -> void:
 	assert_false(screen.completion_layer.visible)
 	_storage.fail = false
 	screen.hint_button.pressed.emit()
+	_settle_motion()
 	assert_true(screen.completion_layer.visible)
 	var writes: int = _storage.writes
 	_content.unavailable = 2
@@ -249,6 +257,7 @@ func test_completion_layout() -> void:
 		viewport.size = dimensions
 		await get_tree().process_frame
 		await get_tree().process_frame
+		_settle_motion()
 		assert_gte(screen.continue_button.global_position.x, float(Tokens.Space.M + 16))
 		assert_lte(
 			screen.continue_button.get_global_rect().end.x,

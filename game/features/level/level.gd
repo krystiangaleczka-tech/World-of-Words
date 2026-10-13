@@ -32,6 +32,12 @@ var _slot: int = 0
 var _event_bus: Node
 var _area: Control
 var _status_key: String = ""
+var _completion_motion: Tween
+var _completion_start_pending: bool = false
+var _completion_host_size: Vector2 = Vector2.ZERO
+var _completion_layout: StringName = &""
+var _completion_waiting: bool = false
+var _completion_rest: Vector2 = Vector2.ZERO
 var _copy: LevelCopy = LevelCopy.new()
 
 
@@ -82,6 +88,8 @@ func _ready() -> void:
 	add_child(controller)
 	progress = PROGRESS_SCRIPT.new()
 	add_child(progress)
+	board_view.wave_finished.connect(_on_wave_finished)
+	body.sort_children.connect(_start_completion_motion)
 	_area.resized.connect(_layout_play_area)
 	preview.minimum_size_changed.connect(_layout_play_area)
 	layout_class_changed.connect(_on_layout_class_changed)
@@ -226,7 +234,23 @@ func _on_shuffle() -> void:
 
 func _process(_delta: float) -> void:
 	_refresh_actions()
-	if not wheel.is_locked():
+	if (
+		Tokens.reduced_motion
+		and (_completion_waiting or _completion_start_pending or _completion_motion != null)
+	):
+		_completion_waiting = false
+		_completion_start_pending = false
+		if _completion_motion != null:
+			_completion_motion.kill()
+			_completion_motion = null
+			completion_layer.position = _completion_rest
+		completion_layer.visible = true
+		completion_layer.modulate = Color.WHITE
+	if (
+		not _completion_waiting
+		and _completion_motion == null
+		and (not wheel.is_locked() or controller.is_complete())
+	):
 		set_process(false)
 
 
@@ -295,7 +319,15 @@ func _on_state_changed() -> void:
 func _on_result(result: AttemptResult) -> void:
 	preview.show_result(result)
 	if result.kind == AttemptResult.Kind.LEVEL:
-		board_view.reveal_word(result.cells_to_reveal)
+		var whole_word: Array[Vector2i] = []
+		var level: LevelData = controller.get_board().get_level()
+		for index: int in level.word_count():
+			if level.word(index) == result.word:
+				whole_word = level.word_cells(index)
+				break
+		board_view.fly_word(
+			result.cells_to_reveal, preview.get_global_transform() * (preview.size / 2), whole_word
+		)
 	elif result.kind == AttemptResult.Kind.ALREADY_FOUND:
 		var level: LevelData = controller.get_board().get_level()
 		for index: int in level.word_count():
@@ -305,8 +337,18 @@ func _on_result(result: AttemptResult) -> void:
 
 func _on_completed() -> void:
 	wheel.set_locked(true)
+	if Tokens.reduced_motion:
+		_show_completion()
+	else:
+		_completion_waiting = true
+		completion_title.text = tr(
+			"level.complete.terminal" if _slot >= _content.slot_count() else "level.complete.title"
+		)
+		continue_button.disabled = _slot >= _content.slot_count() or _continued
+		if _slot < _content.slot_count():
+			_content.level_for_slot(_slot + 1)
+		set_process(true)
 	board_view.play_wave()
-	_show_completion()
 
 
 func _on_persistence_failed(_error: Error) -> void:
@@ -321,6 +363,17 @@ func _set_status(key: String) -> void:
 
 
 func _layout_play_area() -> void:
+	if (
+		_completion_motion != null
+		and (
+			get_viewport_rect().size != _completion_host_size or layout_class != _completion_layout
+		)
+	):
+		_completion_motion.kill()
+		_completion_motion = null
+		completion_layer.position = _completion_rest
+		completion_layer.modulate = Color.WHITE
+		body.queue_sort()
 	var available: Vector2 = _area.size
 	if available.x <= 0 or available.y <= 0:
 		return
@@ -374,6 +427,19 @@ func _notification(what: int) -> void:
 
 
 func _exit_tree() -> void:
+	_completion_waiting = false
+	_completion_start_pending = false
+	if body.sort_children.is_connected(_start_completion_motion):
+		body.sort_children.disconnect(_start_completion_motion)
+	if _completion_motion != null:
+		_completion_motion.kill()
+		_completion_motion = null
+		completion_layer.position = _completion_rest
+		completion_layer.modulate = Color.WHITE
+	if is_instance_valid(completion_layer):
+		completion_layer.modulate = Color.WHITE
+	if is_instance_valid(board_view) and board_view.wave_finished.is_connected(_on_wave_finished):
+		board_view.wave_finished.disconnect(_on_wave_finished)
 	if is_instance_valid(preview) and preview.minimum_size_changed.is_connected(_layout_play_area):
 		preview.minimum_size_changed.disconnect(_layout_play_area)
 	if layout_class_changed.is_connected(_on_layout_class_changed):
@@ -398,3 +464,56 @@ func _exit_tree() -> void:
 		controller.completed.disconnect(_on_completed)
 		controller.persistence_failed.disconnect(_on_persistence_failed)
 	_copy.unregister()
+
+
+func _on_wave_finished() -> void:
+	if not _completion_waiting:
+		return
+	_completion_waiting = false
+	_show_completion()
+	if not Tokens.reduced_motion:
+		completion_layer.modulate.a = 0
+		_completion_start_pending = true
+		body.queue_sort()
+
+
+func _start_completion_motion() -> void:
+	if _completion_motion != null and not _completion_start_pending:
+		_completion_rest = completion_layer.position
+		_slide_completion(
+			clampf(
+				_completion_motion.get_total_elapsed_time() / Tokens.dur(Tokens.Motion.SLOW), 0, 1
+			)
+		)
+		return
+	if not _completion_start_pending or not is_inside_tree() or not completion_layer.visible:
+		return
+	_completion_start_pending = false
+	if Tokens.reduced_motion:
+		completion_layer.modulate = Color.WHITE
+		return
+	if _completion_motion != null:
+		_completion_motion.kill()
+	_completion_rest = completion_layer.position
+	_completion_host_size = get_viewport_rect().size
+	_completion_layout = layout_class
+	_completion_motion = create_tween().set_parallel(true).set_trans(Tokens.Ease.OUT.x).set_ease(
+		Tokens.Ease.OUT.y
+	)
+	_slide_completion(0)
+	_completion_motion.tween_property(
+		completion_layer, "modulate:a", 1.0, Tokens.dur(Tokens.Motion.SLOW)
+	)
+	_completion_motion.tween_method(_slide_completion, 0.0, 1.0, Tokens.dur(Tokens.Motion.SLOW))
+	_completion_motion.chain().tween_callback(_finish_completion_motion)
+	set_process(true)
+
+
+func _slide_completion(progress_value: float) -> void:
+	completion_layer.position = _completion_rest + Vector2(0, Tokens.Space.L * (1 - progress_value))
+
+
+func _finish_completion_motion() -> void:
+	_completion_motion = null
+	completion_layer.position = _completion_rest
+	completion_layer.modulate = Color.WHITE

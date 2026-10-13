@@ -106,6 +106,7 @@ func test_complete_selected_and_preserve_other_sections() -> void:
 	assert_eq(screen.complete_selected(), OK)
 	var level: LevelScreen = _nav.mounted_screen() as LevelScreen
 	assert_true(level.controller.is_complete())
+	_settle_motion()
 	assert_true(level.completion_layer.visible)
 	assert_eq(int(_storage.document["progress"]["by_lang"]["pl"]["current_slot"]), 3)
 	assert_eq(_save.get_section(&"economy"), economy)
@@ -199,6 +200,7 @@ func test_failed_override_then_changed_selection_and_controller_retry() -> void:
 	for _index: int in 12:
 		if not level.controller.is_complete():
 			level.hint_button.pressed.emit()
+	_settle_motion()
 	assert_true(level.completion_layer.visible)
 	assert_eq(int(_storage.document["progress"]["by_lang"]["pl"]["current_slot"]), 3)
 
@@ -238,5 +240,12 @@ func test_last_cell_failure_reports_error_until_durable_retry() -> void:
 	assert_eq(int(_storage.document["progress"]["by_lang"]["pl"]["current_slot"]), 1)
 	_storage.fail_from = 0
 	level.hint_button.pressed.emit()
+	_settle_motion()
 	assert_true(level.completion_layer.visible)
 	assert_eq(int(_storage.document["progress"]["by_lang"]["pl"]["current_slot"]), 2)
+
+
+func _settle_motion() -> void:
+	for phase: int in 4:
+		for tween: Tween in get_tree().get_processed_tweens():
+			tween.custom_step(10)

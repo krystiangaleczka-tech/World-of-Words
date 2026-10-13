@@ -2,6 +2,15 @@ class_name BoardView
 extends Control
 ## @api Passive, coordinate-based crossword presentation; never mutates the board.
 
+signal wave_finished
+
+var _ghosts: Array[Label] = []
+var _flight: Tween
+var _wave: Tween
+var _flight_cells: Array[Vector2i] = []
+var _flash_cells: Array[Vector2i] = []
+var _motion_speed: float = 1.0
+var _wave_pending: bool = false
 var _board: BoardState
 var _cells: Dictionary[Vector2i, GridCell] = {}
 var _fits: bool = true
@@ -13,6 +22,7 @@ func _init() -> void:
 
 ## @api Replace all level geometry, including intersections only once. Null clears the view.
 func set_board(board: BoardState) -> void:
+	_cancel_board_motion()
 	for node: GridCell in _cells.values():
 		remove_child(node)
 		node.queue_free()
@@ -36,6 +46,7 @@ func set_board(board: BoardState) -> void:
 
 ## @api Render a fresh snapshot. Revealed cells outside a found word are hint markers.
 func refresh() -> void:
+	_cancel_board_motion()
 	if _board == null or _cells.is_empty():
 		return
 	var revealed: Array[Vector2i] = _board.revealed_cells()
@@ -92,8 +103,75 @@ func highlight_word(cells: Array[Vector2i]) -> void:
 
 ## @api Completion wave ordered by grid diagonal, without blocking input.
 func play_wave() -> void:
+	if _flight != null:
+		_wave_pending = true
+		var flight_duration: float = (
+			maxf(0, (_flight_cells.size() - 1) * Tokens.dur(Tokens.Motion.STAGGER))
+			+ Tokens.dur(Tokens.Motion.BASE) * 2
+			+ Tokens.dur(Tokens.Motion.FAST)
+		)
+		var remaining: float = maxf(0, flight_duration - _flight.get_total_elapsed_time())
+		_motion_speed = maxf(
+			1,
+			(
+				(remaining + _nominal_wave_duration())
+				/ (
+					Tokens.dur(Tokens.Motion.CELEBRATE)
+					- Tokens.dur(Tokens.Motion.SLOW)
+					- Tokens.dur(Tokens.Motion.STAGGER)
+				)
+			)
+		)
+		_flight.set_speed_scale(_motion_speed)
+		for coordinate: Vector2i in _cells:
+			_cells[coordinate].set_motion_speed(_motion_speed)
+		return
+	if _wave != null:
+		_wave.kill()
+		_wave = null
 	for cell: Vector2i in _cells:
-		_cells[cell].highlight((cell.x + cell.y) * Tokens.dur(Tokens.Motion.STAGGER))
+		_cells[cell].highlight(_wave_delay(cell))
+	if Tokens.reduced_motion or not is_inside_tree():
+		wave_finished.emit()
+		return
+	_wave = create_tween().set_speed_scale(_motion_speed)
+	_wave.tween_interval(_nominal_wave_duration())
+	_wave.tween_callback(_finish_wave)
+	set_process(true)
+
+
+## @api Bound wave + completion-layer SLOW to CELEBRATE.
+func wave_duration() -> float:
+	return _nominal_wave_duration() / _motion_speed
+
+
+func _nominal_wave_duration() -> float:
+	var last: float = 0
+	for cell: Vector2i in _cells:
+		if _cells[cell].state != GridCell.State.EMPTY:
+			last = maxf(last, _wave_delay(cell))
+	return 0 if Tokens.reduced_motion else last + Tokens.dur(Tokens.Motion.FAST) * 2
+
+
+func _wave_delay(cell: Vector2i) -> float:
+	return minf(
+		(cell.x + cell.y) * Tokens.dur(Tokens.Motion.STAGGER),
+		(
+			Tokens.dur(Tokens.Motion.CELEBRATE)
+			- Tokens.dur(Tokens.Motion.SLOW)
+			- Tokens.dur(Tokens.Motion.FAST) * 2
+			- Tokens.dur(Tokens.Motion.STAGGER)
+		)
+	)
+
+
+func _finish_wave() -> void:
+	_wave = null
+	_motion_speed = 1
+	for coordinate: Vector2i in _cells:
+		_cells[coordinate].set_motion_speed(1)
+	set_process(false)
+	wave_finished.emit()
 
 
 ## @api False when the available rect requires cells below the content minimum.
@@ -107,6 +185,7 @@ func _notification(what: int) -> void:
 
 
 func _layout_cells() -> void:
+	_cancel_board_motion(true)
 	_fits = true
 	if _cells.is_empty():
 		return
@@ -185,3 +264,163 @@ static func play_area_rects(
 		Vector2.ONE * diameter
 	)
 	return result
+
+
+func _enter_tree() -> void:
+	for index: int in LevelData.MAX_TILES:
+		var ghost: Label = Label.new()
+		ghost.name = "FlightLetter%d" % index
+		ghost.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		ghost.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+		ghost.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		ghost.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		_ghosts.append(ghost)
+	set_process(false)
+
+
+## @api Canvas-global origin, ordered new cells, optional complete word for intersection flash.
+func fly_word(cells: Array[Vector2i], origin: Vector2, whole_word: Array[Vector2i] = []) -> Error:
+	if (
+		not origin.is_finite()
+		or cells.size() > LevelData.MAX_TILES
+		or whole_word.size() > LevelData.MAX_TILES
+	):
+		return ERR_INVALID_PARAMETER
+	for cell: Vector2i in cells:
+		if not _cells.has(cell) or cells.count(cell) > 1:
+			return ERR_INVALID_PARAMETER
+	for cell: Vector2i in whole_word:
+		if not _cells.has(cell) or whole_word.count(cell) > 1:
+			return ERR_INVALID_PARAMETER
+	if not is_inside_tree() or not is_node_ready() or _ghosts.is_empty():
+		return ERR_UNCONFIGURED
+	_cancel_board_motion()
+	_flight_cells = cells.duplicate()
+	_flash_cells = whole_word.duplicate() if not whole_word.is_empty() else cells.duplicate()
+	for cell: Vector2i in _flash_cells:
+		_cells[cell].state = GridCell.State.FILLED
+	if Tokens.reduced_motion:
+		for cell: Vector2i in cells:
+			_cells[cell].fade_filled()
+		return OK
+	var local_origin: Vector2 = get_global_transform().affine_inverse() * origin
+	var font_size: int = get_theme_font_size(&"font_size", &"Preview")
+	_flight = create_tween().set_parallel(true)
+	for index: int in cells.size():
+		var cell: Vector2i = cells[index]
+		var node: GridCell = _cells[cell]
+		node.prepare_landing()
+		var ghost: Label = _ghosts[index]
+		ghost.text = node.letter
+		ghost.theme_type_variation = &"Preview"
+		ghost.add_theme_color_override("font_color", get_theme_color(&"TEXT", &"Palette"))
+		ghost.size = Vector2.ONE * (font_size + Tokens.Space.M)
+		ghost.pivot_offset = ghost.size / 2
+		ghost.position = (
+			local_origin
+			- ghost.size / 2
+			+ Vector2(
+				(index - (cells.size() - 1) / 2.0) * font_size * Tokens.Type.CELL_LETTER_RATIO, 0
+			)
+		)
+		ghost.scale = Vector2.ONE
+		add_child(ghost)
+		var delay: float = index * Tokens.dur(Tokens.Motion.STAGGER)
+		(
+			_flight
+			. tween_property(
+				ghost,
+				"position",
+				node.position + node.size / 2 - ghost.size / 2,
+				Tokens.dur(Tokens.Motion.BASE)
+			)
+			. set_delay(delay)
+			. set_trans(Tokens.Ease.IN_OUT.x)
+			. set_ease(Tokens.Ease.IN_OUT.y)
+		)
+		(
+			_flight
+			. tween_property(
+				ghost,
+				"scale",
+				Vector2.ONE * node.size.y * Tokens.Type.CELL_LETTER_RATIO / font_size,
+				Tokens.dur(Tokens.Motion.BASE)
+			)
+			. set_delay(delay)
+			. set_trans(Tokens.Ease.IN_OUT.x)
+			. set_ease(Tokens.Ease.IN_OUT.y)
+		)
+		_flight.tween_callback(_land_letter.bind(index, cell)).set_delay(
+			delay + Tokens.dur(Tokens.Motion.BASE)
+		)
+	_flight.chain().tween_interval(Tokens.dur(Tokens.Motion.FAST))
+	_flight.chain().tween_callback(_flash_word)
+	_flight.chain().tween_interval(Tokens.dur(Tokens.Motion.BASE))
+	_flight.chain().tween_callback(_finish_flight)
+	set_process(true)
+	return OK
+
+
+## @api Presentation state independent of gameplay completion.
+func flight_state() -> StringName:
+	return &"flying" if _flight != null else &"idle"
+
+
+func _land_letter(index: int, cell: Vector2i) -> void:
+	if _ghosts[index].get_parent() == self:
+		remove_child(_ghosts[index])
+	_cells[cell].land()
+
+
+func _flash_word() -> void:
+	for cell: Vector2i in _flash_cells:
+		_cells[cell].flash()
+
+
+func _finish_flight() -> void:
+	_flight = null
+	var pending: bool = _wave_pending
+	_wave_pending = false
+	set_process(false)
+	if pending:
+		play_wave()
+
+
+func _cancel_board_motion(complete_wave: bool = false) -> void:
+	var pending: bool = _wave != null or _wave_pending
+	if _flight != null:
+		_flight.kill()
+		_flight = null
+	if _wave != null:
+		_wave.kill()
+		_wave = null
+	for ghost: Label in _ghosts:
+		if ghost.get_parent() == self:
+			remove_child(ghost)
+	for coordinate: Vector2i in _cells:
+		_cells[coordinate].finish_motion()
+		_cells[coordinate].set_motion_speed(1)
+	_motion_speed = 1
+	_flight_cells.clear()
+	_flash_cells.clear()
+	_wave_pending = false
+	set_process(false)
+	if complete_wave and pending and is_inside_tree():
+		wave_finished.emit()
+
+
+func _process(_delta: float) -> void:
+	if Tokens.reduced_motion:
+		var pending: bool = _wave != null or _wave_pending
+		_cancel_board_motion()
+		for coordinate: Vector2i in _cells:
+			_cells[coordinate].finish_motion()
+		if pending:
+			wave_finished.emit()
+
+
+func _exit_tree() -> void:
+	_cancel_board_motion()
+	for ghost: Label in _ghosts:
+		ghost.free()
+	_ghosts.clear()
