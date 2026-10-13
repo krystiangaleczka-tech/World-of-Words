@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: high
 ui: low
-status: review
+status: done
 depends_on: [T-0207, T-0208]
 touch:
   - game/ui/components/LetterTile.gd

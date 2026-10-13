@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: med
 ui: high
-status: review
+status: done
 depends_on: [T-0203]
 touch:
   - game/ui/tokens.gd

@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: low
-status: review
+status: done
 depends_on: [T-0223]
 touch:
   - game/ui/components/BoardView.gd

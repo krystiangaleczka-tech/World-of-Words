@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: high
 ui: low
-status: review
+status: done
 depends_on: [T-0222]
 touch:
   - game/ui/components/GridCell.gd

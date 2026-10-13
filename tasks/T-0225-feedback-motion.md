@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: low
-status: review
+status: done
 depends_on: [T-0224, T-0219]
 touch:
   - game/ui/components/WordPreview.gd

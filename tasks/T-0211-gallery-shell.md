@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: med
 ui: med
-status: review
+status: done
 depends_on: [T-0132, T-0203]
 touch:
   - game/ui/gallery/gallery.gd*

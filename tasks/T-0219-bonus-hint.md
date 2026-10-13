@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: med
 ui: med
-status: review
+status: done
 depends_on: [T-0218]
 touch:
   - game/ui/components/BonusMeter.gd*

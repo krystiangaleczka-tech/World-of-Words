@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: high
 ui: high
-status: review
+status: done
 depends_on: [T-0203]
 touch:
   - docs/design/T-0204/**
