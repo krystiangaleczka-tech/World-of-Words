@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0231, T-0229]
 touch:
   - game/services/economy.gd
