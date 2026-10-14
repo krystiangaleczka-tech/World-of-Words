@@ -199,3 +199,39 @@ func test_last_load_report_is_copied_and_fresh_is_not_migrated() -> void:
 	_events.consent_changed.emit(true)
 	assert_eq(_occurrences("save_migrated"), 0)
 	assert_eq(_occurrences("save_corrupted"), 0)
+
+
+func test_load_report_detects_actual_v3_upgrade_and_corrupt_original() -> void:
+	var legacy: String = FileAccess.get_file_as_string("res://tests/fixtures/save/v3.json")
+	var migrated_path: String = ROOT + "/legacy.json"
+	var file: FileAccess = FileAccess.open(migrated_path, FileAccess.WRITE)
+	assert_not_null(file)
+	file.store_string(legacy)
+	file.close()
+	var migrated: SAVE_SCRIPT = SAVE_SCRIPT.new()
+	add_child_autofree(migrated)
+	migrated.initialize(_clock)
+	migrated.configure(SaveStorage.new(migrated_path))
+	assert_eq(migrated.load(), OK)
+	assert_eq(
+		migrated.last_load_report(),
+		{"corrupted": false, "from_version": 3, "to_version": 4}
+	)
+	var broken_path: String = ROOT + "/broken.json"
+	var bad_file: FileAccess = FileAccess.open(broken_path, FileAccess.WRITE)
+	assert_not_null(bad_file)
+	bad_file.store_string("{bad json")
+	bad_file.close()
+	var recovered: SAVE_SCRIPT = SAVE_SCRIPT.new()
+	add_child_autofree(recovered)
+	recovered.initialize(_clock)
+	recovered.configure(SaveStorage.new(broken_path), func() -> String: return INSTALL_ID)
+	assert_eq(recovered.load(), OK)
+	assert_eq(
+		recovered.last_load_report(),
+		{"corrupted": true, "from_version": 0, "to_version": 0}
+	)
+	for path: String in [migrated_path, broken_path]:
+		for suffix: String in ["", ".tmp", ".bak"]:
+			if FileAccess.file_exists(path + suffix):
+				DirAccess.remove_absolute(path + suffix)
