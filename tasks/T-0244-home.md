@@ -8,9 +8,11 @@ risk: low
 executor: sol
 think: med
 ui: high
-status: done
+status: review
 depends_on: [T-0243, T-0220]
 touch:
+  - game/ui/components/LocationPostcard.gd
+  - game/tests/integration/test_reward_postcard.gd
   - game/features/home/**
   - game/services/nav.gd
   - game/locale/home.csv*
@@ -18,7 +20,7 @@ touch:
   - docs/qa/T-0244/**
   - tasks/T-0220-reward-postcard.md
   - tasks/T-0244-home.md
-revision: 1
+revision: 2
 ---
 
 ## Goal
@@ -31,14 +33,22 @@ next campaign slot and one Play action. Reconcile the already merged T-0220 prer
 - Reference: docs/design/T-0205/evidence/home_TABLET_PL_default.png and DESIGN.md#home.
 
 ## Current state
-Main aac79fa merged T-0243; Nav lazily mounts res://features/home/home.tscn (currently absent),
-provides guarded go_to_level/go_to_screen and owns pending Toasts. Save.committed_view returns
-sections with economy.coins and progress.by_lang[language].current_slot/location_pieces.
-Content.location_for_slot returns name_key, postcard resource path and pieces; the shipped legacy
-manifest has virtual campaign metadata with no art. Content.get_language and slot_count exist.
-Config.get_int(meta.postcard.pieces) is available. ScreenScaffold, TopBar, CurrencyPill,
-IconButton, PrimaryButton, NavTab, LocationPostcard, StatePanel and LocaleCatalog exist.
-Global Progress P2 is deliberately not activated by Nav; do not activate it here.
+Revision 2 starts from main e3fe760, with Home (#172), Journey (#173) and Postcard (#174)
+already merged. Home extends ScreenScaffold and exposes configure and refresh; it mounts
+ReadingSurface, Postcard, MissingArt, Progress, NextLevel and Play. LocationPostcard exposes
+configure(image, total, revealed, mode), with full/thumb presets currently sharing Space.M
+padding and MID shadow. CatalogProgressBar exposes set_value(value, animate). Save, Content,
+Config and Nav contracts remain as implemented and must be preserved.
+
+## Owner-authorized visual revision
+Chris requested Home corrections and explicitly approved LocationPostcard.gd and
+test_reward_postcard.gd scope expansion on 2026-10-14. The full preset uses Space.S padding
+and LOW shadow (owner override of the documented MID visual token); thumb retains M/MID.
+Refresh styling when switching presets. Center Home title/captions, add passive normalized
+progress using CatalogProgressBar, lighten the enclosing reading surface, and shorten missing-art
+copy without promising a particular content update. Preserve Settings/Journey behavior and all
+newer navigation, durable state and reveal behavior. No new public API or component.
+The older parallel PR #171 was closed as superseded; reimplement on fresh main with -r2.
 
 ## Specification
 1. Add Home scene/script extending ScreenScaffold. Nav injects its actual Save/Content/Config and
@@ -76,6 +86,8 @@ Native COMPACT/REGULAR/TABLET, PL/PSEUDO, default100/HC130 captures plus mockup 
 Chris owns reference-device screenshots and taste approval, recorded as pending rather than fabricated.
 
 ## Tests
+Revision 2 additionally verifies full/thumb padding and shadow across preset changes, passive
+Home progress for partial/complete/missing-art states and centered captions without Save writes.
 New test_home.gd: injected-service boot/mount; committed coins/location/pieces/slot and no writes;
 partial saved board resumes through actual Level; failed navigation preserves Home and explains;
 terminal slot never replays; invalid services (including Config alone missing/unloaded)/missing art graceful; configured art partial/complete;

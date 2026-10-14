@@ -102,6 +102,7 @@ func configure(image: Texture2D, total: int, revealed: int, mode: StringName = &
 		)
 		_alphas[index] = 1.0 if index < revealed else 0.0
 	_refresh_copy()
+	_refresh_theme()
 	_layout_art()
 	return OK
 
@@ -193,6 +194,9 @@ func _refresh_copy() -> void:
 	accessibility_name = COMPLETE_KEY if complete else PROGRESS_KEY
 	accessibility_description = str(_revealed) + " / " + str(_total)
 	if _caption != null:
+		_caption.horizontal_alignment = (
+			HORIZONTAL_ALIGNMENT_CENTER if _preset == &"full" else HORIZONTAL_ALIGNMENT_LEFT
+		)
 		_caption.text = tr(COMPLETE_KEY) if complete else str(_revealed) + " / " + str(_total)
 		_stamp.visible = complete
 		_lock.visible = state == &"locked"
@@ -206,12 +210,13 @@ func _layout_art() -> void:
 	var width: float = (
 		Tokens.Touch.MIN_TARGET * 2.0 if _preset == &"thumb" else Tokens.Touch.MIN_TARGET
 	)
-	var padded_width: float = width + Tokens.Space.M * 2
+	var padding: int = Tokens.Space.S if _preset == &"full" else Tokens.Space.M
+	var padded_width: float = width + padding * 2
 	custom_minimum_size.x = padded_width
 	size_flags_horizontal = (
 		Control.SIZE_SHRINK_CENTER if _preset == &"thumb" else Control.SIZE_EXPAND_FILL
 	)
-	var actual: float = maxf(width, size.x - Tokens.Space.M * 2)
+	var actual: float = maxf(width, size.x - padding * 2)
 	var aspect: float = (
 		_texture.get_width() / float(_texture.get_height()) if _texture != null else 1.0
 	)
@@ -224,7 +229,13 @@ func _refresh_theme() -> void:
 		return
 	_refreshing = true
 	add_theme_stylebox_override(
-		"panel", CatalogSurface.panel(self, Tokens.Space.M, Tokens.Radius.M, &"MID")
+		"panel",
+		CatalogSurface.panel(
+			self,
+			Tokens.Space.S if _preset == &"full" else Tokens.Space.M,
+			Tokens.Radius.M,
+			&"LOW" if _preset == &"full" else &"MID"
+		)
 	)
 	_stamp.modulate = get_theme_color(&"SUCCESS", &"Palette")
 	_lock.modulate = get_theme_color(&"TEXT", &"Palette")
