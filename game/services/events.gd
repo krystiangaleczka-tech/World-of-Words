@@ -12,6 +12,10 @@ signal invalid_word(word: String)
 signal level_completed(slot: int)
 signal hint_used
 
+## @api Analytics transmission decision for the current launch. The first emission resolves the
+## unknown state; later emissions update consent and false also represents revocation.
+signal consent_changed(analytics_allowed: bool)
+
 ## @api Publish copied transaction and wallet values only after durable Economy success.
 ## Side effects only; listeners must not control the transaction.
 signal economy_changed(
