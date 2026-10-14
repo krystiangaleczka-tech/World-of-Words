@@ -175,6 +175,8 @@ func _add_location(location: Dictionary, state: Dictionary) -> void:
 	)
 	card.disabled = locked
 	card.highlighted = not locked and done < count
+	card.action_key = "postcard.main.open" if not locked else ""
+	card.action_requested.connect(_open_postcard.bind(first))
 	var column: VBoxContainer = VBoxContainer.new()
 	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	column.add_theme_constant_override("separation", Tokens.Space.S)
@@ -263,7 +265,7 @@ func _refresh_copy() -> void:
 		row.note.text = (
 			tr("journey.location.unlock") % row.first
 			if row.locked
-			else tr("journey.location.postcard_soon")
+			else tr("postcard.main.open_hint")
 		)
 		var missing: Label = row.body.get_node_or_null("MissingArt")
 		if missing != null:
@@ -303,3 +305,9 @@ func _exit_tree() -> void:
 	_clear_rows()
 	_catalog.unregister()
 	super._exit_tree()
+
+
+func _open_postcard(slot: int) -> void:
+	if is_instance_valid(_nav):
+		_back_error = _nav.go_to_postcard(slot) != OK
+		_refresh_copy()

@@ -147,6 +147,7 @@ func test_complete_current_locked_cards_have_explicit_copy_and_no_replay() -> vo
 	assert_eq(_child(_row("market"), "CompletedLevels").text, "Ukończone poziomy: 0 / 1")
 	for id: String in ["harbor", "market", "hill"]:
 		assert_false(_row(id).tappable)
+		assert_eq(_row(id).action_key, "" if id == "hill" else "postcard.main.open")
 		_row(id).pressed.emit()
 	assert_eq(_nav.current_screen(), NAV.Screen.JOURNEY)
 	assert_eq(_nav.level_slot(), 2)
@@ -325,7 +326,9 @@ func test_all_three_safe_layouts_hc130_pseudo35_scroll_to_last_location() -> voi
 		var heading: Label = screen.find_child("RegionTitle", true, false)
 		assert_true(screen.top_bar.fits or heading.visible)
 		assert_eq(heading.text, screen.tr(screen.top_bar.title_key))
-		var origin: Vector2 = scroll.get_global_rect().get_center()
+		var first_card: Card = screen.find_child("Location_harbor", true, false)
+		var first_image: LocationPostcard = _child(first_card, "Postcard")
+		var origin: Vector2 = first_image.get_global_rect().get_center()
 		# Godot 4.7 ScrollContainer consumes the mouse events emitted by touch emulation.
 		var touch: InputEventMouseButton = InputEventMouseButton.new()
 		touch.button_index = MOUSE_BUTTON_LEFT

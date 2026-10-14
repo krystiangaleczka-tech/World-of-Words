@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://c5iuytgcdvu8e"
+
+[deps]
+
+files=["res://locale/postcard.pl.translation", "res://locale/postcard.en.translation"]
+
+source_file="res://locale/postcard.csv"
+dest_files=["res://locale/postcard.pl.translation", "res://locale/postcard.en.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

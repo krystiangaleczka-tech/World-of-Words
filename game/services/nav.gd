@@ -18,6 +18,7 @@ const SCENES: Dictionary = {
 	Screen.LEVEL: "res://features/level/level.tscn",
 	Screen.HOME: "res://features/home/home.tscn",
 	Screen.JOURNEY: "res://features/journey/journey.tscn",
+	Screen.POSTCARD: "res://features/journey/postcard.tscn",
 	Screen.DEBUG: "res://features/debug/debug.tscn",
 }
 const BACK_GROUP: StringName = &"nav_back_owner"
@@ -202,7 +203,7 @@ func _discard_mounted() -> void:
 	_mounted = null
 
 
-func _enter(screen: Screen) -> void:
+func _enter(screen: Screen, reveal_latest: bool = false) -> void:
 	OS.low_processor_usage_mode = screen != Screen.LEVEL
 	_discard_mounted()
 	var path: String = SCENES.get(screen, "")
@@ -216,6 +217,10 @@ func _enter(screen: Screen) -> void:
 				_mounted.call("configure", _save, _content, _level_slot)
 				if _mounted.has_method("configure_navigation"):
 					_mounted.call("configure_navigation", self)
+			elif screen == Screen.POSTCARD and _mounted.has_method("configure"):
+				_mounted.call(
+					"configure", _save, _content, _config, self, _level_slot, reveal_latest
+				)
 			elif screen in [Screen.HOME, Screen.JOURNEY] and _mounted.has_method("configure"):
 				_mounted.call("configure", _save, _content, _config, self)
 			elif screen == Screen.DEBUG and _mounted.has_method("configure"):
@@ -259,6 +264,8 @@ func go_to_screen(screen: Screen) -> Error:
 		return ERR_INVALID_PARAMETER
 	if screen == Screen.HOME:
 		return go_home()
+	if screen == Screen.POSTCARD:
+		return go_to_postcard(_resume_slot())
 	return _p2.route(screen, _level_slot)
 
 
@@ -293,9 +300,9 @@ func _prepare_leave() -> Error:
 	return _save.flush()
 
 
-func _mount_p2(screen: Screen, slot: int) -> void:
+func _mount_p2(screen: Screen, slot: int, reveal_latest: bool = false) -> void:
 	_level_slot = slot
-	_enter(screen)
+	_enter(screen, reveal_latest)
 
 
 func _notification(what: int) -> void:
@@ -332,3 +339,72 @@ func _on_host_exit() -> void:
 
 func _valid_level(slot: int) -> bool:
 	return is_instance_valid(_content) and _content.level_for_slot(slot) != null
+
+
+## @api Location selection is a route slot, never a change to campaign progress.
+func go_to_postcard(slot: int, reveal_latest: bool = false) -> Error:
+	if _p2 == null or _screen == Screen.BOOT:
+		return ERR_UNCONFIGURED
+	return _p2.route(Screen.POSTCARD, slot, true, reveal_latest)
+
+
+## @api Committed location credits, including before Home unlock; no grants or live writes.
+func postcard_piece_count(slot: int) -> int:
+	if _p2 == null:
+		return 0
+	var context: Dictionary = _postcard_context(slot)
+	if context.is_empty():
+		return 0
+	return clampi(
+		int(context.progress.get("location_pieces", {}).get(context.location.id, 0)),
+		0,
+		maxi(_config.get_int(&"meta.postcard.pieces"), 0)
+	)
+
+
+## @api Continue after a durably completed board; new credits may present its postcard first.
+func continue_campaign(completed_slot: int, previous_pieces: int) -> Error:
+	if _p2 == null:
+		return go_to_level(completed_slot + 1)
+	if _p2.busy:
+		return ERR_BUSY
+	if _screen != Screen.LEVEL or _level_slot != completed_slot or previous_pieces < 0:
+		return ERR_INVALID_PARAMETER
+	_p2.busy = true
+	var context: Dictionary = _postcard_context(completed_slot)
+	if context.is_empty() or int(context.progress.current_slot) <= completed_slot:
+		_p2.busy = false
+		return ERR_UNAVAILABLE
+	var show_postcard: bool = (
+		home_unlocked()
+		and previous_pieces < _config.get_int(&"meta.postcard.pieces")
+		and postcard_piece_count(completed_slot) > previous_pieces
+	)
+	_p2.busy = false
+	return (
+		go_to_postcard(completed_slot, true)
+		if show_postcard
+		else go_to_level(int(context.progress.current_slot))
+	)
+
+
+func _postcard_context(slot: int) -> Dictionary:
+	if (
+		not is_instance_valid(_save)
+		or not _save.is_loaded()
+		or not is_instance_valid(_content)
+		or not _content.is_loaded()
+		or not is_instance_valid(_config)
+		or not _config.has_key(&"meta.postcard.pieces")
+	):
+		return {}
+	var view: Dictionary = _save.committed_view()
+	if view.error != OK or view.sections.settings.language != _content.get_language():
+		return {}
+	var location: Dictionary = _content.location_for_slot(slot)
+	if location.is_empty():
+		return {}
+	var state: Dictionary = view.sections.progress.by_lang.get(
+		str(view.sections.settings.language), SaveSchema.LANGUAGE_STATE
+	)
+	return {"location": location, "progress": state}
