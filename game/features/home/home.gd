@@ -127,7 +127,13 @@ func refresh() -> void:
 	_postcard.hide()
 	_empty.show()
 	_coins.set_value(0, false)
-	if is_instance_valid(_save) and _save.is_loaded() and is_instance_valid(_content):
+	if (
+		is_instance_valid(_save)
+		and _save.is_loaded()
+		and is_instance_valid(_content)
+		and is_instance_valid(_config)
+		and _config.has_key(&"meta.postcard.pieces")
+	):
 		var view: Dictionary = _save.committed_view()
 		if view.error == OK and _content.is_loaded():
 			var language: String = str(view.sections.settings.language)

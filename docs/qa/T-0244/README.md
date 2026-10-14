@@ -14,11 +14,11 @@ support parameterized sublabels. Reference-device/taste review remains Chris's p
 
 ## Verification
 
-Godot 4.7.2 ed1daf0bf: full make check passed 587/587 GUT, 329 pipeline and 500 tools tests;
+Godot 4.7.2 ed1daf0bf: full make check passed 588/588 GUT, 329 pipeline and 500 tools tests;
 formatting/lint, registries, content, UI strings and generated-theme guards passed. The final
-Home composition also passed native X11/Mesa llvmpipe GUT: 8/8 tests, 118 assertions. Tests verify
+Home composition also passed native X11/Mesa llvmpipe GUT: 9/9 tests, 133 assertions. Tests verify
 committed values without writes, exact-slot partial-board restoration through the real Level,
-failed routing, unavailable services, terminal content, partial/complete art, copy/re-entry and
+failed routing, unavailable services (including absent/unloaded Config alone), terminal content, partial/complete art, copy/re-entry and
 HC130/PSEUDO safe scrolling in all three layout classes. Existing tests were not changed.
 Task lint: 180 tasks. Scope, independent exact-head review and CI results are recorded in the PR.
 

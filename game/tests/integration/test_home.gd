@@ -197,6 +197,22 @@ func test_art_partial_complete_and_invalid_services_are_safe() -> void:
 	assert_true(unavailable.find_child("Status", true, false).visible)
 
 
+func test_missing_or_unloaded_config_alone_disables_play_with_explanation() -> void:
+	var unloaded: CONFIG = CONFIG.new()
+	add_child_autofree(unloaded)
+	for config: CONFIG in [null, unloaded]:
+		var home: ScreenScaffold = HOME.new()
+		home.configure(_save, _content, config, _nav)
+		_host.add_child(home)
+		var play: PrimaryButton = home.find_child("Play", true, false)
+		var status: Label = home.find_child("Status", true, false)
+		assert_true(play.disabled)
+		assert_true(status.visible)
+		assert_eq(status.text, "Postęp jest teraz niedostępny. Spróbuj ponownie później.")
+		play.pressed.emit()
+		assert_eq(_nav.current_screen(), NAV.Screen.HOME)
+
+
 func test_locale_reentry_and_unbuilt_destinations() -> void:
 	assert_false(_control("Journey").visible)
 	assert_true(_control("Settings").disabled)

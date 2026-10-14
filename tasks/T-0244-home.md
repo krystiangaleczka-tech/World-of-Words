@@ -78,7 +78,7 @@ Chris owns reference-device screenshots and taste approval, recorded as pending 
 ## Tests
 New test_home.gd: injected-service boot/mount; committed coins/location/pieces/slot and no writes;
 partial saved board resumes through actual Level; failed navigation preserves Home and explains;
-terminal slot never replays; invalid services/missing art graceful; configured art partial/complete;
+terminal slot never replays; invalid services (including Config alone missing/unloaded)/missing art graceful; configured art partial/complete;
 locale changes/re-entry; future tab visibility; 3 layout classes with HC130/PSEUDO and fake insets,
 no horizontal overflow and primary action reachable by scroll. Existing tests unchanged.
 Full make check, task/scope lint, fresh independent exact-head review, all14CI before merge.
