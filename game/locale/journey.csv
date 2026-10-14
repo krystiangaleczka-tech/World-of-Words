@@ -1,0 +1,22 @@
+keys,pl,en
+journey.main.title,Twoja podróż,Your journey
+journey.main.back,Wróć,Back
+journey.main.unavailable,Podróż jest teraz niedostępna,Journey is unavailable
+journey.main.retry,Wróć na ekran główny i spróbuj ponownie.,Return to Home and try again.
+journey.main.back_failed,Nie można teraz wrócić. Spróbuj ponownie.,Cannot go back now. Try again.
+journey.region.complete,Region ukończony,Region complete
+journey.location.title,Bieżąca lokacja,Current location
+journey.location.locked,Zablokowana,Locked
+journey.location.current,Tu jesteś,You are here
+journey.location.complete,Poziomy ukończone,Levels completed
+journey.location.pieces,Pocztówka: %d / %d,Postcard: %d / %d
+journey.location.completed_range,Ukończone poziomy: %d–%d (%d / %d),Completed levels: %d–%d (%d / %d)
+journey.location.completed_none,Ukończone poziomy: 0 / %d,Completed levels: 0 / %d
+journey.location.unlock,Poziom odblokowania: %d,Unlocks at level: %d
+journey.location.missing_art,Ilustracja pocztówki w przygotowaniu,Postcard artwork coming soon
+journey.location.postcard_soon,Widok pocztówki pojawi się w kolejnej aktualizacji.,Postcard details will arrive in a future update.
+journey.preview.region,Region pokazowy,Preview region
+journey.preview.harbor,Przystań,Harbor
+journey.preview.market,Rynek,Market square
+journey.preview.hill,Wzgórze,Hill
+journey.preview.region_two,Drugi region pokazowy,Second preview region

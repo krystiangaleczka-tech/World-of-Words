@@ -228,8 +228,8 @@ func test_missing_or_unloaded_config_alone_disables_play_with_explanation() -> v
 		assert_eq(_nav.current_screen(), NAV.Screen.HOME)
 
 
-func test_locale_reentry_and_unbuilt_destinations() -> void:
-	assert_false(_control("Journey").visible)
+func test_locale_reentry_and_implemented_journey_navigation() -> void:
+	assert_true(_control("Journey").visible)
 	assert_true(_control("Settings").disabled)
 	TranslationServer.set_locale("en")
 	await get_tree().process_frame
@@ -241,6 +241,11 @@ func test_locale_reentry_and_unbuilt_destinations() -> void:
 	await get_tree().process_frame
 	assert_eq(_control("NextLevel").text, "Poziom: 2")
 	assert_eq(_control("Play").text, "Graj")
+	_control("Journey").pressed.emit()
+	assert_eq(_nav.current_screen(), NAV.Screen.JOURNEY)
+	assert_not_null(_nav.mounted_screen())
+	assert_eq(_nav.handle_back(), OK)
+	assert_eq(_nav.current_screen(), NAV.Screen.HOME)
 
 
 func test_three_layout_classes_hc130_pseudo_safe_scroll_and_no_horizontal_overflow() -> void:

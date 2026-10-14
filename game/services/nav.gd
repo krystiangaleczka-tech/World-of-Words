@@ -17,6 +17,7 @@ const CONTENT_SCRIPT = preload("res://services/content.gd")
 const SCENES: Dictionary = {
 	Screen.LEVEL: "res://features/level/level.tscn",
 	Screen.HOME: "res://features/home/home.tscn",
+	Screen.JOURNEY: "res://features/journey/journey.tscn",
 	Screen.DEBUG: "res://features/debug/debug.tscn",
 }
 const BACK_GROUP: StringName = &"nav_back_owner"
@@ -215,7 +216,7 @@ func _enter(screen: Screen) -> void:
 				_mounted.call("configure", _save, _content, _level_slot)
 				if _mounted.has_method("configure_navigation"):
 					_mounted.call("configure_navigation", self)
-			elif screen == Screen.HOME and _mounted.has_method("configure"):
+			elif screen in [Screen.HOME, Screen.JOURNEY] and _mounted.has_method("configure"):
 				_mounted.call("configure", _save, _content, _config, self)
 			elif screen == Screen.DEBUG and _mounted.has_method("configure"):
 				_mounted.call("configure", _save, _content, self)

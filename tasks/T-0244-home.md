@@ -8,7 +8,7 @@ risk: low
 executor: sol
 think: med
 ui: high
-status: review
+status: done
 depends_on: [T-0243, T-0220]
 touch:
   - game/features/home/**
