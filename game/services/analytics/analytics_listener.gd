@@ -6,7 +6,15 @@ const SAVE_SCRIPT: Script = preload("res://services/save.gd")
 const CONTENT_SCRIPT: Script = preload("res://services/content.gd")
 const EVENTS_SCRIPT: Script = preload("res://services/events.gd")
 const SCREEN_NAMES: PackedStringArray = [
-	"BOOT", "LEVEL", "HOME", "JOURNEY", "POSTCARD", "SETTINGS", "DAILY", "COLLECTION", "DEBUG"
+	"BOOT",
+	"LEVEL",
+	"HOME",
+	"JOURNEY",
+	"POSTCARD",
+	"SETTINGS",
+	"DAILY",
+	"COLLECTION",
+	"DEBUG",
 ]
 
 var _analytics: Node
