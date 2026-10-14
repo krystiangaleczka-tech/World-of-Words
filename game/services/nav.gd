@@ -111,7 +111,8 @@ func start(host: Node, content_root: String = "res://content") -> Error:
 		error = _content.load_manifest(language, content_root)
 	if error == OK:
 		# Analytics is nonessential: a damaged telemetry queue must not block offline gameplay.
-		Analytics.start_runtime(_save, _config, _content)
+		if Analytics.start_runtime(_save, _config, _content) == OK:
+			Analytics.configure_listener(_save, _content, self, get_clock())
 	if _p2 != null:
 		_p2.busy = false
 	if error == OK:

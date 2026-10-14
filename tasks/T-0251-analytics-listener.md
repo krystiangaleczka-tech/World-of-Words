@@ -8,7 +8,7 @@ risk: medium
 executor: cheap
 think: med
 ui: none
-status: ready
+status: review
 depends_on: [T-0250, T-0233, T-0242]
 touch:
   - game/services/analytics.gd

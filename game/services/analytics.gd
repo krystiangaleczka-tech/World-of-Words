@@ -24,6 +24,7 @@ var _content: CONTENT_SCRIPT = null
 var _event_bus: EVENTS_SCRIPT = null
 var _queue: AnalyticsQueue = null
 var _buckets: Dictionary = {}
+var _listener: AnalyticsListener = null
 
 
 ## @api Load sorted area JSON files atomically; reject reload while events are queued.
@@ -114,6 +115,24 @@ func start_runtime(
 	_mode = Mode.RUNTIME
 	_event_bus.consent_changed.connect(_on_consent_changed)
 	return OK
+
+
+## @api Attach runtime side effects without making gameplay depend on analytics.
+func configure_listener(
+	save: SAVE_SCRIPT, content: CONTENT_SCRIPT, navigation: Node, clock: Clock
+) -> Error:
+	if (
+		_mode != Mode.RUNTIME
+		or save != _save
+		or content != _content
+		or not is_instance_valid(navigation)
+		or clock == null
+	):
+		return ERR_UNCONFIGURED
+	if _listener == null:
+		_listener = AnalyticsListener.new()
+		add_child(_listener)
+	return _listener.configure(self, save, content, navigation, _event_bus, clock)
 
 
 ## @api Replace bucket context for subsequently accepted events.

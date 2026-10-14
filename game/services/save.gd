@@ -14,6 +14,7 @@ var _id_factory: Callable = SaveSchema.new_install_id
 var _data: Dictionary = {}
 var _loaded: bool = false
 var _compat_v3: bool = false
+var _last_load_report: Dictionary = {"corrupted": false, "from_version": 0, "to_version": 0}
 var _dirty: bool = false
 var _primary_valid: bool = false
 var _loaded_temp: bool = false
@@ -45,6 +46,13 @@ func load() -> Error:
 				candidate = legacy
 				_compat_v3 = true
 		if _valid_document(candidate):
+			if not _compat_v3 and source.has("schema_version"):
+				var old_version: int = int(source["schema_version"])
+				var new_version: int = int(candidate["schema_version"])
+				if old_version > 0 and old_version < new_version:
+					_last_load_report = {
+						"corrupted": false, "from_version": old_version, "to_version": new_version
+					}
 			_data = _canonical_document(candidate)
 			_atomic.observe(_data)
 			_loaded = true
@@ -69,9 +77,15 @@ func load() -> Error:
 	_loaded = true
 	_dirty = true
 	if existing:
+		_last_load_report = {"corrupted": true, "from_version": 0, "to_version": 0}
 		Events.save_corrupted.emit()
 		return OK
 	return flush()
+
+
+## @api Independent summary of the last completed load; no save payload or identifiers.
+func last_load_report() -> Dictionary:
+	return _last_load_report.duplicate(true)
 
 
 ## @api Whether a valid save has been loaded, without triggering domain work.
