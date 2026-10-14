@@ -16,6 +16,8 @@ func test_headless_boot_reaches_level_with_fakes() -> void:
 	assert_between(Nav.level_slot(), 1, Content.slot_count())
 	assert_eq(Content.get_language(), str(Save.get_setting(&"language")))
 	assert_true(Config.has_key(&"unlocks.journey_slot"))
+	assert_true(Config.has_key(&"analytics.queue.max_events"))
+	assert_true(Analytics.runtime_ready())
 	for adapter: Object in [
 		Platform.ads,
 		Platform.iap,

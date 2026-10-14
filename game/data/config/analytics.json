@@ -1,0 +1,13 @@
+{
+  "analytics.queue.max_events": {
+    "default": 500,
+    "type": "int",
+    "range": [
+      50,
+      5000
+    ],
+    "description": "Maximum number of analytics events retained in the durable FIFO",
+    "owner": "Sol",
+    "remote": false
+  }
+}
