@@ -215,6 +215,8 @@ func _enter(screen: Screen) -> void:
 				_mounted.call("configure", _save, _content, _level_slot)
 				if _mounted.has_method("configure_navigation"):
 					_mounted.call("configure_navigation", self)
+			elif screen == Screen.HOME and _mounted.has_method("configure"):
+				_mounted.call("configure", _save, _content, _config, self)
 			elif screen == Screen.DEBUG and _mounted.has_method("configure"):
 				_mounted.call("configure", _save, _content, self)
 			_host.add_child(_mounted)
