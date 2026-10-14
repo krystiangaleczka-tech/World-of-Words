@@ -1,0 +1,14 @@
+keys,pl,en
+postcard.main.location,Twoja pocztówka,Your postcard
+postcard.main.back,Wróć,Back
+postcard.main.open,Zobacz pocztówkę,View postcard
+postcard.main.open_hint,Otwórz szczegóły pocztówki.,Open postcard details.
+postcard.main.continue,Kontynuuj,Continue
+postcard.main.complete,Pocztówka ukończona,Postcard complete
+postcard.main.credits,Pocztówka: %d / %d,Postcard: %d / %d
+postcard.main.fact_pending,Opis lokacji w przygotowaniu.,Location description coming soon.
+postcard.main.unavailable,Pocztówka jest teraz niedostępna. Wróć i spróbuj ponownie.,Postcard is unavailable. Go back and try again.
+postcard.main.terminal,Wszystkie dostępne poziomy ukończone.,All available levels completed.
+postcard.main.route_failed,Nie można teraz przejść dalej. Spróbuj ponownie.,Cannot navigate now. Try again.
+postcard.art.title,Ilustracja w przygotowaniu,Artwork coming soon
+postcard.art.body,Postęp pocztówki jest zapisany. Ilustracja pojawi się z paczką podróży.,Your postcard progress is saved. Artwork will arrive with a journey pack.

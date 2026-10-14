@@ -8,7 +8,7 @@ risk: low
 executor: sol
 think: med
 ui: high
-status: review
+status: done
 depends_on: [T-0244]
 touch:
   - game/features/journey/journey.gd*

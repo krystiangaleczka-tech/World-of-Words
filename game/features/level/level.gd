@@ -23,6 +23,7 @@ var continue_button: PrimaryButton
 var _navigation: Node
 var _navigation_supplied: bool = false
 var _continued: bool = false
+var _postcard_pieces_before: int = 0
 var _actions: BoxContainer
 var _action_spacer: Control
 var _rng: RandomNumberGenerator
@@ -59,6 +60,8 @@ func configure_rng(rng: RandomNumberGenerator) -> void:
 func configure_navigation(nav: Node) -> void:
 	_navigation = nav
 	_navigation_supplied = is_instance_valid(nav)
+	if _navigation_supplied and nav.has_method("postcard_piece_count"):
+		_postcard_pieces_before = nav.call("postcard_piece_count", _slot)
 
 
 func _ready() -> void:
@@ -161,7 +164,7 @@ func _show_completion() -> void:
 	completion_layer.visible = true
 	var terminal: bool = _slot >= _content.slot_count()
 	completion_title.text = tr("level.complete.terminal" if terminal else "level.complete.title")
-	continue_button.disabled = terminal or _continued
+	continue_button.disabled = (terminal and not _new_postcard_piece()) or _continued
 	if not terminal:
 		_content.level_for_slot(_slot + 1)
 	_refresh_actions()
@@ -173,7 +176,10 @@ func _on_continue() -> void:
 		return
 	continue_button.disabled = true
 	var error: Error = ERR_UNAVAILABLE
-	if (
+	if is_instance_valid(_navigation) and _navigation.has_method("continue_campaign"):
+		_continued = true
+		error = _navigation.call("continue_campaign", _slot, _postcard_pieces_before)
+	elif (
 		_content.level_for_slot(_slot + 1) != null
 		and is_instance_valid(_navigation)
 		and _navigation.has_method("go_to_level")
@@ -356,7 +362,9 @@ func _on_completed() -> void:
 		completion_title.text = tr(
 			"level.complete.terminal" if _slot >= _content.slot_count() else "level.complete.title"
 		)
-		continue_button.disabled = _slot >= _content.slot_count() or _continued
+		continue_button.disabled = (
+			(_slot >= _content.slot_count() and not _new_postcard_piece()) or _continued
+		)
 		if _slot < _content.slot_count():
 			_content.level_for_slot(_slot + 1)
 		set_process(true)
@@ -548,4 +556,14 @@ func prepare_navigation() -> Error:
 		progress.complete_level(board.get_level().get_slot())
 		if board.is_complete()
 		else progress.save_level(board)
+	)
+
+
+func _new_postcard_piece() -> bool:
+	return (
+		is_instance_valid(_navigation)
+		and _navigation.has_method("postcard_piece_count")
+		and _navigation.has_method("home_unlocked")
+		and _navigation.call("home_unlocked")
+		and _navigation.call("postcard_piece_count", _slot) > _postcard_pieces_before
 	)

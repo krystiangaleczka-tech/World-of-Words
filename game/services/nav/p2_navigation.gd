@@ -38,27 +38,43 @@ func close() -> void:
 	_nav = null
 
 
-func route(screen: int, slot: int, remember: bool = true) -> Error:
+func route(screen: int, slot: int, remember: bool = true, reveal_latest: bool = false) -> Error:
 	if busy:
 		return ERR_BUSY
 	if not _nav.is_in_group(&"nav_back_owner"):
 		return ERR_UNCONFIGURED
-	if screen == _nav.Screen.LEVEL and not _nav.call("_valid_level", slot):
-		return ERR_INVALID_PARAMETER
-	if _nav.current_screen() == screen and _nav.level_slot() == slot:
-		return OK
 	busy = true
+	var destination: int = slot
+	if screen == _nav.Screen.LEVEL and not _nav.call("_valid_level", slot):
+		destination = -1
+	if screen == _nav.Screen.POSTCARD:
+		var context: Dictionary = _nav.call("_postcard_context", slot)
+		if (
+			context.is_empty()
+			or not _nav.home_unlocked()
+			or int(context.progress.current_slot) < int(context.location.first)
+		):
+			destination = -1
+		else:
+			destination = int(context.location.first)
+	if destination < 0:
+		busy = false
+		return ERR_INVALID_PARAMETER
+	slot = destination
+	if _nav.current_screen() == screen and _nav.level_slot() == slot:
+		busy = false
+		return OK
 	var error: Error = _nav.call("_prepare_leave")
 	if error != OK:
 		busy = false
 		return error
 	if remember and _nav.current_screen() != 0:
 		history.append({"screen": _nav.current_screen(), "slot": _nav.level_slot()})
-	_run_route(screen, slot)
+	_run_route(screen, slot, reveal_latest)
 	return OK
 
 
-func _run_route(screen: int, slot: int) -> void:
+func _run_route(screen: int, slot: int, reveal_latest: bool = false) -> void:
 	_park_toast()
 	var old: Control = _nav.mounted_screen() as Control
 	if old != null and animate and not Tokens.reduced_motion:
@@ -66,7 +82,7 @@ func _run_route(screen: int, slot: int) -> void:
 		_tween = _nav.create_tween().set_trans(Tokens.Ease.IN.x).set_ease(Tokens.Ease.IN.y)
 		_tween.tween_property(old, "modulate:a", 0.0, Tokens.dur(Tokens.Motion.FAST))
 		await _tween.finished
-	_nav.call("_mount_p2", screen, slot)
+	_nav.call("_mount_p2", screen, slot, reveal_latest)
 	var mounted: Control = _nav.mounted_screen() as Control
 	if mounted != null and animate and not Tokens.reduced_motion:
 		var mode: Node.ProcessMode = mounted.process_mode
@@ -117,7 +133,10 @@ func back() -> Error:
 			_nav.go_home() if _nav.home_unlocked() else _nav.go_to_level(_nav.call("_resume_slot"))
 		)
 	var previous: Dictionary = history.pop_back()
-	var error: Error = route(previous.screen, previous.slot, false)
+	var destination: int = previous.screen
+	if screen == _nav.Screen.POSTCARD and destination == _nav.Screen.LEVEL:
+		destination = _nav.Screen.HOME
+	var error: Error = route(destination, previous.slot, false)
 	if error != OK:
 		history.append(previous)
 	return error
