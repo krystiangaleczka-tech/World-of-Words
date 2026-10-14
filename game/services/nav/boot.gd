@@ -21,7 +21,9 @@ func _ready() -> void:
 	var audio_error: Error = Audio.load_cues()
 	if audio_error != OK:
 		push_warning("Sound cues unavailable: %s" % error_string(audio_error))
-	error = Nav.start(self, content_root)
+	error = Nav.configure_p2()
+	if error == OK:
+		error = Nav.start(self, content_root)
 	if error != OK:
 		push_warning("Boot stopped before the first screen: %s" % error_string(error))
 		return

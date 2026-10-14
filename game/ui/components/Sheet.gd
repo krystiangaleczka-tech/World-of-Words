@@ -400,6 +400,9 @@ func _notification(what: int) -> void:
 	elif what == NOTIFICATION_THEME_CHANGED:
 		_refresh_theme()
 	elif what == NOTIFICATION_WM_GO_BACK_REQUEST:
+		for owner: Node in get_tree().get_nodes_in_group(&"nav_back_owner"):
+			if owner.get_viewport() == get_viewport():
+				return
 		handle_back()
 
 

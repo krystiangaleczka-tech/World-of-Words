@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://csi6epqiobm1a"
+
+[deps]
+
+files=["res://locale/nav.pl.translation", "res://locale/nav.en.translation"]
+
+source_file="res://locale/nav.csv"
+dest_files=["res://locale/nav.pl.translation", "res://locale/nav.en.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true
