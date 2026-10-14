@@ -95,7 +95,9 @@ completed ranges/counts without replay; committed stars/pieces ignore pending wr
 writes; independent campaign/postcard completion; correct current-region and terminal selection;
 legacy/missing art and optional art resolver; missing/unloaded services and language mismatch;
 refresh/exit/re-entry cleanup, translation update; all three safe layouts with HC130/PSEUDO35%,
-no horizontal overflow and last location reachable by scroll. Test-only metadata catalog fixture,
+no horizontal overflow and last location reachable by scroll. Native touch-emulation pointer
+   drags starting on passive cards must reach ScrollContainer (this engine consumes emulated
+   mouse events for finger scrolling); no input-grabbing passive card/list containers. Test-only metadata catalog fixture,
 no edits to generated content. Existing Home test changes limited to implemented Journey behavior.
 Full make check, scope/task lint, independent exact-head review and all14CI before merge.
 

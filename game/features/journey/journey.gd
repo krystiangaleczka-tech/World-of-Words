@@ -73,6 +73,7 @@ func _ready() -> void:
 	body.add_child(scroll)
 	_list = VBoxContainer.new()
 	_list.name = "LocationList"
+	_list.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_list.add_theme_constant_override("separation", Tokens.Space.M)
 	scroll.add_child(_list)
@@ -163,6 +164,7 @@ func _add_location(location: Dictionary, state: Dictionary) -> void:
 	var pieces: int = clampi(int(state.get("location_pieces", {}).get(location.id, 0)), 0, total)
 	var card: Card = Card.new()
 	card.name = "Location_" + str(location.id)
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.title_key = (
 		location.name_key if not str(location.name_key).is_empty() else "journey.location.title"
 	)

@@ -20,13 +20,15 @@ Chris's pending gate; desktop evidence does not certify physical devices.
 
 ## Verification
 
-Godot 4.7.2 ed1daf0bf, native X11/Mesa llvmpipe: final Journey 11/11 tests, 182 assertions; existing
+Godot 4.7.2 ed1daf0bf, native X11/Mesa llvmpipe: final Journey 11/11 tests, 185 assertions; existing
 Home suite 9/9 tests, 137 assertions, including its newly implemented Journey route/Back behavior.
 Coverage includes committed values without file writes, missing/unloaded services and language
 mismatch, unsupported piece capacity, multi-level completed ranges, independent campaign/postcard
 completion, terminal/current-region selection, missing/injected art, Back errors, locale and owned
 Card-body refresh/exit/re-entry cleanup. No orphans in either focused native suite. Safe-layout
-assertions pass in COMPACT/REGULAR/TABLET with HC130 and 35% pseudolocalization. Full make check,
+assertions pass in COMPACT/REGULAR/TABLET with HC130 and 35% pseudolocalization. Native
+touch-emulation mouse drags scroll when started over a passive card. The test fails in all three
+classes when the two pointer-pass-through settings are reverted in an isolated project. Full make check,
 exact-head independent review, task/scope and all14CI results are recorded in the PR before merge.
 
 ## Reproduction and matrix

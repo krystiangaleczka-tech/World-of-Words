@@ -325,6 +325,29 @@ func test_all_three_safe_layouts_hc130_pseudo35_scroll_to_last_location() -> voi
 		var heading: Label = screen.find_child("RegionTitle", true, false)
 		assert_true(screen.top_bar.fits or heading.visible)
 		assert_eq(heading.text, screen.tr(screen.top_bar.title_key))
+		var origin: Vector2 = scroll.get_global_rect().get_center()
+		# Godot 4.7 ScrollContainer consumes the mouse events emitted by touch emulation.
+		var touch: InputEventMouseButton = InputEventMouseButton.new()
+		touch.button_index = MOUSE_BUTTON_LEFT
+		touch.button_mask = MOUSE_BUTTON_MASK_LEFT
+		touch.position = origin
+		touch.pressed = true
+		viewport.push_input(touch, true)
+		for step: int in [1, 2]:
+			var drag: InputEventMouseMotion = InputEventMouseMotion.new()
+			drag.button_mask = MOUSE_BUTTON_MASK_LEFT
+			drag.position = origin + Vector2.UP * Tokens.Touch.MIN_TARGET * step
+			drag.relative = Vector2.UP * Tokens.Touch.MIN_TARGET
+			viewport.push_input(drag, true)
+		assert_gt(
+			scroll.scroll_vertical,
+			0,
+			"touch-emulation drag starting on a passive location scrolls the list"
+		)
+		touch.position = origin + Vector2.UP * Tokens.Touch.MIN_TARGET * 2
+		touch.pressed = false
+		touch.button_mask = 0
+		viewport.push_input(touch, true)
 		scroll.ensure_control_visible(last)
 		for frame: int in 2:
 			await get_tree().process_frame
