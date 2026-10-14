@@ -275,6 +275,84 @@ func test_toast_queue_validation_dedupe_fifo_and_route_retention() -> void:
 	assert_false(_toast().visible, "duplicate queued result was suppressed")
 
 
+func test_non_dismissible_sheet_consumes_back_without_persistence_or_background() -> void:
+	_start()
+	var screen: PersistScreen = _b.nav.mounted_screen()
+	var sheet: Sheet = Sheet.new()
+	_b.host.add_child(sheet)
+	sheet.dismissible = false
+	assert_eq(sheet.open(), OK)
+	assert_eq(_b.nav.handle_back(), OK)
+	_b.nav.notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	assert_eq(sheet.state, &"open")
+	assert_eq(_b.nav.mounted_screen(), screen)
+	assert_eq(_b.nav.current_screen(), NAV.Screen.LEVEL)
+	assert_eq(screen.calls, 0)
+	assert_eq(_b.background[0], 0)
+	sheet.dismissible = true
+	assert_eq(_b.nav.handle_back(), OK)
+	assert_eq(sheet.state, &"closed")
+	assert_eq(_b.background[0], 0)
+	assert_eq(_b.nav.handle_back(), OK)
+	assert_eq(_b.background[0], 1)
+
+
+func test_host_exit_cancels_active_entry_tween_and_allows_restart() -> void:
+	_b = _bundle(true)
+	Tokens.reduced_motion = false
+	var existing: Array[Tween] = get_tree().get_processed_tweens()
+	_start()
+	assert_eq(_b.nav.handle_back(), ERR_BUSY)
+	var transitions: Array[Tween] = []
+	for tween: Tween in get_tree().get_processed_tweens():
+		if not existing.has(tween):
+			transitions.append(tween)
+	assert_eq(transitions.size(), 1)
+	watch_signals(_b.nav)
+	_b.host.free()
+	for tween: Tween in transitions:
+		assert_false(tween.is_running(), "host exit kills its unfinished entry transition")
+	await get_tree().process_frame
+	assert_signal_not_emitted(_b.nav, "transition_finished")
+	assert_eq(_b.nav.handle_back(), ERR_UNCONFIGURED)
+	assert_false(_b.nav.is_in_group(NAV.BACK_GROUP))
+	_b.host = Control.new()
+	add_child_autofree(_b.host)
+	Tokens.reduced_motion = true
+	_start()
+	assert_signal_emit_count(_b.nav, "transition_finished", 1)
+	assert_eq(_b.nav.current_screen(), NAV.Screen.LEVEL)
+	assert_eq(_b.nav.mounted_screen().process_mode, Node.PROCESS_MODE_INHERIT)
+
+
+func test_nav_exit_cancels_active_departure_without_mounting_destination() -> void:
+	_b = _bundle(true)
+	Tokens.reduced_motion = false
+	_start()
+	await _b.nav.transition_finished
+	# Leave the emitting signal stack before destroying its owner later in this test.
+	await get_tree().process_frame
+	var existing: Array[Tween] = get_tree().get_processed_tweens()
+	var completions: Array[int] = [0]
+	var record_completion: Callable = func() -> void: completions[0] += 1
+	_b.nav.transition_finished.connect(record_completion)
+	assert_eq(_b.nav.go_to_screen(NAV.Screen.SETTINGS), OK)
+	assert_eq(_b.nav.handle_back(), ERR_BUSY)
+	assert_eq(_b.nav.current_screen(), NAV.Screen.LEVEL)
+	var transitions: Array[Tween] = []
+	for tween: Tween in get_tree().get_processed_tweens():
+		if not existing.has(tween):
+			transitions.append(tween)
+	assert_eq(transitions.size(), 1)
+	_b.nav.transition_finished.disconnect(record_completion)
+	_b.nav.free()
+	for tween: Tween in transitions:
+		assert_false(tween.is_running(), "owner exit cancels its unfinished departure")
+	await get_tree().process_frame
+	assert_eq(completions[0], 0)
+	assert_eq(_b.host.get_child_count(), 0, "no stale destination is mounted after owner exit")
+
+
 func test_native_transition_busy_mount_order_reentrancy_and_settlement() -> void:
 	_b = _bundle(true)
 	Tokens.reduced_motion = false
