@@ -44,7 +44,8 @@ var _config: CONFIG_SCRIPT = null
 var _content: CONTENT_SCRIPT = null
 var _debug_enabled: bool = true
 var _screen_factory: Callable = Callable()
-var _p2: P2Navigation
+# Load after asset import: UI dependencies include generated CSV translations.
+var _p2: RefCounted
 
 
 ## @api Explicitly inject one Clock into the closed autoload list. No domain work.
@@ -227,7 +228,8 @@ func configure_p2(background: Callable = Callable(), animate: bool = true) -> Er
 		return OK
 	if _screen != Screen.BOOT:
 		return ERR_ALREADY_IN_USE
-	_p2 = P2Navigation.new()
+	var navigation_script: Script = load("res://services/nav/p2_navigation.gd") as Script
+	_p2 = navigation_script.new() as RefCounted
 	_p2.configure(self, background, animate)
 	if is_instance_valid(_save):
 		_save.backup_restored.connect(_on_backup_restored)
