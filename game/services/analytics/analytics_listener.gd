@@ -62,7 +62,7 @@ func configure(
 	_events = events
 	_clock = clock
 	_reset_level()
-	_navigation.screen_changed.connect(_on_screen_changed)
+	_navigation.connect("screen_changed", _on_screen_changed)
 	_save.setting_changed.connect(_on_setting_changed)
 	_events.word_found.connect(_on_word_found)
 	_events.bonus_found.connect(_on_bonus_found)
@@ -93,7 +93,7 @@ func configure(
 func _track(event_name: StringName, values: Dictionary = {}) -> void:
 	if _configured and is_instance_valid(_analytics):
 		# Telemetry can fail (full/offline/denied); business operations must still succeed.
-		_analytics.track(event_name, values)
+		_analytics.call("track", event_name, values)
 
 
 func _on_screen_changed(screen: int) -> void:
@@ -103,7 +103,7 @@ func _on_screen_changed(screen: int) -> void:
 	_track(&"nav_screen", {"screen": SCREEN_NAMES[screen]})
 	if screen != 1:
 		return
-	var slot: int = _navigation.level_slot()
+	var slot: int = int(_navigation.call("level_slot"))
 	var level: LevelData = _content.level_for_slot(slot)
 	if level == null or level.get_slot() != slot:
 		return
@@ -114,7 +114,7 @@ func _on_screen_changed(screen: int) -> void:
 
 
 func _active() -> bool:
-	return _slot > 0 and not _level_id.is_empty() and _navigation.current_screen() == 1
+	return _slot > 0 and not _level_id.is_empty() and int(_navigation.call("current_screen")) == 1
 
 
 func _on_word_found(word: String) -> void:
@@ -251,10 +251,10 @@ func _reset_level() -> void:
 func _disconnect() -> void:
 	if not _configured:
 		return
-	if is_instance_valid(_navigation) and _navigation.screen_changed.is_connected(
-		_on_screen_changed
+	if is_instance_valid(_navigation) and _navigation.is_connected(
+		"screen_changed", _on_screen_changed
 	):
-		_navigation.screen_changed.disconnect(_on_screen_changed)
+		_navigation.disconnect("screen_changed", _on_screen_changed)
 	if is_instance_valid(_save) and _save.setting_changed.is_connected(_on_setting_changed):
 		_save.setting_changed.disconnect(_on_setting_changed)
 	if is_instance_valid(_events):
