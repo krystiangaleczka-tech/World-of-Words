@@ -8,7 +8,7 @@ risk: med
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0247]
 touch:
   - docs/qa/T-0248-name-review.md
