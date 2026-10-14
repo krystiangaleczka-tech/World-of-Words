@@ -12,6 +12,9 @@ func _initialize() -> void:
 
 
 func _capture() -> void:
+	for key: String in GalleryShell.OPTIONS:
+		ProjectSettings.set_setting(GalleryShell.PSEUDO + key, GalleryShell.OPTIONS[key])
+	TranslationServer.reload_pseudolocalization()
 	for suffix: String in ["", ".tmp", ".bak"]:
 		DirAccess.remove_absolute(PATH + suffix)
 	_save = load("res://services/save.gd").new()

@@ -29,6 +29,8 @@ var _config: CONFIG
 var _nav: NAV
 var _host: Control
 var _home: ScreenScaffold
+var _old_pseudo: bool
+var _pseudo_settings: Dictionary = {}
 var _old_locale: String
 var _old_motion: bool
 var _old_low: bool
@@ -36,6 +38,14 @@ var _old_low: bool
 
 func before_each() -> void:
 	_clean()
+	_old_pseudo = TranslationServer.pseudolocalization_enabled
+	for key: String in GalleryShell.OPTIONS:
+		var path: String = GalleryShell.PSEUDO + key
+		_pseudo_settings[path] = (
+			ProjectSettings.get_setting(path) if ProjectSettings.has_setting(path) else null
+		)
+		ProjectSettings.set_setting(path, GalleryShell.OPTIONS[key])
+	TranslationServer.reload_pseudolocalization()
 	_old_locale = TranslationServer.get_locale()
 	_old_motion = Tokens.reduced_motion
 	_old_low = OS.low_processor_usage_mode
@@ -68,6 +78,11 @@ func after_each() -> void:
 	if is_instance_valid(_nav):
 		_nav.free()
 	await get_tree().process_frame
+	for path: String in _pseudo_settings:
+		ProjectSettings.set_setting(path, _pseudo_settings[path])
+	_pseudo_settings.clear()
+	TranslationServer.reload_pseudolocalization()
+	TranslationServer.pseudolocalization_enabled = _old_pseudo
 	TranslationServer.set_locale(_old_locale)
 	Tokens.reduced_motion = _old_motion
 	OS.low_processor_usage_mode = _old_low

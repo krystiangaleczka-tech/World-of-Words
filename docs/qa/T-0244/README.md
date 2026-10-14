@@ -28,7 +28,7 @@ Task lint: 180 tasks. Scope, independent exact-head review and CI results are re
 an isolated Godot project as res://capture244.gd. Run the engine with --path <isolated-game>
 --display-driver x11 --rendering-method gl_compatibility --audio-driver Dummy -s res://capture244.gd.
 The script writes only its own user:// capture save and these review PNGs. Fake safe insets are
-24/48 viewport pixels on each side. PL/PSEUDO uses current engine expansion; default100/HC130
+24/48 viewport pixels on each side. PL/PSEUDO uses GalleryShell.OPTIONS (35% expansion, accents, no doubled vowels); default100/HC130
 uses the shipped generated themes. Images are settled static UI, with no device certification claim.
 
 | Capture | View |
