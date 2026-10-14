@@ -51,6 +51,7 @@ func before_each() -> void:
 	_fake = AnalyticsFake.new()
 	Platform.analytics = _fake
 	_clear_storage()
+	DirAccess.make_dir_recursive_absolute(ROOT)
 	_clock = FixedClock.new()
 	_save = SAVE_SCRIPT.new()
 	_save.initialize(_clock)
