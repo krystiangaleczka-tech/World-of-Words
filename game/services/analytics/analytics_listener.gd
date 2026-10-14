@@ -258,26 +258,24 @@ func _disconnect() -> void:
 	if is_instance_valid(_save) and _save.setting_changed.is_connected(_on_setting_changed):
 		_save.setting_changed.disconnect(_on_setting_changed)
 	if is_instance_valid(_events):
-		var connections: Dictionary = {
-			"word_found": _on_word_found,
-			"bonus_found": _on_bonus_found,
-			"already_found": _on_already_found,
-			"invalid_word": _on_invalid_word,
-			"level_completed": _on_level_completed,
-			"hint_used": _on_hint_used,
-			"shuffle_performed": _on_shuffle,
-			"economy_changed": _on_economy_changed,
-			"stars_earned": _on_stars_earned,
-			"postcard_piece_revealed": _on_postcard_piece_revealed,
-			"location_complete": _on_location_complete,
-			"feature_unlocked": _on_feature_unlocked,
-		}
-		for signal_name: String in connections:
-			var source: Signal = _events.get(signal_name)
-			var callback: Callable = connections[signal_name]
-			if source.is_connected(callback):
-				source.disconnect(callback)
+		_disconnect_signal(_events.word_found, _on_word_found)
+		_disconnect_signal(_events.bonus_found, _on_bonus_found)
+		_disconnect_signal(_events.already_found, _on_already_found)
+		_disconnect_signal(_events.invalid_word, _on_invalid_word)
+		_disconnect_signal(_events.level_completed, _on_level_completed)
+		_disconnect_signal(_events.hint_used, _on_hint_used)
+		_disconnect_signal(_events.shuffle_performed, _on_shuffle)
+		_disconnect_signal(_events.economy_changed, _on_economy_changed)
+		_disconnect_signal(_events.stars_earned, _on_stars_earned)
+		_disconnect_signal(_events.postcard_piece_revealed, _on_postcard_piece_revealed)
+		_disconnect_signal(_events.location_complete, _on_location_complete)
+		_disconnect_signal(_events.feature_unlocked, _on_feature_unlocked)
 	_configured = false
+
+
+func _disconnect_signal(source: Signal, callback: Callable) -> void:
+	if source.is_connected(callback):
+		source.disconnect(callback)
 
 
 func _exit_tree() -> void:
