@@ -1,0 +1,11 @@
+keys,pl,en
+home.main.title,Twoja podróż,Your journey
+home.main.play,Graj,Play
+home.main.level_n,Poziom: %s,Level: %s
+home.nav.settings,Ustawienia,Settings
+home.nav.journey,Podróż,Journey
+home.postcard.progress,Fragmenty: %s / %s,Pieces: %s / %s
+home.postcard.unavailable,Pocztówka niedostępna,Postcard unavailable
+home.postcard.pending,Możesz kontynuować grę.,You can continue playing.
+home.state.error,Nie udało się wczytać zawartości,Content could not be loaded
+home.state.try_again,Spróbuj ponownie później.,Please try again later.
