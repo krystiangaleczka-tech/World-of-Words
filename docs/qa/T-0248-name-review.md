@@ -1,14 +1,16 @@
-# T-0248 irreversible-name review packet
+# T-0248 irreversible-name review and inventory
 
-Status: PREPARED; required independent opinion pending. This document is not an Opus review.
+Opinion: PASS for the current irreversible names, with downstream integration requirements below.
+Reviewer: current Codex/GPT assistant, self-authored at the owner's explicit request on 2026-10-14.
+This is neither an Opus opinion nor an independent second opinion.
 
 Audited source: `e3fe760acbb5af3ac549645d817994347b84b670` (merged T-0246; includes T-0247).
 No names, runtime behavior, SDKs, store products or provider settings are changed by this packet.
 
-## Review request
+## Review scope
 
 Read AGENTS.md, PRODUCT core-events/IAP catalog/config requirements, decision0009 and the files
-below. Independently assess reserved names, reporting semantics, sensitive payloads, units,
+below. Assess reserved names, reporting semantics, sensitive payloads, units,
 namespace boundaries and irreversible product IDs. Return PASS or findings with severity,
 source/line and a concrete recommendation. Distinguish blockers from future integration checks.
 Do not certify current vendor/store policy or external account state without actual evidence.
@@ -161,7 +163,7 @@ rules at creation time).
 Price points are Chris's decision per store. Research reference for Poland: Remove Forced Ads around
 24.99 PLN (Words of Wonders charges about 49.99 PLN), small coin pack 4.99 PLN, starter pack 9.99 PLN.
 
-## Preliminary checks and questions for the independent reviewer
+## Reviewed considerations
 
 - Analytics must equal the 47 PRODUCT names exactly. Existing tests cover typed payloads,
   atomic append/copy isolation and runtime/schema pattern parity. These do not establish that
@@ -178,15 +180,53 @@ Price points are Chris's decision per store. Research reference for Poland: Remo
 - The starter pack is a future P3 consumable with per-install gating, not a restorable entitlement.
   Confirm that this intended store identity/gating distinction is acceptable before product creation.
 
-## Required disposition
+## Owner authorization and method
 
-Reviewer identity: pending owner selection / external Opus report.
-Opinion: NOT RECEIVED. Findings: not yet assessed by the required reviewer.
-T-0248 remains blocked; T-0249 and T-0268 dependencies are not satisfied.
+Chris requested "Zrób samemu opinie" after being told T-0248 specifies Opus and the environment
+cannot supply it. That is the explicit selection of this assistant and a checkpoint-specific
+waiver of independence for the primary opinion. Earlier decision0010 is not extended. The fresh
+independent PR-quality review remains separate and does not become an Opus opinion.
+
+Reviewed the exact 24 fingerprinted source files, PRODUCT core-event/IAP requirements, GAME_DESIGN
+config namespace/default table, runtime/schema naming guards and the existing registry tests.
+Compared all 47 unique events with PRODUCT; verified all 35 config entries use their area prefix,
+and all five IAP IDs match the canonical catalog and version/type convention.
+
+Also retrieved Google's official naming reference on 2026-10-14:
+https://support.google.com/analytics/answer/13316687?hl=en, Mobile (Android and iOS) subsection.
+Response SHA-256: `a73d96cb55b56db51ac629e1c8cdf3570cac80027a10b2f7fcd0f38290a1661d`.
+The documented reserved mobile-event/custom-reporting parameter lists match the frozen guard;
+`screen_view` and `ad_impression` are additionally blocked by this project's policy. The current
+reference also reserves the parameter prefix `gtag.`; the allowed snake_case pattern already
+rejects a period. This review is of source and public naming rules, not a provider-account test.
+
+## Opinion and dispositions
+
+PASS for the current event names, IAP IDs and shipped config namespaces. No critical/high/medium
+rename blocker was found. Preserve the names: a gratuitous rename would break future history or
+store identity without solving a present conflict. The following low-severity integration findings
+are requirements for the already-planned downstream tasks, not completed runtime evidence.
+
+| ID / severity | Finding and reason | Disposition / owner task |
+|---|---|---|
+| N1 / low | `iap_purchase_completed` is a custom business event, not proof that Firebase's built-in revenue dashboard will recognize a purchase. `price_currency` avoids a reserved custom reporting dimension; that does not prohibit `currency` in a provider's recommended purchase payload. | Preserve business names/fields. T-0252 must explicitly map purchase semantics, units and provider automatic/custom tracking; T-0271 must prevent duplicate committed grants. Verify exactly one counted purchase before release, without assuming a custom name populates standard revenue reports. |
+| N2 / low | Strict primitive types do not enforce bounded `reason`, `status`, `payment`, `kind`, `trigger` or `error_code` values. Invalid letters are game-input telemetry; the schema alone cannot establish privacy safety. | T-0250/T-0251 and provider producers must enforce bounded codes, game-origin letter strings, consent and no raw exceptions/receipts/identifiers. Keep FR-ANL-04 language/slot/letters; do not treat registry availability as permission to collect. |
+| N3 / low | Durable meta/economy names and descriptions are suitable, but names alone do not specify once-only emission or distinguish a cumulative `pieces` count from a newly revealed delta. | T-0251 must derive side effects from committed progression, emit once per committed effect and retain `pieces` as the documented persisted count; analytics must not award progress. T-0252 must avoid double-counting automatic ad events as custom `ad_shown`. |
+| N4 / low | `nc.remove_forced_ads.v1` clearly identifies a permanent, restorable nonconsumable; the coin IDs correctly identify consumables. The future starter-pack rule is per install, so a new install may qualify again. This is consistent with PRODUCT, but is not an account-wide once-ever promise. | Keep all five IDs. T-0268 approves catalog/price points; T-0272/T-0273 validate actual store product types/ID rules before creation. Preserve the declared P3 per-install policy in its future implementation; no products are created or prices approved here. |
+| N5 / low | All 35 shipped dotted keys have unique area ownership and match the GAME_DESIGN table. `analytics.queue.max_events`, `config.remote.timeout_ms` and further P3 pack/streak keys are documented future names, not currently loaded entries. All shipped remote flags are false. | T-0250 registers its queue key and T-0254/T-0255 register remote-config requirements in bounded scope; future P3 tasks add their keys without renaming current ones. Review remote eligibility explicitly; consent/unlock boundaries must not become remotely weakened. |
+
+No runtime or canonical-name remediation is needed in this documentation task. No assumption that
+store products exist, SDK integration works, consent is certified or release is approved is made.
+T-0248's named-reviewer checkpoint is satisfied by the explicit owner-selected self-authored opinion;
+T-0249/T-0268 may use its merged completion only after ordinary PR review and CI. Their other
+prerequisites and their actual provider/store work remain unchanged.
+
 T-0247 was already merged as d16fa90; its status is reconciled to done in this documentation task.
 
 ## Validation
 
-Inventory verified against all 24 source hashes and all47/35 JSON entries. Registry validation
-passes (35 config keys,47 events); focused analytics/tool registry tests pass under the repository
-pytest configuration. Full make check is in progress. No external provider/store claims.
+All 24 source hashes,47 event definitions and35 config entries verified against the unchanged
+source. Existing full `make check` on this same production/test tree passed:612/612 Godot tests,
+329 pipeline tests,500 tools tests, registries/content/UI/token/generated-theme checks. The later
+changes are Markdown report/task updates only; task/scope/inventory validation is rerun for the final
+candidate and fresh exact-head PR-quality review/all14CI remain required before merge.
