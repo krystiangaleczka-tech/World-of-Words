@@ -530,3 +530,22 @@ func _finish_completion_motion() -> void:
 	_completion_motion = null
 	completion_layer.position = _completion_rest
 	completion_layer.modulate = Color.WHITE
+
+
+## @api Persist the current campaign board before Nav destroys its screen or backgrounds.
+func prepare_navigation() -> Error:
+	if controller == null or progress == null:
+		return ERR_UNCONFIGURED
+	var board: BoardState = controller.get_board()
+	if board == null:
+		return ERR_UNCONFIGURED
+	if (
+		board.get_level().get_slot() != progress.current_slot()
+		and not progress.atomic_has_pending()
+	):
+		return OK
+	return (
+		progress.complete_level(board.get_level().get_slot())
+		if board.is_complete()
+		else progress.save_level(board)
+	)
