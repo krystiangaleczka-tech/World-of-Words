@@ -24,6 +24,9 @@ var _content: CONTENT_SCRIPT = null
 var _event_bus: EVENTS_SCRIPT = null
 var _queue: AnalyticsQueue = null
 var _buckets: Dictionary = {}
+var _remote_bucket_properties_enabled: bool = false
+var _bucket_property_sent: bool = false
+var _published_bucket_property: String = ""
 
 
 ## @api Load sorted area JSON files atomically; reject reload while events are queued.
@@ -117,10 +120,14 @@ func start_runtime(
 
 
 ## @api Replace bucket context for subsequently accepted events.
-func set_experiment_buckets(buckets: Dictionary) -> Error:
+func set_experiment_buckets(buckets: Dictionary, remote: bool = false) -> Error:
 	if not _buckets_valid(buckets):
 		return ERR_INVALID_PARAMETER
 	_buckets = buckets.duplicate(true)
+	if remote:
+		_remote_bucket_properties_enabled = true
+	if _mode == Mode.RUNTIME and _consent == ConsentState.ALLOWED:
+		_publish_bucket_properties()
 	return OK
 
 
@@ -336,9 +343,28 @@ func _delivery_params(event: Dictionary) -> Dictionary:
 func _on_consent_changed(analytics_allowed: bool) -> void:
 	_consent = ConsentState.ALLOWED if analytics_allowed else ConsentState.DENIED
 	if analytics_allowed:
+		_publish_bucket_properties()
 		flush()
 	else:
 		_drop_pending()
+
+
+## Provider user properties are consent-gated just like event delivery.
+func _publish_bucket_properties() -> void:
+	if (
+		_mode != Mode.RUNTIME
+		or _consent != ConsentState.ALLOWED
+		or not _remote_bucket_properties_enabled
+	):
+		return
+	var encoded: String = (
+		JSON.stringify(_buckets, "", true, true) if not _buckets.is_empty() else ""
+	)
+	if _bucket_property_sent and encoded == _published_bucket_property:
+		return
+	Platform.analytics.set_user_property("experiment_buckets", encoded)
+	_published_bucket_property = encoded
+	_bucket_property_sent = true
 
 
 func _drop_pending() -> Error:

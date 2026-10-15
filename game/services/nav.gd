@@ -112,6 +112,8 @@ func start(host: Node, content_root: String = "res://content") -> Error:
 	if error == OK:
 		# Analytics is nonessential: a damaged telemetry queue must not block offline gameplay.
 		Analytics.start_runtime(_save, _config, _content)
+		# Remote config is optional: cache first, HTTPS fetching only with a configured endpoint.
+		_config.start_remote(str(_save.get_section(&"meta").get("install_id", "")), Analytics)
 	if _p2 != null:
 		_p2.busy = false
 	if error == OK:
