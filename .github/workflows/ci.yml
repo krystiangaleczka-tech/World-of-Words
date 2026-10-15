@@ -190,6 +190,14 @@ jobs:
       - name: Verify clean-cache generated theme outputs
         run: make theme-check
 
+  remote-config-validation:
+    name: remote-config-validation
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate remote config before publishing
+        run: python3 tools/validate_remote_config.py
+
   registries:
     name: registries
     runs-on: ubuntu-24.04
