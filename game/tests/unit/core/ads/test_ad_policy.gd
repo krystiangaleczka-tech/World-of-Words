@@ -108,8 +108,11 @@ func test_missing_malformed_time_and_config_fail_closed() -> void:
 	assert_false(AdPolicy.should_show_interstitial(state, config, 1000))
 	config = _config()
 	for key: String in [
-		"completed_slot", "last_interstitial_slot", "last_interstitial_seconds",
-		"session_start_seconds", "last_purchase_slot"
+		"completed_slot",
+		"last_interstitial_slot",
+		"last_interstitial_seconds",
+		"session_start_seconds",
+		"last_purchase_slot"
 	]:
 		var bad: Dictionary = state.duplicate()
 		bad[key] = "bad"
