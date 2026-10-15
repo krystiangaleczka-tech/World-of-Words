@@ -90,7 +90,7 @@ func _shot(layout: String, pseudo: bool, hc: bool, art: bool, state: String) -> 
 		await process_frame
 	RenderingServer.force_draw(false)
 	var path: String = (
-		"/workspace/World-of-Words/docs/qa/T-0244/home_%s_%s_%s_%s.png"
+		ProjectSettings.globalize_path("res://../docs/qa/T-0244/home_%s_%s_%s_%s.png")
 		% [layout, "PSEUDO" if pseudo else "PL", "hc130" if hc else "default100", state]
 	)
 	assert(viewport.get_texture().get_image().save_png(path) == OK)

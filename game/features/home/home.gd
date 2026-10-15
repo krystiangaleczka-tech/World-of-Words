@@ -14,6 +14,7 @@ var _catalog: LocaleCatalog = LocaleCatalog.new()
 var _surface: PanelContainer
 var _title: Label
 var _progress: Label
+var _progress_bar: CatalogProgressBar
 var _next: Label
 var _status: Label
 var _play: PrimaryButton
@@ -68,6 +69,7 @@ func _ready() -> void:
 	top_bar = TopBar.new()
 	top_bar.configure([_coins], "", [_settings])
 	_coins.autowrap_mode = TextServer.AUTOWRAP_OFF
+	_coins.expand_icon = false
 	var scroll: ScrollContainer = ScrollContainer.new()
 	scroll.name = "Content"
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -84,6 +86,7 @@ func _ready() -> void:
 	_surface.add_child(column)
 	_refresh_surface()
 	_title = _label(column, "Location", &"Title")
+	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_postcard = LocationPostcard.new()
 	_postcard.name = "Postcard"
 	column.add_child(_postcard)
@@ -91,8 +94,13 @@ func _ready() -> void:
 	_empty.name = "MissingArt"
 	_empty.configure(&"empty", "home.art.title", "home.art.body")
 	column.add_child(_empty)
+	_progress_bar = CatalogProgressBar.new()
+	_progress_bar.name = "PostcardProgress"
+	column.add_child(_progress_bar)
 	_progress = _label(column, "Progress", &"Caption")
-	_next = _label(column, "NextLevel", &"Subtitle")
+	_progress.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_next = _label(column, "NextLevel", &"Caption")
+	_next.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_play = PrimaryButton.new()
 	_play.name = "Play"
 	_play.text_key = "home.main.play"
@@ -203,6 +211,8 @@ func _refresh_copy() -> void:
 	_title.text = tr(_location_key)
 	_progress.text = tr("home.main.progress") % [_pieces, _total]
 	_progress.visible = _total > 0 and not _postcard.visible
+	_progress_bar.visible = _total > 0
+	_progress_bar.set_value(float(_pieces) / _total if _total > 0 else 0.0, false)
 	_next.text = tr("home.main.level_n") % _slot
 	_next.visible = _slot > 0 and _slot <= _content_count()
 	_status.text = tr(_status_key) if not _status_key.is_empty() else ""
@@ -214,7 +224,9 @@ func _refresh_copy() -> void:
 
 func _refresh_surface() -> void:
 	if is_instance_valid(_surface):
-		_surface.add_theme_stylebox_override("panel", CatalogSurface.panel(self))
+		_surface.add_theme_stylebox_override(
+			"panel", CatalogSurface.panel(self, Tokens.Space.S, Tokens.Radius.M, &"NONE")
+		)
 
 
 func _notification(what: int) -> void:

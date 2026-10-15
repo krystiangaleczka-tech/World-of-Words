@@ -275,3 +275,21 @@ func test_three_layout_classes_hc130_pseudo_safe_scroll_and_no_horizontal_overfl
 		assert_true(scroll.get_global_rect().encloses(play.get_global_rect()))
 		assert_gte(play.size.y, float(Tokens.Touch.MIN_TARGET))
 	TranslationServer.set_pseudolocalization_enabled(false)
+
+
+func test_passive_progress_and_centered_copy_follow_committed_pieces() -> void:
+	var primary: String = FileAccess.get_file_as_string(PATH)
+	assert_eq((_control("PostcardProgress") as CatalogProgressBar).value, 0.75)
+	assert_eq((_control("Location") as Label).horizontal_alignment, HORIZONTAL_ALIGNMENT_CENTER)
+	assert_eq((_control("Progress") as Label).horizontal_alignment, HORIZONTAL_ALIGNMENT_CENTER)
+	assert_eq((_control("NextLevel") as Label).horizontal_alignment, HORIZONTAL_ALIGNMENT_CENTER)
+	var home: ScreenScaffold = _preview(_art())
+	var bar: CatalogProgressBar = home.find_child("PostcardProgress", true, false)
+	assert_true(bar.visible)
+	assert_eq(bar.value, 0.75)
+	assert_false(bar.filling)
+	assert_eq(FileAccess.get_file_as_string(PATH), primary)
+	_write_progress(2, 4)
+	home.refresh()
+	assert_eq(bar.value, 1.0)
+	assert_true((bar.find_child("Complete", true, false) as Control).visible)

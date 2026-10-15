@@ -330,3 +330,19 @@ func test_rewards_gallery_inventory_scroll_and_large_pseudo_fit() -> void:
 	for card: LocationPostcard in screen.find_children("*", "LocationPostcard", true, false):
 		assert_lte(card.size.x, screen.body.size.x)
 	gallery.free()
+
+
+func test_full_postcard_light_frame_and_shadow_refresh_when_switching_presets() -> void:
+	var card: LocationPostcard = _card(_viewport(), 4, 2)
+	for mode: StringName in [&"full", &"thumb", &"full"]:
+		assert_eq(card.configure(card.texture, 4, 2, mode), OK)
+		var panel: StyleBoxFlat = card.get_theme_stylebox("panel") as StyleBoxFlat
+		assert_eq(
+			panel.content_margin_left, float(Tokens.Space.S if mode == &"full" else Tokens.Space.M)
+		)
+		assert_eq(panel.content_margin_right, panel.content_margin_left)
+		assert_eq(
+			panel.shadow_size, Tokens.Elevation.LOW if mode == &"full" else Tokens.Elevation.MID
+		)
+		assert_eq(card.pieces_revealed, 2)
+		assert_eq(card.state, &"in_progress")
