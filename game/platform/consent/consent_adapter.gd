@@ -4,6 +4,8 @@ extends RefCounted
 
 signal consent_resolved(state: State)
 signal att_resolved(status: AttStatus)
+## @api Provider-verified analytics purpose decision; UMP or ATT state alone never implies it.
+signal analytics_purpose_resolved(allowed: bool)
 
 enum State { UNKNOWN, REQUIRED, NOT_REQUIRED, OBTAINED }
 enum AttStatus { UNKNOWN, NOT_DETERMINED, RESTRICTED, DENIED, AUTHORIZED }

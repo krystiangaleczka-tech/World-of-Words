@@ -3,6 +3,8 @@ extends RefCounted
 ## @api ads adapter contract; signals report outcomes, never gameplay grants.
 
 signal rewarded_loaded
+## @api An interstitial is loaded and can be shown; Monetization tracks it until the next show.
+signal interstitial_loaded
 signal reward_earned
 signal ad_closed
 signal ad_failed(reason: String)
