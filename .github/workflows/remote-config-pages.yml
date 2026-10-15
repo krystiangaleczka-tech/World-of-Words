@@ -1,0 +1,44 @@
+name: remote-config-pages
+
+# Only repository owners trigger publication after the GitHub Pages source is enabled.
+# This workflow never runs on a pull request, and never deploys a non-main commit.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: remote-config-pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reject malformed or unauthorized tuning
+        run: python3 tools/validate_remote_config.py
+      - name: Stage only the public remote config artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _site/remote
+          cp remote/config.json _site/remote/config.json
+          touch _site/.nojekyll
+          printf '%s\n' '<!doctype html><html lang="en"><meta charset="utf-8"><title>World of Words Remote Config</title><body><p>Remote configuration is served at <a href="remote/config.json">remote/config.json</a>.</p></body></html>' > _site/index.html
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - name: Publish to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
