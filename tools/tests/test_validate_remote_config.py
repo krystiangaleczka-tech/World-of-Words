@@ -69,8 +69,14 @@ def valid_experiment() -> dict[str, object]:
 
 def test_shipped_document_passes() -> None:
     result = subprocess.run(
-        [sys.executable, str(SCRIPT), "--config", str(ROOT / "remote/config.json"),
-         "--registry-dir", str(ROOT / "game/data/config")],
+        [
+            sys.executable,
+            str(SCRIPT),
+            "--config",
+            str(ROOT / "remote/config.json"),
+            "--registry-dir",
+            str(ROOT / "game/data/config"),
+        ],
         capture_output=True,
         text=True,
         check=False,
@@ -135,23 +141,22 @@ def test_rejects_unsafe_overrides(
         },
         {
             **DEFAULT,
-            "experiments": [
-                {"id": "Bad-Name", "variants": [{"id": "control", "weight": 100}]}
-            ],
+            "experiments": [{"id": "Bad-Name", "variants": [{"id": "control", "weight": 100}]}],
+        },
+        {
+            **DEFAULT,
+            "experiments": [{"id": "ad_frequency", "variants": [{"id": "control", "weight": 99}]}],
         },
         {
             **DEFAULT,
             "experiments": [
-                {"id": "ad_frequency", "variants": [{"id": "control", "weight": 99}]}
-            ],
-        },
-        {
-            **DEFAULT,
-            "experiments": [
-                {"id": "ad_frequency", "variants": [
-                    {"id": "control", "weight": True},
-                    {"id": "control", "weight": 100},
-                ]}
+                {
+                    "id": "ad_frequency",
+                    "variants": [
+                        {"id": "control", "weight": True},
+                        {"id": "control", "weight": 100},
+                    ],
+                }
             ],
         },
     ],
@@ -172,14 +177,11 @@ def test_invalid_envelopes_or_experiments_fail(
         "not json",
     ],
 )
-def test_malformed_or_duplicate_json_fails(
-    workspace: tuple[Path, Path], content: str
-) -> None:
+def test_malformed_or_duplicate_json_fails(workspace: tuple[Path, Path], content: str) -> None:
     config, registry = workspace
     config.write_text(content, encoding="utf-8")
     result = subprocess.run(
-        [sys.executable, str(SCRIPT), "--config", str(config),
-         "--registry-dir", str(registry)],
+        [sys.executable, str(SCRIPT), "--config", str(config), "--registry-dir", str(registry)],
         capture_output=True,
         text=True,
         check=False,
@@ -191,8 +193,7 @@ def test_oversized_remote_document_is_rejected(workspace: tuple[Path, Path]) -> 
     config, registry = workspace
     config.write_bytes(b" " * 65537)
     result = subprocess.run(
-        [sys.executable, str(SCRIPT), "--config", str(config),
-         "--registry-dir", str(registry)],
+        [sys.executable, str(SCRIPT), "--config", str(config), "--registry-dir", str(registry)],
         capture_output=True,
         text=True,
         check=False,

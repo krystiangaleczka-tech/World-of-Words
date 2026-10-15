@@ -79,17 +79,11 @@ def _valid_value(value: Any, definition: dict[str, Any]) -> bool:
     if kind in ("int", "float"):
         if not math.isfinite(value) or abs(value) > 9007199254740991:
             return False
-        return (
-            isinstance(bounds, list)
-            and len(bounds) == 2
-            and bounds[0] <= value <= bounds[1]
-        )
+        return isinstance(bounds, list) and len(bounds) == 2 and bounds[0] <= value <= bounds[1]
     return bounds is None
 
 
-def validate_document(
-    document: Any, definitions: dict[str, dict[str, Any]]
-) -> list[str]:
+def validate_document(document: Any, definitions: dict[str, dict[str, Any]]) -> list[str]:
     errors: list[str] = []
     if not isinstance(document, dict):
         return ["remote config must be an object"]
@@ -160,9 +154,7 @@ def validate_document(
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, default=Path("remote/config.json"))
-    parser.add_argument(
-        "--registry-dir", type=Path, default=Path("game/data/config")
-    )
+    parser.add_argument("--registry-dir", type=Path, default=Path("game/data/config"))
     args = parser.parse_args(argv)
     try:
         document = read_json(args.config)
