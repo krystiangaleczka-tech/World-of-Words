@@ -52,10 +52,7 @@ func _unlocks_monotonic(values: Dictionary) -> bool:
 		var following: int = int(values[str(UNLOCK_KEYS[index + 1])])
 		if previous > following:
 			return false
-	return (
-		int(values["unlocks.daily_slot"])
-		< int(values["ads.interstitial.first_slot"])
-	)
+	return int(values["unlocks.daily_slot"]) < int(values["ads.interstitial.first_slot"])
 
 
 func test_shipped_config_obeys_consent_and_onboarding_constraints() -> void:
