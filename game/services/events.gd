@@ -27,3 +27,6 @@ signal stars_earned(language: String, slot: int, stars: int)
 signal postcard_piece_revealed(language: String, location_id: String, pieces: int)
 signal location_complete(language: String, location_id: String)
 signal feature_unlocked(language: String, feature: StringName, slot: int)
+
+## @api A durable onboarding step (OnboardingState step ids); analytics maps it to onboarding_step.
+signal onboarding_step_reached(step: int)

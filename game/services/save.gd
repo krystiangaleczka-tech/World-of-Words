@@ -191,6 +191,60 @@ func set_setting(key: StringName, value: Variant) -> Error:
 	return flush()
 
 
+## @api Copied Save-owned onboarding meta: {coach_marks_seen: Array, onboarding_step: int}.
+func onboarding_meta() -> Dictionary:
+	if not _loaded:
+		return {}
+	var meta: Dictionary = _data["meta"]
+	return {
+		"coach_marks_seen": (meta["coach_marks_seen"] as Array).duplicate(),
+		"onboarding_step": meta["onboarding_step"]
+	}
+
+
+## @api Durably record one coach mark id; already seen is OK without a write.
+func mark_coach_seen(feature: StringName) -> Error:
+	if not _loaded:
+		return ERR_UNCONFIGURED
+	if feature.is_empty():
+		return ERR_INVALID_PARAMETER
+	if str(feature) in _data["meta"]["coach_marks_seen"]:
+		return OK
+	var candidate: Dictionary = _data.duplicate(true)
+	candidate["meta"]["coach_marks_seen"].append(str(feature))
+	return _write_meta(candidate)
+
+
+## @api Durably raise the onboarding step; an equal or lower step is OK without a write.
+func reach_onboarding_step(step: int) -> Error:
+	if not _loaded:
+		return ERR_UNCONFIGURED
+	if step < 0:
+		return ERR_INVALID_PARAMETER
+	if step <= int(_data["meta"]["onboarding_step"]):
+		return OK
+	var candidate: Dictionary = _data.duplicate(true)
+	candidate["meta"]["onboarding_step"] = step
+	return _write_meta(candidate)
+
+
+# Meta writes flush immediately; a failed write restores the previous in-memory document.
+func _write_meta(candidate: Dictionary) -> Error:
+	if writes_blocked():
+		return ERR_BUSY
+	if not _valid_document(candidate):
+		return ERR_INVALID_DATA
+	var previous: Dictionary = _data
+	var was_dirty: bool = _dirty
+	_data = _canonical_document(candidate)
+	_dirty = true
+	var error: Error = flush()
+	if error != OK:
+		_data = previous
+		_dirty = was_dirty
+	return error
+
+
 ## @api Synchronous durable write; success is required before a caller finishes a transaction.
 func flush() -> Error:
 	if writes_blocked():
