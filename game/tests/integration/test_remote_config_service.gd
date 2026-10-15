@@ -3,6 +3,11 @@ extends GutTest
 const CONFIG_SCRIPT: Script = preload("res://services/config.gd")
 const ANALYTICS_SCRIPT: Script = preload("res://services/analytics.gd")
 const CACHE: String = "user://t0255-config-cache.json"
+const SAVE_PATH: String = "user://t0255-save.json"
+const QUEUE_PATH: String = "user://t0255-analytics-queue.json"
+const SAVE_SCRIPT: Script = preload("res://services/save.gd")
+const CONTENT_SCRIPT: Script = preload("res://services/content.gd")
+const EVENTS_SCRIPT: Script = preload("res://services/events.gd")
 const INSTALL: String = "123e4567-e89b-42d3-a456-426614174000"
 const TUNABLE: StringName = &"ads.interstitial.min_levels_between"
 
@@ -32,9 +37,10 @@ func after_each() -> void:
 
 
 func _clear() -> void:
-	for suffix: String in ["", ".tmp", ".bak"]:
-		if FileAccess.file_exists(CACHE + suffix):
-			DirAccess.remove_absolute(CACHE + suffix)
+	for path: String in [CACHE, SAVE_PATH, QUEUE_PATH]:
+		for suffix: String in ["", ".tmp", ".bak"]:
+			if FileAccess.file_exists(path + suffix):
+				DirAccess.remove_absolute(path + suffix)
 
 
 func _document(value: int = 5) -> Dictionary:
@@ -135,7 +141,38 @@ func test_assignments_are_tracked_using_registered_analytics_event() -> void:
 
 
 func test_https_endpoint_validation_does_not_block_cache_only_boot() -> void:
-	assert_eq(_config.start_remote(INSTALL, _analytics, "http://insecure", CACHE), ERR_INVALID_PARAMETER)
+	assert_eq(
+		_config.start_remote(INSTALL, _analytics, "http://insecure", CACHE),
+		ERR_INVALID_PARAMETER
+	)
 	assert_eq(_config.start_remote(INSTALL, _analytics, "", CACHE), OK)
 	assert_eq(_config.get_int(&"config.remote.timeout_ms"), 3000)
 	assert_eq(_config.start_remote(INSTALL, _analytics, "", CACHE), ERR_ALREADY_IN_USE)
+
+
+func test_remote_bucket_user_property_requires_analytics_consent() -> void:
+	var save: SAVE_SCRIPT = SAVE_SCRIPT.new()
+	save.initialize(Clock.new())
+	save.configure(SaveStorage.new(SAVE_PATH), func() -> String: return INSTALL)
+	add_child_autofree(save)
+	assert_eq(save.load(), OK)
+	var content: CONTENT_SCRIPT = CONTENT_SCRIPT.new()
+	add_child_autofree(content)
+	assert_eq(content.load_manifest("pl", "res://tests/fixtures/content"), OK)
+	var events: EVENTS_SCRIPT = EVENTS_SCRIPT.new()
+	add_child_autofree(events)
+	var runtime: ANALYTICS_SCRIPT = ANALYTICS_SCRIPT.new()
+	add_child_autofree(runtime)
+	var queue: AnalyticsQueue = AnalyticsQueue.new(SaveStorage.new(QUEUE_PATH))
+	assert_eq(runtime.start_runtime(save, _config, content, events, queue), OK)
+	assert_eq(_config.start_remote(INSTALL, runtime, "", CACHE), OK)
+	assert_eq(_config.accept_remote_document(_document()), OK)
+	assert_eq(_fake.calls.entries.size(), 0)
+	events.consent_changed.emit(false)
+	assert_eq(_fake.calls.entries.size(), 0)
+	events.consent_changed.emit(true)
+	assert_eq(_fake.calls.entries.size(), 1)
+	assert_eq(_fake.calls.entries[0]["arguments"][0], "experiment_buckets")
+	assert_true(
+		str(_fake.calls.entries[0]["arguments"][1]).contains("ad_frequency")
+	)

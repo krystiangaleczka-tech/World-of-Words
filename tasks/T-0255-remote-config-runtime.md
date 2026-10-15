@@ -66,6 +66,7 @@ File: game/tests/integration/test_remote_config_service.gd
 - Backup recovery returns the last valid document if primary is corrupt.
 - Experiment assignments use the existing event schema and deterministic bucket.
 - An empty endpoint supports cache-only boot; HTTP is not accepted.
+- Buckets are transmitted as a user property only after explicit analytics consent.
 
 ## Acceptance
 - Existing Analytics fake calls unaffected by legacy buckets.

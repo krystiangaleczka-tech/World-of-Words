@@ -89,7 +89,7 @@ func start_remote(
 	return OK
 
 
-## @api Validate and atomically cache a downloaded document; rejected candidates preserve live values.
+## @api Validate and cache downloads atomically, without discarding earlier valid values.
 ## This method also permits deterministic integration tests without external HTTP.
 func accept_remote_document(document: Dictionary) -> Error:
 	if not _remote_started:
@@ -191,7 +191,14 @@ func _normalize_json_numbers(document: Dictionary) -> Dictionary:
 
 
 func _integral(value: Variant) -> bool:
-	return value is float and is_finite(value) and abs(value) <= 9007199254740991.0 and value == floor(value)
+	if not value is float:
+		return false
+	var number: float = float(value)
+	return (
+		is_finite(number)
+		and abs(number) <= 9007199254740991.0
+		and number == floor(number)
+	)
 
 
 func _activate(checked: Dictionary) -> void:
