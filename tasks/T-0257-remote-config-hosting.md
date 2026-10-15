@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: med
 ui: none
-status: blocked
+status: review
 depends_on: [T-0254]
 touch:
   - remote/config.json
@@ -32,7 +32,8 @@ on-demand path to publish only this validated document as a public static asset.
 - GitHub Pages custom workflows publish a static artifact from an authorized environment.
 
 ## Current state
-- T-0254 contract exists on t/0254-remote-config-contract, still a draft PR #182.
+- T-0254 contract (#182), T-0255 runtime (#183), and T-0256 timeline tests (#184)
+  are merged on main.
 - Only four ad cooldown/grace fields are remotely tunable; no consent/unlocks.
 - CI is .github/workflows/ci.yml. There is no remote/config.json or Pages workflow.
 - No deployed public URL is approved; T-0255 starts with an empty endpoint.
@@ -73,11 +74,11 @@ File: tools/tests/test_validate_remote_config.py
 - No deployment from a PR; manual deploy restricted to main.
 - Owner enables Pages > Source: GitHub Actions, restricts github-pages
   environment to main, reviews public URL and triggers manual publication.
-- After #182 merges, this branch is rebased onto main and reviewed independently.
+- Branch is rebased onto current main and reviewed independently before merge.
 
 ## Escalation
-S1: T-0254 remains draft/unmerged. The owner's recurring direction to proceed
-is implemented as a stacked draft PR based on the T-0254 branch, not a merge.
+S1 resolved: T-0254 is merged. The owner requested the next roadmap task;
+the existing PR #185 was mechanically rebased onto current main without conflicts.
 S11: Hosting choice is GitHub Pages for zero external infrastructure; no
 network URL is activated or deployed. Owner must authorize final public
 publication and Pages settings. S7: A new workflow is expressly required by

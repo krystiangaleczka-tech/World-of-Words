@@ -35,7 +35,8 @@ def reject_constant(value: str) -> None:
 
 
 def read_json(path: Path, limit: int = MAX_BYTES) -> Any:
-    data = path.read_bytes()
+    with path.open("rb") as source:
+        data = source.read(limit + 1)
     if len(data) > limit:
         raise ValueError(f"file exceeds {limit} bytes")
     return json.loads(
@@ -77,7 +78,7 @@ def _valid_value(value: Any, definition: dict[str, Any]) -> bool:
         return False
     bounds = definition.get("range")
     if kind in ("int", "float"):
-        if not math.isfinite(value) or abs(value) > 9007199254740991:
+        if abs(value) > 9007199254740991 or not math.isfinite(value):
             return False
         return isinstance(bounds, list) and len(bounds) == 2 and bounds[0] <= value <= bounds[1]
     return bounds is None

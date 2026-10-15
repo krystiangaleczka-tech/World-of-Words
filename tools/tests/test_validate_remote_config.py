@@ -109,6 +109,7 @@ def test_valid_override_and_weighted_experiment(workspace: tuple[Path, Path]) ->
         ("ads.interstitial.min_levels_between", 6.0, "invalid type or range"),
         ("ads.interstitial.min_levels_between", 0, "invalid type or range"),
         ("ads.interstitial.min_levels_between", 21, "invalid type or range"),
+        ("ads.interstitial.min_levels_between", 10**400, "invalid type or range"),
     ],
 )
 def test_rejects_unsafe_overrides(
@@ -126,11 +127,13 @@ def test_rejects_unsafe_overrides(
     [
         [],
         {},
+        {"version": 1, "values": {}},
         {"version": True, "values": {}, "experiments": []},
         {"version": 2, "values": {}, "experiments": []},
         {**DEFAULT, "extra": "not in v1"},
         {**DEFAULT, "values": []},
         {**DEFAULT, "experiments": {}},
+        {**DEFAULT, "experiments": [None]},
         {**DEFAULT, "experiments": [valid_experiment()] * 33},
         {
             **DEFAULT,
@@ -143,6 +146,17 @@ def test_rejects_unsafe_overrides(
             **DEFAULT,
             "experiments": [{"id": "Bad-Name", "variants": [{"id": "control", "weight": 100}]}],
         },
+        {**DEFAULT, "experiments": [{"id": "x", "variants": []}]},
+        {
+            **DEFAULT,
+            "experiments": [
+                {"id": "x", "variants": [{"id": str(i), "weight": 1} for i in range(101)]}
+            ],
+        },
+        {**DEFAULT, "experiments": [{"id": "x", "variants": [{"id": "", "weight": 100}]}]},
+        {**DEFAULT, "experiments": [{"id": "x", "variants": [{"id": "a", "weight": 0}]}]},
+        {**DEFAULT, "experiments": [{"id": "x", "variants": [{"id": "a", "weight": 101}]}]},
+        {**DEFAULT, "experiments": [{"id": "x", "variants": [{"id": "a", "weight": 100.0}]}]},
         {
             **DEFAULT,
             "experiments": [{"id": "ad_frequency", "variants": [{"id": "control", "weight": 99}]}],
