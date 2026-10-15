@@ -3,6 +3,7 @@ extends ServiceStub
 
 const ANALYTICS_SCRIPT: Script = preload("res://services/analytics.gd")
 const CACHE_PATH: String = "user://config_cache.json"
+const MAX_REMOTE_BYTES: int = 262144
 
 var _registry: ConfigRegistry = ConfigRegistry.new()
 var _overrides: Dictionary = {}
@@ -11,10 +12,16 @@ var _analytics: ANALYTICS_SCRIPT = null
 var _install_id: String = ""
 var _remote_started: bool = false
 var _request: HTTPRequest = null
+var _cache_primary_valid: bool = false
+var _cache_source: String = ""
+var _updating: bool = false
 
 
 ## @api Load sorted prefix JSON files atomically. Any invalid file keeps the prior registry.
+# gdlint: disable=max-returns
 func load(directory: String = "res://data/config") -> Error:
+	if _updating:
+		return ERR_BUSY
 	var folder: DirAccess = DirAccess.open(directory)
 	if folder == null:
 		return ERR_CANT_OPEN
@@ -49,6 +56,8 @@ func load(directory: String = "res://data/config") -> Error:
 	_analytics = null
 	_cache = null
 	_install_id = ""
+	_cache_primary_valid = false
+	_cache_source = ""
 	return OK
 
 
@@ -74,13 +83,15 @@ func start_remote(
 		return ERR_INVALID_PARAMETER
 	_install_id = install_id
 	_analytics = analytics
-	_cache = SaveStorage.new(cache_path)
+	_cache = _create_cache(cache_path)
 	_remote_started = true
 	_restore_cache()
 	if endpoint.is_empty():
 		return OK
 	_request = HTTPRequest.new()
 	_request.timeout = float(get_int(&"config.remote.timeout_ms")) / 1000.0
+	_request.body_size_limit = MAX_REMOTE_BYTES
+	_request.max_redirects = 0
 	add_child(_request)
 	_request.request_completed.connect(_on_remote_finished)
 	var error: Error = _request.request(endpoint)
@@ -92,20 +103,23 @@ func start_remote(
 ## @api Validate and cache downloads atomically, without discarding earlier valid values.
 ## This method also permits deterministic integration tests without external HTTP.
 func accept_remote_document(document: Dictionary) -> Error:
+	if _updating:
+		return ERR_BUSY
 	if not _remote_started:
 		return ERR_UNCONFIGURED
-	var checked: Dictionary = RemoteConfigContract.validate(document, _registry, _install_id)
+	var checked: Dictionary = _validate_remote(document)
 	if checked.is_empty():
 		return ERR_INVALID_DATA
-	var error: Error = _cache.commit(
-		JSON.stringify(document, "", true, true), FileAccess.file_exists(_cache.path)
-	)
+	_updating = true
+	var error: Error = _persist_remote(document)
 	if error != OK:
-		push_warning("Remote config cache write failed: %s" % error)
+		_updating = false
+		return error
 	_activate(checked)
 	_analytics.track(
 		&"remote_config_applied", {"config_version": str(RemoteConfigContract.VERSION)}
 	)
+	_updating = false
 	return error
 
 
@@ -116,44 +130,118 @@ func has_key(key: StringName) -> bool:
 
 ## @api Read an int default or validated remote override.
 func get_int(key: StringName) -> int:
-	var fallback: int = int(_registry.read_value(key, &"int", 0))
-	return int(_overrides.get(str(key), fallback))
+	return int(_typed_value(key, &"int", 0))
 
 
 ## @api Read a float default or validated remote override.
 func get_float(key: StringName) -> float:
-	var fallback: float = float(_registry.read_value(key, &"float", 0.0))
-	return float(_overrides.get(str(key), fallback))
+	return float(_typed_value(key, &"float", 0.0))
 
 
 ## @api Read a bool default or validated remote override.
 func get_bool(key: StringName) -> bool:
-	var fallback: bool = bool(_registry.read_value(key, &"bool", false))
-	return bool(_overrides.get(str(key), fallback))
+	return bool(_typed_value(key, &"bool", false))
 
 
 ## @api Read a string default or validated remote override.
 func get_string(key: StringName) -> String:
-	var fallback: String = str(_registry.read_value(key, &"string", ""))
-	return str(_overrides.get(str(key), fallback))
+	return str(_typed_value(key, &"string", ""))
+
+
+func _typed_value(key: StringName, expected: StringName, fallback: Variant) -> Variant:
+	var local: Variant = _registry.read_value(key, expected, fallback)
+	if _registry.definition(key).get("type") != str(expected):
+		return local
+	return _overrides.get(str(key), local)
 
 
 func _restore_cache() -> void:
-	for suffix: String in ["", ".tmp", ".bak"]:
+	for suffix: String in ["", ".bak", ".tmp"]:
 		var document: Dictionary = _cache.read_document(suffix)
 		var normalized: Dictionary = _normalize_json_numbers(document)
-		var checked: Dictionary = RemoteConfigContract.validate(
-			normalized, _registry, _install_id
-		)
+		var checked: Dictionary = _validate_remote(normalized)
 		if not checked.is_empty():
+			_cache_source = suffix
+			_cache_primary_valid = suffix.is_empty()
+			_updating = true
 			_activate(checked)
+			_updating = false
 			return
+	_updating = true
+	_analytics.set_experiment_buckets({}, true)
+	_updating = false
+
+
+func _validate_remote(document: Dictionary) -> Dictionary:
+	var checked: Dictionary = RemoteConfigContract.validate(document, _registry, _install_id)
+	if checked.is_empty():
+		return {}
+	var pattern: RegEx = RegEx.new()
+	pattern.compile("^[a-z][a-z0-9_]{0,39}$")
+	for experiment: String in checked["buckets"]:
+		if pattern.search(experiment) == null:
+			return {}
+	return checked
+
+
+func _create_cache(path: String) -> SaveStorage:
+	return SaveStorage.new(path)
+
+
+func _persist_remote(document: Dictionary) -> Error:
+	if not _cache_primary_valid and FileAccess.file_exists(_cache.path):
+		var remove_error: Error = DirAccess.remove_absolute(_cache.path)
+		if remove_error != OK:
+			return remove_error
+	if _cache_source == ".tmp":
+		var promote_error: Error = _cache.promote_temp()
+		if promote_error != OK:
+			return promote_error
+		_cache_primary_valid = true
+		_cache_source = ""
+	var text: String = JSON.stringify(document, "", true, true)
+	var error: Error = _cache.commit(text, _cache_primary_valid)
+	if (
+		error == OK
+		or (
+			FileAccess.file_exists(_cache.path)
+			and FileAccess.get_file_as_string(_cache.path) == text
+		)
+	):
+		_cache_primary_valid = true
+		_cache_source = ""
+		return OK
+	# A rotated primary was already accepted. Restore it before discarding the rejected candidate.
+	if _cache_primary_valid and not FileAccess.file_exists(_cache.path):
+		DirAccess.rename_absolute(_cache.path + ".bak", _cache.path)
+	_discard_cache_temp()
+	_cache_primary_valid = _cache_primary_valid and FileAccess.file_exists(_cache.path)
+	return error
+
+
+func _discard_cache_temp() -> Error:
+	var path: String = _cache.path + ".tmp"
+	if not FileAccess.file_exists(path):
+		return OK
+	var error: Error = DirAccess.remove_absolute(path)
+	if error != OK:
+		# Unlink may be denied while the analytics-free cache file is still writable.
+		var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+		if file != null:
+			file.store_string("")
+			file.flush()
+			file.close()
+	return error
 
 
 func _on_remote_finished(
 	result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray
 ) -> void:
-	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
+	if (
+		result != HTTPRequest.RESULT_SUCCESS
+		or response_code != 200
+		or body.size() > MAX_REMOTE_BYTES
+	):
 		return
 	var parser: JSON = JSON.new()
 	if parser.parse(body.get_string_from_utf8()) != OK or not parser.data is Dictionary:
@@ -194,11 +282,7 @@ func _integral(value: Variant) -> bool:
 	if not value is float:
 		return false
 	var number: float = float(value)
-	return (
-		is_finite(number)
-		and abs(number) <= 9007199254740991.0
-		and number == floor(number)
-	)
+	return is_finite(number) and abs(number) <= 9007199254740991.0 and number == floor(number)
 
 
 func _activate(checked: Dictionary) -> void:
@@ -212,5 +296,11 @@ func _activate(checked: Dictionary) -> void:
 	var buckets: Dictionary = checked["buckets"]
 	for experiment_id: String in buckets:
 		_analytics.track(
-			&"experiment_assigned", {"experiment_id": experiment_id, "bucket": buckets[experiment_id]}
+			&"experiment_assigned",
+			{"experiment_id": experiment_id, "bucket": buckets[experiment_id]}
 		)
+
+
+func _exit_tree() -> void:
+	if _request != null:
+		_request.cancel_request()

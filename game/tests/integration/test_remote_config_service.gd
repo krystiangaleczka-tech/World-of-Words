@@ -11,6 +11,44 @@ const EVENTS_SCRIPT: Script = preload("res://services/events.gd")
 const INSTALL: String = "123e4567-e89b-42d3-a456-426614174000"
 const TUNABLE: StringName = &"ads.interstitial.min_levels_between"
 
+
+class FailingStorage:
+	extends SaveStorage
+	var fail_step: StringName = &""
+
+	func checkpoint(step: StringName) -> Error:
+		return ERR_CANT_CREATE if step == fail_step else OK
+
+
+class FaultyConfig:
+	extends "res://services/config.gd"
+	var storage: FailingStorage
+	var fail_cleanup: bool = false
+
+	func _create_cache(path: String) -> SaveStorage:
+		storage = FailingStorage.new(path)
+		return storage
+
+	func _discard_cache_temp() -> Error:
+		return ERR_CANT_CREATE if fail_cleanup else super()
+
+
+class CallbackFake:
+	extends AnalyticsFake
+	var on_log: Callable
+	var on_property: Callable
+
+	func log_event(name: String, params: Dictionary) -> void:
+		super.log_event(name, params)
+		if on_log.is_valid():
+			on_log.call()
+
+	func set_user_property(key: String, value: String) -> void:
+		super.set_user_property(key, value)
+		if on_property.is_valid():
+			on_property.call()
+
+
 var _config: CONFIG_SCRIPT
 var _analytics: ANALYTICS_SCRIPT
 var _previous: AnalyticsAdapter
@@ -121,6 +159,72 @@ func test_cache_recovers_valid_backup_when_primary_corrupt() -> void:
 	assert_eq(_reboot().get_int(TUNABLE), 5)
 
 
+func test_failed_writes_preserve_last_valid_cache_and_activation() -> void:
+	for step: StringName in [&"temp_opened", &"temp_written", &"temp_flushed", &"backup_rotated"]:
+		_clear()
+		var service: FaultyConfig = FaultyConfig.new()
+		add_child_autofree(service)
+		assert_eq(service.load(), OK)
+		assert_eq(service.start_remote(INSTALL, _analytics, "", CACHE), OK)
+		assert_eq(service.accept_remote_document(_document(5)), OK)
+		service.storage.fail_step = step
+		assert_eq(service.accept_remote_document(_document(7)), ERR_CANT_CREATE)
+		assert_eq(service.get_int(TUNABLE), 5)
+		assert_eq(_reboot().get_int(TUNABLE), 5)
+
+
+func test_recovered_temp_and_backup_survive_interrupted_replacement() -> void:
+	for suffix: String in [".tmp", ".bak"]:
+		_clear()
+		var file: FileAccess = FileAccess.open(CACHE + suffix, FileAccess.WRITE)
+		file.store_string(JSON.stringify(_document(5)))
+		file.close()
+		var corrupt: FileAccess = FileAccess.open(CACHE, FileAccess.WRITE)
+		corrupt.store_string("{broken")
+		corrupt.close()
+		var service: FaultyConfig = FaultyConfig.new()
+		add_child_autofree(service)
+		assert_eq(service.load(), OK)
+		assert_eq(service.start_remote(INSTALL, _analytics, "", CACHE), OK)
+		assert_eq(service.get_int(TUNABLE), 5)
+		service.storage.fail_step = &"temp_written"
+		assert_eq(service.accept_remote_document(_document(7)), ERR_CANT_CREATE)
+		assert_eq(_reboot().get_int(TUNABLE), 5)
+		service.storage.fail_step = &"primary_promoted"
+		assert_eq(service.accept_remote_document(_document(7)), OK)
+		assert_eq(service.get_int(TUNABLE), 7)
+		assert_eq(_reboot().get_int(TUNABLE), 7)
+
+
+func test_incompatible_experiment_ids_and_wrong_typed_reads_are_rejected() -> void:
+	assert_eq(_config.start_remote(INSTALL, _analytics, "", CACHE), OK)
+	assert_eq(_config.accept_remote_document(_document(5)), OK)
+	var invalid: Dictionary = _document(7)
+	invalid["experiments"][0]["id"] = "Bad-Id"
+	assert_eq(_config.accept_remote_document(invalid), ERR_INVALID_DATA)
+	assert_eq(_config.get_int(TUNABLE), 5)
+	assert_eq(_reboot().get_int(TUNABLE), 5)
+	assert_eq(_config.get_string(TUNABLE), "")
+	assert_push_error(str(TUNABLE))
+
+
+func test_failed_cleanup_cannot_resurrect_a_rejected_candidate() -> void:
+	var service: FaultyConfig = FaultyConfig.new()
+	add_child_autofree(service)
+	assert_eq(service.load(), OK)
+	assert_eq(service.start_remote(INSTALL, _analytics, "", CACHE), OK)
+	assert_eq(service.accept_remote_document(_document(5)), OK)
+	service.storage.fail_step = &"backup_rotated"
+	service.fail_cleanup = true
+	assert_eq(service.accept_remote_document(_document(7)), ERR_CANT_CREATE)
+	assert_eq(service.get_int(TUNABLE), 5)
+	assert_true(FileAccess.file_exists(CACHE + ".tmp"))
+	assert_eq(_reboot().get_int(TUNABLE), 5)
+	# If canonical restore itself cannot complete, prefer the last accepted backup over temp.
+	assert_eq(DirAccess.rename_absolute(CACHE, CACHE + ".bak"), OK)
+	assert_eq(_reboot().get_int(TUNABLE), 5)
+
+
 func test_assignments_are_tracked_using_registered_analytics_event() -> void:
 	assert_eq(_config.start_remote(INSTALL, _analytics, "", CACHE), OK)
 	assert_eq(_config.accept_remote_document(_document()), OK)
@@ -142,8 +246,7 @@ func test_assignments_are_tracked_using_registered_analytics_event() -> void:
 
 func test_https_endpoint_validation_does_not_block_cache_only_boot() -> void:
 	assert_eq(
-		_config.start_remote(INSTALL, _analytics, "http://insecure", CACHE),
-		ERR_INVALID_PARAMETER
+		_config.start_remote(INSTALL, _analytics, "http://insecure", CACHE), ERR_INVALID_PARAMETER
 	)
 	assert_eq(_config.start_remote(INSTALL, _analytics, "", CACHE), OK)
 	assert_eq(_config.get_int(&"config.remote.timeout_ms"), 3000)
@@ -173,6 +276,30 @@ func test_remote_bucket_user_property_requires_analytics_consent() -> void:
 	events.consent_changed.emit(true)
 	assert_eq(_fake.calls.entries.size(), 1)
 	assert_eq(_fake.calls.entries[0]["arguments"][0], "experiment_buckets")
-	assert_true(
-		str(_fake.calls.entries[0]["arguments"][1]).contains("ad_frequency")
-	)
+	assert_true(str(_fake.calls.entries[0]["arguments"][1]).contains("ad_frequency"))
+	var removed: Dictionary = _document()
+	removed["experiments"] = []
+	assert_eq(_config.accept_remote_document(removed), OK)
+	assert_eq(_fake.calls.entries[1]["arguments"], ["experiment_buckets", ""])
+	var reentrant: Array[Error] = []
+	var callback_fake: CallbackFake = CallbackFake.new()
+	Platform.analytics = callback_fake
+	callback_fake.on_log = func() -> void:
+		reentrant.append(_config.accept_remote_document(removed))
+		reentrant.append(_config.load())
+	assert_eq(_config.accept_remote_document(removed), OK)
+	assert_eq(reentrant, [ERR_BUSY, ERR_BUSY])
+	callback_fake.on_log = Callable()
+	assert_eq(runtime.set_experiment_buckets({"ad_frequency": 0}, true), OK)
+	var fresh: CONFIG_SCRIPT = CONFIG_SCRIPT.new()
+	add_child_autofree(fresh)
+	assert_eq(fresh.load(), OK)
+	_clear()
+	reentrant.clear()
+	callback_fake.on_property = func() -> void:
+		reentrant.append(fresh.accept_remote_document(removed))
+		reentrant.append(fresh.load())
+	assert_eq(fresh.start_remote(INSTALL, runtime, "", CACHE), OK)
+	assert_eq(reentrant, [ERR_BUSY, ERR_BUSY])
+	callback_fake.on_property = Callable()
+	assert_eq(fresh.accept_remote_document(removed), OK)

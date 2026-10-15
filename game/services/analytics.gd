@@ -25,6 +25,8 @@ var _event_bus: EVENTS_SCRIPT = null
 var _queue: AnalyticsQueue = null
 var _buckets: Dictionary = {}
 var _remote_bucket_properties_enabled: bool = false
+var _bucket_property_sent: bool = false
+var _published_bucket_property: String = ""
 
 
 ## @api Load sorted area JSON files atomically; reject reload while events are queued.
@@ -353,12 +355,16 @@ func _publish_bucket_properties() -> void:
 		_mode != Mode.RUNTIME
 		or _consent != ConsentState.ALLOWED
 		or not _remote_bucket_properties_enabled
-		or _buckets.is_empty()
 	):
 		return
-	Platform.analytics.set_user_property(
-		"experiment_buckets", JSON.stringify(_buckets, "", true, true)
+	var encoded: String = (
+		JSON.stringify(_buckets, "", true, true) if not _buckets.is_empty() else ""
 	)
+	if _bucket_property_sent and encoded == _published_bucket_property:
+		return
+	Platform.analytics.set_user_property("experiment_buckets", encoded)
+	_published_bucket_property = encoded
+	_bucket_property_sent = true
 
 
 func _drop_pending() -> Error:

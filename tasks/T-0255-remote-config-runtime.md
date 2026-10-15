@@ -4,11 +4,11 @@ title: Fetch and cache remote configuration without blocking startup
 epic: E17
 type: feat
 area: services.config
-risk: medium
+risk: high
 executor: cheap
 think: med
 ui: none
-status: blocked
+status: review
 depends_on: [T-0254, T-0250]
 touch:
   - game/services/config.gd
@@ -16,7 +16,7 @@ touch:
   - game/services/nav.gd
   - game/tests/integration/test_remote_config_service.gd*
   - tasks/T-0255-remote-config-runtime.md
-revision: 1
+revision: 3
 ---
 
 ## Goal
@@ -31,14 +31,14 @@ updates asynchronously over HTTPS, and report assignment buckets to consent-gate
 
 ## Current state
 - Config.load() reads sorted local JSON into a ConfigRegistry and typed getters return defaults.
-- RemoteConfigContract.validate() is on the T-0254 branch; not merged into main.
+- RemoteConfigContract.validate() is merged into main through T-0254 (#182).
 - Analytics.set_experiment_buckets() stores event context buckets but does not set SDK user properties.
 - Nav.start() calls Analytics.start_runtime() after Save, Config and Content load.
 - No remote fetch, HTTPRequest, cache or CDN URL is wired.
 
 ## Specification
 1. Add Config.start_remote(install_id, analytics, endpoint="", cache_path=...) and
-   accept_remote_document(document). It restores first valid primary/temp/backup JSON
+   accept_remote_document(document). It restores first valid primary/backup/temp JSON
    synchronously, exposing only contract-valid overrides and experiment buckets.
 2. Valid HTTPS endpoint requests use HTTPRequest with config.remote.timeout_ms, in the
    background. Errors, timeouts, malformed content and non-200 status never block startup
@@ -46,13 +46,21 @@ updates asynchronously over HTTPS, and report assignment buckets to consent-gate
 3. Valid updates persist atomically via SaveStorage and apply runtime typed overrides.
    Normalize integral numbers from parsed Godot JSON at schema-defined integer fields.
    Unknown/unallowed values continue to follow T-0254 validation rules.
+   Preserve the only valid temp/backup before writing; failed writes retain the previous active
+   snapshot. A write already promoted to primary counts as successful despite a late checkpoint error.
+   Restore rotated accepted primary before rejected-temp cleanup; prefer accepted backup before
+   an unpublished temp even if cleanup or canonical restore cannot complete.
+   Reject experiment IDs incompatible with Analytics before persisting or activating any values.
 4. Emit registered experiment_assigned {experiment_id:string,bucket:int} events and
    remote_config_applied {config_version:string} for newly accepted responses.
 5. Send a snapshot of experiment_buckets as one adapter user property ONLY after
    consent_changed(true); existing Analytics.set_experiment_buckets calls retain behavior
    unless explicitly marked remote. Never transmit properties on unknown/denied consent.
+   Clear removed experiments after consent, suppress identical property updates, and preserve strict
+   typed getter fallbacks. Reject acceptance/reload reentry while publishing an active snapshot.
 6. Nav initializes the optional cache/runtime after analytics initialization and before
    navigating to the first screen. The deployed HTTPS URL is supplied in T-0257.
+   HTTP responses are limited to 256 KiB and redirects are disabled; requests cancel on exit/reload.
 
 ## Out of scope
 - Hosting, CDN deployment or choosing a network endpoint (T-0257).
@@ -67,6 +75,10 @@ File: game/tests/integration/test_remote_config_service.gd
 - Experiment assignments use the existing event schema and deterministic bucket.
 - An empty endpoint supports cache-only boot; HTTP is not accepted.
 - Buckets are transmitted as a user property only after explicit analytics consent.
+- Interrupted writes, recovered temp/backup replacement, incompatible experiment IDs, strict
+  typed fallbacks, bucket removal and synchronous callback reentry have regression coverage.
+- Failed rejected-temp cleanup preserves the last accepted snapshot on restart. Cache-miss
+  property publication rejects synchronous reload/acceptance reentry as well.
 
 ## Acceptance
 - Existing Analytics fake calls unaffected by legacy buckets.
@@ -74,7 +86,6 @@ File: game/tests/integration/test_remote_config_service.gd
 - Full CI and independent review required before merging.
 
 ## Escalation
-S1 dependency exception: The owner explicitly requested T-0255 implementation despite
-T-0254 being unmerged/draft. This PR is stacked on t/0254-remote-config-contract
-and remains draft/blocked until T-0254 is green, reviewed and merged.
+S1 dependency exception resolved: T-0254 merged as #182 after owner-confirmed review.
+The T-0255 branch was mechanically rebased onto main with no conflicts.
 S11: No endpoint, secrets or network permissions are introduced here.
