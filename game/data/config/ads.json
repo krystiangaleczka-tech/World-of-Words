@@ -19,7 +19,7 @@
     ],
     "description": "Ads interstitial min levels between",
     "owner": "Sol",
-    "remote": false
+    "remote": true
   },
   "ads.interstitial.min_seconds_between": {
     "default": 180,
@@ -30,7 +30,7 @@
     ],
     "description": "Ads interstitial min seconds between",
     "owner": "Sol",
-    "remote": false
+    "remote": true
   },
   "ads.interstitial.session_grace_seconds": {
     "default": 120,
@@ -41,7 +41,7 @@
     ],
     "description": "Ads interstitial session grace seconds",
     "owner": "Sol",
-    "remote": false
+    "remote": true
   },
   "ads.interstitial.purchase_grace_levels": {
     "default": 10,
@@ -52,7 +52,7 @@
     ],
     "description": "Ads interstitial purchase grace levels",
     "owner": "Sol",
-    "remote": false
+    "remote": true
   },
   "ads.rewarded.hint.enabled": {
     "default": true,

@@ -49,7 +49,7 @@ def mutate(root: Path, area: str, filename: str, action) -> None:
 def test_shipped_registries_pass() -> None:
     result = run(REPO)
     assert result.returncode == 0, result.stderr
-    assert "36 config keys, 47 events" in result.stdout
+    assert "37 config keys, 47 events" in result.stdout
 
 
 def test_valid_multiline_stringname_and_escaped_literals(root: Path) -> None:
