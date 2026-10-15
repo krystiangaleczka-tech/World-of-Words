@@ -235,6 +235,8 @@ func _on_shuffle() -> void:
 	if _status_key == "level.state.persistence_failed":
 		controller.hint()
 	elif wheel.shuffle(_rng):
+		if is_instance_valid(_event_bus) and _event_bus.has_signal("shuffle_performed"):
+			_event_bus.emit_signal("shuffle_performed", _slot)
 		set_process(wheel.is_locked())
 	_refresh_hud()
 

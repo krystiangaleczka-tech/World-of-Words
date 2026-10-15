@@ -27,6 +27,7 @@ var _buckets: Dictionary = {}
 var _remote_bucket_properties_enabled: bool = false
 var _bucket_property_sent: bool = false
 var _published_bucket_property: String = ""
+var _listener: AnalyticsListener = null
 
 
 ## @api Load sorted area JSON files atomically; reject reload while events are queued.
@@ -90,6 +91,9 @@ func start_runtime(
 	if _mode == Mode.RUNTIME:
 		if selected_bus != _event_bus:
 			return ERR_ALREADY_IN_USE
+		if is_instance_valid(_listener) and (save != _save or content != _content):
+			# Complete the old visit while its common context is still bound.
+			_listener._disconnect()
 		_save = save
 		_config = config
 		_content = content
@@ -117,6 +121,34 @@ func start_runtime(
 	_mode = Mode.RUNTIME
 	_event_bus.consent_changed.connect(_on_consent_changed)
 	return OK
+
+
+## @api Observe runtime side effects without making gameplay depend on telemetry.
+func configure_listener(
+	save: SAVE_SCRIPT, content: CONTENT_SCRIPT, navigation: Node, clock: Clock
+) -> Error:
+	if (
+		_mode != Mode.RUNTIME
+		or save != _save
+		or content != _content
+		or not is_instance_valid(navigation)
+		or clock == null
+	):
+		return ERR_UNCONFIGURED
+	if not is_instance_valid(_listener):
+		_listener = AnalyticsListener.new()
+		add_child(_listener)
+	return _listener.configure(self, save, content, navigation, _event_bus, clock)
+
+
+func _begin_listener_boot() -> void:
+	if is_instance_valid(_listener):
+		_listener.begin_boot()
+
+
+func _finish_listener_boot(success: bool) -> void:
+	if is_instance_valid(_listener):
+		_listener.finish_boot(success)
 
 
 ## @api Replace bucket context for subsequently accepted events.
