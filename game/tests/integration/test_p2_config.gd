@@ -27,7 +27,8 @@ const EXPECTED: Dictionary = {
 	"meta.postcard.pieces": 4,
 	"meta.postcard.piece_star_cost": 12,
 	"onboarding.max_prompts_per_session": 1,
-	"iap.coins_s.amount": 1000
+	"iap.coins_s.amount": 1000,
+	"config.remote.timeout_ms": 3000
 }
 
 
@@ -69,14 +70,27 @@ func test_shipped_defaults_types_and_reward_table() -> void:
 
 func test_added_metadata_and_bounds_are_validated() -> void:
 	var registry: ConfigRegistry = ConfigRegistry.new()
-	for prefix: String in ["economy", "bonus", "ads", "consent", "meta", "onboarding", "iap"]:
+	for prefix: String in [
+		"economy", "bonus", "ads", "consent", "meta", "onboarding", "iap", "config"
+	]:
 		var document: Dictionary = JSON.parse_string(
 			FileAccess.get_file_as_string("res://data/config/" + prefix + ".json")
 		)
 		assert_eq(registry.append_document(prefix, document), OK)
 	for key: String in EXPECTED:
 		var definition: Dictionary = registry.definition(StringName(key))
-		assert_false(definition["remote"])
+		assert_eq(
+			definition["remote"],
+			(
+				key
+				in [
+					"ads.interstitial.min_levels_between",
+					"ads.interstitial.min_seconds_between",
+					"ads.interstitial.session_grace_seconds",
+					"ads.interstitial.purchase_grace_levels"
+				]
+			)
+		)
 		assert_eq(definition["default"], EXPECTED[key])
 		if not EXPECTED[key] is bool:
 			assert_between(EXPECTED[key], definition["range"][0], definition["range"][1])

@@ -1,0 +1,13 @@
+{
+  "config.remote.timeout_ms": {
+    "default": 3000,
+    "type": "int",
+    "range": [
+      500,
+      10000
+    ],
+    "description": "Remote config fetch timeout in milliseconds",
+    "owner": "Sol",
+    "remote": false
+  }
+}
