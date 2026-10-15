@@ -22,11 +22,17 @@ pieces, and removes the enclosing surface shadow. Missing-art copy is shorter an
 promising a specific content pack. Settings remains disabled; Journey routes the merged screen.
 PR #171 was superseded by #172; this revision preserves #173/#174 on fresh main e3fe760.
 
+Review follow-up: completion is stated once. Home hides the progress bar at full pieces, so
+the postcard stamp (art) or the Progress caption (missing art) carries it. The full preset
+reserves a mirrored icon slot, so its caption stays centred beside the stamp or lock. The
+Status caption is centred like the other Home captions.
+
 ## Verification
 
-Godot 4.7.2 ed1daf0bf: 614/614 GUT tests pass, including all Home, Journey and Postcard cases.
-The two additional tests cover passive Home progress/copy/no writes and full/thumb styling
-across preset changes. Full make check and scope results are recorded in the PR.
+Godot 4.7.2 ed1daf0bf: 642/642 GUT tests pass on main 6757e6d, including all Home, Journey and
+Postcard cases. The additional tests cover passive Home progress/copy/no writes, the hidden bar
+at completion, full/thumb styling across preset changes and the centred full caption beside the
+stamp or lock. Full make check and scope results are recorded in the PR.
 Native Apple M3 OpenGL/Metal captures cover all 15 states below; their run log contains no
 errors or warnings. Reviewed REGULAR PL partial/missing-art and COMPACT PSEUDO HC130 against
 the reference: centered progress is legible, frame/shadow is lighter, and Play stays reachable.
