@@ -8,7 +8,7 @@ risk: low
 executor: cheap
 think: low
 ui: none
-status: blocked
+status: review
 depends_on: [T-0255, T-0234]
 touch:
   - game/tests/integration/test_config_timeline_constraints.gd*
@@ -33,7 +33,7 @@ exposes an ad before ATT, or reorders the onboarding feature unlock timeline.
   but does not check every monotonic unlock boundary, inclusive UMP <= ATT,
   or negative mutation cases.
 - RemoteConfigContract.validate() (T-0254) rejects protected nonremote keys.
-- T-0255 is on draft PR #183, still waiting on upstream T-0254 PR #182.
+- T-0254 (#182) and T-0255 (#183) are merged; the remote runtime is available on main.
 
 ## Specification
 1. Verify the shipped Config service satisfies
@@ -60,11 +60,10 @@ File: game/tests/integration/test_config_timeline_constraints.gd
 ## Acceptance
 - All five GUT tests pass.
 - CI catches a violation in any actual shipped slot gate.
-- Only the two allowed files changed relative to T-0255 branch.
+- Only the allowed test/script UID and task file changed relative to main.
 - Merge only after T-0255 is merged and this branch is updated onto main.
 
 ## Escalation
-S1 dependency override — owner explicitly requested progressing through
-successive tasks despite draft dependencies. This test-only PR is stacked on
-t/0255-remote-config-runtime (#183) and remains blocked/draft until both
-#182 and #183 complete. It does not override CI or independent review gates.
+S1 dependency exception resolved — #182 and #183 are merged. This test-only branch
+was mechanically rebased onto main without conflicts. The owner requested completing
+the next roadmap task; pinned gdformat is available to resolve the prior formatting block.

@@ -11,14 +11,9 @@ const UNLOCK_KEYS: Array[StringName] = [
 	&"unlocks.daily_slot"
 ]
 const OFFER_KEYS: Array[StringName] = [
-	&"unlocks.hint_slot",
-	&"unlocks.double_reward_slot",
-	&"ads.interstitial.first_slot"
+	&"unlocks.hint_slot", &"unlocks.double_reward_slot", &"ads.interstitial.first_slot"
 ]
-const CONSENT_KEYS: Array[StringName] = [
-	&"consent.ump_after_slot",
-	&"consent.att_after_slot"
-]
+const CONSENT_KEYS: Array[StringName] = [&"consent.ump_after_slot", &"consent.att_after_slot"]
 
 
 func _shipped() -> Dictionary:
