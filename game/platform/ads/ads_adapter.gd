@@ -3,6 +3,9 @@ extends RefCounted
 ## @api ads adapter contract; signals report outcomes, never gameplay grants.
 
 signal rewarded_loaded
+signal initialized
+signal interstitial_loaded
+signal ad_opened
 signal reward_earned
 signal ad_closed
 signal ad_failed(reason: String)
