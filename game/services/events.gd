@@ -11,6 +11,8 @@ signal already_found(word: String)
 signal invalid_word(word: String)
 signal level_completed(slot: int)
 signal hint_used
+## @api Side-effect confirmation after a successful wheel shuffle.
+signal shuffle_performed(slot: int)
 
 ## @api Analytics transmission decision for the current launch. The first emission resolves the
 ## unknown state; later emissions update consent and false also represents revocation.

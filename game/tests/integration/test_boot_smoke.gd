@@ -18,6 +18,8 @@ func test_headless_boot_reaches_level_with_fakes() -> void:
 	assert_true(Config.has_key(&"unlocks.journey_slot"))
 	assert_true(Config.has_key(&"analytics.queue.max_events"))
 	assert_true(Analytics.runtime_ready())
+	assert_true(Events.shuffle_performed.get_connections().size() > 0)
+	assert_eq((Platform.analytics as AnalyticsFake).calls.entries.size(), 0)
 	for adapter: Object in [
 		Platform.ads,
 		Platform.iap,
