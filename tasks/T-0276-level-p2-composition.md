@@ -8,7 +8,7 @@ risk: medium
 executor: cheap
 think: med
 ui: high
-status: ready
+status: review
 depends_on: [T-0225, T-0242, T-0233, T-0219]
 touch:
   - game/features/level/level.gd

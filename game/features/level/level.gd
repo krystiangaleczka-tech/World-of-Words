@@ -2,10 +2,17 @@ class_name LevelScreen
 extends ScreenScaffold
 ## @api Playable P1 composition. Nav injects services and the requested slot before mounting.
 
+signal navigation_requested(target: StringName)
+signal shop_requested
+signal powerup_requested(kind: StringName)
+
+const ECONOMY_SCRIPT: Script = preload("res://services/economy.gd")
+const CONFIG_SCRIPT: Script = preload("res://services/config.gd")
 const SAVE_SCRIPT: Script = preload("res://services/save.gd")
 const CONTENT_SCRIPT: Script = preload("res://services/content.gd")
 const PROGRESS_SCRIPT: Script = preload("res://services/progress.gd")
 
+var p2_hud: LevelP2Hud
 var controller: LevelController
 var board_view: BoardView
 var wheel: LetterWheelView
@@ -91,23 +98,97 @@ func _ready() -> void:
 	add_child(controller)
 	progress = PROGRESS_SCRIPT.new()
 	add_child(progress)
-	board_view.wave_finished.connect(_on_wave_finished)
-	body.sort_children.connect(_start_completion_motion)
-	_area.resized.connect(_layout_play_area)
-	preview.minimum_size_changed.connect(_layout_play_area)
-	layout_class_changed.connect(_on_layout_class_changed)
-	controller.state_changed.connect(_on_state_changed)
-	controller.result_ready.connect(_on_result)
-	controller.completed.connect(_on_completed)
-	controller.persistence_failed.connect(_on_persistence_failed)
-	wheel.chain_changed.connect(_on_chain)
-	wheel.word_attempted.connect(_on_attempt)
-	wheel.short_released.connect(_on_short_release)
-	wheel.tile_added.connect(_on_tile)
+	_connect_runtime()
 	_load_board()
+	if p2_hud != null:
+		level_label.get_parent().visible = false
+		bonus_label.visible = false
+		_actions.visible = false
+		p2_hud.mount(self, _area, _save, _event_bus, _slot, hint_button, shuffle_button, _can_act)
+		p2_hud.meter.minimum_size_changed.connect(_layout_play_area, CONNECT_DEFERRED)
+		p2_hud.navigation_requested.connect(navigation_requested.emit)
+		p2_hud.shop_requested.connect(shop_requested.emit)
+		p2_hud.powerup_requested.connect(powerup_requested.emit)
 	_refresh_hud()
 	set_process(false)
 	_layout_play_area()
+
+
+## @api Explicit before-mount presentation opt-in; no paid operation or boot activation.
+func configure_p2(economy: Node, config: Node) -> Error:
+	if is_inside_tree() or p2_hud != null:
+		return ERR_BUSY
+	if not economy is ECONOMY_SCRIPT or not config is CONFIG_SCRIPT:
+		return ERR_UNCONFIGURED
+	if not is_instance_valid(_save) or not economy.atomic_save_matches(_save):
+		return ERR_UNCONFIGURED
+	var helper: LevelP2Hud = LevelP2Hud.new()
+	var error: Error = helper.configure(economy, config)
+	if error != OK:
+		helper.free()
+		return error
+	p2_hud = helper
+	add_child(helper)
+	return OK
+
+
+func _enter_tree() -> void:
+	super._enter_tree()
+	if p2_hud != null and controller != null:
+		_resume_p2.call_deferred()
+
+
+func _resume_p2() -> void:
+	if not is_inside_tree():
+		return
+	_copy.register()
+	_connect_runtime()
+	if _slot == progress.current_slot():
+		progress.bind_board(controller.get_board())
+	_layout_play_area()
+
+
+func _connect_runtime() -> void:
+	if (
+		p2_hud != null
+		and is_instance_valid(p2_hud.meter)
+		and not p2_hud.meter.minimum_size_changed.is_connected(_layout_play_area)
+	):
+		p2_hud.meter.minimum_size_changed.connect(_layout_play_area, CONNECT_DEFERRED)
+	if not board_view.wave_finished.is_connected(_on_wave_finished):
+		board_view.wave_finished.connect(_on_wave_finished)
+	if not body.sort_children.is_connected(_start_completion_motion):
+		body.sort_children.connect(_start_completion_motion)
+	if not _area.resized.is_connected(_layout_play_area):
+		_area.resized.connect(_layout_play_area)
+	if not preview.minimum_size_changed.is_connected(_layout_play_area):
+		preview.minimum_size_changed.connect(_layout_play_area)
+	if not layout_class_changed.is_connected(_on_layout_class_changed):
+		layout_class_changed.connect(_on_layout_class_changed)
+	if not controller.state_changed.is_connected(_on_state_changed):
+		controller.state_changed.connect(_on_state_changed)
+	if not controller.result_ready.is_connected(_on_result):
+		controller.result_ready.connect(_on_result)
+	if not controller.completed.is_connected(_on_completed):
+		controller.completed.connect(_on_completed)
+	if not controller.persistence_failed.is_connected(_on_persistence_failed):
+		controller.persistence_failed.connect(_on_persistence_failed)
+	if not wheel.chain_changed.is_connected(_on_chain):
+		wheel.chain_changed.connect(_on_chain)
+	if not wheel.word_attempted.is_connected(_on_attempt):
+		wheel.word_attempted.connect(_on_attempt)
+	if not wheel.short_released.is_connected(_on_short_release):
+		wheel.short_released.connect(_on_short_release)
+	if not wheel.tile_added.is_connected(_on_tile):
+		wheel.tile_added.connect(_on_tile)
+	if not continue_button.pressed.is_connected(_on_continue):
+		continue_button.pressed.connect(_on_continue)
+	if not hint_button.pressed.is_connected(_on_hint):
+		hint_button.pressed.connect(_on_hint)
+	if not shuffle_button.pressed.is_connected(_on_shuffle):
+		shuffle_button.pressed.connect(_on_shuffle)
+	if not debug_button.pressed.is_connected(_on_debug):
+		debug_button.pressed.connect(_on_debug)
 
 
 func _create_hud() -> void:
@@ -199,9 +280,13 @@ func _refresh_hud() -> void:
 		tr("level.hud.bonus_count") % (board.bonus_words().size() if board != null else 0)
 	)
 	_refresh_actions()
+	if p2_hud != null:
+		p2_hud.refresh()
 
 
 func _can_act() -> bool:
+	if p2_hud != null and not p2_hud.bindings_ready():
+		return false
 	return (
 		is_instance_valid(wheel)
 		and controller.get_board() != null
@@ -216,10 +301,16 @@ func _refresh_actions() -> void:
 	var enabled: bool = _can_act()
 	hint_button.disabled = not enabled
 	shuffle_button.disabled = not enabled
+	if p2_hud != null and is_instance_valid(p2_hud.reveal):
+		p2_hud.reveal.disabled = not enabled
 
 
 func _on_hint() -> void:
 	if not _can_act():
+		return
+	if p2_hud != null:
+		if hint_button.is_visible_in_tree():
+			powerup_requested.emit(&"hint")
 		return
 	var cell: Vector2i = HintLogic.next_cell(controller.get_board())
 	if controller.hint() and cell in controller.get_board().revealed_cells():
@@ -233,7 +324,8 @@ func _on_shuffle() -> void:
 	if not _can_act():
 		return
 	if _status_key == "level.state.persistence_failed":
-		controller.hint()
+		if p2_hud == null:
+			controller.hint()
 	elif wheel.shuffle(_rng):
 		if is_instance_valid(_event_bus) and _event_bus.has_signal("shuffle_performed"):
 			_event_bus.emit_signal("shuffle_performed", _slot)
@@ -385,6 +477,8 @@ func _set_status(key: String) -> void:
 
 
 func _layout_play_area() -> void:
+	if not is_inside_tree():
+		return
 	if (
 		_completion_motion != null
 		and (
@@ -409,15 +503,23 @@ func _layout_play_area() -> void:
 		> width
 	)
 	_action_spacer.visible = not _actions.vertical
+	var bonus_height: float = (
+		p2_hud.meter.get_combined_minimum_size().y + Tokens.Space.S
+		if p2_hud != null and is_instance_valid(p2_hud.meter) and p2_hud.meter.visible
+		else 0.0
+	)
 	var rectangles: Dictionary[StringName, Rect2] = BoardView.play_area_rects(
-		available,
+		available - Vector2(0, bonus_height),
 		layout_class,
 		preview.get_combined_minimum_size().y,
-		_actions.get_combined_minimum_size().y
+		0 if p2_hud != null else _actions.get_combined_minimum_size().y
 	)
 	if rectangles.is_empty() or rectangles[&"wheel"].size.x <= 0:
 		wheel.visible = false
 		return
+	for key: StringName in [&"preview", &"actions", &"wheel"]:
+		if rectangles.has(key):
+			rectangles[key].position.y += bonus_height
 	wheel.visible = true
 	board_view.position = rectangles[&"board"].position
 	board_view.size = rectangles[&"board"].size
@@ -427,6 +529,8 @@ func _layout_play_area() -> void:
 	_actions.size = rectangles[&"actions"].size
 	wheel.position = rectangles[&"wheel"].position
 	wheel.size = rectangles[&"wheel"].size
+	if p2_hud != null and is_instance_valid(p2_hud.reveal):
+		p2_hud.layout(available, rectangles[&"wheel"], rectangles[&"board"])
 
 
 func _on_layout_class_changed(_value: StringName) -> void:
@@ -434,6 +538,8 @@ func _on_layout_class_changed(_value: StringName) -> void:
 
 
 func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE and is_instance_valid(p2_hud):
+		p2_hud.dispose()
 	if what == NOTIFICATION_TRANSLATION_CHANGED and is_instance_valid(status_label):
 		_set_status(_status_key)
 		_refresh_hud()
@@ -449,6 +555,13 @@ func _notification(what: int) -> void:
 
 
 func _exit_tree() -> void:
+	super._exit_tree()
+	if (
+		p2_hud != null
+		and is_instance_valid(p2_hud.meter)
+		and p2_hud.meter.minimum_size_changed.is_connected(_layout_play_area)
+	):
+		p2_hud.meter.minimum_size_changed.disconnect(_layout_play_area)
 	_completion_waiting = false
 	_completion_start_pending = false
 	if body.sort_children.is_connected(_start_completion_motion):
