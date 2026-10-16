@@ -46,4 +46,6 @@ composition remain caller-owned and unactivated by existing boot.
 Preflight receipts: T-0285 is merged as4efc9ce (#199); the theme foundation
 dependency T-0207 is already on main asc876b90 (#132), despite its older review
 metadata. All six exact resources exist. No out-of-scope task metadata is edited.
-Final game suite:781 tests,27,351 assertions;11 new integration tests.
+Final game suite:782 tests,27,373 assertions;12 new integration tests.
+A detached screen reconciles a successful owner flush or external winning value
+on remount, clears its stale retry and restores catalog-owned input availability.

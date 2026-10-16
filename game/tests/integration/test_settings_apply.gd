@@ -372,6 +372,8 @@ func test_screen_keeps_retry_after_unrelated_commit_and_resolves_on_owner_flush(
 	storage.set("fail", false)
 	assert_eq(save.flush(), OK)
 	assert_false(screen.retry_button.visible)
+	for frame: int in range(3):
+		await get_tree().process_frame
 	assert_false(screen.controls[&"high_contrast"].disabled)
 	assert_true(screen.controls[&"high_contrast"].value)
 	assert_eq(runtime.retry(), ERR_DOES_NOT_EXIST)
@@ -386,3 +388,30 @@ func test_detached_runtime_discards_a_committed_external_winner_on_reentry() -> 
 	add_child(runtime)
 	assert_eq(runtime.retry(), ERR_DOES_NOT_EXIST)
 	assert_eq(runtime.snapshot().music_volume, 0.8)
+
+
+func test_detached_screen_reconciles_owner_flush_and_external_winner() -> void:
+	for external_winner: bool in [false, true]:
+		assert_eq(save.set_setting(&"high_contrast", false), OK)
+		var screen: SettingsScreen = SCENE.instantiate()
+		assert_eq(screen.configure(save), OK)
+		assert_eq(screen.bind_runtime(runtime), OK)
+		add_child_autofree(screen)
+		storage.set("fail", true)
+		(screen.controls[&"high_contrast"] as Toggle).value_changed.emit(true)
+		assert_true(screen.retry_button.visible)
+		remove_child(screen)
+		storage.set("fail", false)
+		if external_winner:
+			assert_eq(save.set_setting(&"high_contrast", false), OK)
+		else:
+			assert_eq(save.flush(), OK)
+		add_child(screen)
+		for frame: int in range(3):
+			await get_tree().process_frame
+		assert_false(screen.retry_button.visible)
+		assert_false(screen.write_error.visible)
+		assert_false(screen.controls[&"high_contrast"].disabled)
+		assert_eq(screen.controls[&"high_contrast"].value, not external_winner)
+		assert_eq(runtime.retry(), ERR_DOES_NOT_EXIST)
+		screen.free()

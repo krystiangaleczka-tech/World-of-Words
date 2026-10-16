@@ -36,6 +36,8 @@ var retry_button: TextButton
 var write_error: Label
 var _text_content: VBoxContainer
 var _failed_key: StringName = &""
+var _failed_value: Variant
+var _failed_revision: int = 0
 var _runtime: RUNTIME
 var _save: SAVE
 var _column: VBoxContainer
@@ -87,6 +89,7 @@ func _runtime_changed() -> void:
 
 
 func _runtime_failed(_error: Error) -> void:
+	_failed_revision = _save.committed_view().revision
 	if is_instance_valid(retry_button):
 		retry_button.visible = true
 		write_error.visible = true
@@ -97,7 +100,7 @@ func _runtime_failed(_error: Error) -> void:
 
 func _retry_write() -> void:
 	if is_instance_valid(_runtime):
-		if _runtime.retry() == OK:
+		if _runtime.retry() in [OK, ERR_DOES_NOT_EXIST]:
 			_clear_write_error()
 
 
@@ -130,6 +133,7 @@ func _build_apply_controls() -> void:
 func _choose_text_size(index: int) -> void:
 	if is_instance_valid(_runtime) and text_sheet.state != &"closed":
 		_failed_key = &"text_scale"
+		_failed_value = index
 		if _runtime.set_value(&"text_scale", index) == OK:
 			_clear_write_error()
 		text_sheet.close()
@@ -151,7 +155,21 @@ func _enter_tree() -> void:
 	_connect_save()
 	_connect_runtime()
 	if is_instance_valid(scroll):
-		_refresh.call_deferred()
+		_reconcile_after_entry.call_deferred()
+
+
+func _reconcile_after_entry() -> void:
+	if not is_inside_tree():
+		return
+	if not _failed_key.is_empty():
+		var view: Dictionary = _save.committed_view()
+		var resolved: bool = view.sections.settings[_failed_key] == _failed_value
+		var replaced: bool = (
+			view.revision > _failed_revision and _save.get_setting(_failed_key) != _failed_value
+		)
+		if resolved or replaced:
+			_clear_write_error()
+	_refresh()
 
 
 func _ready() -> void:
@@ -243,6 +261,7 @@ func _request_setting(value: Variant, key: StringName) -> void:
 	if is_instance_valid(_runtime):
 		if not is_instance_valid(retry_button) or not retry_button.visible:
 			_failed_key = key
+			_failed_value = value
 		if _runtime.set_value(key, value) == OK:
 			_clear_write_error()
 	setting_requested.emit(key, value)
@@ -278,10 +297,8 @@ func _refresh() -> void:
 	for key: StringName in controls:
 		rows[key].disabled = retry_button.visible
 		if controls[key] is Toggle:
-			(controls[key] as Toggle).disabled = retry_button.visible
 			(controls[key] as Toggle).configure(values[key], SETTING_KEYS[key])
 		else:
-			(controls[key] as CatalogSlider).set_available(not retry_button.visible)
 			(controls[key] as CatalogSlider).configure(float(values[key]), SETTING_KEYS[key], true)
 	rows[&"text_size"].trailing_value = tr(
 		["settings.display.scale100", "settings.display.scale115", "settings.display.scale130"][
