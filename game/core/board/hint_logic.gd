@@ -21,3 +21,19 @@ static func next_cell(board: BoardState) -> Vector2i:
 			if cell not in revealed:
 				return cell
 	return Vector2i(-1, -1)
+
+
+## @api Pure Reveal target: longest unfound word; data order breaks ties.
+static func reveal_word(board: BoardState) -> String:
+	if board == null or board.is_complete():
+		return ""
+	var level: LevelData = board.get_level()
+	if level == null:
+		return ""
+	var found: PackedStringArray = board.found_words()
+	var target: String = ""
+	for index: int in level.word_count():
+		var word: String = level.word(index)
+		if word not in found and word.length() > target.length():
+			target = word
+	return target
