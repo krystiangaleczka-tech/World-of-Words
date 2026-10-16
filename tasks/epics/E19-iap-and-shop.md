@@ -13,6 +13,10 @@ Idempotent purchases, permanent Remove Forced Ads and store-backed restore.
 - T-0269: native billing plugins; blocked on T-0264 and exact S1 preflight.
 - T-0270: deterministic Fake store outcomes; independent of accounts/plugins.
 
+## Wave 2
+- T-0271: durable Fake-backed purchase settlement on merged T-0270/T-0263.
+- T-0272/T-0273: native verified adapters, blocked planning records only.
+
 ## Decisions
 StoreTransaction.store_key remains the store transaction key, never orderId.
 Fakes model provider delivery/unfinished state, never wallet grants or Save.
@@ -21,8 +25,8 @@ Real store setup and irreversible product creation remain owner work.
 
 ## Open questions
 Native plugin versions, device verification and Q6 prices remain external gates.
-They do not block unactivated Fake coverage. T-0271 settlement needs a separate
-reviewed wave on the merged Fake APIs; it is not implemented by T-0270.
+They do not block unactivated Fake-backed settlement. Native preflights require
+exact plugin/device evidence before their task scope can be released.
 
 ## Exit criteria
 T-0275 sandbox device checks pass in both stores.
