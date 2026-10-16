@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: med
 ui: high
-status: review
+status: done
 depends_on: [T-0284, T-0218]
 touch:
   - game/features/settings/*.gd*

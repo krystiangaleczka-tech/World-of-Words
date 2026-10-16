@@ -8,6 +8,7 @@ const PLATFORM_SCRIPT: Script = preload("res://platform/platform.gd")
 
 var _events: EVENTS_SCRIPT
 var _save: SAVE_SCRIPT
+var _enabled: bool = false
 var _platform: PLATFORM_SCRIPT
 
 
@@ -29,6 +30,10 @@ func _exit_tree() -> void:
 
 
 func _connect_events() -> void:
+	if is_inside_tree() and is_instance_valid(_save):
+		if not _save.setting_changed.is_connected(_setting_changed):
+			_save.setting_changed.connect(_setting_changed)
+		_setting_changed(&"haptics_enabled")
 	if _events == null or not is_inside_tree():
 		return
 	if not _events.tile_touched.is_connected(_on_tile_touched):
@@ -42,6 +47,8 @@ func _connect_events() -> void:
 
 
 func _disconnect_events() -> void:
+	if is_instance_valid(_save) and _save.setting_changed.is_connected(_setting_changed):
+		_save.setting_changed.disconnect(_setting_changed)
 	if _events == null:
 		return
 	if _events.tile_touched.is_connected(_on_tile_touched):
@@ -54,10 +61,15 @@ func _disconnect_events() -> void:
 		_events.hint_used.disconnect(_on_hint_used)
 
 
+func _setting_changed(key: StringName) -> void:
+	if key == &"haptics_enabled" and _save.is_loaded():
+		_enabled = _save.committed_view().sections.settings.haptics_enabled
+
+
 func _play(pattern: String) -> void:
 	if _save == null or _platform == null or not _save.is_loaded():
 		return
-	if _save.get_setting(&"haptics_enabled") == true and _platform.haptics != null:
+	if _enabled and _platform.haptics != null:
 		_platform.haptics.play(pattern)
 
 

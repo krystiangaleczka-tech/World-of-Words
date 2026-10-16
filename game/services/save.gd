@@ -19,6 +19,7 @@ var _dirty: bool = false
 var _primary_valid: bool = false
 var _loaded_temp: bool = false
 var _pending_settings: Dictionary[StringName, bool] = {}
+var _system_defaults: Dictionary = {}
 
 
 ## @api Inject isolated storage/identity generation before loading (tests/tools only).
@@ -28,6 +29,16 @@ func configure(storage: SaveStorage, id_factory: Callable = Callable()) -> void:
 	_atomic.configure(_storage, _atomic_publish)
 	if id_factory.is_valid():
 		_id_factory = id_factory
+
+
+## @api Inject observed, shipped initial preferences before load; existing documents win.
+func configure_system_defaults(reduced_motion: bool, language: String = "pl") -> Error:
+	if _loaded:
+		return ERR_ALREADY_IN_USE
+	if language.is_empty() or language != language.strip_edges():
+		return ERR_INVALID_PARAMETER
+	_system_defaults = {"reduced_motion": reduced_motion, "language": language}
+	return OK
 
 
 ## @api Load primary, temp, backup; migrate/validate before exposing any sections.
@@ -70,6 +81,9 @@ func load() -> Error:
 	_data = SaveSchema.fresh(
 		identity, created_at, str(ProjectSettings.get_setting("application/config/version", ""))
 	)
+	if not existing:
+		for key: String in _system_defaults:
+			_data.settings[key] = _system_defaults[key]
 	if not SaveSchema.is_valid(_data):
 		_data = {}
 		return ERR_INVALID_DATA

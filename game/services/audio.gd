@@ -15,6 +15,8 @@ var _next_voice: int = 0
 var _ad_paused: bool = false
 var _background: bool = false
 var _monetization: Node
+var _settings: Dictionary = {}
+var _music: AudioStreamPlayer
 
 
 ## @api Inject live settings and an optional test sink(cue, linear_gain, pitch).
@@ -27,6 +29,23 @@ func configure(save: SAVE_SCRIPT, sink: Callable = Callable()) -> void:
 	_refresh_volume()
 	if is_inside_tree():
 		bind_monetization(get_node_or_null("/root/Monetization"))
+
+
+## @api Bind a caller-owned music voice without starting or owning its stream.
+func bind_music(player: AudioStreamPlayer) -> Error:
+	if not is_instance_valid(player):
+		return ERR_INVALID_PARAMETER
+	_music = player
+	_refresh_volume()
+	_refresh_pause()
+	return OK
+
+
+func _enter_tree() -> void:
+	if is_instance_valid(_save) and not _save.setting_changed.is_connected(_on_setting_changed):
+		_save.setting_changed.connect(_on_setting_changed)
+	_refresh_volume()
+	_refresh_pause()
 
 
 ## @api Presentation-only pause; independent from persistent volumes and app background.
@@ -47,6 +66,8 @@ func set_ad_paused(paused: bool) -> void:
 
 
 func _refresh_pause() -> void:
+	if is_instance_valid(_music):
+		_music.stream_paused = _ad_paused or _background
 	for voice: AudioStreamPlayer in _voices:
 		voice.stream_paused = _ad_paused or _background
 
@@ -167,10 +188,23 @@ func play(cue: StringName) -> bool:
 
 
 func _volume() -> float:
-	return float(_save.get_setting(&"sfx_volume")) if _save != null and _save.is_loaded() else 0.0
+	return _committed_volume(&"sfx_volume")
+
+
+func _committed_volume(key: StringName) -> float:
+	if not is_instance_valid(_save) or not _save.is_loaded():
+		return 0.0
+	return float(_settings.get(key, 0.0))
 
 
 func _refresh_volume() -> void:
+	_settings = (
+		_save.committed_view().sections.settings
+		if is_instance_valid(_save) and _save.is_loaded()
+		else {}
+	)
+	if is_instance_valid(_music):
+		_music.volume_linear = _committed_volume(&"music_volume")
 	var volume: float = _volume()
 	for index: int in _voices.size():
 		_voices[index].volume_linear = volume * _voice_gains[index]
@@ -179,7 +213,7 @@ func _refresh_volume() -> void:
 
 
 func _on_setting_changed(key: StringName) -> void:
-	if key == &"sfx_volume":
+	if key in [&"sfx_volume", &"music_volume"]:
 		_refresh_volume()
 
 

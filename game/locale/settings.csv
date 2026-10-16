@@ -27,3 +27,5 @@ settings.privacy.policy,Polityka prywatności,Privacy policy
 settings.about.licences,Licencje,Licences
 settings.about.support,Pomoc,Support
 settings.about.version,Wersja: %s · ID: %s,Version: %s · ID: %s
+settings.write.error,Nie udało się zapisać ustawień.,Settings could not be saved.
+settings.write.retry,Spróbuj ponownie,Try again
