@@ -12,6 +12,9 @@ var _gains: Dictionary = {}
 var _voices: Array[AudioStreamPlayer] = []
 var _voice_gains: PackedFloat32Array = PackedFloat32Array()
 var _next_voice: int = 0
+var _ad_paused: bool = false
+var _background: bool = false
+var _monetization: Node
 
 
 ## @api Inject live settings and an optional test sink(cue, linear_gain, pitch).
@@ -22,6 +25,39 @@ func configure(save: SAVE_SCRIPT, sink: Callable = Callable()) -> void:
 	if _save != null:
 		_save.setting_changed.connect(_on_setting_changed)
 	_refresh_volume()
+	if is_inside_tree():
+		bind_monetization(get_node_or_null("/root/Monetization"))
+
+
+## @api Presentation-only pause; independent from persistent volumes and app background.
+func bind_monetization(source: Node) -> void:
+	if (
+		is_instance_valid(_monetization)
+		and _monetization.is_connected("audio_pause_requested", set_ad_paused)
+	):
+		_monetization.disconnect("audio_pause_requested", set_ad_paused)
+	_monetization = source
+	if is_instance_valid(source) and source.has_signal("audio_pause_requested"):
+		source.connect("audio_pause_requested", set_ad_paused)
+
+
+func set_ad_paused(paused: bool) -> void:
+	_ad_paused = paused
+	_refresh_pause()
+
+
+func _refresh_pause() -> void:
+	for voice: AudioStreamPlayer in _voices:
+		voice.stream_paused = _ad_paused or _background
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_PAUSED:
+		_background = true
+		_refresh_pause()
+	elif what == NOTIFICATION_APPLICATION_RESUMED:
+		_background = false
+		_refresh_pause()
 
 
 ## @api Atomically validate/preload the registry; retain existing cues on failure.
@@ -60,6 +96,7 @@ func load_cues(path: String = REGISTRY) -> Error:
 	_voice_gains.resize(_voices.size())
 	_voice_gains.fill(0.0)
 	_next_voice = 0
+	_refresh_pause()
 	return OK
 
 
@@ -111,7 +148,7 @@ func _number(value: Variant, minimum: float, maximum: float) -> bool:
 ## @api No I/O or allocation; false means this request is unknown/unready/muted.
 func play(cue: StringName) -> bool:
 	var volume: float = _volume()
-	if volume <= 0.0 or not _entries.has(cue):
+	if _ad_paused or _background or volume <= 0.0 or not _entries.has(cue):
 		return false
 	var gain: float = float(_gains[cue])
 	var pitch: float = float(_entries[cue]["pitch_scale"])
@@ -162,3 +199,4 @@ func _clear_voices() -> void:
 
 func _exit_tree() -> void:
 	_disconnect_settings()
+	bind_monetization(null)
