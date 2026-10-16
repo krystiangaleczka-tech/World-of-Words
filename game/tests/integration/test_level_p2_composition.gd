@@ -7,6 +7,15 @@ const CONTENT: Script = preload("res://services/content.gd")
 const EVENTS: Script = preload("res://services/events.gd")
 const SHOP: PackedScene = preload("res://features/level/level.tscn")
 const FIXTURE: Script = preload("res://tests/integration/test_level_hud.gd")
+
+
+class RaisedConfig:
+	extends "res://services/config.gd"
+
+	func get_int(key: StringName) -> int:
+		return 50 if key == &"unlocks.shuffle_slot" else super.get_int(key)
+
+
 var save: SAVE
 var economy: ECONOMY
 var config: CONFIG
@@ -237,3 +246,21 @@ func test_missing_config_and_changed_owner_binding_fail_closed_before_mount() ->
 	watch_signals(screen)
 	screen.hint_button.pressed.emit()
 	assert_signal_emit_count(screen, "powerup_requested", 0)
+
+
+func test_recorded_unlock_survives_a_raised_config_threshold() -> void:
+	_advance(2)
+	var section: Dictionary = save.get_section(&"progress")
+	section.by_lang.pl.unlocked = ["shuffle"]
+	assert_eq(save.set_section(&"progress", section), OK)
+	assert_eq(save.flush(), OK)
+	var raised: RaisedConfig = RaisedConfig.new()
+	add_child_autofree(raised)
+	assert_eq(raised.load(), OK)
+	assert_gt(raised.get_int(&"unlocks.shuffle_slot"), 2)
+	var screen: LevelScreen = SHOP.instantiate()
+	screen.configure(save, content, 2, bus)
+	assert_eq(screen.configure_p2(economy, raised), OK)
+	_view().add_child(screen)
+	assert_true(screen.shuffle_button.is_visible_in_tree())
+	assert_false(screen.hint_button.is_visible_in_tree())

@@ -120,6 +120,8 @@ func _unlocked(feature: String) -> bool:
 	var view: Dictionary = _save.committed_view()
 	var language: String = view.sections.settings.language
 	var state: Dictionary = view.sections.progress.by_lang.get(language, {})
+	if feature in state.get("unlocked", []) or feature in view.sections.progress.unlocked:
+		return true
 	return (
 		int(state.get("current_slot", 0))
 		>= _config.get_int(StringName("unlocks." + feature + "_slot"))

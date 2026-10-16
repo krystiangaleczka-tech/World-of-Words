@@ -23,10 +23,11 @@ flag. Currency width and the BonusMeter count use catalog font metrics plus toke
 padding, including HC130. BonusMeter follows BoardView and precedes preview; the
 whole meter's minimum height is reserved before fitting the grid and wheel.
 
-Seven integration tests cover: explicit opt-in/default P1 free hint; malformed
+Eight integration tests cover: explicit opt-in/default P1 free hint; malformed
 Config and changed owner binding; first-level hiding; every configured unlock
 boundary based on committed campaign progress; pure navigation/shop/powerup
-intents with unchanged Save; live wallet changes; native keyboard activation after
+intents with unchanged Save; previously recorded unlocks surviving raised config
+thresholds; live wallet changes; native keyboard activation after
 exit/reentry; and the 12-case layout matrix (header rectangles, meter ordering,
 touch targets, all corners vs every tile hit circle). Existing P1 tests are intact.
 
