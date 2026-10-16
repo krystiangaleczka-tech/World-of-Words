@@ -6,6 +6,7 @@ signal back_requested
 signal setting_requested(key: StringName, value: Variant)
 signal action_requested(action: StringName)
 
+const LANGUAGE: Script = preload("res://services/settings_language.gd")
 const RUNTIME: Script = preload("res://services/settings_runtime.gd")
 const SAVE: Script = preload("res://services/save.gd")
 const ACTION_KEYS: Dictionary[StringName, String] = {
@@ -30,10 +31,16 @@ var controls: Dictionary[StringName, Control] = {}
 var scroll: ScrollContainer
 var back: IconButton
 var information: Label
+var language_sheet: Sheet
+var language_options: Dictionary[String, TextButton] = {}
+var language_retry: TextButton
+var language_error: Label
 var text_sheet: Sheet
 var text_options: Array[TextButton] = []
 var retry_button: TextButton
 var write_error: Label
+var _language_content: VBoxContainer
+var _language: LANGUAGE
 var _text_content: VBoxContainer
 var _failed_key: StringName = &""
 var _failed_value: Variant
@@ -139,6 +146,104 @@ func _choose_text_size(index: int) -> void:
 		text_sheet.close()
 
 
+## @api Explicit selector binding; unbound language rows still send named intent.
+func bind_language(selector: Node) -> Error:
+	if not selector is LANGUAGE or selector.snapshot().language.is_empty():
+		return ERR_UNCONFIGURED
+	_disconnect_language()
+	_language = selector
+	_connect_language()
+	_refresh()
+	return OK
+
+
+func _connect_language() -> void:
+	if is_inside_tree() and is_instance_valid(_language):
+		if not _language.changed.is_connected(_language_changed):
+			_language.changed.connect(_language_changed)
+
+
+func _disconnect_language() -> void:
+	if is_instance_valid(_language) and _language.changed.is_connected(_language_changed):
+		_language.changed.disconnect(_language_changed)
+
+
+func _build_language_controls() -> void:
+	_language_content = VBoxContainer.new()
+	_language_content.add_theme_constant_override("separation", Tokens.Space.S)
+	language_sheet = Sheet.new()
+	language_sheet.title_key = "settings.language.row"
+	language_sheet.configure_content(_language_content)
+	add_child(language_sheet)
+
+
+func _open_language() -> void:
+	for child: Node in _language_content.get_children():
+		_language_content.remove_child(child)
+		child.free()
+	language_options.clear()
+	var state: Dictionary = _language.snapshot()
+	for choice: Dictionary in _language.choices():
+		var option: TextButton = TextButton.new()
+		option.text_key = choice.name_key
+		if choice.name_key == "settings.language.other":
+			option.value_text = choice.id
+		option.sublabel_key = (
+			"settings.language.selected"
+			if not state.preview and choice.id == state.language
+			else ""
+		)
+		option.highlighted = not state.preview and choice.id == state.language
+		option.pressed.connect(_select_language.bind(choice.id))
+		_language_content.add_child(option)
+		language_options[choice.id] = option
+	language_error = CatalogSurface.label(&"Caption")
+	_language_content.add_child(language_error)
+	language_retry = TextButton.new()
+	language_retry.text_key = "settings.write.retry"
+	language_retry.pressed.connect(_retry_language)
+	_language_content.add_child(language_retry)
+	_sync_language()
+	language_sheet.open()
+
+
+func _select_language(id: String) -> void:
+	_language.select(id)
+
+
+func _retry_language() -> void:
+	_language.retry()
+
+
+func _language_changed() -> void:
+	_refresh()
+	if _language.snapshot().pending.is_empty() and is_instance_valid(language_sheet):
+		language_sheet.close()
+
+
+func _sync_language() -> void:
+	if not is_instance_valid(_language) or not is_instance_valid(language_sheet):
+		return
+	var state: Dictionary = _language.snapshot()
+	var pending: bool = not state.pending.is_empty()
+	language_sheet.dismissible = not pending
+	if is_instance_valid(language_retry):
+		language_retry.visible = pending and state.error != OK
+		language_error.visible = language_retry.visible
+		language_error.text = tr("settings.language.failed")
+	for option: TextButton in language_options.values():
+		option.disabled = pending
+	rows[&"language"].trailing_value = tr(
+		(
+			"settings.language.preview_value"
+			if state.preview
+			else LANGUAGE.NAMES.get(state.language, "settings.language.other")
+		)
+	)
+	if not LANGUAGE.NAMES.has(state.language) and not state.preview:
+		rows[&"language"].trailing_value = state.language
+
+
 func snapshot() -> Dictionary:
 	if not is_instance_valid(_save) or not _save.is_loaded():
 		return {}
@@ -154,6 +259,7 @@ func _enter_tree() -> void:
 	super._enter_tree()
 	_connect_save()
 	_connect_runtime()
+	_connect_language()
 	if is_instance_valid(scroll):
 		_reconcile_after_entry.call_deferred()
 
@@ -205,6 +311,7 @@ func _ready() -> void:
 	information = CatalogSurface.label(&"Caption")
 	_column.add_child(information)
 	_build_apply_controls()
+	_build_language_controls()
 	back = IconButton.new()
 	back.configure_icon(preload("res://assets/icons/arrow-left.svg"), "settings.main.back")
 	back.pressed.connect(_back)
@@ -272,11 +379,17 @@ func _request_action(key: StringName) -> void:
 	if rows[key].is_visible_in_tree() and not rows[key].disabled and not rows[key].loading:
 		if key == &"text_size" and is_instance_valid(_runtime):
 			text_sheet.open()
+		elif key == &"language" and is_instance_valid(_language):
+			_open_language()
 		else:
 			action_requested.emit(key)
 
 
 func _back() -> void:
+	if is_instance_valid(language_sheet) and language_sheet.handle_back():
+		return
+	if is_instance_valid(_language) and not _language.snapshot().pending.is_empty():
+		return
 	if is_instance_valid(text_sheet) and text_sheet.handle_back():
 		return
 	if back.is_visible_in_tree() and not back.disabled:
@@ -293,9 +406,13 @@ func _refresh() -> void:
 		for row: ListRow in rows.values():
 			row.disabled = true
 		return
-	rows[&"text_size"].disabled = retry_button.visible
+	var language_pending: bool = (
+		is_instance_valid(_language) and not _language.snapshot().pending.is_empty()
+	)
+	rows[&"text_size"].disabled = retry_button.visible or language_pending
+	rows[&"language"].disabled = retry_button.visible
 	for key: StringName in controls:
-		rows[key].disabled = retry_button.visible
+		rows[key].disabled = retry_button.visible or language_pending
 		if controls[key] is Toggle:
 			(controls[key] as Toggle).configure(values[key], SETTING_KEYS[key])
 		else:
@@ -308,6 +425,7 @@ func _refresh() -> void:
 	rows[&"language"].trailing_value = tr(
 		"settings.language.polish" if values.language == "pl" else "settings.language.english"
 	)
+	_sync_language()
 	var view: Dictionary = _save.committed_view()
 	var owned: bool = view.sections.monetization.remove_forced_ads
 	rows[&"shop"].disabled = owned
@@ -343,6 +461,7 @@ func _connect_save() -> void:
 func _exit_tree() -> void:
 	super._exit_tree()
 	_disconnect_runtime()
+	_disconnect_language()
 	if is_instance_valid(_save) and _save.setting_changed.is_connected(_changed):
 		_save.setting_changed.disconnect(_changed)
 
@@ -352,6 +471,8 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_TRANSLATION_CHANGED:
 		_refresh()
 	elif what == NOTIFICATION_PREDELETE:
+		if is_instance_valid(_language_content):
+			_language_content.free()
 		if is_instance_valid(_text_content):
 			_text_content.free()
 		for control: Control in controls.values():

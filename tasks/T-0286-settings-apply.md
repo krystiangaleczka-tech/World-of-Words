@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: high
-status: review
+status: done
 depends_on: [T-0285, T-0207]
 touch:
   - game/services/settings_runtime.gd*
