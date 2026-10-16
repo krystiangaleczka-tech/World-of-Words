@@ -6,6 +6,11 @@ extends Button
 	set(value):
 		text_key = value
 		_refresh_copy()
+## @api Opaque caller value (e.g. store-localized price); caption identity remains text_key.
+@export var value_text: String = "":
+	set(value):
+		value_text = value
+		_refresh_copy()
 @export var sublabel_key: String = "":
 	set(value):
 		sublabel_key = value
@@ -90,13 +95,17 @@ func _connect_signals() -> void:
 
 
 func _refresh_copy() -> void:
-	text = tr(text_key) if not text_key.is_empty() else ""
+	text = (
+		value_text
+		if not value_text.is_empty()
+		else (tr(text_key) if not text_key.is_empty() else "")
+	)
 	# Native accessibility getters translate keys even with auto translation disabled.
 	accessibility_name = text_key
 	if _sublabel != null:
 		_sublabel.text = tr(sublabel_key) if not sublabel_key.is_empty() else ""
 		_sublabel.visible = not sublabel_key.is_empty()
-		accessibility_description = sublabel_key
+		accessibility_description = value_text if not value_text.is_empty() else sublabel_key
 		_layout_copy()
 
 

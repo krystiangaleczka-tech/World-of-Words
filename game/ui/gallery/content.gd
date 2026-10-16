@@ -21,6 +21,12 @@ func _ready() -> void:
 		card.sublabel_key = "gallery.actions." + ("disabled" if state == "locked" else state)
 		card.media = preload("res://assets/icons/map-pinned.svg")
 		card.action_key = "gallery.content.action"
+		if state == "normal":
+			card.configure_action(&"primary", "gallery.content.action", "12,99 zł")
+		elif state == "pressed":
+			card.configure_action(&"secondary", "gallery.content.action", "CHF 123.90")
+		elif state in ["disabled", "highlighted"]:
+			card.configure_action(&"secondary", "gallery.content.action", "", &"ad")
 		card.locked_label_key = "gallery.content.locked"
 		card.tappable = state != "normal"
 		card.disabled = state == "disabled"
