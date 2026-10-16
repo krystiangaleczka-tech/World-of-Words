@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://bmbito0hjbxd5"
+
+[deps]
+
+files=["res://locale/settings.pl.translation", "res://locale/settings.en.translation"]
+
+source_file="res://locale/settings.csv"
+dest_files=["res://locale/settings.pl.translation", "res://locale/settings.en.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

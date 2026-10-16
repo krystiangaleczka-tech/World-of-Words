@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: med
 ui: none
-status: review
+status: done
 depends_on: [T-0229, T-0207]
 touch:
   - docs/contracts/settings.md
