@@ -1,6 +1,7 @@
 extends ServiceStub
 ## @api Unactivated consent, ads and explicit verified IAP settlement.
 
+signal shop_changed
 signal continuation_ready(completed_slot: int)
 signal audio_pause_requested(paused: bool)
 signal purchase_state_changed(product_id: String, state: StringName, error: Error)
@@ -37,6 +38,8 @@ var _history_failed: bool = false
 var _analytics_live: bool = false
 var _shop_reservation: Dictionary = {}
 var _iap_flow: IapFlow
+var _shop_economy: ECONOMY_SCRIPT
+var _shop_reward: Callable
 
 
 ## @api No implicit provider operation; reconfiguration disconnects old adapters.
@@ -90,6 +93,7 @@ func configure(
 	_presentation = AdPresentation.new()
 	add_child(_presentation)
 	_presentation.configure(_ads, _reserve_shop_reward, _save)
+	_presentation.changed.connect(_emit_shop_changed)
 	_presentation.finished.connect(_release)
 	_presentation.audio_paused.connect(_relay_audio_pause)
 	_presentation.interstitial_opened.connect(_on_interstitial_opened)
@@ -106,6 +110,8 @@ func configure(
 	_consent.operation_failed.connect(expire_operation)
 	_ads.initialized.connect(_on_initialized)
 	_ads.ad_failed.connect(_on_ad_failed)
+	_events.economy_changed.connect(_on_shop_economy)
+	_emit_shop_changed()
 	return OK
 
 
@@ -166,7 +172,9 @@ func rewarded_state() -> StringName:
 ## @api Explicit opt-in. Only a validated bound Economy.grant can settle an earned reward.
 func request_rewarded(placement: StringName, reward: Callable) -> Error:
 	if is_instance_valid(_presentation) and _presentation.rewarded_state() == &"pending_reward":
-		return _presentation.request_rewarded(placement, reward)
+		var result: Error = _presentation.request_rewarded(placement, reward)
+		_emit_shop_changed()
+		return result
 	if is_instance_valid(_iap_flow) and _iap_flow.presenting():
 		return ERR_BUSY
 	if not ads_ready() or _slot > 0 or _step != Step.IDLE:
@@ -236,7 +244,10 @@ func _reserve_shop_reward() -> Error:
 
 ## @api Explicit same-Save binding; no provider command or boot activation.
 func configure_iap(economy: Node, adapter: IapAdapter) -> Error:
-	if is_instance_valid(_iap_flow) and _iap_flow.busy():
+	if (
+		(is_instance_valid(_iap_flow) and _iap_flow.busy())
+		or (is_instance_valid(_presentation) and _presentation.busy())
+	):
 		return ERR_BUSY
 	if not _configured() or not economy is ECONOMY_SCRIPT or adapter == null:
 		return ERR_UNCONFIGURED
@@ -252,7 +263,81 @@ func configure_iap(economy: Node, adapter: IapAdapter) -> Error:
 	add_child(_iap_flow)
 	_iap_flow.configure(_save, economy, adapter)
 	_iap_flow.state_changed.connect(_on_purchase_state)
+	_iap_flow.changed.connect(_emit_shop_changed)
+	_shop_economy = economy
+	_shop_reward = Callable()
+	_emit_shop_changed()
 	return OK
+
+
+## @api Presentation data only; copied prices and actual owners determine availability.
+func shop_snapshot() -> Dictionary:
+	if (
+		not _configured()
+		or not is_instance_valid(_shop_economy)
+		or not _shop_economy.is_ready()
+		or not _shop_economy.atomic_save_matches(_save)
+		or not is_instance_valid(_iap_flow)
+	):
+		return {}
+	var catalog: Dictionary = _iap_flow.catalog_snapshot()
+	var owned: bool = _save.committed_view().sections.monetization.remove_forced_ads
+	var products: Dictionary = {}
+	for id: String in IapFlow.PRODUCTS:
+		var product: Dictionary = catalog.products.get(id, {}).duplicate(true)
+		product["state"] = _iap_flow.product_state(id)
+		products[id] = product
+	var reward: StringName = _presentation.rewarded_state()
+	if reward == &"pending_reward" and not _presentation.can_retry(&"shop_coins", _shop_reward):
+		reward = &"unavailable"
+	elif reward != &"pending_reward":
+		reward = rewarded_state()
+	return {
+		"coins": _shop_economy.snapshot().coins,
+		"owned": owned,
+		"products": products,
+		"catalog_state": catalog.state,
+		"purchase_state": _iap_flow.state(),
+		"failure_revision": _iap_flow.failure_revision,
+		"reward_state": reward,
+		"reward_pending": _presentation.rewarded_state() == &"pending_reward",
+		"ads_ready": ads_ready(),
+		"capped": not _shop_available(),
+		"coin_amount": _config.get_int(&"iap.coins_s.amount"),
+		"reward_amount": _config.get_int(&"economy.reward.rewarded_coins")
+	}
+
+
+func begin_shop_visit() -> void:
+	if is_instance_valid(_presentation):
+		_presentation.begin_shop_visit()
+		_emit_shop_changed()
+
+
+func request_products() -> Error:
+	return _iap_flow.query_products() if is_instance_valid(_iap_flow) else ERR_UNAVAILABLE
+
+
+func request_shop_reward() -> Error:
+	if shop_snapshot().is_empty():
+		return ERR_UNCONFIGURED
+	if _presentation.rewarded_state() != &"pending_reward":
+		_shop_reward = _shop_economy.grant.bind(
+			&"rewarded_coins", {"coins": _config.get_int(&"economy.reward.rewarded_coins")}
+		)
+	var error: Error = request_rewarded(&"shop_coins", _shop_reward)
+	_emit_shop_changed()
+	return error
+
+
+func _on_shop_economy(
+	_operation: StringName, _reason: StringName, _amounts: Dictionary, _wallet: Dictionary
+) -> void:
+	_emit_shop_changed()
+
+
+func _emit_shop_changed() -> void:
+	shop_changed.emit()
 
 
 func purchase_state() -> StringName:
@@ -395,6 +480,7 @@ func _on_initialized() -> void:
 	_legal_timer.stop()
 	_sdk_ready = true
 	_after_consent()
+	_emit_shop_changed()
 
 
 func _after_consent() -> void:
@@ -454,6 +540,10 @@ func _release() -> void:
 
 
 func _disconnect() -> void:
+	if is_instance_valid(_events) and _events.economy_changed.is_connected(_on_shop_economy):
+		_events.economy_changed.disconnect(_on_shop_economy)
+	_shop_economy = null
+	_shop_reward = Callable()
 	if is_instance_valid(_iap_flow):
 		_iap_flow.free()
 	if is_instance_valid(_presentation):

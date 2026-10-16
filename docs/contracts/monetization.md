@@ -114,3 +114,39 @@ has no acknowledgement callback; unfinished replay handles a lost finish. Bindin
 does not run boot fetch: future activation must explicitly invoke recovery once
 per startup. No boot/Nav activation, live provider, endpoint, SDK permission,
 store verification implementation, analytics producer or catalog/price approval.
+
+## Explicit Shop presentation (T-0274)
+
+`ShopSheet.configure(monetization, ios: bool) -> Error` requires the explicit,
+matching IAP/Economy binding. The scene stays unmapped in boot/Nav. `open()` begins
+one visit and requests products; it never starts a purchase, consent or ad.
+
+`shop_snapshot() -> Dictionary` returns copied provider prices, durable balance and
+entitlement, per-product state, catalog state, purchase state/failure revision,
+actual rewarded readiness/pending grant, local-day cap and configured coin amounts.
+Only the two canonical IDs with nonblank String prices are offers. Duplicate IDs
+fail the entire response closed; provider grant/amount metadata is ignored.
+`request_products() -> Error` owns query loading/failure and a finite 120-second
+technical watchdog. Query/purchase/recovery dispatch cannot overlap. Late results
+without an outstanding query are ignored; the frozen adapter has no catalog request
+ID, so a later explicitly requested query accepts its next provider response.
+
+`shop_changed` forwards owner transitions without polling. Synchronous notification
+and provider dispatch retain their owner until callbacks return, including listeners
+that expire/rebind operations. `begin_shop_visit()` only resets an idle failed ad
+offer so the next explicit visit may try again; it performs no provider operation.
+No-fill disables the watch action for the current visit. Closed-without-earned ads
+leave another explicit attempt available. `request_shop_reward()` binds the actual
+Economy and configured grant. An earned failed grant retains that same Callable for
+retry without another ad/cap reservation. Another placement's pending reward disables
+Shop actions but permits dismissal so its owning caller can settle it.
+
+The view emits purchase/recover/reward/restore intent only. Prices remain opaque
+provider-localized strings; amount Labels use config. Owned removal has no action;
+the sole purchase Primary moves to the coin pack. Loading blocks buying; offline
+uses StatePanel with an explicit catalog retry. Durable coin increases use existing
+CurrencyPill count-up, RewardBurst and Toast, never optimistic rewards.
+Restore acceptance shows only “purchase check requested”. Actual failure supersedes
+that caption (including repeated errors after older failures); no receipt means no
+invented “restored”/“nothing to restore”, no aggregate success or endless spinner.
+Native SDK activation, physical-device approval and store approval remain open.

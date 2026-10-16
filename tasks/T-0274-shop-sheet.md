@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: high
-status: ready
+status: review
 depends_on: [T-0271, T-0217, T-0334]
 touch:
   - game/features/shop/*.gd*

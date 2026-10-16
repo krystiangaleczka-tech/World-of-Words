@@ -1,0 +1,26 @@
+keys,pl,en
+shop.sheet.title,Sklep,Shop
+shop.remove_forced_ads.title,Usuń wymuszone reklamy,Remove forced ads
+shop.remove_forced_ads.body,Koniec reklam między poziomami. Reklamy z nagrodą pozostają dostępne.,No ads between levels. Rewarded ads remain available.
+shop.coins_pack.title,Monety,Coins
+shop.free_coins.title,Darmowe monety,Free coins
+shop.free_coins.body,Obejrzyj reklamę i odbierz monety.,Watch an ad to receive coins.
+shop.free_coins.watch,Obejrzyj,Watch
+shop.free_coins.capped,Dzienny limit osiągnięty,Daily limit reached
+shop.free_coins.unavailable,Reklama jest teraz niedostępna,Ad unavailable right now
+shop.sheet.restore,Przywróć zakupy,Restore purchases
+shop.restore.requested,Zlecono sprawdzenie zakupów. Stan produktów zaktualizuje się po odpowiedzi sklepu.,Purchase check requested. Product status updates when the store responds.
+shop.action.buy,Kup,Buy
+shop.action.retry,Sprawdź ponownie,Check again
+shop.state.loading,Ładowanie…,Loading…
+shop.state.offline,Oferta sklepu jest niedostępna. Spróbuj ponownie później.,Store offers unavailable. Try again later.
+shop.state.pending,Zakup oczekuje na potwierdzenie,Purchase awaiting confirmation
+shop.state.retry,Zakup wymaga ponowienia zapisu. Sprawdź ponownie.,Purchase needs a save retry. Check again.
+shop.state.success,Zakup rozliczony,Purchase settled
+shop.state.cancelled,Zakup anulowany,Purchase cancelled
+shop.state.failed,Nie udało się zakończyć operacji,Could not complete the operation
+shop.state.unknown,Trwa sprawdzanie wyniku zakupu. Możesz sprawdzić ponownie.,Purchase result unresolved. You can check again.
+shop.state.owned,Posiadane,Owned
+shop.offline.title,Sklep niedostępny,Store unavailable
+shop.coins.added,Dodano monety,Coins added
+shop.purchase.thanks,Dziękujemy za zakup,Thank you for your purchase
