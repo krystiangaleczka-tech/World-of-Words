@@ -1,0 +1,29 @@
+keys,pl,en
+settings.main.title,Ustawienia,Settings
+settings.main.back,Wróć,Back
+settings.section.sound,DŹWIĘK,SOUND
+settings.section.display,WYŚWIETLANIE,DISPLAY
+settings.section.language,JĘZYK,LANGUAGE
+settings.section.purchases,ZAKUPY,PURCHASES
+settings.section.privacy,PRYWATNOŚĆ,PRIVACY
+settings.section.about,INFORMACJE,ABOUT
+settings.sound.effects,Efekty dźwiękowe,Sound effects
+settings.sound.music,Muzyka,Music
+settings.sound.haptics,Wibracje,Haptics
+settings.display.reduced_motion,Ograniczony ruch,Reduced motion
+settings.display.high_contrast,Wysoki kontrast,High contrast
+settings.display.text_size,Rozmiar tekstu,Text size
+settings.display.scale100,100%,100%
+settings.display.scale115,115%,115%
+settings.display.scale130,130%,130%
+settings.language.row,Język,Language
+settings.language.polish,Polski,Polish
+settings.language.english,Angielski,English
+settings.purchases.remove_forced_ads,Usuń wymuszone reklamy,Remove forced ads
+settings.purchases.restore,Przywróć zakupy,Restore purchases
+settings.purchases.owned,Posiadane,Owned
+settings.privacy.options,Opcje prywatności,Privacy options
+settings.privacy.policy,Polityka prywatności,Privacy policy
+settings.about.licences,Licencje,Licences
+settings.about.support,Pomoc,Support
+settings.about.version,Wersja: %s · ID: %s,Version: %s · ID: %s
