@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: med
 ui: high
-status: ready
+status: review
 depends_on: [T-0286, T-0242]
 touch:
   - game/services/settings_language.gd*

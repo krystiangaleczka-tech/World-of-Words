@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "lang": "en",
+  "kind": "campaign",
+  "levels": [
+    {
+      "bonus": [
+        "ACT"
+      ],
+      "difficulty": 0,
+      "grid": {
+        "h": 1,
+        "w": 3
+      },
+      "id": "en-fixture-1",
+      "landmark": false,
+      "letters": [
+        "C",
+        "A",
+        "T"
+      ],
+      "pipeline": "0.0.0",
+      "seed": 0,
+      "slot": 1,
+      "source": "handmade",
+      "words": [
+        {
+          "dir": "h",
+          "w": "CAT",
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "bonus": [
+        "ACT"
+      ],
+      "difficulty": 0,
+      "grid": {
+        "h": 1,
+        "w": 3
+      },
+      "id": "en-fixture-2",
+      "landmark": false,
+      "letters": [
+        "C",
+        "A",
+        "T"
+      ],
+      "pipeline": "0.0.0",
+      "seed": 0,
+      "slot": 2,
+      "source": "handmade",
+      "words": [
+        {
+          "dir": "h",
+          "w": "CAT",
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    {
+      "bonus": [
+        "ACT"
+      ],
+      "difficulty": 0,
+      "grid": {
+        "h": 1,
+        "w": 3
+      },
+      "id": "en-fixture-3",
+      "landmark": false,
+      "letters": [
+        "C",
+        "A",
+        "T"
+      ],
+      "pipeline": "0.0.0",
+      "seed": 0,
+      "slot": 3,
+      "source": "handmade",
+      "words": [
+        {
+          "dir": "h",
+          "w": "CAT",
+          "x": 0,
+          "y": 0
+        }
+      ]
+    }
+  ]
+}

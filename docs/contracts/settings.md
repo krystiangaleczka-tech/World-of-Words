@@ -89,3 +89,53 @@ layout/scroll/keyboard/lifecycle and supported-language filtering. Every screen 
 supplies native three-class PL/PSEUDO default/HC130 evidence. Physical device/taste,
 OS integration, native store/consent actions and external links remain explicit
 release gates; native desktop evidence does not certify them.
+
+### T-0287 preflight: explicit reload boundary
+
+Content has `load_manifest(language, root)`, preserving its previous state on
+failure, but no staged adoption or screen reload API. Settings does not own Nav
+or Progress. The explicit `SettingsLanguage extends Node` hook therefore requires
+`reload(phase: StringName, target: String) -> Error`, synchronously:
+
+- `prepare`: caller durably checkpoints any active board, validates/prepares its
+  replacement and holds the old presentation safely until completion. An unsafe
+  or unavailable caller returns an error without discarding the board.
+- `apply`: after the target setting is committed, caller loads the bound actual
+  Content and publishes its prepared replacement together. Error must preserve
+  the previous Content/presentation; returning OK certifies the target manifest.
+  The controller independently verifies Content language/hash before publishing
+  success or applying TranslationServer locale. Hooks must not await or replace
+  the controller's pending request reentrantly.
+
+`configure(save: Node, content: Node, reload: Callable, root: String =
+"res://content", debug_preview: bool = false) -> Error` binds loaded coherent
+owners. `choices() -> Array[Dictionary]` returns copied IDs/names/debug flags;
+`snapshot() -> Dictionary` exposes presentation language, preview, pending target,
+state and error. `select(language: String) -> Error` and `retry() -> Error`
+serialize one exact target/manifest identity. Signals `changed` and
+`failed(error: Error)` report real state. There is no boot/Nav activation.
+
+States are `ready`, `prepare_failed`, `write_failed`, `reload_pending` and
+`validation_failed`. Every failure preserves the old displayed language and keeps
+an explicit retry for the same target. Persistence can complete before reload:
+in `reload_pending` Save.language can already be the target, while the previous
+Content/UI stays presented. The selector explicitly displays that pending state,
+does not label it selected and does not allow another choice or Back. A successful
+unrelated Save flush may resolve a failed write; the controller resumes through
+the same hook, never silently equating persistence with reload success. The caller
+holds the safe checkpoint until apply succeeds. Hook contract violations fail
+closed and never emit a successful switch.
+
+Manifest discovery uses the actual Content validator on each language directory;
+translation CSVs never establish availability. An immutable packaged content root
+is expected in production. Retry rejects a changed manifest identity. Per-language
+progress is left with its existing owner; only Save's language setting changes.
+`initial_language(device_locale, root)` filters a normalized base locale to this
+catalog or PL. `configure_initial_defaults(save, reduced_motion, device_locale,
+root)` feeds the filtered value to the before-load Save hook, without OS probing.
+
+Before EN content ships, `preview_en` is an optional OS-debug-build-only transient
+choice; `restore_preview` restores the actual content locale. Preview changes UI
+locale only, never Save/Content, is clearly labelled and resets when its owner
+leaves the tree. Passing debug_preview=false always yields production choices;
+release builds cannot enable preview even when a caller requests it.

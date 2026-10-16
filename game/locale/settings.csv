@@ -29,3 +29,10 @@ settings.about.support,Pomoc,Support
 settings.about.version,Wersja: %s · ID: %s,Version: %s · ID: %s
 settings.write.error,Nie udało się zapisać ustawień.,Settings could not be saved.
 settings.write.retry,Spróbuj ponownie,Try again
+settings.language.german,Niemiecki,German
+settings.language.other,Inny język,Other language
+settings.language.preview_en,English UI (podgląd debug),English UI (debug preview)
+settings.language.restore_preview,Zakończ podgląd języka,End language preview
+settings.language.failed,Nie udało się zmienić języka. Spróbuj ponownie.,Language could not be changed. Try again.
+settings.language.selected,Wybrany,Selected
+settings.language.preview_value,EN · debug,EN · debug

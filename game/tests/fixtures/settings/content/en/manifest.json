@@ -1,0 +1,17 @@
+{
+  "content_version": 1,
+  "daily": null,
+  "lang": "en",
+  "packs": [
+    {
+      "file": "packs/c-0001-0003.json",
+      "first": 1,
+      "kind": "campaign",
+      "last": 3,
+      "sha256": "38f68271bcce0f607a9278c2b538ad6d3d2c2af146f2daca36984830bec3ea9c"
+    }
+  ],
+  "pipeline": "0.0.0",
+  "schema_version": 1,
+  "slots": 3
+}
