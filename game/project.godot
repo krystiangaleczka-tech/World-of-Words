@@ -31,6 +31,10 @@ Platform="*res://platform/platform.gd"
 
 general/ios/session_category=0
 
+[editor]
+
+import/use_multiple_threads=false
+
 [gui]
 
 theme/custom="res://ui/theme/generated/theme_default_100.tres"
