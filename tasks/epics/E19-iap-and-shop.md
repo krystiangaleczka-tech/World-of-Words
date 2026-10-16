@@ -17,6 +17,11 @@ Idempotent purchases, permanent Remove Forced Ads and store-backed restore.
 - T-0271: durable Fake-backed purchase settlement on merged T-0270/T-0263.
 - T-0272/T-0273: native verified adapters, blocked planning records only.
 
+## Wave 3
+- T-0334: separate Card footer/value states required by R-UI-1/2.
+- T-0274: explicitly injected Shop Sheet, after T-0334.
+- T-0275: future HUMAN device test after real adapters/shop, not certified here.
+
 ## Decisions
 StoreTransaction.store_key remains the store transaction key, never orderId.
 Fakes model provider delivery/unfinished state, never wallet grants or Save.
