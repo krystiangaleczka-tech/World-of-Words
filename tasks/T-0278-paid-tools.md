@@ -9,7 +9,7 @@ executor: cheap
 think: high
 ui: high
 status: blocked
-depends_on: [T-0276, T-0277, T-0263]
+depends_on: [T-0276, T-0277, T-0263, T-0274]
 touch:
   - tasks/T-0278-paid-tools.md
   - docs/qa/T-0278-paid-tools-preflight.md
@@ -21,7 +21,7 @@ Atomically debit item/coins and publish Hint/Reveal with retry-safe identity.
 
 ## Context
 GAME_DESIGN.md#hints: a shared dirty Save followed by flush is not sufficient proof
-for paid tools. Roadmap also requires T-0274; add it to depends_on when materialized.
+for paid tools. T-0274 supplies the explicit Shop Sheet; activation remains blocked on this preflight.
 
 ## Specification
 Blocked preflight only. On merged T-0274/T-0276/T-0277 inspect exact durable candidate

@@ -2,6 +2,7 @@ class_name AdPresentation
 extends Node
 ## Internal Fake-era presentation owner; no boot/UI activation or IAP processing.
 
+signal changed
 signal finished
 signal audio_paused(paused: bool)
 signal interstitial_opened
@@ -28,6 +29,8 @@ var _reserve: Callable
 var _reserved: bool = false
 var _save: SAVE
 var _settling: bool = false
+var _notifying: bool = false
+var _dispatching: bool = false
 
 
 func configure(ads: AdsAdapter, reserve: Callable, save: SAVE) -> void:
@@ -50,7 +53,7 @@ func configure(ads: AdsAdapter, reserve: Callable, save: SAVE) -> void:
 
 
 func busy() -> bool:
-	return _kind not in [&"idle", &"preload"]
+	return _dispatching or _notifying or _kind not in [&"idle", &"preload"]
 
 
 func interstitial_ready() -> bool:
@@ -60,9 +63,18 @@ func interstitial_ready() -> bool:
 func rewarded_state() -> StringName:
 	if _kind == &"pending_reward":
 		return &"pending_reward"
-	if busy():
+	if _kind not in [&"idle", &"preload"]:
 		return &"busy"
 	return &"unavailable" if _unavailable else &"ready"
+
+
+func can_retry(placement: StringName, reward: Callable) -> bool:
+	return _kind == &"pending_reward" and _same_reward(placement, reward)
+
+
+func begin_shop_visit() -> void:
+	if _kind == &"idle":
+		_unavailable = false
 
 
 func prepare_interstitial() -> void:
@@ -83,7 +95,7 @@ func show_interstitial() -> void:
 
 
 func request_rewarded(placement: StringName, reward: Callable) -> Error:
-	if _settling:
+	if _settling or _dispatching:
 		return ERR_BUSY
 	if _kind == &"pending_reward":
 		if not _same_reward(placement, reward):
@@ -109,7 +121,13 @@ func request_rewarded(placement: StringName, reward: Callable) -> Error:
 	_opened = false
 	_kind = &"reward_loading"
 	_timer.start()
-	_ads.load_rewarded()
+	_dispatching = true
+	var generation: int = _generation
+	changed.emit()
+	if _generation == generation and _kind == &"reward_loading":
+		_ads.load_rewarded()
+	_dispatching = false
+	changed.emit()
 	return OK
 
 
@@ -235,8 +253,9 @@ func _on_failed(_reason: String) -> void:
 
 
 func _end() -> void:
+	_notifying = true
 	var continuation: bool = _kind == &"interstitial"
-	_unavailable = _kind in [&"reward_loading", &"rewarded"]
+	_unavailable = _kind in [&"reward_loading", &"rewarded"] and not _earned and not _opened
 	_timer.stop()
 	_generation += 1
 	_kind = &"pending_reward" if _earned and _reward_error != OK else &"idle"
@@ -245,6 +264,8 @@ func _end() -> void:
 	if _opened:
 		_opened = false
 		audio_paused.emit(false)
+	changed.emit()
+	_notifying = false
 	if continuation:
 		finished.emit()
 
