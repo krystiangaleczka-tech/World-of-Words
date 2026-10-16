@@ -75,12 +75,119 @@ func grant(source: StringName, items: Dictionary) -> Error:
 	return _transact(&"grant", source, items)
 
 
+## @api Specialized grant owner: wallet/entitlement and store key share one durable document.
+func grant_purchase(store_key: String, product_id: String) -> Error:
+	if _busy or (is_instance_valid(_save) and _save.writes_blocked()):
+		return ERR_BUSY
+	if not is_ready() or not _config.has_key(&"iap.coins_s.amount"):
+		return ERR_UNCONFIGURED
+	if (
+		store_key.is_empty()
+		or store_key != store_key.strip_edges()
+		or product_id not in ["nc.remove_forced_ads.v1", "c.coins_s.v1"]
+	):
+		return ERR_INVALID_PARAMETER
+	_busy = true
+	var error: Error = _apply_purchase(store_key, product_id)
+	_busy = false
+	return error
+
+
+func _apply_purchase(key: String, product: String) -> Error:
+	if not _pending.is_empty():
+		if _pending.get("purchase_key") != key or _pending.get("product_id") != product:
+			return ERR_BUSY
+		return _flush_purchase()
+	var view: Dictionary = _save.committed_view()
+	if view.error != OK:
+		return ERR_UNAVAILABLE
+	if key in view.sections.monetization.processed_transactions:
+		return OK
+	var before: Dictionary = _save.get_section(&"economy")
+	var monetization: Dictionary = _save.get_section(&"monetization")
+	if before != view.sections.economy or monetization != view.sections.monetization:
+		return ERR_BUSY
+	return _stage_purchase(before, monetization, view, key, product)
+
+
+func _stage_purchase(
+	before: Dictionary, monetization: Dictionary, view: Dictionary, key: String, product: String
+) -> Error:
+	var amounts: Dictionary = {}
+	var commands: Array[Dictionary] = []
+	if product == "c.coins_s.v1":
+		var coins: int = _config.get_int(&"iap.coins_s.amount")
+		if coins < 1:
+			return ERR_INVALID_DATA
+		amounts = {"coins": coins}
+		commands.append({"operation": "grant", "reason": "iap_coins", "amounts": amounts})
+	else:
+		monetization.remove_forced_ads = true
+	var prepared: Dictionary = _build_batch(before, commands)
+	if prepared.is_empty():
+		return ERR_INVALID_DATA
+	monetization.processed_transactions.append(key)
+	var language: String = view.sections.settings.language
+	monetization.last_purchase_slot = view.sections.progress.by_lang.get(language, {}).get(
+		"current_slot", 1
+	)
+	monetization.levels_since_purchase = 0
+	var error: Error = _save.stage_purchase(prepared.section, monetization)
+	if error != OK:
+		return error
+	_pending = {
+		"before": before,
+		"candidate": prepared.section,
+		"purchase_key": key,
+		"product_id": product,
+		"entitlement": monetization.remove_forced_ads,
+		"amounts": amounts.duplicate(true)
+	}
+	return _flush_purchase()
+
+
+func _flush_purchase() -> Error:
+	var key: String = _pending.purchase_key
+	if key not in _save.committed_view().sections.monetization.processed_transactions:
+		var error: Error = _persist_purchase()
+		if error != OK:
+			return error
+	var committed: Dictionary = _save.committed_view().sections
+	if (
+		key not in committed.monetization.processed_transactions
+		or committed.economy != _pending.candidate
+		or (_pending.entitlement and not committed.monetization.remove_forced_ads)
+	):
+		return ERR_BUSY
+	var amounts: Dictionary = _pending.amounts.duplicate(true)
+	_pending = {}
+	if not amounts.is_empty():
+		_events.economy_changed.emit(&"grant", &"iap_coins", amounts, snapshot())
+	return OK
+
+
+func _persist_purchase() -> Error:
+	if _save.get_section(&"economy") != _pending.candidate:
+		return ERR_BUSY
+	var monetization: Dictionary = _save.get_section(&"monetization")
+	if _pending.purchase_key not in monetization.processed_transactions:
+		return ERR_BUSY
+	if _pending.entitlement and not monetization.remove_forced_ads:
+		monetization.remove_forced_ads = true
+		var staged: Error = _save.stage_purchase(_pending.candidate, monetization)
+		if staged != OK:
+			return staged
+	return _save.flush()
+
+
 ## @api True means durable success; false includes invalid, insufficient, busy and I/O failures.
 func spend(sink: StringName, items: Dictionary) -> bool:
 	return _transact(&"spend", sink, items) == OK
 
 
 func _transact(operation: StringName, reason: StringName, amounts: Dictionary) -> Error:
+	if _pending.has("purchase_key"):
+		return ERR_BUSY
 	if _busy or (is_instance_valid(_save) and _save.writes_blocked()):
 		return ERR_BUSY
 	if not is_ready():

@@ -181,6 +181,22 @@ func set_section(section: StringName, values: Dictionary) -> Error:
 	return OK
 
 
+## @api Stage the Economy-owned purchase pair together; no I/O or partial assignment.
+func stage_purchase(economy: Dictionary, monetization: Dictionary) -> Error:
+	if writes_blocked():
+		return ERR_BUSY
+	if not _loaded:
+		return ERR_UNCONFIGURED
+	var candidate: Dictionary = _data.duplicate(true)
+	candidate["economy"] = economy.duplicate(true)
+	candidate["monetization"] = monetization.duplicate(true)
+	if not _valid_document(candidate):
+		return ERR_INVALID_DATA
+	_data = _canonical_document(candidate)
+	_dirty = true
+	return OK
+
+
 ## @api Read a closed settings key; invalid names return null.
 func get_setting(key: StringName) -> Variant:
 	assert(_loaded)

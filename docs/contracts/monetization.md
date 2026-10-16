@@ -1,4 +1,4 @@
-# Monetization contract and Fake flows (T-0261, T-0263)
+# Monetization contract and Fake flows (T-0261, T-0263, T-0271)
 
 No boot/view caller activates this service. Inject Clock through initialize, then
 configure(save, config, events, consent, ads, ios) with loaded Save/Config and
@@ -15,9 +15,9 @@ must settle or expire before reconfiguration.
 | can_offer_interstitial(state: Dictionary) -> bool | Owned readiness/entitlement/history/budget override caller data |
 | rewarded_state() -> StringName | unavailable, ready (may attempt explicit load), busy, pending_reward |
 | request_rewarded(placement: StringName, reward: Callable) -> Error | Opt-in load/show or identical pending settlement retry |
-| purchase(product_id: String) -> Error | ERR_UNAVAILABLE until T-0271 |
-| restore_purchases() -> Error | ERR_UNAVAILABLE until T-0271 |
-| process_unfinished_transactions() -> Error | ERR_UNAVAILABLE until T-0271 |
+| purchase(product_id: String) -> Error | Explicit IAP request after configure_iap |
+| restore_purchases() -> Error | Request provider non-consumable restore |
+| process_unfinished_transactions() -> Error | Retry settlement, then fetch unfinished |
 | audio_pause_requested(paused: bool) | Actual opened/ended ad pause boundary |
 
 Legal states: idle -> info -> required form at/after completed UMP slot -> iOS ATT
@@ -69,5 +69,48 @@ Audio.bind_monetization(source) connects the pause signal. set_ad_paused(bool) a
 application background are separate pause reasons; neither overwrites persistent
 volume/mute settings. No sounds start while either reason applies.
 
-T-0271 still owns transaction idempotency and durable grant/flush/finish. No boot/Nav
-activation, live provider, endpoint, SDK permission, save schema or balance change.
+## Explicit IAP settlement (T-0271)
+
+configure_iap(economy, adapter: IapAdapter) -> Error binds the matching loaded Save
+and Economy, without provider calls. Frozen consent configuration is unchanged;
+without this explicit binding all three IAP commands remain ERR_UNAVAILABLE.
+purchase_state() -> StringName and purchase_state_changed(product_id: String,
+state: StringName, error: Error) report idle/purchasing/pending/settling/completed/
+cancelled/failed/unknown. Commands returning OK mean accepted, not purchase success.
+Each verified transaction update is serialized independently; the frozen adapter
+has no end-of-fetch/restore signal, so no aggregate completion is fabricated.
+
+Only valid PURCHASED updates for the two canonical P2 products can settle. Pending,
+deferred, cancelled and failed cannot grant or finish. Adapters own verification
+and non-consumable filtering for restore. Unsolicited verified purchases follow the
+same settlement path; provider callbacks may arrive independently of UI commands.
+
+Economy.grant_purchase(store_key: String, product_id: String) -> Error extends the
+wallet owner's grant path without changing grant/spend. The configured coin amount
+comes from iap.coins_s.amount, never provider metadata. Remove Forced Ads is only
+set true. Save.stage_purchase(economy: Dictionary, monetization: Dictionary) -> Error
+validates the whole paired document before staging either section. The wallet or
+entitlement, permanent processed_transactions entry and purchase-history fields
+reach one Save.flush together. Campaign AtomicRequest is unchanged. Processed keys
+are never trimmed. No new save field, schema, config key or balance value.
+
+A pending purchase blocks other Economy work/owner replacement and hides its dirty
+wallet. Retry reconciles a matching committed pair even if another owner flushed
+it after an error, emitting its Economy notification once. A conflicting committed
+wallet or missing expected entitlement cannot certify the pair; it remains blocked
+without acknowledgement. Retries preserve unrelated section changes. Only committed
+Save evidence after Economy reconciliation permits finish. Duplicates finish without
+a new grant; crashes before acknowledgement replay through the same key.
+
+One pending purchase command cannot be superseded by fetch/restore or another
+purchase. A provider pending product cannot be purchased again; recovery can still
+fetch its eventual outcome. A one-shot 120-second technical timer marks unanswered
+purchase unknown, keeps its product blocked and permits later callback/recovery.
+It ignores scene pause/time scale. Rewarded ads and active purchase presentation
+are mutually excluded; already-earned reward retries remain available.
+
+Completed means the local pair is durable and finish was requested. The adapter
+has no acknowledgement callback; unfinished replay handles a lost finish. Binding
+does not run boot fetch: future activation must explicitly invoke recovery once
+per startup. No boot/Nav activation, live provider, endpoint, SDK permission,
+store verification implementation, analytics producer or catalog/price approval.

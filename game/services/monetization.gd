@@ -1,11 +1,13 @@
 extends ServiceStub
-## @api Unactivated consent/ad flows against Fakes; transaction processing remains T-0271.
+## @api Unactivated consent, ads and explicit verified IAP settlement.
 
 signal continuation_ready(completed_slot: int)
 signal audio_pause_requested(paused: bool)
+signal purchase_state_changed(product_id: String, state: StringName, error: Error)
 
 enum Step { IDLE, INFO, FORM, ATT, INITIALIZING }
 
+const ECONOMY_SCRIPT: Script = preload("res://services/economy.gd")
 const SAVE_SCRIPT: Script = preload("res://services/save.gd")
 const CONFIG_SCRIPT: Script = preload("res://services/config.gd")
 const EVENTS_SCRIPT: Script = preload("res://services/events.gd")
@@ -34,6 +36,7 @@ var _last_evaluated: String = ""
 var _history_failed: bool = false
 var _analytics_live: bool = false
 var _shop_reservation: Dictionary = {}
+var _iap_flow: IapFlow
 
 
 ## @api No implicit provider operation; reconfiguration disconnects old adapters.
@@ -46,7 +49,8 @@ func configure(
 	ios: bool
 ) -> Error:
 	if (
-		_slot > 0
+		(is_instance_valid(_iap_flow) and _iap_flow.busy())
+		or _slot > 0
 		or _step != Step.IDLE
 		or (is_instance_valid(_presentation) and _presentation.busy())
 	):
@@ -124,7 +128,11 @@ func before_next_level(completed_slot: int) -> Error:
 		return ERR_UNCONFIGURED
 	if completed_slot < 1:
 		return ERR_INVALID_PARAMETER
-	if _slot > 0 or _presentation.busy():
+	if (
+		_slot > 0
+		or _presentation.busy()
+		or (is_instance_valid(_iap_flow) and _iap_flow.presenting())
+	):
 		return ERR_BUSY
 	_slot = completed_slot
 	if not _started:
@@ -159,6 +167,8 @@ func rewarded_state() -> StringName:
 func request_rewarded(placement: StringName, reward: Callable) -> Error:
 	if is_instance_valid(_presentation) and _presentation.rewarded_state() == &"pending_reward":
 		return _presentation.request_rewarded(placement, reward)
+	if is_instance_valid(_iap_flow) and _iap_flow.presenting():
+		return ERR_BUSY
 	if not ads_ready() or _slot > 0 or _step != Step.IDLE:
 		return ERR_UNAVAILABLE
 	var error: Error = _validate_placement(placement, reward)
@@ -224,17 +234,49 @@ func _reserve_shop_reward() -> Error:
 	return error
 
 
-## @api T-0271 owns verified and durable grant/flush/finish transaction processing.
-func purchase(_product_id: String) -> Error:
-	return ERR_UNAVAILABLE
+## @api Explicit same-Save binding; no provider command or boot activation.
+func configure_iap(economy: Node, adapter: IapAdapter) -> Error:
+	if is_instance_valid(_iap_flow) and _iap_flow.busy():
+		return ERR_BUSY
+	if not _configured() or not economy is ECONOMY_SCRIPT or adapter == null:
+		return ERR_UNCONFIGURED
+	if (
+		not economy.is_ready()
+		or not economy.atomic_save_matches(_save)
+		or economy.atomic_has_pending()
+	):
+		return ERR_UNCONFIGURED
+	if is_instance_valid(_iap_flow):
+		_iap_flow.free()
+	_iap_flow = IapFlow.new()
+	add_child(_iap_flow)
+	_iap_flow.configure(_save, economy, adapter)
+	_iap_flow.state_changed.connect(_on_purchase_state)
+	return OK
+
+
+func purchase_state() -> StringName:
+	return _iap_flow.state() if is_instance_valid(_iap_flow) else &"unavailable"
+
+
+func purchase(product_id: String) -> Error:
+	if not is_instance_valid(_iap_flow):
+		return ERR_UNAVAILABLE
+	if _slot > 0 or _step != Step.IDLE or _presentation.busy():
+		return ERR_BUSY
+	return _iap_flow.purchase(product_id)
 
 
 func restore_purchases() -> Error:
-	return ERR_UNAVAILABLE
+	return _iap_flow.recover(true) if is_instance_valid(_iap_flow) else ERR_UNAVAILABLE
 
 
 func process_unfinished_transactions() -> Error:
-	return ERR_UNAVAILABLE
+	return _iap_flow.recover() if is_instance_valid(_iap_flow) else ERR_UNAVAILABLE
+
+
+func _on_purchase_state(product: String, state: StringName, error: Error) -> void:
+	purchase_state_changed.emit(product, state, error)
 
 
 ## @api Caller cannot override owned readiness, history, budget or entitlement.
@@ -412,6 +454,8 @@ func _release() -> void:
 
 
 func _disconnect() -> void:
+	if is_instance_valid(_iap_flow):
+		_iap_flow.free()
 	if is_instance_valid(_presentation):
 		_presentation.free()
 	if is_instance_valid(_legal_timer):
