@@ -5,6 +5,9 @@ const SAVE_SCRIPT: Script = preload("res://services/save.gd")
 const CONTENT_SCRIPT: Script = preload("res://services/content.gd")
 const CONFIG_SCRIPT: Script = preload("res://services/config.gd")
 
+var coaches: FeatureCoaches
+var coach_caption: Label
+var _coach_height: float = 0
 var _save: SAVE_SCRIPT
 var _content: CONTENT_SCRIPT
 var _config: CONFIG_SCRIPT
@@ -46,10 +49,52 @@ func configure(
 	_art_resolver = art_resolver
 
 
+## @api Explicit teaching opt-in; caller owns the actual consent/modal guard.
+func configure_coaches(events: Node, blocked: Callable) -> Error:
+	if is_inside_tree() or coaches != null:
+		return ERR_BUSY
+	if not is_instance_valid(_save) or not is_instance_valid(_config) or not blocked.is_valid():
+		return ERR_UNCONFIGURED
+	var helper: FeatureCoaches = FeatureCoaches.new()
+	var error: Error = helper.configure(_save, events, _coach_eligible, blocked)
+	if error != OK:
+		helper.free()
+		return error
+	coaches = helper
+	add_child(helper)
+	return OK
+
+
+func _coach_eligible(feature: StringName, target: Control) -> bool:
+	var view: Dictionary = _save.committed_view()
+	var language: String = view.sections.settings.language
+	var slot: int = int(view.sections.progress.by_lang.get(language, {}).get("current_slot", 0))
+	return (
+		feature == &"journey"
+		and target == _journey
+		and _journey.implemented
+		and not _journey.locked
+		and slot >= _config.get_int(&"unlocks.journey_slot")
+		and _content.get_language() == language
+	)
+
+
+func refresh_coaches() -> void:
+	if coaches != null and is_instance_valid(_journey):
+		if _coach_eligible(&"journey", _journey):
+			coaches.show(&"journey", _journey, coach_caption)
+		coaches.refresh()
+
+
+func prepare_navigation() -> Error:
+	return coaches.prepare_navigation() if coaches != null else OK
+
+
 func _enter_tree() -> void:
 	super._enter_tree()
 	_catalog.register_all()
 	if _title != null:
+		_connect_coach_layout()
 		call_deferred("refresh")
 
 
@@ -111,7 +156,18 @@ func _ready() -> void:
 	_journey.name = "Journey"
 	_journey.configure(preload("res://assets/icons/route.svg"), "home.nav.journey")
 	_journey.pressed.connect(_open_journey)
-	bottom = _journey
+	if coaches == null:
+		bottom = _journey
+	else:
+		var row: Control = Control.new()
+		row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_child(_journey)
+		coach_caption = CatalogSurface.label(&"Caption")
+		coach_caption.text = tr("onboarding.coach.journey")
+		coach_caption.visible = false
+		row.add_child(coach_caption)
+		_connect_coach_layout()
+		bottom = row
 	refresh()
 
 
@@ -154,6 +210,71 @@ func refresh() -> void:
 	_settings.disabled = not ResourceLoader.exists("res://features/settings/settings.tscn")
 	_journey.implemented = ResourceLoader.exists("res://features/journey/journey.tscn")
 	_refresh_copy()
+	refresh_coaches.call_deferred()
+
+
+func _connect_coach_layout() -> void:
+	if (
+		is_instance_valid(coach_caption)
+		and not coach_caption.minimum_size_changed.is_connected(_layout_coach)
+	):
+		coach_caption.minimum_size_changed.connect(_layout_coach, CONNECT_DEFERRED)
+		coach_caption.get_parent().resized.connect(_layout_coach)
+		coaches.changed.connect(_layout_coach, CONNECT_DEFERRED)
+		_journey.minimum_size_changed.connect(_layout_coach, CONNECT_DEFERRED)
+
+
+func _layout_coach() -> void:
+	if not is_instance_valid(coach_caption):
+		return
+	var font: Font = _journey.get_theme_font(&"CAPTION", &"Type")
+	var width: float = Tokens.Touch.MIN_TARGET
+	for key: String in ["home.nav.journey", Badge.NEW_KEY]:
+		width = maxf(
+			width,
+			(
+				(
+					font
+					. get_string_size(
+						tr(key),
+						HORIZONTAL_ALIGNMENT_LEFT,
+						-1,
+						_journey.get_theme_font_size(&"CAPTION", &"Type")
+					)
+					. x
+				)
+				+ Tokens.Space.M * 2
+				+ Tokens.Space.S * 2
+			)
+		)
+	var font_size: int = _journey.get_theme_font_size(&"CAPTION", &"Type")
+	var height: float = (
+		font.get_height(font_size)
+		+ (
+			font
+			. get_multiline_string_size(
+				tr(Badge.NEW_KEY),
+				HORIZONTAL_ALIGNMENT_LEFT,
+				Tokens.Touch.MIN_TARGET,
+				font_size,
+				-1,
+				TextServer.BREAK_MANDATORY | TextServer.BREAK_WORD_BOUND | TextServer.BREAK_ADAPTIVE
+			)
+			. y
+		)
+		+ Tokens.Space.XL
+		+ Tokens.Space.M * 2
+		+ Tokens.Space.S * 2
+		+ Tokens.Space.XS * 2
+	)
+	_journey.size = Vector2(width, maxf(height, _coach_height))
+	_coach_height = maxf(_coach_height, _journey.size.y)
+	height = _coach_height
+	var row: Control = coach_caption.get_parent()
+	coach_caption.position.x = width + Tokens.Space.S
+	coach_caption.size.x = maxf(Tokens.Touch.MIN_TARGET, row.size.x - coach_caption.position.x)
+	coach_caption.size.y = coach_caption.get_minimum_size().y
+	row.custom_minimum_size.y = maxf(coach_caption.size.y, height)
 
 
 func _content_count() -> int:
@@ -233,10 +354,20 @@ func _notification(what: int) -> void:
 	super._notification(what)
 	if what == NOTIFICATION_TRANSLATION_CHANGED:
 		_refresh_copy()
+		_layout_coach.call_deferred()
 	elif what == NOTIFICATION_THEME_CHANGED:
 		_refresh_surface()
+		_layout_coach.call_deferred()
 
 
 func _exit_tree() -> void:
+	if (
+		is_instance_valid(coach_caption)
+		and coach_caption.minimum_size_changed.is_connected(_layout_coach)
+	):
+		coach_caption.minimum_size_changed.disconnect(_layout_coach)
+		coach_caption.get_parent().resized.disconnect(_layout_coach)
+		coaches.changed.disconnect(_layout_coach)
+		_journey.minimum_size_changed.disconnect(_layout_coach)
 	_catalog.unregister()
 	super._exit_tree()

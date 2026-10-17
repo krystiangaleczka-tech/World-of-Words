@@ -14,6 +14,7 @@ const SAVE_SCRIPT: Script = preload("res://services/save.gd")
 const CONTENT_SCRIPT: Script = preload("res://services/content.gd")
 const PROGRESS_SCRIPT: Script = preload("res://services/progress.gd")
 
+var coaches: FeatureCoaches
 var tutorial_ui: LevelTutorialUI
 var complete_ui: LevelCompleteUI
 var bonus_ui: LevelBonusUI
@@ -156,6 +157,8 @@ func _ready() -> void:
 		bonus_ui.mount(self, _p2_economy, _save)
 	if complete_ui != null:
 		complete_ui.mount(self, _save, _p2_economy, _p2_config, _content, _slot, _navigation)
+	if coaches != null:
+		coaches.mount_level(_area)
 	_refresh_hud()
 	set_process(false)
 	_layout_play_area()
@@ -269,6 +272,27 @@ func configure_tutorial() -> Error:
 	tutorial_ui = LevelTutorialUI.new()
 	add_child(tutorial_ui)
 	return OK
+
+
+## @api Caller supplies the actual consent/modal guard and refreshes at its boundaries.
+func configure_coaches(blocked: Callable) -> Error:
+	if is_inside_tree() or coaches != null:
+		return ERR_BUSY
+	if p2_hud == null or not is_instance_valid(_save):
+		return ERR_UNCONFIGURED
+	var helper: FeatureCoaches = FeatureCoaches.new()
+	var error: Error = helper.configure_level(self, _save, _p2_config, _event_bus, _slot, blocked)
+	if error != OK:
+		helper.free()
+		return error
+	coaches = helper
+	add_child(helper)
+	return OK
+
+
+func refresh_coaches() -> void:
+	if coaches != null:
+		coaches.refresh_level()
 
 
 ## @api Retry only the lesson metadata, never replay a word or its reward.
@@ -729,12 +753,20 @@ func _layout_play_area() -> void:
 	preview.size = rectangles[&"preview"].size
 	_actions.position = rectangles[&"actions"].position
 	_actions.size = rectangles[&"actions"].size
+	if coaches != null:
+		var diameter: float = minf(rectangles[&"wheel"].size.x, Tokens.Layout.WHEEL_MIN)
+		rectangles[&"wheel"].position += Vector2(
+			(rectangles[&"wheel"].size.x - diameter) / 2, rectangles[&"wheel"].size.y - diameter
+		)
+		rectangles[&"wheel"].size = Vector2.ONE * diameter
 	wheel.position = rectangles[&"wheel"].position
 	wheel.size = rectangles[&"wheel"].size
 	if p2_hud != null and is_instance_valid(p2_hud.reveal):
 		p2_hud.layout(available, rectangles[&"wheel"], rectangles[&"board"])
 	if tutorial_ui != null:
 		tutorial_ui.layout()
+	if coaches != null:
+		coaches.layout_level()
 
 
 func _on_layout_class_changed(_value: StringName) -> void:
@@ -861,6 +893,10 @@ func _finish_completion_motion() -> void:
 
 ## @api Persist the current campaign board before Nav destroys its screen or backgrounds.
 func prepare_navigation() -> Error:
+	if coaches != null:
+		var coach_error: Error = coaches.prepare_navigation()
+		if coach_error != OK:
+			return coach_error
 	if tutorial_ui != null and tutorial_ui.pending:
 		var tutorial_error: Error = tutorial_ui.retry()
 		if tutorial_error != OK:
@@ -923,6 +959,7 @@ func refresh_paid_hud() -> void:
 func can_offer_hint() -> bool:
 	return (
 		is_visible_in_tree()
+		and (coaches == null or coaches.active_feature() == &"")
 		and paid_tools_ui != null
 		and paid_bindings_ready()
 		and not _save.writes_blocked()
