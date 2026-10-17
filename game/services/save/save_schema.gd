@@ -259,7 +259,9 @@ static func _json_safe(value: Variant) -> bool:
 			if not _json_safe(item):
 				return false
 	elif value is int or value is float:
-		return is_finite(float(value)) and abs(float(value)) <= 9007199254740991.0
+		return (
+			is_finite(float(value)) and abs(float(value)) <= float(ProgressSnapshot.MAX_SAFE_COUNT)
+		)
 	else:
 		return value == null or value is String or value is bool
 	return true
@@ -364,6 +366,18 @@ static func _valid_proof(key: String, value: Variant, atomic: Dictionary) -> boo
 			return false
 		identity = (
 			"paid_tool:%s:%d:%s:%s" % [value["language"], int(value["slot"]), parts[3], parts[4]]
+		)
+	if value["operation_id"].begins_with("campaign_checkpoint:"):
+		var parts: PackedStringArray = value["operation_id"].split(":")
+		if (
+			parts.size() != 5
+			or not AtomicRequest.valid_hash(parts[3])
+			or not AtomicRequest.valid_hash(parts[4])
+		):
+			return false
+		identity = (
+			"campaign_checkpoint:%s:%d:%s:%s"
+			% [value["language"], int(value["slot"]), parts[3], parts[4]]
 		)
 	if value["operation_id"] != identity or key != "%d:%s" % [int(value["lineage"]), identity]:
 		return false

@@ -244,7 +244,8 @@ func _assemble(
 	var state: Dictionary = result.progress.get("by_lang", {}).get(_request.language, {})
 	var slot: int = _request.context.slot
 	var partial: bool = (
-		_request.kind == "paid_tool" and _request.progress_candidate.current_slot == slot
+		_request.kind in ["paid_tool", "campaign_checkpoint"]
+		and _request.progress_candidate.current_slot == slot
 	)
 	var highest: int = int(
 		(
@@ -266,7 +267,10 @@ func _assemble(
 		partial
 		and (
 			not _request.delta.is_empty()
-			or not _same(state.get("level_state", {}), _request.tool.after)
+			or not _same(
+				state.get("level_state", {}),
+				_request.tool.after if _request.kind == "paid_tool" else _request.checkpoint.after
+			)
 		)
 	):
 		return {}
