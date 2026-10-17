@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://d1qbiod4ih0a2"
+
+[deps]
+
+files=["res://locale/onboarding.pl.translation", "res://locale/onboarding.en.translation"]
+
+source_file="res://locale/onboarding.csv"
+dest_files=["res://locale/onboarding.pl.translation", "res://locale/onboarding.en.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

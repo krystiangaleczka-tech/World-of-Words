@@ -123,8 +123,9 @@ func _hide() -> void:
 	if _hold == null:
 		return
 	_hold.stop()
+	if caption.visible:
+		_host.hint_button.highlighted = false
 	caption.visible = false
-	_host.hint_button.highlighted = false
 
 
 func _enter_tree() -> void:
