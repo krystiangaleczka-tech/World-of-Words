@@ -472,6 +472,82 @@ func completion_request(commands: Array[Dictionary]) -> Dictionary:
 	return request.duplicate(true)
 
 
+## @api Register a detached paid candidate against this owner's current bound durable board.
+func paid_tool_request(
+	board: BoardState, kind: StringName, commands: Array[Dictionary]
+) -> Dictionary:
+	if (
+		not atomic_available()
+		or _save.writes_blocked()
+		or atomic_has_pending()
+		or board == null
+		or board != _bound_board
+		or not _valid_board(board)
+		or kind not in [&"hint", &"reveal"]
+	):
+		return {}
+	var view: Dictionary = _save.committed_view()
+	var language: String = _save_language()
+	var state: Dictionary = view.sections.progress.by_lang.get(language, SaveSchema.LANGUAGE_STATE)
+	var slot: int = board.get_level().get_slot()
+	if (
+		slot < _atomic_config.get_int(StringName("unlocks." + str(kind) + "_slot"))
+		or view.lineage != _bound_lineage
+	):
+		return {}
+	var saved: BoardState = (
+		BoardState.new(board.get_level())
+		if state.level_state == null
+		else BoardState.from_dict(board.get_level(), state.level_state, true)
+	)
+	if (
+		saved == null
+		or AtomicRequest.hash_value(saved.to_dict()) != AtomicRequest.hash_value(board.to_dict())
+	):
+		return {}
+	var candidate: BoardState = PaidToolPlan.after(board, kind)
+	if candidate == null:
+		return {}
+	var change: Dictionary = (
+		ProgressSaveAdapter.completion(view, language, _content, _atomic_rules())
+		if candidate.is_complete()
+		else {"snapshot": ProgressSaveAdapter.domain(state), "delta": {}}
+	)
+	if change.is_empty():
+		return {}
+	var before: Dictionary = board.to_dict()
+	var request: Dictionary = {
+		"operation_id":
+		"paid_tool:%s:%d:%s:%s" % [language, slot, kind, AtomicRequest.hash_value(before)],
+		"kind": "paid_tool",
+		"language": language,
+		"tool": {"kind": str(kind), "before": before, "after": candidate.to_dict()},
+		"context":
+		{
+			"content_version": _content.content_version(),
+			"manifest_hash": _content.manifest_hash(),
+			"level_id": board.get_level().get_id(),
+			"slot": slot,
+			"expected_current_slot": state.current_slot,
+			"expected_highest_completed_slot": state.highest_completed_slot,
+			"board_hash": AtomicRequest.hash_value(candidate.to_dict()),
+			"expected_progress_hash": AtomicRequest.hash_value(ProgressSaveAdapter.domain(state))
+		},
+		"progress_candidate": change.snapshot,
+		"economy_commands": commands.duplicate(true),
+		"delta": change.delta
+	}
+	_intent = {
+		"request": request.duplicate(true),
+		"board": candidate,
+		"before": board,
+		"config": _atomic_values(),
+		"lineage": view.lineage,
+		"revision": view.revision
+	}
+	return request.duplicate(true)
+
+
 func prepare_completion(transaction: SaveTransaction) -> ProgressPrepared:
 	var rejected: ProgressPrepared = ProgressPrepared.new()
 	if not atomic_context_valid(transaction):
@@ -483,8 +559,19 @@ func prepare_completion(transaction: SaveTransaction) -> ProgressPrepared:
 	_approvals.clear()
 	var request: Dictionary = transaction.request()
 	var view: Dictionary = transaction.committed_view()
-	var change: Dictionary = ProgressSaveAdapter.completion(
-		view, request.language, _content, _atomic_rules()
+	var partial: bool = (
+		request.kind == "paid_tool" and not (_intent.board as BoardState).is_complete()
+	)
+	var change: Dictionary = (
+		{
+			"snapshot":
+			ProgressSaveAdapter.domain(
+				view.sections.progress.by_lang.get(request.language, SaveSchema.LANGUAGE_STATE)
+			),
+			"delta": {}
+		}
+		if partial
+		else ProgressSaveAdapter.completion(view, request.language, _content, _atomic_rules())
 	)
 	if (
 		change.is_empty()
@@ -500,9 +587,12 @@ func prepare_completion(transaction: SaveTransaction) -> ProgressPrepared:
 	for field: String in ["current_slot", "stars", "location_stars", "location_pieces", "unlocked"]:
 		state[field] = change.snapshot[field]
 	state.postcards = change.snapshot.completed_locations
-	state.highest_completed_slot = request.context.slot
-	state.completed_slot = maxi(int(state.completed_slot), int(request.context.slot))
-	state.level_state = null
+	if partial:
+		state.level_state = request.tool.after.duplicate(true)
+	else:
+		state.highest_completed_slot = request.context.slot
+		state.completed_slot = maxi(int(state.completed_slot), int(request.context.slot))
+		state.level_state = null
 	section.by_lang[request.language] = state
 	var value: ProgressPrepared = ProgressPrepared.new()
 	value.error = OK
@@ -554,7 +644,8 @@ func atomic_context_valid(transaction: SaveTransaction) -> bool:
 		and view.revision == _intent.revision
 		and _atomic_values() == _intent.config
 		and board != null
-		and board.is_complete()
+		and (board.is_complete() or request.kind == "paid_tool")
+		and _paid_intent_valid(request)
 		and _is_ready()
 		and _matches_content(board.get_level())
 		and request.language == _save_language()
@@ -563,6 +654,18 @@ func atomic_context_valid(transaction: SaveTransaction) -> bool:
 		and request.context.manifest_hash == _content.manifest_hash()
 		and request.context.board_hash == AtomicRequest.hash_value(board.to_dict())
 	)
+
+
+func _paid_intent_valid(request: Dictionary) -> bool:
+	if request.kind != "paid_tool":
+		return true
+	var before: BoardState = _intent.get("before")
+	if before == null or before != _bound_board or not _valid_board(before):
+		return false
+	if before.to_dict() != request.tool.before:
+		return false
+	var candidate: BoardState = PaidToolPlan.after(before, StringName(request.tool.kind))
+	return candidate != null and candidate.to_dict() == request.tool.after
 
 
 func _atomic_rules() -> ProgressRules:
@@ -681,7 +784,8 @@ func accept_commit(receipt: Dictionary) -> Error:
 	if not _p2_request.is_empty() and receipt.request_hash == AtomicRequest.hash_value(_p2_request):
 		_p2_request.clear()
 	_p2_notifying = true
-	_publish_p2_effects(receipt)
+	if not receipt.delta.is_empty():
+		_publish_p2_effects(receipt)
 	_p2_notifying = false
 	return OK
 
@@ -730,6 +834,13 @@ func _p2_context() -> Dictionary:
 
 
 func _valid_p2_receipt(receipt: Dictionary) -> bool:
+	if receipt.delta.is_empty() and receipt.operation_id.begins_with("paid_tool:"):
+		var partial: ProgressSnapshot = ProgressSnapshot.from_dict(receipt.committed_snapshot)
+		return partial != null and partial.snapshot().current_slot == receipt.slot
+	return _valid_completion_receipt(receipt)
+
+
+func _valid_completion_receipt(receipt: Dictionary) -> bool:
 	var delta: Dictionary = receipt.delta
 	if not AtomicRequest.closed(
 		delta,

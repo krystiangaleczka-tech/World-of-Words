@@ -198,3 +198,8 @@ func certifies(save: Node, progress: Node) -> bool:
 
 func completion_commands(language: String, slot: int) -> Array[Dictionary]:
 	return _economy.completion_commands(language, slot) if is_available() and not _busy else []
+
+
+## @api Paid callers use this port's exact Economy owner; no separate wallet injection.
+func tool_commands(kind: StringName, complete: bool = false) -> Array[Dictionary]:
+	return _economy.tool_commands(kind, complete) if is_available() and not _busy else []

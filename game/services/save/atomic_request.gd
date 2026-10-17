@@ -18,9 +18,15 @@ const CONTEXT_KEYS: Array[String] = [
 
 
 static func valid(request: Dictionary) -> bool:
-	if not closed(request, REQUEST_KEYS) or not json_value(request):
+	var keys: Array[String] = REQUEST_KEYS.duplicate()
+	if request.get("kind") == "paid_tool":
+		keys.append("tool")
+	if not closed(request, keys) or not json_value(request):
 		return false
-	if request.kind != "campaign_complete" or not ProgressSnapshot.valid_id(request.language):
+	if (
+		request.kind not in ["campaign_complete", "paid_tool"]
+		or not ProgressSnapshot.valid_id(request.language)
+	):
 		return false
 	if not request.context is Dictionary or not closed(request.context, CONTEXT_KEYS):
 		return false
@@ -35,7 +41,21 @@ static func valid(request: Dictionary) -> bool:
 			return false
 	if not ProgressSnapshot.valid_id(context.level_id):
 		return false
-	if request.operation_id != "campaign_complete:%s:%d" % [request.language, context.slot]:
+	var identity: String = "campaign_complete:%s:%d" % [request.language, context.slot]
+	if request.kind == "paid_tool":
+		if not request.tool is Dictionary or not closed(request.tool, ["kind", "before", "after"]):
+			return false
+		if request.tool.kind not in ["hint", "reveal"]:
+			return false
+		if not request.tool.before is Dictionary or not request.tool.after is Dictionary:
+			return false
+		if not integer_tree(request.tool):
+			return false
+		identity = (
+			"paid_tool:%s:%d:%s:%s"
+			% [request.language, context.slot, request.tool.kind, hash_value(request.tool.before)]
+		)
+	if request.operation_id != identity:
 		return false
 	if not request.progress_candidate is Dictionary:
 		return false
