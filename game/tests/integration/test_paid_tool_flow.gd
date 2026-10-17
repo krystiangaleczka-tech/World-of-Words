@@ -310,6 +310,8 @@ func test_early_close_and_no_fill_never_grant_or_reveal() -> void:
 	assert_eq(ui.message.text, host.tr("level.hint.no_reward"))
 	p.ads.set_outcome(&"show_rewarded", &"no_fill")
 	ui.watch_ad.pressed.emit()
+	assert_eq(ui.message.text, host.tr("level.hint.ad_unavailable"))
+	assert_true(ui.watch_ad.disabled)
 	assert_eq(b.economy.snapshot().items.hint, 0)
 	assert_true(host.controller.get_board().revealed_cells().is_empty())
 	assert_false(ui.sheet.busy)
@@ -495,3 +497,41 @@ func test_owner_advancement_between_configuration_and_mount_cannot_enable_free_h
 	assert_eq(b.economy.snapshot().coins, balance)
 	assert_true(host.wheel.is_locked())
 	assert_eq(host.status_label.text, host.tr("level.tool.unavailable"))
+
+
+func test_economy_config_replacement_before_mount_clears_the_paid_board() -> void:
+	var host: LevelScreen = SCENE.instantiate()
+	host.configure(b.save, b.content, 2, b.bus)
+	assert_eq(host.configure_p2(b.economy, b.config), OK)
+	assert_eq(host.configure_paid_tools(b.progress, b.port), OK)
+	var replacement: FIXTURE.ToolConfig = FIXTURE.ToolConfig.new()
+	add_child_autofree(replacement)
+	assert_eq(replacement.load(), OK)
+	replacement.hint_price = 101
+	b.economy.configure(b.save, replacement, b.bus)
+	var view: SubViewport = SubViewport.new()
+	view.size = Vector2i(1080, 1920)
+	add_child_autofree(view)
+	view.add_child(host)
+	await wait_process_frames(2)
+	assert_null(host.controller.get_board())
+	assert_false(host.controller.hint())
+	assert_ne(host.controller.use_paid_tool(&"hint").error, OK)
+	assert_eq(b.economy.snapshot().coins, 500)
+	assert_true(host.wheel.is_locked())
+	assert_eq(host.status_label.text, host.tr("level.tool.unavailable"))
+
+
+func test_redundant_hud_refresh_preserves_the_stock_hint_count_animation() -> void:
+	Tokens.reduced_motion = false
+	var host: LevelScreen = screen()
+	await wait_process_frames(3)
+	var badge: Badge = host.hint_button.find_children("*", "Badge", true, false)[0]
+	assert_eq(b.economy.grant(&"test", {"hint": 1}), OK)
+	for tween: Tween in get_tree().get_processed_tweens():
+		tween.custom_step(Tokens.dur(Tokens.Motion.FAST) / 4.0)
+	var animated_scale: Vector2 = badge.scale
+	assert_ne(animated_scale, Vector2.ONE)
+	host.refresh_paid_hud()
+	assert_eq(badge.scale, animated_scale)
+	assert_eq(host.hint_button.count, 1)

@@ -165,7 +165,7 @@ func _refresh_options() -> void:
 		_reward_message = (
 			"level.hint.reward_added"
 			if _economy.snapshot().items.hint > _reward_before
-			else "level.hint.no_reward"
+			else "level.hint.ad_unavailable" if state == &"unavailable" else "level.hint.no_reward"
 		)
 		_reward_attempt = false
 		if _reward_message == "level.hint.reward_added":

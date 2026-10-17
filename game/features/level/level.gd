@@ -119,7 +119,9 @@ func _ready() -> void:
 		status_label.remove_theme_font_size_override("font_size")
 		status_label.remove_theme_color_override("font_color")
 		status_label.theme_type_variation = &"Caption"
-		var paid_error: Error = controller.configure_paid_tools(_save, _paid_port)
+		var paid_error: Error = ERR_UNCONFIGURED
+		if paid_bindings_ready():
+			paid_error = controller.configure_paid_tools(_save, _paid_port)
 		if paid_error != OK:
 			controller.configure(null, progress, _event_bus)
 			progress.unbind_board()

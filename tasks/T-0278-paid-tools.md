@@ -13,6 +13,7 @@ depends_on: [T-0276, T-0277, T-0263, T-0274, T-0336, T-0337]
 touch:
   - game/features/level/level.gd
   - game/features/level/level_controller.gd
+  - game/features/level/p2_hud.gd
   - game/features/level/paid_tools_ui.gd*
   - game/features/shop/shop.gd
   - game/services/monetization.gd
@@ -69,7 +70,8 @@ replacement, Monetization.request_rewarded accepts bound Economy.grant callbacks
   Payment analytics integration remains T-0275; do not fabricate P1 paid events.
 
 ## Interface refinement
-LevelP2Hud keeps its presentation contract. LevelScreen stores the supplied Economy
+LevelP2Hud keeps its presentation contract. Refresh tool amounts only when count or
+price changes, so redundant wallet/HUD refreshes preserve the stock count animation. LevelScreen stores the supplied Economy
 and Config identities from configure_p2 for certifies_tools. Monetization's current
 shop_snapshot exposes no identity certifier; only use a provider when its configured
 bindings can be certified via an explicit read-only
