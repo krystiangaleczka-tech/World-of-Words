@@ -5,6 +5,7 @@ extends ScreenScaffold
 signal navigation_requested(target: StringName)
 signal shop_requested
 signal powerup_requested(kind: StringName)
+signal stuck_offer_shown(trigger: StringName)
 
 const ECONOMY_SCRIPT: Script = preload("res://services/economy.gd")
 const CONFIG_SCRIPT: Script = preload("res://services/config.gd")
@@ -12,6 +13,7 @@ const SAVE_SCRIPT: Script = preload("res://services/save.gd")
 const CONTENT_SCRIPT: Script = preload("res://services/content.gd")
 const PROGRESS_SCRIPT: Script = preload("res://services/progress.gd")
 
+var stuck_offer: LevelStuckOffer
 var paid_tools_ui: LevelPaidTools
 var p2_hud: LevelP2Hud
 var controller: LevelController
@@ -28,6 +30,7 @@ var debug_button: IconButton
 var completion_layer: VBoxContainer
 var completion_title: Label
 var continue_button: PrimaryButton
+var _offer_clock: Clock
 var _paid_progress: PROGRESS_SCRIPT
 var _paid_port: AtomicProgressPort
 var _p2_economy: ECONOMY_SCRIPT
@@ -74,6 +77,16 @@ func configure_navigation(nav: Node) -> void:
 	_navigation_supplied = is_instance_valid(nav)
 	if _navigation_supplied and nav.has_method("postcard_piece_count"):
 		_postcard_pieces_before = nav.call("postcard_piece_count", _slot)
+
+
+## @api Deterministic monotonic time injection for contextual offers, before mounting.
+func configure_offer_clock(clock: Clock) -> Error:
+	if is_inside_tree():
+		return ERR_BUSY
+	if clock == null:
+		return ERR_INVALID_PARAMETER
+	_offer_clock = clock
+	return OK
 
 
 func _ready() -> void:
@@ -127,6 +140,9 @@ func _ready() -> void:
 			progress.unbind_board()
 			_set_status("level.tool.unavailable")
 		paid_tools_ui.mount(self, controller)
+		stuck_offer = LevelStuckOffer.new()
+		add_child(stuck_offer)
+		stuck_offer.mount(self, _p2_config, _offer_clock)
 	_refresh_hud()
 	set_process(false)
 	_layout_play_area()
@@ -374,6 +390,8 @@ func _refresh_actions() -> void:
 	shuffle_button.disabled = not enabled
 	if p2_hud != null and is_instance_valid(p2_hud.reveal):
 		p2_hud.reveal.disabled = not enabled
+	if stuck_offer != null:
+		stuck_offer.refresh()
 
 
 func _on_hint() -> void:
@@ -468,6 +486,7 @@ func _load_board() -> void:
 
 func _on_attempt(tiles: PackedInt32Array) -> void:
 	controller.submit(tiles)
+	_refresh_actions()
 
 
 func _on_short_release(tiles: PackedInt32Array) -> void:
@@ -781,3 +800,17 @@ func show_paid_status(key: String) -> void:
 
 func refresh_paid_hud() -> void:
 	_refresh_hud()
+
+
+func can_offer_hint() -> bool:
+	return (
+		is_visible_in_tree()
+		and paid_tools_ui != null
+		and paid_bindings_ready()
+		and not _save.writes_blocked()
+		and _status_key != "level.state.persistence_failed"
+		and hint_button.is_visible_in_tree()
+		and controller.get_board() != null
+		and _slot == progress.current_slot()
+		and _can_act()
+	)

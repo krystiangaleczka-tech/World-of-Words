@@ -26,3 +26,4 @@ level.hint.reward_info,Reklama przyznaje podpowiedź. Użyj jej przyciskiem Podp
 level.hint.reward_added,Dodano podpowiedź. Użyj jej przyciskiem Podpowiedź.,Hint added. Use it with the Hint button.
 level.hint.no_reward,Reklama nie została ukończona. Nie dodano podpowiedzi.,Ad not finished. No Hint was added.
 level.hint.reward_retry,Nie zapisano nagrody. Ponów zapis bez kolejnej reklamy.,Reward was not saved. Retry without another ad.
+level.hint.offer,Potrzebna podpowiedź?,Need a hint?
