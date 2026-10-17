@@ -177,7 +177,10 @@ func refresh() -> void:
 	)
 	meter.visible = _unlocked("bonus_meter")
 	var target: int = _config.get_int(&"bonus.chest.words_required")
-	meter.configure(wallet.bonus_counter, target)
+	if meter.target != target:
+		meter.configure(wallet.bonus_counter, target)
+	elif meter.count != wallet.bonus_counter:
+		meter.set_count(wallet.bonus_counter)
 	_meter_width = (
 		(
 			meter
@@ -193,6 +196,24 @@ func refresh() -> void:
 		+ Tokens.Space.M
 		+ Tokens.Space.M
 	)
+	for key: String in [BonusMeter.OPEN_KEY, CatalogProgressBar.COMPLETE_KEY]:
+		var caption_width: float = (
+			(
+				meter
+				. get_theme_font(&"CAPTION", &"Type")
+				. get_string_size(
+					tr(key),
+					HORIZONTAL_ALIGNMENT_LEFT,
+					-1,
+					meter.get_theme_font_size(&"CAPTION", &"Type")
+				)
+				. x
+			)
+			+ Tokens.Space.M * 2
+		)
+		if key == CatalogProgressBar.COMPLETE_KEY:
+			caption_width += Tokens.Space.L + Tokens.Space.S
+		_meter_width = maxf(_meter_width, caption_width)
 	hint.visible = _unlocked("hint")
 	reveal.visible = _unlocked("reveal")
 	shuffle.visible = _unlocked("shuffle")

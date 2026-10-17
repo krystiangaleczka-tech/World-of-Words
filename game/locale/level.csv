@@ -27,3 +27,5 @@ level.hint.reward_added,Dodano podpowiedź. Użyj jej przyciskiem Podpowiedź.,H
 level.hint.no_reward,Reklama nie została ukończona. Nie dodano podpowiedzi.,Ad not finished. No Hint was added.
 level.hint.reward_retry,Nie zapisano nagrody. Ponów zapis bez kolejnej reklamy.,Reward was not saved. Retry without another ad.
 level.hint.offer,Potrzebna podpowiedź?,Need a hint?
+level.bonus.at_complete,Skrzynka bonusowa otworzy się po ukończeniu poziomu.,The bonus chest opens when you complete the level.
+level.bonus.reward,Skrzynki: %d • Monety: %d,Chests: %d • Coins: %d
