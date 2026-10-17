@@ -13,6 +13,7 @@ const SAVE_SCRIPT: Script = preload("res://services/save.gd")
 const CONTENT_SCRIPT: Script = preload("res://services/content.gd")
 const PROGRESS_SCRIPT: Script = preload("res://services/progress.gd")
 
+var bonus_ui: LevelBonusUI
 var stuck_offer: LevelStuckOffer
 var paid_tools_ui: LevelPaidTools
 var p2_hud: LevelP2Hud
@@ -100,6 +101,9 @@ func _ready() -> void:
 	status_label.add_theme_font_size_override("font_size", Tokens.Type.CAPTION)
 	status_label.add_theme_color_override("font_color", Tokens.Palette.TEXT)
 	body.add_child(status_label)
+	if bonus_ui != null:
+		bonus_ui.caption = CatalogSurface.label(&"Caption")
+		body.add_child(bonus_ui.caption)
 	_area = Control.new()
 	_area.name = "PlayArea"
 	_area.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -143,6 +147,8 @@ func _ready() -> void:
 		stuck_offer = LevelStuckOffer.new()
 		add_child(stuck_offer)
 		stuck_offer.mount(self, _p2_config, _offer_clock)
+	if bonus_ui != null:
+		bonus_ui.mount(self, _p2_economy, _save)
 	_refresh_hud()
 	set_process(false)
 	_layout_play_area()
@@ -191,6 +197,20 @@ func configure_paid_tools(
 	_paid_port = port
 	paid_tools_ui = helper
 	add_child(helper)
+	return OK
+
+
+## @api Explicit durable bonus presentation after certified paid tools, before mounting.
+func configure_bonus_meter() -> Error:
+	if is_inside_tree() or bonus_ui != null:
+		return ERR_BUSY
+	if paid_tools_ui == null or not paid_bindings_ready() or _slot != _paid_progress.current_slot():
+		return ERR_UNCONFIGURED
+	var error: Error = _paid_progress.configure_bonus_progress()
+	if error != OK:
+		return error
+	bonus_ui = LevelBonusUI.new()
+	add_child(bonus_ui)
 	return OK
 
 
@@ -531,14 +551,19 @@ func _on_result(result: AttemptResult) -> void:
 			result.cells_to_reveal, preview.get_global_transform() * (preview.size / 2), whole_word
 		)
 	elif result.kind == AttemptResult.Kind.BONUS:
-		preview.fly_bonus(bonus_label)
+		preview.fly_bonus(
+			p2_hud.meter if bonus_ui != null and p2_hud.meter.visible else bonus_label
+		)
 	elif result.kind == AttemptResult.Kind.ALREADY_FOUND:
 		var level: LevelData = controller.get_board().get_level()
 		for index: int in level.word_count():
 			if level.word(index) == result.word:
 				board_view.highlight_word(level.word_cells(index))
 		if result.word in controller.get_board().bonus_words():
-			preview.pulse_already_target(bonus_label)
+			if bonus_ui != null and p2_hud.meter.visible:
+				p2_hud.meter.pulse_already()
+			else:
+				preview.pulse_already_target(bonus_label)
 
 
 func _on_completed() -> void:
