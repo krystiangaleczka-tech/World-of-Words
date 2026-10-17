@@ -7,12 +7,14 @@ signal shop_requested
 signal powerup_requested(kind: StringName)
 signal stuck_offer_shown(trigger: StringName)
 
+const MONETIZATION_SCRIPT: Script = preload("res://services/monetization.gd")
 const ECONOMY_SCRIPT: Script = preload("res://services/economy.gd")
 const CONFIG_SCRIPT: Script = preload("res://services/config.gd")
 const SAVE_SCRIPT: Script = preload("res://services/save.gd")
 const CONTENT_SCRIPT: Script = preload("res://services/content.gd")
 const PROGRESS_SCRIPT: Script = preload("res://services/progress.gd")
 
+var complete_ui: LevelCompleteUI
 var bonus_ui: LevelBonusUI
 var stuck_offer: LevelStuckOffer
 var paid_tools_ui: LevelPaidTools
@@ -149,6 +151,8 @@ func _ready() -> void:
 		stuck_offer.mount(self, _p2_config, _offer_clock)
 	if bonus_ui != null:
 		bonus_ui.mount(self, _p2_economy, _save)
+	if complete_ui != null:
+		complete_ui.mount(self, _save, _p2_economy, _p2_config, _content, _slot, _navigation)
 	_refresh_hud()
 	set_process(false)
 	_layout_play_area()
@@ -212,6 +216,42 @@ func configure_bonus_meter() -> Error:
 	bonus_ui = LevelBonusUI.new()
 	add_child(bonus_ui)
 	return OK
+
+
+## @api Explicit complete-layer opt-in after certified bonus owners, before mount.
+func configure_completion(monetization: Node = null) -> Error:
+	if is_inside_tree() or complete_ui != null:
+		return ERR_BUSY
+	if bonus_ui == null or not paid_bindings_ready() or _slot != _paid_progress.current_slot():
+		return ERR_UNCONFIGURED
+	if (
+		monetization != null
+		and (
+			not monetization is MONETIZATION_SCRIPT
+			or not monetization.matches_tool_owners(_save, _p2_economy, _p2_config)
+		)
+	):
+		return ERR_INVALID_PARAMETER
+	complete_ui = LevelCompleteUI.new()
+	complete_ui.configure(monetization)
+	add_child(complete_ui)
+	return OK
+
+
+func completion_is_continuing() -> bool:
+	return _continued
+
+
+func set_completion_reward_busy(busy: bool) -> void:
+	continue_button.disabled = (
+		busy or _continued or (_slot >= _content.slot_count() and not _new_postcard_piece())
+	)
+
+
+func retry_continuation() -> void:
+	_continued = false
+	set_completion_reward_busy(complete_ui != null and complete_ui.busy())
+	_set_status("level.complete.retry")
 
 
 func _p2_navigate(target: StringName) -> void:
@@ -354,7 +394,12 @@ func _show_completion() -> void:
 
 
 func _on_continue() -> void:
-	if not completion_layer.visible or continue_button.disabled or _continued:
+	if (
+		not completion_layer.visible
+		or continue_button.disabled
+		or _continued
+		or (complete_ui != null and complete_ui.busy())
+	):
 		return
 	continue_button.disabled = true
 	var error: Error = ERR_UNAVAILABLE
