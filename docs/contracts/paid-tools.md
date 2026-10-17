@@ -1,6 +1,8 @@
 # Paid board tools
 
-T-0336 extends the existing concrete AtomicProgressPort/Save owner protocol. It is
+T-0336 extends the existing concrete AtomicProgressPort/Save owner protocol.
+AtomicProgressPort.certifies_tools(save, progress, economy, content, config) verifies
+the exact current owner pair plus P2 content/config/port bindings before UI activation. It is
 not a new autoload and does not activate P2 in Boot/Nav.
 
 `PaidToolPlan.after(board: BoardState, kind: StringName) -> BoardState` returns a

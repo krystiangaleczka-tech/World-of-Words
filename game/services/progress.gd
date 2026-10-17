@@ -472,6 +472,19 @@ func completion_request(commands: Array[Dictionary]) -> Dictionary:
 	return request.duplicate(true)
 
 
+## @api Read-only identity check for the exact P2 content/config/port bindings.
+func tool_context_matches(
+	content: CONTENT_SCRIPT, config: CONFIG_SCRIPT, port: ProgressCommitPort
+) -> bool:
+	return (
+		_content == content
+		and _atomic_config == config
+		and _p2_config == config
+		and _p2_port == port
+		and p2_ready()
+	)
+
+
 ## @api Register a detached paid candidate against this owner's current bound durable board.
 func paid_tool_request(
 	board: BoardState, kind: StringName, commands: Array[Dictionary]

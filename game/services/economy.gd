@@ -274,6 +274,11 @@ func completion_commands(language: String, slot: int) -> Array[Dictionary]:
 	return _completion_commands(_save.committed_view(), language, slot, _reward_values())
 
 
+## @api Read-only identity check for the exact price/balance configuration.
+func tool_config_matches(config: CONFIG_SCRIPT) -> bool:
+	return _config == config and is_ready()
+
+
 ## @api Canonical item-first debit proposal; completion rewards never finance a tool.
 func tool_commands(kind: StringName, complete: bool = false) -> Array[Dictionary]:
 	if (

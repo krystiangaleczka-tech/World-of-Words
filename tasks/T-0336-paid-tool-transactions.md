@@ -49,6 +49,10 @@ AtomicProgressPort already serializes typed owner preparation/recovery.
   Completed paid boards append existing completion rewards to the same batch.
 - AtomicProgressPort.tool_commands(kind, complete=false) exposes only its bound
   Economy owner's proposal, so callers cannot accidentally pair a different wallet.
+- AtomicProgressPort.certifies_tools(save, progress, economy, content, config)
+  verifies exact injected owners and the actual P2 content/config/port bindings.
+  Progress.tool_context_matches(content, config, port) and
+  Economy.tool_config_matches(config) are read-only identity checks for this boundary.
 - Closed paid_tool request adds tool {kind, before, after}; stable operation ID is
   paid_tool:<language>:<slot>:<kind>:<before snapshot SHA256>. Full request hash
   binds prices, commands, content and candidate. Existing campaign request unchanged.

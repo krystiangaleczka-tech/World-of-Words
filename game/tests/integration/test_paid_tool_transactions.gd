@@ -117,7 +117,7 @@ func wallet(coins: int, hints: int, reveals: int) -> void:
 func request(source: BoardState, kind: StringName) -> Dictionary:
 	var after: BoardState = PaidToolPlan.after(source, kind)
 	return b.progress.paid_tool_request(
-		source, kind, b.economy.tool_commands(kind, after != null and after.is_complete())
+		source, kind, b.port.tool_commands(kind, after != null and after.is_complete())
 	)
 
 
@@ -365,3 +365,15 @@ func test_final_hint_and_reveal_gaps_keep_debit_completion_and_rewards_together(
 			assert_eq(b.economy.snapshot().coins, 500 + reward)
 			assert_eq(b.progress.current_slot(), 3)
 			assert_false(board.is_complete())
+
+
+func test_paid_ui_bindings_certify_exact_owners_content_config_and_port() -> void:
+	assert_true(b.port.certifies_tools(b.save, b.progress, b.economy, b.content, b.config))
+	var config: ToolConfig = ToolConfig.new()
+	add_child_autofree(config)
+	assert_eq(config.load(), OK)
+	assert_false(b.port.certifies_tools(b.save, b.progress, b.economy, b.content, config))
+	var other: Dictionary = bundle()
+	assert_false(b.port.certifies_tools(b.save, b.progress, other.economy, b.content, b.config))
+	assert_false(b.port.certifies_tools(b.save, b.progress, b.economy, other.content, b.config))
+	assert_false(other.port.certifies_tools(b.save, b.progress, b.economy, b.content, b.config))
