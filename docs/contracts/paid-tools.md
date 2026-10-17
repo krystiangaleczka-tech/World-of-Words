@@ -45,3 +45,11 @@ The storage policy remains primary, then temp, then backup. A crash while primar
 is valid may discard the unpromoted temp candidate: neither charge nor reveal survives.
 After backup rotation the valid temp is promoted and the entire candidate survives.
 These are filesystem checkpoint guarantees, not physical power-loss certification.
+
+## Issued price stability (T-0337)
+Before the first storage attempt, both owners still compare current authorization
+context. Once Save.transaction_started(transaction) is true for the current valid
+lease, Economy's registered immutable payload retains its original price, rewards
+and journal limit. A remote price change cannot strand that pending operation or
+reprice a retry. Subsequent distinct operations use the new configuration. This
+never authorizes a forged/different approval, hash, request, board or owner.

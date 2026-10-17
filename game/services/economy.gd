@@ -383,8 +383,16 @@ func validates_prepared(value: RefCounted, transaction: SaveTransaction) -> bool
 		and atomic_context_valid(transaction)
 		and _save.validates_progress(_atomic_prepared_batches[value].progress, transaction)
 		and _atomic_prepared_batches[value].hash == AtomicRequest.hash_value(transaction.request())
-		and _atomic_prepared_batches[value].config == _reward_values()
-		and _atomic_prepared_batches[value].limit == _config.get_int(&"economy.journal.max_entries")
+		and (
+			_save.transaction_started(transaction)
+			or (
+				_atomic_prepared_batches[value].config == _reward_values()
+				and (
+					_atomic_prepared_batches[value].limit
+					== _config.get_int(&"economy.journal.max_entries")
+				)
+			)
+		)
 	)
 
 

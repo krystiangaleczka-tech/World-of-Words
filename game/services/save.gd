@@ -307,6 +307,11 @@ func validates_transaction(transaction: SaveTransaction) -> bool:
 	return _atomic.validates(transaction)
 
 
+## @api Current valid lease has attempted its issued immutable candidate, including I/O failure.
+func transaction_started(transaction: SaveTransaction) -> bool:
+	return _atomic.started(transaction)
+
+
 func validates_progress(value: ProgressPrepared, transaction: SaveTransaction) -> bool:
 	return _atomic.validates_progress(value, transaction)
 
