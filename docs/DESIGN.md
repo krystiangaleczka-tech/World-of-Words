@@ -270,7 +270,7 @@ Wheel area     wheel diameter + Space.L top/bottom; HintButton / shuffle IconBut
 | COMPACT | 0.62 x width = ~670 | ~48 % | top bar 144; preview strip tighter (`Space.XS`) |
 | TABLET | 0.66 x column, clamped to 800 | ~55 % | column 1080, art fills sides |
 
-Grid fitting: `cell = min(area_w / cols, area_h / rows)` minus `Space.XS` gap, clamped to `[CELL_MIN, CELL_MAX]`, grid centred. The grid **scales to fit and never scrolls**. If the wheel would push the grid below `GRID_MIN_RATIO`, the wheel shrinks towards `WHEEL_MIN` first. Grids that cannot meet `CELL_MIN` on COMPACT are a content bug (pipeline validator), not a layout case.
+Grid fitting: `cell = min(area_w / cols, area_h / rows)` minus `Space.XS` gap, clamped to `[CELL_MIN, CELL_MAX]`, grid centred. The grid **scales to fit and never scrolls**. If the wheel would push the grid below `GRID_MIN_RATIO`, the wheel shrinks towards `WHEEL_MIN` first. The grid floor is `min(GRID_MIN_RATIO x body, rows x cell + gaps)`: a grid whose capped cells need less than the share claims only that natural height, and the wheel gets the rest. Grids that cannot meet `CELL_MIN` on COMPACT are a content bug (pipeline validator), not a layout case.
 
 ### Reference devices
 | Device | Class | Why |

@@ -640,6 +640,20 @@ func _set_status(key: String) -> void:
 	status_label.visible = not key.is_empty()
 
 
+## Autowrap lets the container squeeze a labelled button to the touch minimum and break words.
+func _keep_label_on_one_line(button: ActionButton) -> void:
+	if button.text.is_empty():
+		return
+	var font: Font = button.get_theme_font(&"font")
+	var font_size: int = button.get_theme_font_size(&"font_size")
+	var label_width: float = (
+		font.get_string_size(button.text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+	)
+	button.custom_minimum_size.x = maxf(
+		Tokens.Touch.MIN_TARGET, ceilf(label_width) + Tokens.Space.M * 2
+	)
+
+
 func _layout_play_area() -> void:
 	if not is_inside_tree():
 		return
@@ -658,6 +672,8 @@ func _layout_play_area() -> void:
 	if available.x <= 0 or available.y <= 0:
 		return
 	var width: float = minf(available.x, Tokens.Layout.MAX_CONTENT_WIDTH)
+	for labelled: ActionButton in [shuffle_button, hint_button, debug_button]:
+		_keep_label_on_one_line(labelled)
 	_actions.vertical = (
 		(
 			shuffle_button.get_combined_minimum_size().x
@@ -676,7 +692,8 @@ func _layout_play_area() -> void:
 		available - Vector2(0, bonus_height),
 		layout_class,
 		preview.get_combined_minimum_size().y,
-		0 if p2_hud != null else _actions.get_combined_minimum_size().y
+		0 if p2_hud != null else _actions.get_combined_minimum_size().y,
+		board_view.grid_dimensions()
 	)
 	if rectangles.is_empty() or rectangles[&"wheel"].size.x <= 0:
 		wheel.visible = false
