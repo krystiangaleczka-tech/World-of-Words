@@ -107,6 +107,7 @@ func _ready() -> void:
 	_play.pressed.connect(_continue_campaign)
 	column.add_child(_play)
 	_status = _label(column, "Status", &"Caption")
+	_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_journey = NavTab.new()
 	_journey.name = "Journey"
 	_journey.configure(preload("res://assets/icons/route.svg"), "home.nav.journey")
@@ -211,7 +212,8 @@ func _refresh_copy() -> void:
 	_title.text = tr(_location_key)
 	_progress.text = tr("home.main.progress") % [_pieces, _total]
 	_progress.visible = _total > 0 and not _postcard.visible
-	_progress_bar.visible = _total > 0
+	# Completion is stated once: by the postcard stamp or the Progress caption.
+	_progress_bar.visible = _total > 0 and _pieces < _total
 	_progress_bar.set_value(float(_pieces) / _total if _total > 0 else 0.0, false)
 	_next.text = tr("home.main.level_n") % _slot
 	_next.visible = _slot > 0 and _slot <= _content_count()
