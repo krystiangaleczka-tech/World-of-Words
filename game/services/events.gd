@@ -29,3 +29,6 @@ signal stars_earned(language: String, slot: int, stars: int)
 signal postcard_piece_revealed(language: String, location_id: String, pieces: int)
 signal location_complete(language: String, location_id: String)
 signal feature_unlocked(language: String, feature: StringName, slot: int)
+
+## @api One newly committed teaching/coach action; registered analytics parameter only.
+signal onboarding_step(step: int)

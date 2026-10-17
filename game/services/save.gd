@@ -7,6 +7,12 @@ signal setting_changed(key: StringName)
 signal backup_restored
 signal flush_failed(error: Error)
 
+const ONBOARDING_EVENTS: Script = preload("res://services/events.gd")
+var _onboarding_events: ONBOARDING_EVENTS
+var _onboarding_pending: Dictionary = {}
+var _onboarding_busy: bool = false
+var _onboarding_notifying: bool = false
+var _onboarding_flush_depth: int = 0
 var _atomic: AtomicSave = AtomicSave.new()
 var _storage: SaveStorage = SaveStorage.new()
 var _migrations: SaveMigrations = SaveMigrations.new()
@@ -156,17 +162,21 @@ func debug_reset() -> Error:
 		candidate[section] = (_data[section] as Dictionary).duplicate(true)
 	if not _compat_v3 and not _reset_atomic(candidate):
 		return ERR_INVALID_DATA
+	_onboarding_flush_depth += 1
 	var error: Error = _prepare_write()
 	if error == OK:
 		error = _storage.commit(JSON.stringify(candidate, "", true, true), _primary_valid)
 	if error != OK:
 		flush_failed.emit(error)
+		_onboarding_flush_depth -= 1
 		return error
 	_data = _canonical_document(candidate)
 	_atomic.observe(_data)
 	_dirty = false
 	_primary_valid = true
 	_publish_settings()
+	_publish_onboarding()
+	_onboarding_flush_depth -= 1
 	return OK
 
 
@@ -235,6 +245,97 @@ func set_setting(key: StringName, value: Variant) -> Error:
 	return flush()
 
 
+## @api Explicit metadata/event opt-in; no startup work or historical event replay.
+func configure_onboarding(events: Node) -> Error:
+	if (
+		_onboarding_busy
+		or _onboarding_flush_depth > 0
+		or writes_blocked()
+		or not _onboarding_pending.is_empty()
+	):
+		return ERR_BUSY
+	if not _loaded or not events is ONBOARDING_EVENTS:
+		return ERR_UNCONFIGURED
+	_onboarding_events = events
+	return OK
+
+
+## @api Independent committed teaching history; dirty metadata stays private.
+func onboarding_snapshot() -> Dictionary:
+	if not _loaded:
+		return {}
+	var meta: Dictionary = committed_view().sections.meta
+	return {"step": int(meta.onboarding_step), "seen": meta.coach_marks_seen.duplicate()}
+
+
+## @api Only a committed player-solved first word may call this teaching boundary.
+func complete_tutorial() -> Error:
+	return _onboarding_request(&"tutorial")
+
+
+## @api Record an eligible coach once before presenting it; no presentation occurs here.
+func mark_coach_seen(feature: StringName) -> Error:
+	return ERR_INVALID_PARAMETER if feature == &"tutorial" else _onboarding_request(feature)
+
+
+func retry_onboarding() -> Error:
+	if _onboarding_busy or _onboarding_flush_depth > 0 or writes_blocked():
+		return ERR_BUSY
+	if _onboarding_pending.is_empty():
+		return ERR_DOES_NOT_EXIST
+	return _onboarding_request(StringName(_onboarding_pending.action))
+
+
+func _onboarding_error(action: StringName) -> Error:
+	if _onboarding_busy or _onboarding_flush_depth > 0 or writes_blocked():
+		return ERR_BUSY
+	if not _loaded or not is_instance_valid(_onboarding_events):
+		return ERR_UNCONFIGURED
+	if not OnboardingState.STEPS.has(action):
+		return ERR_INVALID_PARAMETER
+	if not _onboarding_pending.is_empty() and _onboarding_pending.action != str(action):
+		return ERR_BUSY
+	return OK
+
+
+func _onboarding_request(action: StringName) -> Error:
+	var guard: Error = _onboarding_error(action)
+	if guard != OK:
+		return guard
+	if _onboarding_pending.is_empty():
+		var state: OnboardingState = OnboardingState.from_dict(onboarding_snapshot())
+		if action != &"tutorial" and not state.tutorial_complete():
+			return ERR_UNAVAILABLE
+		var next: OnboardingState = (
+			state.after_tutorial() if action == &"tutorial" else state.after_coach(action)
+		)
+		if next.snapshot() == state.snapshot():
+			return OK
+		_data.meta.onboarding_step = next.snapshot().step
+		_data.meta.coach_marks_seen = next.snapshot().seen
+		_dirty = true
+		_onboarding_pending = {
+			"action": str(action), "value": next.snapshot(), "event": OnboardingState.STEPS[action]
+		}
+	_onboarding_busy = true
+	var error: Error = flush()
+	if error == OK:
+		_publish_onboarding()
+	_onboarding_busy = false
+	return error
+
+
+func _publish_onboarding() -> void:
+	if _onboarding_pending.is_empty() or onboarding_snapshot() != _onboarding_pending.value:
+		return
+	var step: int = _onboarding_pending.event
+	_onboarding_pending.clear()
+	_onboarding_notifying = true
+	if is_instance_valid(_onboarding_events):
+		_onboarding_events.onboarding_step.emit(step)
+	_onboarding_notifying = false
+
+
 ## @api Synchronous durable write; success is required before a caller finishes a transaction.
 func flush() -> Error:
 	if writes_blocked():
@@ -246,6 +347,7 @@ func flush() -> Error:
 	var candidate: Dictionary = _data.duplicate(true)
 	if not _compat_v3 and not _bump_revision(candidate):
 		return ERR_INVALID_DATA
+	_onboarding_flush_depth += 1
 	var error: Error = _prepare_write()
 	if error == OK:
 		error = _storage.commit(JSON.stringify(candidate, "", true, true), _primary_valid)
@@ -255,8 +357,10 @@ func flush() -> Error:
 		_dirty = false
 		_primary_valid = true
 		_publish_settings()
+		_publish_onboarding()
 	else:
 		flush_failed.emit(error)
+	_onboarding_flush_depth -= 1
 	return error
 
 
@@ -300,7 +404,7 @@ func configure_atomic(progress: AtomicSaveOwner, economy: AtomicSaveOwner) -> Er
 
 ## @api Shared lease/notification barrier for every owner writer.
 func writes_blocked() -> bool:
-	return _atomic.blocked()
+	return _atomic.blocked() or _onboarding_notifying
 
 
 func validates_transaction(transaction: SaveTransaction) -> bool:
@@ -321,23 +425,37 @@ func validates_receipt(receipt: Dictionary) -> bool:
 
 
 func begin_transaction(request: Dictionary) -> Dictionary:
-	return _atomic.begin(request, _dirty)
+	return _atomic.begin(request, _dirty or _onboarding_notifying)
 
 
 func commit_transaction(
 	transaction: SaveTransaction, progress: ProgressPrepared, economy: EconomyPrepared
 ) -> Dictionary:
+	if _onboarding_notifying:
+		return _onboarding_blocked_result()
 	return _atomic.commit(transaction, progress, economy)
 
 
 func recover_transaction(operation_id: String, request_hash: String) -> Dictionary:
+	if _onboarding_notifying:
+		return _onboarding_blocked_result()
 	if _dirty and not writes_blocked():
 		return {"error": ERR_BUSY, "state": "pending", "view": committed_view(), "receipt": {}}
 	return _atomic.recover(operation_id, request_hash)
 
 
 func abort_transaction(transaction: SaveTransaction) -> Error:
-	return _atomic.abort(transaction)
+	return ERR_BUSY if _onboarding_notifying else _atomic.abort(transaction)
+
+
+func _onboarding_blocked_result() -> Dictionary:
+	return {
+		"error": ERR_BUSY,
+		"state": "pending",
+		"transaction": null,
+		"view": committed_view(),
+		"receipt": {}
+	}
 
 
 func _atomic_publish(document: Dictionary, suffix: String) -> void:
@@ -367,7 +485,7 @@ func _reset_atomic(candidate: Dictionary) -> bool:
 
 ## @api Replayed side effects use the same Save-wide barrier; this never mutates persistence.
 func publish_receipt(receipt: Dictionary) -> Error:
-	return _atomic.publish_receipt(receipt)
+	return ERR_BUSY if _onboarding_notifying else _atomic.publish_receipt(receipt)
 
 
 func receipt_publishing() -> bool:
