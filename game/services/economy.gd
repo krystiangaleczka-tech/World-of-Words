@@ -1,6 +1,8 @@
 extends AtomicSaveOwner
 ## @api Global wallet owner. Serialize requests and retry an unresolved request before another.
 
+signal bonus_chest_redeemed(chests: int, coins: int)
+
 const SAVE_SCRIPT: Script = preload("res://services/save.gd")
 const CONFIG_SCRIPT: Script = preload("res://services/config.gd")
 const EVENTS_SCRIPT: Script = preload("res://services/events.gd")
@@ -343,22 +345,29 @@ func prepare_commands(transaction: SaveTransaction, progress: ProgressPrepared) 
 	var expected: Array[Dictionary] = _completion_commands(
 		view, request.language, request.context.slot, values
 	)
+	if request.kind == "campaign_checkpoint":
+		expected = []
 	if request.kind == "paid_tool":
 		expected = _tool_commands(
 			view,
 			request.tool.kind,
 			request.progress_candidate.current_slot == request.context.slot + 1
 		)
-		if expected.is_empty():
-			rejected.error = ERR_INVALID_DATA
-			return rejected
-	if request.economy_commands != expected:
+	if (
+		request.economy_commands != expected
+		or (request.kind == "paid_tool" and expected.is_empty())
+	):
+		rejected.error = ERR_INVALID_DATA
+		return rejected
+	var bonus: Dictionary = _bonus_candidate(view, request, values)
+	if bonus.is_empty():
 		rejected.error = ERR_INVALID_DATA
 		return rejected
 	var payload: Dictionary = _build_batch(view.sections.economy, expected)
 	if payload.is_empty():
 		rejected.error = ERR_INVALID_DATA
 		return rejected
+	payload.section.bonus_counter = bonus.counter
 	var value: EconomyPrepared = EconomyPrepared.new()
 	value.error = OK
 	_atomic_prepared_batches[value] = {
@@ -368,7 +377,8 @@ func prepare_commands(transaction: SaveTransaction, progress: ProgressPrepared) 
 		"hash": AtomicRequest.hash_value(request),
 		"config": values,
 		"limit": _config.get_int(&"economy.journal.max_entries"),
-		"payload": payload.duplicate(true)
+		"payload": payload.duplicate(true),
+		"bonus": bonus.duplicate(true)
 	}
 	return value
 
@@ -437,6 +447,11 @@ func accept_commit(receipt: Dictionary) -> Error:
 			notification.amounts.duplicate(true),
 			snapshot()
 		)
+	for approval: EconomyPrepared in _atomic_prepared_batches:
+		var issued: Dictionary = _atomic_prepared_batches[approval]
+		if _save.validates_live_economy_approval(approval, receipt) and issued.bonus.chests > 0:
+			bonus_chest_redeemed.emit(issued.bonus.chests, issued.bonus.coins)
+			break
 	_busy = false
 	return OK
 
@@ -460,7 +475,56 @@ func _completion_commands(
 			result.append(
 				{"operation": "grant", "reason": "onboarding_hints", "amounts": {"hint": hints}}
 			)
+	var bonus: Dictionary = _chest_settlement(view, language, slot, values)
+	if bonus.is_empty():
+		return []
+	if bonus.coins > 0:
+		result.append(
+			{"operation": "grant", "reason": "bonus_chest", "amounts": {"coins": bonus.coins}}
+		)
 	return result
+
+
+func _bonus_unlocked(view: Dictionary, language: String, slot: int, values: Dictionary) -> bool:
+	var state: Dictionary = view.sections.progress.by_lang.get(language, SaveSchema.LANGUAGE_STATE)
+	return (
+		slot >= values["unlocks.bonus_meter_slot"]
+		or "bonus_meter" in state.unlocked
+		or "bonus_meter" in view.sections.progress.unlocked
+	)
+
+
+func _chest_settlement(
+	view: Dictionary, language: String, slot: int, values: Dictionary
+) -> Dictionary:
+	var count: int = int(view.sections.economy.bonus_counter)
+	var required: int = values["bonus.chest.words_required"]
+	if required < 1:
+		return {}
+	@warning_ignore("integer_division")
+	var chests: int = count / required if _bonus_unlocked(view, language, slot, values) else 0
+	var payout: int = values["economy.reward.bonus_chest"]
+	@warning_ignore("integer_division")
+	if chests > 0 and payout > WalletSnapshot.MAX_SAFE_COUNT / chests:
+		return {}
+	return {"counter": count - chests * required, "chests": chests, "coins": chests * payout}
+
+
+func _bonus_candidate(view: Dictionary, request: Dictionary, values: Dictionary) -> Dictionary:
+	if request.progress_candidate.current_slot == request.context.slot + 1:
+		return _chest_settlement(view, request.language, request.context.slot, values)
+	var count: int = int(view.sections.economy.bonus_counter)
+	var added: int = 0
+	if (
+		request.kind == "campaign_checkpoint"
+		and _bonus_unlocked(view, request.language, request.context.slot, values)
+	):
+		for word: String in request.checkpoint.after.bonus_words:
+			if word not in request.checkpoint.before.bonus_words:
+				added += 1
+	if count > WalletSnapshot.MAX_SAFE_COUNT - added:
+		return {}
+	return {"counter": count + added, "chests": 0, "coins": 0}
 
 
 func _onboarding_eligible(view: Dictionary, slot: int, threshold: int) -> bool:
@@ -481,7 +545,9 @@ func _reward_values() -> Dictionary:
 		return {}
 	var values: Dictionary = {}
 	var keys: Array[String] = RewardTable.KEYS.duplicate()
-	keys.append("unlocks.hint_slot")
+	keys.append_array(
+		["unlocks.hint_slot", "unlocks.bonus_meter_slot", "bonus.chest.words_required"]
+	)
 	for key: String in keys:
 		if not _config.has_key(StringName(key)):
 			return {}

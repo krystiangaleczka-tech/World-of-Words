@@ -27,6 +27,7 @@ var _p2_published: Dictionary = {}
 var _p2_busy: bool = false
 var _p2_notifying: bool = false
 var _p2_dispatching: bool = false
+var _bonus_progress: bool = false
 var _p2_diagnostic: String = "unavailable"
 
 
@@ -37,6 +38,7 @@ func configure(save: SAVE_SCRIPT, content: CONTENT_SCRIPT) -> void:
 	if _save != save:
 		_p2_published.clear()
 	_p2_port = null
+	_bonus_progress = false
 	_p2_config = null
 	_p2_events = null
 	_p2_request.clear()
@@ -90,6 +92,8 @@ func restore_level(level: LevelData) -> BoardState:
 
 ## @api Persist a meaningful board mutation synchronously; a failed flush remains retryable.
 func save_level(board: BoardState) -> Error:
+	if _bonus_progress:
+		return _checkpoint_p2(board)
 	if is_instance_valid(_save) and _save.writes_blocked():
 		return ERR_BUSY
 	if not _is_ready():
@@ -561,6 +565,73 @@ func paid_tool_request(
 	return request.duplicate(true)
 
 
+## @api Before-mount opt-in for T-0280; legacy/P1 checkpoints retain their behavior.
+func configure_bonus_progress() -> Error:
+	if (
+		_p2_busy
+		or _p2_notifying
+		or not _p2_request.is_empty()
+		or _save == null
+		or _save.writes_blocked()
+	):
+		return ERR_BUSY
+	if not p2_ready():
+		return ERR_UNCONFIGURED
+	_bonus_progress = true
+	return OK
+
+
+func _checkpoint_p2(board: BoardState) -> Error:
+	if _p2_busy or _p2_notifying or (_p2_request.is_empty() and _save.writes_blocked()):
+		return ERR_BUSY
+	if not _p2_request.is_empty():
+		if _p2_request.kind != "campaign_checkpoint" or board != _bound_board:
+			return ERR_BUSY
+		return _run_p2_request()
+	if (
+		not p2_ready()
+		or board == null
+		or board != _bound_board
+		or not _valid_board(board)
+		or board.is_complete()
+	):
+		return ERR_INVALID_PARAMETER
+	if ProgressTransactionValues.unchanged(_save.committed_view(), _save_language(), board):
+		return OK
+	_p2_request = checkpoint_request(board)
+	return ERR_INVALID_DATA if _p2_request.is_empty() else _run_p2_request()
+
+
+## @api Register the actual bound board against its committed baseline; no arbitrary credit count.
+func checkpoint_request(board: BoardState) -> Dictionary:
+	if (
+		not _bonus_progress
+		or not atomic_available()
+		or _save.writes_blocked()
+		or atomic_has_pending()
+	):
+		return {}
+	if board == null or board != _bound_board or not _valid_board(board) or board.is_complete():
+		return {}
+	var view: Dictionary = _save.committed_view()
+	var language: String = _save_language()
+	if view.lineage != _bound_lineage:
+		return {}
+	var request: Dictionary = ProgressTransactionValues.request(
+		view, language, board, _content.content_version(), _content.manifest_hash()
+	)
+	if request.is_empty():
+		return {}
+	_intent = {
+		"request": request.duplicate(true),
+		"board": board,
+		"config": _atomic_values(),
+		"lineage": view.lineage,
+		"revision": view.revision
+	}
+	return request.duplicate(true)
+
+
 func prepare_completion(transaction: SaveTransaction) -> ProgressPrepared:
 	var rejected: ProgressPrepared = ProgressPrepared.new()
 	if not atomic_context_valid(transaction):
@@ -573,7 +644,8 @@ func prepare_completion(transaction: SaveTransaction) -> ProgressPrepared:
 	var request: Dictionary = transaction.request()
 	var view: Dictionary = transaction.committed_view()
 	var partial: bool = (
-		request.kind == "paid_tool" and not (_intent.board as BoardState).is_complete()
+		request.kind in ["paid_tool", "campaign_checkpoint"]
+		and not (_intent.board as BoardState).is_complete()
 	)
 	var change: Dictionary = (
 		{
@@ -601,7 +673,10 @@ func prepare_completion(transaction: SaveTransaction) -> ProgressPrepared:
 		state[field] = change.snapshot[field]
 	state.postcards = change.snapshot.completed_locations
 	if partial:
-		state.level_state = request.tool.after.duplicate(true)
+		state.level_state = (
+			(request.tool.after if request.kind == "paid_tool" else request.checkpoint.after)
+			. duplicate(true)
+		)
 	else:
 		state.highest_completed_slot = request.context.slot
 		state.completed_slot = maxi(int(state.completed_slot), int(request.context.slot))
@@ -657,7 +732,7 @@ func atomic_context_valid(transaction: SaveTransaction) -> bool:
 		and view.revision == _intent.revision
 		and _atomic_values() == _intent.config
 		and board != null
-		and (board.is_complete() or request.kind == "paid_tool")
+		and (board.is_complete() or request.kind in ["paid_tool", "campaign_checkpoint"])
 		and _paid_intent_valid(request)
 		and _is_ready()
 		and _matches_content(board.get_level())
@@ -670,6 +745,14 @@ func atomic_context_valid(transaction: SaveTransaction) -> bool:
 
 
 func _paid_intent_valid(request: Dictionary) -> bool:
+	if request.kind == "campaign_checkpoint":
+		return (
+			_bonus_progress
+			and _intent.board == _bound_board
+			and _valid_board(_bound_board)
+			and _bound_board.to_dict() == request.checkpoint.after
+			and ProgressTransactionValues.forward(request.checkpoint.before, _bound_board)
+		)
 	if request.kind != "paid_tool":
 		return true
 	var before: BoardState = _intent.get("before")
@@ -847,7 +930,13 @@ func _p2_context() -> Dictionary:
 
 
 func _valid_p2_receipt(receipt: Dictionary) -> bool:
-	if receipt.delta.is_empty() and receipt.operation_id.begins_with("paid_tool:"):
+	if (
+		receipt.delta.is_empty()
+		and (
+			receipt.operation_id.begins_with("paid_tool:")
+			or receipt.operation_id.begins_with("campaign_checkpoint:")
+		)
+	):
 		var partial: ProgressSnapshot = ProgressSnapshot.from_dict(receipt.committed_snapshot)
 		return partial != null and partial.snapshot().current_slot == receipt.slot
 	return _valid_completion_receipt(receipt)
@@ -861,7 +950,7 @@ func _valid_completion_receipt(receipt: Dictionary) -> bool:
 	):
 		return false
 	var snapshot: ProgressSnapshot = ProgressSnapshot.from_dict(receipt.committed_snapshot)
-	if snapshot == null or not _delta_counts_valid(delta, receipt):
+	if snapshot == null or not ProgressTransactionValues.valid_completion_counts(delta, receipt):
 		return false
 	var data: Dictionary = snapshot.snapshot()
 	if (
@@ -871,7 +960,7 @@ func _valid_completion_receipt(receipt: Dictionary) -> bool:
 	):
 		return false
 	for field: String in ["completed_locations", "unlocked"]:
-		if not _delta_ids_valid(delta[field], data[field]):
+		if not ProgressTransactionValues.valid_ids(delta[field], data[field]):
 			return false
 	for id: Variant in delta.piece_delta:
 		var count: Variant = delta.piece_delta[id]
@@ -882,24 +971,6 @@ func _valid_completion_receipt(receipt: Dictionary) -> bool:
 			or count > data.location_pieces.get(id, 0)
 			or floorf(float(count)) != float(count)
 		):
-			return false
-	return true
-
-
-func _delta_counts_valid(delta: Dictionary, receipt: Dictionary) -> bool:
-	return (
-		(delta.slot is int or delta.slot is float)
-		and (delta.stars is int or delta.stars is float)
-		and delta.slot == receipt.slot
-		and delta.stars == 1
-	)
-
-
-func _delta_ids_valid(values: Variant, persisted: Array) -> bool:
-	if not ProgressSnapshot.valid_ids(values):
-		return false
-	for id: String in values:
-		if not persisted.has(id):
 			return false
 	return true
 

@@ -21,10 +21,12 @@ static func valid(request: Dictionary) -> bool:
 	var keys: Array[String] = REQUEST_KEYS.duplicate()
 	if request.get("kind") == "paid_tool":
 		keys.append("tool")
+	elif request.get("kind") == "campaign_checkpoint":
+		keys.append("checkpoint")
 	if not closed(request, keys) or not json_value(request):
 		return false
 	if (
-		request.kind not in ["campaign_complete", "paid_tool"]
+		request.kind not in ["campaign_complete", "paid_tool", "campaign_checkpoint"]
 		or not ProgressSnapshot.valid_id(request.language)
 	):
 		return false
@@ -54,6 +56,28 @@ static func valid(request: Dictionary) -> bool:
 		identity = (
 			"paid_tool:%s:%d:%s:%s"
 			% [request.language, context.slot, request.tool.kind, hash_value(request.tool.before)]
+		)
+	if request.kind == "campaign_checkpoint":
+		if (
+			not request.checkpoint is Dictionary
+			or not closed(request.checkpoint, ["before", "after"])
+			or not request.checkpoint.before is Dictionary
+			or not request.checkpoint.after is Dictionary
+			or not integer_tree(request.checkpoint)
+			or not request.economy_commands is Array
+			or not request.economy_commands.is_empty()
+			or not request.delta is Dictionary
+			or not request.delta.is_empty()
+		):
+			return false
+		identity = (
+			"campaign_checkpoint:%s:%d:%s:%s"
+			% [
+				request.language,
+				context.slot,
+				hash_value(request.checkpoint.before),
+				hash_value(request.checkpoint.after)
+			]
 		)
 	if request.operation_id != identity:
 		return false

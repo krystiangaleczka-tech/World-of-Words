@@ -372,3 +372,8 @@ func publish_receipt(receipt: Dictionary) -> Error:
 
 func receipt_publishing() -> bool:
 	return _atomic.receipt_publishing()
+
+
+## @api Readonly identity of the Economy approval actually resolving this live receipt.
+func validates_live_economy_approval(value: EconomyPrepared, receipt: Dictionary) -> bool:
+	return _atomic.validates_live_economy_approval(value, receipt)
