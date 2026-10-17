@@ -32,3 +32,4 @@ level.bonus.reward,Skrzynki: %d • Monety: %d,Chests: %d • Coins: %d
 level.complete.double,Podwój monety,Double coins
 level.complete.no_ad,Reklama jest teraz niedostępna.,No ad is available right now.
 level.complete.pieces,Pocztówka: %d / %d,Postcard: %d / %d
+level.tutorial.connect,Połącz litery aby ułożyć słowo,Connect letters to make words

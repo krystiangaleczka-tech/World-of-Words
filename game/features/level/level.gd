@@ -14,6 +14,7 @@ const SAVE_SCRIPT: Script = preload("res://services/save.gd")
 const CONTENT_SCRIPT: Script = preload("res://services/content.gd")
 const PROGRESS_SCRIPT: Script = preload("res://services/progress.gd")
 
+var tutorial_ui: LevelTutorialUI
 var complete_ui: LevelCompleteUI
 var bonus_ui: LevelBonusUI
 var stuck_offer: LevelStuckOffer
@@ -125,6 +126,8 @@ func _ready() -> void:
 		add_child(progress)
 	_connect_runtime()
 	_load_board()
+	if tutorial_ui != null:
+		tutorial_ui.mount(self, _save, _area)
 	if p2_hud != null:
 		level_label.get_parent().visible = false
 		bonus_label.visible = false
@@ -236,6 +239,41 @@ func configure_completion(monetization: Node = null) -> Error:
 	complete_ui.configure(monetization)
 	add_child(complete_ui)
 	return OK
+
+
+## @api Explicit first-campaign lesson activation; defaults and boot remain unchanged.
+func configure_tutorial() -> Error:
+	if is_inside_tree() or tutorial_ui != null:
+		return ERR_BUSY
+	if (
+		p2_hud == null
+		or not is_instance_valid(_p2_economy)
+		or not _p2_economy.atomic_save_matches(_save)
+	):
+		return ERR_UNCONFIGURED
+	if (
+		not is_instance_valid(_save)
+		or not _save.is_loaded()
+		or _slot != 1
+		or not is_instance_valid(_content)
+		or _content.level_for_slot(1) == null
+	):
+		return ERR_UNCONFIGURED
+	var view: Dictionary = _save.committed_view()
+	var language: String = view.sections.settings.language
+	if int(view.sections.progress.by_lang.get(language, {}).get("current_slot", 0)) != _slot:
+		return ERR_UNCONFIGURED
+	var error: Error = _save.configure_onboarding(_event_bus)
+	if error != OK:
+		return error
+	tutorial_ui = LevelTutorialUI.new()
+	add_child(tutorial_ui)
+	return OK
+
+
+## @api Retry only the lesson metadata, never replay a word or its reward.
+func retry_tutorial() -> Error:
+	return tutorial_ui.retry() if tutorial_ui != null else ERR_UNCONFIGURED
 
 
 func completion_is_continuing() -> bool:
@@ -695,6 +733,8 @@ func _layout_play_area() -> void:
 	wheel.size = rectangles[&"wheel"].size
 	if p2_hud != null and is_instance_valid(p2_hud.reveal):
 		p2_hud.layout(available, rectangles[&"wheel"], rectangles[&"board"])
+	if tutorial_ui != null:
+		tutorial_ui.layout()
 
 
 func _on_layout_class_changed(_value: StringName) -> void:
@@ -821,6 +861,14 @@ func _finish_completion_motion() -> void:
 
 ## @api Persist the current campaign board before Nav destroys its screen or backgrounds.
 func prepare_navigation() -> Error:
+	if tutorial_ui != null and tutorial_ui.pending:
+		var tutorial_error: Error = tutorial_ui.retry()
+		if tutorial_error != OK:
+			return tutorial_error
+	return _prepare_progress_navigation()
+
+
+func _prepare_progress_navigation() -> Error:
 	if controller != null and controller.paid_locked():
 		return ERR_BUSY
 	if (
