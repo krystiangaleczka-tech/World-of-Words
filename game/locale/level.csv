@@ -29,3 +29,6 @@ level.hint.reward_retry,Nie zapisano nagrody. Ponów zapis bez kolejnej reklamy.
 level.hint.offer,Potrzebna podpowiedź?,Need a hint?
 level.bonus.at_complete,Skrzynka bonusowa otworzy się po ukończeniu poziomu.,The bonus chest opens when you complete the level.
 level.bonus.reward,Skrzynki: %d • Monety: %d,Chests: %d • Coins: %d
+level.complete.double,Podwój monety,Double coins
+level.complete.no_ad,Reklama jest teraz niedostępna.,No ad is available right now.
+level.complete.pieces,Pocztówka: %d / %d,Postcard: %d / %d

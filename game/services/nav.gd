@@ -6,10 +6,12 @@ extends ServiceStub
 signal screen_changed(screen: Screen)
 ## @api Boot stopped before the first screen; Nav stays on BOOT.
 signal boot_failed(error: Error)
+signal campaign_continue_failed(error: Error)
 signal transition_finished
 
 enum Screen { BOOT, LEVEL, HOME, JOURNEY, POSTCARD, SETTINGS, DAILY, COLLECTION, DEBUG }
 
+const MONETIZATION_SCRIPT: Script = preload("res://services/monetization.gd")
 const SAVE_SCRIPT = preload("res://services/save.gd")
 const CONFIG_SCRIPT = preload("res://services/config.gd")
 const CONTENT_SCRIPT = preload("res://services/content.gd")
@@ -48,6 +50,9 @@ var _debug_enabled: bool = true
 var _screen_factory: Callable = Callable()
 # Load after asset import: UI dependencies include generated CSV translations.
 var _p2: RefCounted
+var _continue_service: Node
+var _continue_economy: Node
+var _continue_intent: Vector2i = Vector2i.ZERO
 
 
 ## @api Explicitly inject one Clock into the closed autoload list. No domain work.
@@ -63,6 +68,7 @@ func configure(save: SAVE_SCRIPT, config: CONFIG_SCRIPT, content: CONTENT_SCRIPT
 	if _p2 != null and _p2.busy:
 		return
 	if _save != null and (_save != save or _config != config or _content != content):
+		_disconnect_continue()
 		if _p2 != null:
 			_p2.close()
 			_p2 = null
@@ -330,6 +336,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _exit_tree() -> void:
+	_disconnect_continue()
 	if _p2 != null:
 		_p2.close()
 	_discard_mounted()
@@ -340,6 +347,7 @@ func _exit_tree() -> void:
 
 
 func _on_host_exit() -> void:
+	_continue_intent = Vector2i.ZERO
 	remove_from_group(BACK_GROUP)
 	if _p2 != null:
 		_p2.reset()
@@ -370,8 +378,82 @@ func postcard_piece_count(slot: int) -> int:
 	)
 
 
-## @api Continue after a durably completed board; new credits may present its postcard first.
+## @api Explicit P2 binding; navigation waits for this exact provider before routing.
+func configure_campaign_continue(service: Node, economy: Node) -> Error:
+	if _p2 == null:
+		return ERR_UNCONFIGURED
+	if _p2.busy:
+		return ERR_BUSY
+	if (
+		not service is MONETIZATION_SCRIPT
+		or not service.matches_tool_owners(_save, economy, _config)
+	):
+		return ERR_INVALID_PARAMETER
+	_disconnect_continue()
+	_continue_service = service
+	_continue_economy = economy
+	service.continuation_ready.connect(_continue_ready)
+	return OK
+
+
+func _disconnect_continue() -> void:
+	if (
+		is_instance_valid(_continue_service)
+		and _continue_service.continuation_ready.is_connected(_continue_ready)
+	):
+		_continue_service.continuation_ready.disconnect(_continue_ready)
+	_continue_service = null
+	_continue_economy = null
+	_continue_intent = Vector2i.ZERO
+
+
+func _continue_ready(slot: int) -> void:
+	if _continue_intent.x != slot or slot == 0:
+		return
+	var intent: Vector2i = _continue_intent
+	_continue_intent = Vector2i.ZERO
+	_p2.busy = false
+	var error: Error = ERR_UNCONFIGURED
+	if (
+		is_instance_valid(_continue_service)
+		and _continue_service.matches_tool_owners(_save, _continue_economy, _config)
+	):
+		error = _route_campaign_continue(intent.x, intent.y)
+	if error != OK:
+		campaign_continue_failed.emit(error)
+
+
+## @api Optional exact-owner provider barrier; all screen ordering stays here.
+# gdlint: disable=max-returns
 func continue_campaign(completed_slot: int, previous_pieces: int) -> Error:
+	if _continue_service == null:
+		return _route_campaign_continue(completed_slot, previous_pieces)
+	if _p2.busy:
+		return ERR_BUSY
+	if _screen != Screen.LEVEL or _level_slot != completed_slot or previous_pieces < 0:
+		return ERR_INVALID_PARAMETER
+	var context: Dictionary = _postcard_context(completed_slot)
+	if context.is_empty() or int(context.progress.current_slot) <= completed_slot:
+		return ERR_UNAVAILABLE
+	if (
+		not is_instance_valid(_continue_service)
+		or not _continue_service.matches_tool_owners(_save, _continue_economy, _config)
+	):
+		return ERR_UNCONFIGURED
+	var leave_error: Error = _prepare_leave()
+	if leave_error != OK:
+		return leave_error
+	_continue_intent = Vector2i(completed_slot, previous_pieces)
+	_p2.busy = true
+	var error: Error = _continue_service.before_next_level(completed_slot)
+	if error != OK:
+		_continue_intent = Vector2i.ZERO
+		_p2.busy = false
+	return error
+
+
+# gdlint: enable=max-returns
+func _route_campaign_continue(completed_slot: int, previous_pieces: int) -> Error:
 	if _p2 == null:
 		return go_to_level(completed_slot + 1)
 	if _p2.busy:
