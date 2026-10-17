@@ -239,11 +239,31 @@ func _assemble(
 		return {}
 	var state: Dictionary = result.progress.get("by_lang", {}).get(_request.language, {})
 	var slot: int = _request.context.slot
+	var partial: bool = (
+		_request.kind == "paid_tool" and _request.progress_candidate.current_slot == slot
+	)
+	var highest: int = int(
+		(
+			_baseline
+			. progress
+			. by_lang
+			. get(_request.language, SaveSchema.LANGUAGE_STATE)
+			. highest_completed_slot
+		)
+	)
 	if (
 		slot >= ProgressSnapshot.MAX_SAFE_COUNT
 		or _domain(state) != _request.progress_candidate
-		or state.get("current_slot") != slot + 1
-		or state.get("highest_completed_slot") != slot
+		or state.get("current_slot") != (slot if partial else slot + 1)
+		or state.get("highest_completed_slot") != (highest if partial else slot)
+	):
+		return {}
+	if (
+		partial
+		and (
+			not _request.delta.is_empty()
+			or not _same(state.get("level_state", {}), _request.tool.after)
+		)
 	):
 		return {}
 	var old_languages: Dictionary = _baseline.progress.by_lang

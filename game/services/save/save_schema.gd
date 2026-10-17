@@ -354,6 +354,17 @@ static func _valid_proof(key: String, value: Variant, atomic: Dictionary) -> boo
 	if value["language"] != value["language"].strip_edges():
 		return false
 	var identity: String = "campaign_complete:%s:%d" % [value["language"], int(value["slot"])]
+	if value["operation_id"].begins_with("paid_tool:"):
+		var parts: PackedStringArray = value["operation_id"].split(":")
+		if (
+			parts.size() != 5
+			or parts[3] not in ["hint", "reveal"]
+			or not AtomicRequest.valid_hash(parts[4])
+		):
+			return false
+		identity = (
+			"paid_tool:%s:%d:%s:%s" % [value["language"], int(value["slot"]), parts[3], parts[4]]
+		)
 	if value["operation_id"] != identity or key != "%d:%s" % [int(value["lineage"]), identity]:
 		return false
 	var hash_pattern: RegEx = RegEx.new()

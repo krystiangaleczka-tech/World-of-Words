@@ -274,6 +274,45 @@ func completion_commands(language: String, slot: int) -> Array[Dictionary]:
 	return _completion_commands(_save.committed_view(), language, slot, _reward_values())
 
 
+## @api Read-only identity check for the exact price/balance configuration.
+func tool_config_matches(config: CONFIG_SCRIPT) -> bool:
+	return _config == config and is_ready()
+
+
+## @api Canonical item-first debit proposal; completion rewards never finance a tool.
+func tool_commands(kind: StringName, complete: bool = false) -> Array[Dictionary]:
+	if (
+		not atomic_available()
+		or _save.writes_blocked()
+		or atomic_has_pending()
+		or kind not in [&"hint", &"reveal"]
+	):
+		return []
+	return _tool_commands(_save.committed_view(), str(kind), complete)
+
+
+func _tool_commands(view: Dictionary, kind: String, complete: bool) -> Array[Dictionary]:
+	var state: Dictionary = view.sections.progress.by_lang.get(
+		view.sections.settings.language, SaveSchema.LANGUAGE_STATE
+	)
+	var wallet: WalletSnapshot = _wallet(view.sections.economy)
+	var amounts: Dictionary = (
+		{kind: 1}
+		if view.sections.economy.items[kind] > 0
+		else RewardTable.from_config(_reward_values()).price(StringName(kind))
+	)
+	if wallet.spent(amounts) == null:
+		return []
+	var commands: Array[Dictionary] = [{"operation": "spend", "reason": kind, "amounts": amounts}]
+	if complete:
+		commands.append_array(
+			_completion_commands(
+				view, view.sections.settings.language, state.current_slot, _reward_values()
+			)
+		)
+	return commands
+
+
 func atomic_available() -> bool:
 	return (
 		is_ready()
@@ -304,6 +343,15 @@ func prepare_commands(transaction: SaveTransaction, progress: ProgressPrepared) 
 	var expected: Array[Dictionary] = _completion_commands(
 		view, request.language, request.context.slot, values
 	)
+	if request.kind == "paid_tool":
+		expected = _tool_commands(
+			view,
+			request.tool.kind,
+			request.progress_candidate.current_slot == request.context.slot + 1
+		)
+		if expected.is_empty():
+			rejected.error = ERR_INVALID_DATA
+			return rejected
 	if request.economy_commands != expected:
 		rejected.error = ERR_INVALID_DATA
 		return rejected

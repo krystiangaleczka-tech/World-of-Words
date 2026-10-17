@@ -9,7 +9,7 @@ executor: cheap
 think: high
 ui: high
 status: blocked
-depends_on: [T-0276, T-0277, T-0263, T-0274]
+depends_on: [T-0276, T-0277, T-0263, T-0274, T-0336]
 touch:
   - tasks/T-0278-paid-tools.md
   - docs/qa/T-0278-paid-tools-preflight.md
@@ -36,3 +36,8 @@ reentry and full UI/accessibility matrix. No store/device gates inferred complet
 
 ## Acceptance
 Remain blocked until every dependency and durable paid-tool preflight is verified.
+
+## Preflight disposition (2026-10-17)
+T-0336 supplies the missing joint paid-tool transaction and durable receipt namespace.
+Keep presentation blocked until that prerequisite merges; executable UI scope follows
+in revision 2 under Chris's explicit instruction to complete T-0278.

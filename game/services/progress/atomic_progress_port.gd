@@ -198,3 +198,20 @@ func certifies(save: Node, progress: Node) -> bool:
 
 func completion_commands(language: String, slot: int) -> Array[Dictionary]:
 	return _economy.completion_commands(language, slot) if is_available() and not _busy else []
+
+
+## @api Paid callers use this port's exact Economy owner; no separate wallet injection.
+func tool_commands(kind: StringName, complete: bool = false) -> Array[Dictionary]:
+	return _economy.tool_commands(kind, complete) if is_available() and not _busy else []
+
+
+## @api Verify the same owners/content/config used by the visible paid HUD and gameplay.
+func certifies_tools(
+	save: Node, progress: Node, economy: Node, content: Node, config: Node
+) -> bool:
+	return (
+		certifies(save, progress)
+		and economy == _economy
+		and _progress.tool_context_matches(content, config, self)
+		and _economy.tool_config_matches(config)
+	)
