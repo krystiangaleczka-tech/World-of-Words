@@ -73,3 +73,7 @@ gallery.powerups.loading,Ładowanie,Loading
 gallery.page.rewards,Nagrody i pocztówki,Rewards and postcards
 gallery.rewards.replay,Odtwórz nagrody,Replay rewards
 gallery.rewards.reveal,Odkryj kolejny fragment,Reveal next piece
+gallery.tutorial.caption,Połącz litery i puść palec.,Connect letters and release to form a word.
+gallery.tutorial.replay,Pokaż gest,Replay gesture
+gallery.tutorial.hide,Ukryj gest,Hide gesture
+gallery.page.tutorial,Samouczek,Tutorial

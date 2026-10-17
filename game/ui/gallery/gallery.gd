@@ -23,7 +23,8 @@ const PAGES: Dictionary[StringName, String] = {
 	&"Powerups": "res://ui/gallery/powerups.tscn",
 	&"SettingsControls": "res://ui/gallery/settings_controls.tscn",
 	&"Content": "res://ui/gallery/content.tscn",
-	&"Overlays": "res://ui/gallery/overlays.tscn"
+	&"Overlays": "res://ui/gallery/overlays.tscn",
+	&"Tutorial": "res://ui/gallery/tutorial.tscn"
 }
 const PSEUDO: String = "internationalization/pseudolocalization/"
 const OPTIONS: Dictionary[String, Variant] = {
