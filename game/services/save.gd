@@ -162,11 +162,13 @@ func debug_reset() -> Error:
 		candidate[section] = (_data[section] as Dictionary).duplicate(true)
 	if not _compat_v3 and not _reset_atomic(candidate):
 		return ERR_INVALID_DATA
+	_onboarding_flush_depth += 1
 	var error: Error = _prepare_write()
 	if error == OK:
 		error = _storage.commit(JSON.stringify(candidate, "", true, true), _primary_valid)
 	if error != OK:
 		flush_failed.emit(error)
+		_onboarding_flush_depth -= 1
 		return error
 	_data = _canonical_document(candidate)
 	_atomic.observe(_data)
@@ -174,6 +176,7 @@ func debug_reset() -> Error:
 	_primary_valid = true
 	_publish_settings()
 	_publish_onboarding()
+	_onboarding_flush_depth -= 1
 	return OK
 
 

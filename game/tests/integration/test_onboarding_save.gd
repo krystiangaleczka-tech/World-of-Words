@@ -273,3 +273,28 @@ func test_active_atomic_lease_blocks_onboarding_without_staging_metadata() -> vo
 	assert_eq(owner.onboarding_snapshot().step, 0)
 	assert_eq(owner.abort_transaction(begun.transaction), OK)
 	assert_eq(owner.complete_tutorial(), OK)
+
+
+func test_debug_reset_error_and_settings_callbacks_cannot_start_onboarding() -> void:
+	var failures: Array[int] = []
+	var settings: Array[int] = []
+	save.flush_failed.connect(
+		func(_error: Error) -> void:
+			failures.append(save.complete_tutorial())
+			failures.append(save.configure_onboarding(bus))
+	)
+	save.setting_changed.connect(
+		func(_key: StringName) -> void:
+			settings.append(save.complete_tutorial())
+			settings.append(save.configure_onboarding(bus))
+	)
+	storage.fail = true
+	assert_ne(save.set_setting(&"high_contrast", true), OK)
+	assert_ne(save.debug_reset(), OK)
+	assert_eq(failures, [ERR_BUSY, ERR_BUSY, ERR_BUSY, ERR_BUSY])
+	assert_eq(save.onboarding_snapshot().step, 0)
+	storage.fail = false
+	assert_eq(save.debug_reset(), OK)
+	assert_eq(settings, [ERR_BUSY, ERR_BUSY])
+	assert_eq(save.onboarding_snapshot().step, 0)
+	assert_eq(save.complete_tutorial(), OK)
