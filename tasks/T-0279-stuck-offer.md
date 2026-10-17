@@ -30,6 +30,7 @@ Reference: DESIGN.md#level-p2-final.
 
 ## Current state
 LevelScreen explicitly opts into P2 and durable paid tools before mount. Controller
+state_changed publishes durable board changes, including paid reveals;
 result_ready publishes only committed LEVEL/BONUS results and immediate INVALID /
 ALREADY_FOUND. HintButton already has a highlighted state with at most three stock
 pulses and static reduced-motion presentation. Clock.monotonic_msec is injectable.
@@ -43,14 +44,14 @@ No stuck-offer feature exists; T-0278 is merged in main (#205).
 - Trigger after configured monotonic idle time without a new LEVEL/BONUS word, or
   configured consecutive INVALID results. Short ignored releases neither increment
   nor reset the streak. LEVEL, BONUS and ALREADY_FOUND reset the invalid streak;
-  only new LEVEL/BONUS reset idle. Read thresholds from Config, no balance changes.
+  only newly found words reset idle, including a word completed by a paid reveal. Read thresholds from Config, no balance changes.
 - Show only for an unlocked visible actionable Hint, exact current paid bindings,
   live current board and active screen. No offers during modal/reward, pending write,
   paid feedback, drag/shuffle, completion, paused tree or suspended application.
   A blocked due offer remains eligible for the next safe refresh, not consumed.
 - Use existing HintButton.highlighted (stock bounded pulses) and a Caption Label
   immediately below the play area, aligned with Hint. Body layout reserves caption
-  height; do not overlap tile hit circles or block input. Keep copy for TOAST_HOLD,
+  height even while hidden; showing/dismissing must not shift the wheel; do not overlap tile hit circles or block input. Keep copy for TOAST_HOLD,
   including reduced motion. Hide on action/progress, unavailability, exit or timeout;
   never reset the shown latch during retained reentry. A new screen/process is a new
   level visit; no persisted offer flag or save format change.

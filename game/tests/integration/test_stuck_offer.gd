@@ -283,11 +283,13 @@ func test_twelve_case_native_caption_geometry_and_noninteractive_copy() -> void:
 					)
 				)
 				await wait_process_frames(3)
+				var wheel_rect: Rect2 = host.wheel.get_global_rect()
 				offer_clock.now = 45000
 				host.stuck_offer.refresh()
 				await wait_process_frames(3)
 				var caption: Label = host.stuck_offer.caption
 				assert_true(caption.is_visible_in_tree())
+				assert_eq(host.wheel.get_global_rect(), wheel_rect)
 				assert_false(caption.text.is_empty())
 				assert_eq(caption.mouse_filter, Control.MOUSE_FILTER_IGNORE)
 				assert_true(
@@ -322,3 +324,18 @@ func test_locked_hint_and_replaced_owner_configuration_never_offer() -> void:
 	host.stuck_offer.refresh()
 	assert_false(host.stuck_offer.caption.visible)
 	assert_false(host.hint_button.highlighted)
+
+
+func test_paid_reveal_word_resets_idle_before_the_old_deadline() -> void:
+	var host: LevelScreen = screen()
+	await wait_process_frames(3)
+	offer_clock.now = 44000
+	host.p2_hud.reveal.activated.emit(&"reveal")
+	await wait_process_frames(3)
+	assert_true("MODA" in host.controller.get_board().found_words())
+	offer_clock.now = 45000
+	host.stuck_offer.refresh()
+	assert_false(host.stuck_offer.caption.visible)
+	offer_clock.now = 89000
+	host.stuck_offer.refresh()
+	assert_true(host.stuck_offer.caption.visible)

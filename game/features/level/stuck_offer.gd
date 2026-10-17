@@ -3,6 +3,8 @@ extends Node
 ## Per-active-level offer composition; no wallet, board or navigation mutation.
 
 var caption: Label
+var _space: Control
+var _found_count: int = 0
 var _host: LevelScreen
 var _config: Node
 var _clock: Clock
@@ -24,7 +26,13 @@ func mount(host: LevelScreen, config: Node, clock: Clock = null) -> void:
 	caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	caption.text = tr("level.hint.offer")
 	caption.visible = false
-	host.body.add_child(caption)
+	_space = Control.new()
+	_space.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	host.body.add_child(_space)
+	_space.add_child(caption)
+	_space.resized.connect(_layout_caption)
+	caption.minimum_size_changed.connect(_layout_caption, CONNECT_DEFERRED)
+	_layout_caption()
 	_idle = Timer.new()
 	_hold = Timer.new()
 	for timer: Timer in [_idle, _hold]:
@@ -41,7 +49,32 @@ func _resume() -> void:
 	_last_word_msec = _clock.monotonic_msec()
 	if not _host.controller.result_ready.is_connected(_result):
 		_host.controller.result_ready.connect(_result)
+	if not _host.controller.state_changed.is_connected(_state_changed):
+		_host.controller.state_changed.connect(_state_changed)
+	_found_count = _word_count()
 	refresh()
+
+
+func _word_count() -> int:
+	var board: BoardState = _host.controller.get_board()
+	return board.found_words().size() + board.bonus_words().size() if board != null else 0
+
+
+func _state_changed() -> void:
+	var count: int = _word_count()
+	if count > _found_count:
+		_invalid = 0
+		_last_word_msec = _clock.monotonic_msec()
+		_hide()
+	_found_count = count
+	refresh.call_deferred()
+
+
+func _layout_caption() -> void:
+	caption.size.x = _space.size.x
+	var height: float = caption.get_minimum_size().y
+	_space.custom_minimum_size.y = height
+	caption.size.y = height
 
 
 func _result(result: AttemptResult) -> void:
@@ -106,6 +139,8 @@ func _exit_tree() -> void:
 	_hide()
 	if is_instance_valid(_host) and _host.controller.result_ready.is_connected(_result):
 		_host.controller.result_ready.disconnect(_result)
+	if is_instance_valid(_host) and _host.controller.state_changed.is_connected(_state_changed):
+		_host.controller.state_changed.disconnect(_state_changed)
 
 
 func _notification(what: int) -> void:

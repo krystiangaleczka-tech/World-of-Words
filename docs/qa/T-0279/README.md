@@ -2,14 +2,15 @@
 
 References: DESIGN.md#flow-stuck-player and #level-p2-final; FR-HINT-07.
 The opted-in paid P2 screen uses actual owner bindings, canonical offer thresholds,
-one-shot timers and an injectable monotonic Clock. Nine actual-screen tests cover
+one-shot timers and an injectable monotonic Clock. Ten actual-screen tests cover
 idle boundaries, invalid streak resets, ignored releases, LEVEL/BONUS/ALREADY_FOUND,
 once-only display, reward/modal and failed-write suppression, completion, locked
 Hint, stale configuration, retained reentry and application suspension. No sleeps.
 
 The offer composes the existing HintButton highlighted state (stock maximum three
 pulses; reduced motion stays static) with Caption text immediately below the play
-area, right aligned beside Hint. The body reserves its height; input remains active.
+area, right aligned beside Hint. A noninteractive Control reserves its wrapped height even while hidden; showing
+and dismissing the caption leave wheel geometry unchanged. Input remains active.
 The hold uses TOAST_HOLD even in reduced motion. It never opens a Sheet or spends.
 A local stuck_offer_shown(trigger) is available for T-0328; no Analytics delivery is
 activated here. A new screen/process creates a new visit, with no save-format flag.
