@@ -377,3 +377,43 @@ func test_paid_ui_bindings_certify_exact_owners_content_config_and_port() -> voi
 	assert_false(b.port.certifies_tools(b.save, b.progress, other.economy, b.content, b.config))
 	assert_false(b.port.certifies_tools(b.save, b.progress, b.economy, other.content, b.config))
 	assert_false(other.port.certifies_tools(b.save, b.progress, b.economy, b.content, b.config))
+
+
+func test_price_override_after_first_failed_write_keeps_issued_cost_and_next_action_requotes(
+) -> void:
+	var intent: Dictionary = request(board, &"hint")
+	var storage: InterruptedStorage = b.storage
+	storage.stop_at = &"temp_opened"
+	assert_eq(b.port.transact(intent).error, ERR_BUSY)
+	b.config.hint_price = 101
+	storage.stop_at = &""
+	assert_eq(b.port.transact(intent).error, OK)
+	assert_eq(b.economy.snapshot().coins, 400)
+	assert_eq(b.port.transact(intent).error, OK)
+	assert_eq(b.economy.snapshot().coins, 400)
+	board = BoardState.from_dict(board.get_level(), intent.tool.after, true)
+	assert_eq(b.progress.bind_board(board), OK)
+	var next: Dictionary = request(board, &"hint")
+	assert_eq(next.economy_commands[0].amounts, {"coins": 101})
+	assert_eq(b.port.transact(next).error, OK)
+	assert_eq(b.economy.snapshot().coins, 299)
+
+
+func test_final_paid_price_override_retry_keeps_completion_and_reward_once() -> void:
+	var last: Vector2i = board.get_level().word_cells(0)[0]
+	for index: int in board.get_level().word_count():
+		for cell: Vector2i in board.get_level().word_cells(index):
+			if cell != last:
+				board.reveal_cell(cell)
+	assert_eq(b.progress.save_level(board), OK)
+	var intent: Dictionary = request(board, &"hint")
+	var storage: InterruptedStorage = b.storage
+	storage.stop_at = &"temp_opened"
+	assert_eq(b.port.transact(intent).error, ERR_BUSY)
+	b.config.hint_price = 101
+	storage.stop_at = &""
+	assert_eq(b.port.transact(intent).error, OK)
+	assert_eq(b.economy.snapshot().coins, 400 + b.config.get_int(&"economy.reward.level_complete"))
+	assert_eq(b.progress.current_slot(), 3)
+	assert_eq(b.port.transact(intent).error, OK)
+	assert_eq(b.economy.snapshot().coins, 400 + b.config.get_int(&"economy.reward.level_complete"))

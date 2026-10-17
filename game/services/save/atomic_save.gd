@@ -107,6 +107,10 @@ func validates(transaction: SaveTransaction) -> bool:
 	)
 
 
+func started(transaction: SaveTransaction) -> bool:
+	return _started and validates(transaction)
+
+
 func validates_progress(value: ProgressPrepared, transaction: SaveTransaction) -> bool:
 	return (
 		validates(transaction)
