@@ -19,6 +19,7 @@ var _started: bool = false
 var _notifying: bool = false
 var _writing: bool = false
 var _issued: Dictionary = {}
+var _live_economy: Dictionary = {}
 
 
 func configure(storage: SaveStorage, publish: Callable) -> void:
@@ -41,6 +42,7 @@ func bind(progress: AtomicSaveOwner, economy: AtomicSaveOwner) -> Error:
 func observe(document: Dictionary) -> void:
 	_committed = document.duplicate(true)
 	_issued.clear()
+	_live_economy.clear()
 
 
 func blocked() -> bool:
@@ -320,6 +322,7 @@ func _approved(
 func _resolve(document: Dictionary, proof: Dictionary, state: String) -> Dictionary:
 	_committed = document.duplicate(true)
 	_issued[proof.operation_id] = proof.duplicate(true)
+	_live_economy[proof.operation_id] = _economy_approval
 	_clear()
 	_notifying = true
 	_publish.call(document.duplicate(true), "")
@@ -331,6 +334,7 @@ func _resolve(document: Dictionary, proof: Dictionary, state: String) -> Diction
 func _replacement(selected: Dictionary) -> Dictionary:
 	_committed = selected.document.duplicate(true)
 	_issued.clear()
+	_live_economy.clear()
 	_clear()
 	_notifying = true
 	_publish.call(_committed.duplicate(true), selected.suffix)
@@ -510,3 +514,11 @@ func _publish_receipt_owners(receipt: Dictionary) -> Error:
 	if is_instance_valid(_progress):
 		_progress.call("_accept_coordinated_commit", receipt.duplicate(true))
 	return error
+
+
+func validates_live_economy_approval(value: EconomyPrepared, receipt: Dictionary) -> bool:
+	return (
+		value != null
+		and validates_receipt(receipt)
+		and _live_economy.get(receipt.operation_id) == value
+	)

@@ -25,13 +25,12 @@ all full bonus groups. Counter remainder, coin grant, ordinary rewards, progress
 and paid debit when present form one candidate. Debit precedes rewards, so chest
 coins cannot finance an unaffordable tool. Zero configured chest reward still
 consumes full groups. Safe-integer counter, multiplication and wallet overflow
-reject the whole candidate. The v4 JSON bound uses an explicit conversion of the
-existing integer MAX_SAFE_COUNT; its former decimal float literal under-accepted
-the top safe integer in the pinned engine. No documented range or v3 reader change.
+reject the whole candidate. The existing v4 numeric reader ceiling remains unchanged; overflow tests start
+from its accepted top boundary and reject the entire overflowing candidate.
 
 The live Economy.bonus_chest_redeemed(chests, coins) signal is presentation only.
-It is derived from the original registered Economy approval matched to an issued
-Save receipt and emitted once under Save's write barrier, including zero coins.
+It is derived from the original registered Economy approval matched by object identity to the actually resolving issued
+Save receipt via a transient Save association and emitted once under Save's write barrier, including zero coins.
 It never authorizes a reward. Historical receipt recovery after restart does not
 invent live settlement metadata or replay this presentation signal. Wallet grants
 remain durable in the receipt and ordinary canonical journal notifications.

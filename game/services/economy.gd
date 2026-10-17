@@ -449,7 +449,7 @@ func accept_commit(receipt: Dictionary) -> Error:
 		)
 	for approval: EconomyPrepared in _atomic_prepared_batches:
 		var issued: Dictionary = _atomic_prepared_batches[approval]
-		if issued.hash == receipt.request_hash and issued.bonus.chests > 0:
+		if _save.validates_live_economy_approval(approval, receipt) and issued.bonus.chests > 0:
 			bonus_chest_redeemed.emit(issued.bonus.chests, issued.bonus.coins)
 			break
 	_busy = false

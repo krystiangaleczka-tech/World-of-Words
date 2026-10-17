@@ -11,6 +11,7 @@ ui: none
 status: review
 depends_on: [T-0278, T-0231, T-0242]
 touch:
+  - game/services/save.gd
   - game/services/save/atomic_request.gd
   - game/services/save/atomic_save.gd
   - game/services/save/save_schema.gd
@@ -68,14 +69,14 @@ a bonus_found side-effect listener or a separate grant.
   Rewards and target are frozen in the issued Economy approval after write starts;
   changed config before the first write rejects. Completion remains item/coin debit
   before rewards, so a reward cannot finance an unaffordable paid tool.
+- AtomicSave retains a transient association only between an actually resolving
+  EconomyPrepared object and its issued receipt, cleared on observe/replacement.
+  Save.validates_live_economy_approval(value: EconomyPrepared, receipt: Dictionary)
+  -> bool exposes only that readonly identity check; replay cannot create one.
 - Read-only Economy.bonus_chest_redeemed(chests:int, coins:int) publishes only for a
   matching issued live completion receipt and original registered approval metadata,
   once under Save's write barrier, including zero coin reward. No historical replay
   invents a new notification after restart; durable grants remain in the receipt.
-- Use the existing exact integer MAX_SAFE_COUNT for v4 JSON numeric bounds, converted
-  explicitly for float comparison. The old decimal float literal under-accepted the
-  top safe integer in the pinned engine; overflow fixtures exposed this one-unit
-  boundary issue. No new numeric range or v3 reader change.
 - Extend existing receipt namespace reader without changing v4 shape. Never drop
   proofs. Rollback retains this reader; older builds are unsupported downgrades once
   checkpoint receipts exist. No backfill of pre-activation, previously saved bonus

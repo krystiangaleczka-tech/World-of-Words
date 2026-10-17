@@ -350,19 +350,20 @@ func test_existing_historical_credit_is_preserved_and_not_counted_again() -> voi
 
 
 func test_counter_and_wallet_overflow_fail_without_partial_publication() -> void:
-	wallet(500, WalletSnapshot.MAX_SAFE_COUNT)
+	wallet(500, WalletSnapshot.MAX_SAFE_COUNT - 1)
 	bonus()
+	board.evaluate(PackedInt32Array([1, 0, 3]))
 	assert_ne(b.progress.save_level(board), OK)
-	assert_eq(b.economy.snapshot().bonus_counter, WalletSnapshot.MAX_SAFE_COUNT)
+	assert_eq(b.economy.snapshot().bonus_counter, WalletSnapshot.MAX_SAFE_COUNT - 1)
 	assert_false(b.save.writes_blocked())
 	assert_false("DAM" in b.progress.restore_level(board.get_level()).bonus_words())
-	wallet(WalletSnapshot.MAX_SAFE_COUNT, 10)
+	wallet(WalletSnapshot.MAX_SAFE_COUNT - 1, 10)
 	fill(board)
 	watch_signals(b.economy)
 	assert_ne(b.progress.complete_level(2), OK)
 	assert_eq(b.progress.current_slot(), 2)
 	assert_eq(b.economy.snapshot().bonus_counter, 10)
-	assert_eq(b.economy.snapshot().coins, WalletSnapshot.MAX_SAFE_COUNT)
+	assert_eq(b.economy.snapshot().coins, WalletSnapshot.MAX_SAFE_COUNT - 1)
 	assert_signal_emit_count(b.economy, "bonus_chest_redeemed", 0)
 
 
@@ -375,3 +376,51 @@ func test_mutated_board_at_final_write_boundary_rejects_without_bonus_credit() -
 	assert_eq(b.economy.snapshot().bonus_counter, 0)
 	assert_false(b.save.writes_blocked())
 	assert_true(b.progress.restore_level(board.get_level()).bonus_words().is_empty())
+
+
+func test_live_settlement_association_requires_the_actual_resolving_approval() -> void:
+	wallet(500, 20)
+	fill(board)
+	var request: Dictionary = b.progress.completion_request(b.port.completion_commands("pl", 2))
+	var first: Dictionary = b.save.begin_transaction(request)
+	var p: ProgressPrepared = b.progress.prepare_completion(first.transaction)
+	var aborted: EconomyPrepared = b.economy.prepare_commands(first.transaction, p)
+	assert_eq(b.save.abort_transaction(first.transaction), OK)
+	var second: Dictionary = b.save.begin_transaction(request)
+	p = b.progress.prepare_completion(second.transaction)
+	var actual: EconomyPrepared = b.economy.prepare_commands(second.transaction, p)
+	var result: Dictionary = b.save.commit_transaction(second.transaction, p, actual)
+	assert_eq(result.error, OK)
+	assert_true(b.save.validates_live_economy_approval(actual, result.receipt))
+	assert_false(b.save.validates_live_economy_approval(aborted, result.receipt))
+	assert_false(b.save.validates_live_economy_approval(EconomyPrepared.new(), result.receipt))
+	var restarted: Dictionary = bundle()
+	watch_signals(restarted.economy)
+	var recovered: Dictionary = restarted.port.recover(
+		request.operation_id, {"request_hash": AtomicRequest.hash_value(request)}
+	)
+	assert_eq(recovered.error, OK)
+	assert_false(restarted.save.validates_live_economy_approval(actual, recovered.receipt))
+	assert_signal_emit_count(restarted.economy, "bonus_chest_redeemed", 0)
+
+
+func test_global_counter_survives_language_changes_without_touching_other_progress() -> void:
+	bonus()
+	assert_eq(b.progress.save_level(board), OK)
+	var section: Dictionary = b.save.get_section(&"progress")
+	section.by_lang["en"] = section.by_lang.pl.duplicate(true)
+	section.by_lang.en.level_state = null
+	section.by_lang.en.current_slot = 4
+	assert_eq(b.save.set_section(&"progress", section), OK)
+	assert_eq(b.save.flush(), OK)
+	assert_eq(b.save.set_setting(&"language", "en"), OK)
+	assert_eq(b.save.flush(), OK)
+	assert_eq(b.economy.snapshot().bonus_counter, 1)
+	assert_true(b.progress.checkpoint_request(board).is_empty())
+	assert_eq(b.save.set_setting(&"language", "pl"), OK)
+	assert_eq(b.save.flush(), OK)
+	board = b.progress.restore_level(board.get_level())
+	assert_eq(b.progress.bind_board(board), OK)
+	assert_eq(b.progress.save_level(board), OK)
+	assert_eq(b.economy.snapshot().bonus_counter, 1)
+	assert_eq(b.save.get_section(&"progress").by_lang.en, section.by_lang.en)

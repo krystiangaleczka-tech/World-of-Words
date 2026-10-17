@@ -259,9 +259,7 @@ static func _json_safe(value: Variant) -> bool:
 			if not _json_safe(item):
 				return false
 	elif value is int or value is float:
-		return (
-			is_finite(float(value)) and abs(float(value)) <= float(ProgressSnapshot.MAX_SAFE_COUNT)
-		)
+		return is_finite(float(value)) and abs(float(value)) <= 9007199254740991.0
 	else:
 		return value == null or value is String or value is bool
 	return true
