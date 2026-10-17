@@ -29,6 +29,7 @@ var _attempt: bool = false
 var _doubled: bool = false
 var _requesting: bool = false
 var _message_key: String = ""
+var _postcard_group: VBoxContainer
 var _pieces: int
 var _total: int
 
@@ -67,14 +68,18 @@ func mount(
 	row.add_child(stars)
 	coins = CurrencyPill.new()
 	row.add_child(coins)
+	_postcard_group = VBoxContainer.new()
+	_postcard_group.add_theme_constant_override("separation", Tokens.Space.L)
+	_postcard_group.visible = false
+	column.add_child(_postcard_group)
 	postcard = LocationPostcard.new()
 	postcard.visible = false
-	column.add_child(postcard)
+	_postcard_group.add_child(postcard)
 	progress_bar = CatalogProgressBar.new()
-	column.add_child(progress_bar)
+	_postcard_group.add_child(progress_bar)
 	credits = CatalogSurface.label(&"Caption")
 	credits.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	column.add_child(credits)
+	_postcard_group.add_child(credits)
 	double_button = SecondaryButton.new()
 	double_button.text_key = "level.complete.double"
 	double_button.configure_badge(&"ad")
@@ -136,6 +141,14 @@ func _present() -> void:
 		var location: Dictionary = _content.location_for_slot(_slot)
 		_total = _config.get_int(&"meta.postcard.pieces")
 		var state: Dictionary = view.sections.progress.by_lang[language]
+		_postcard_group.visible = (
+			_slot > 1
+			and (
+				"journey" in state.unlocked
+				or "journey" in view.sections.progress.unlocked
+				or int(state.current_slot) >= _config.get_int(&"unlocks.journey_slot")
+			)
+		)
 		_pieces = clampi(int(state.location_pieces.get(location.get("id", ""), 0)), 0, _total)
 		progress_bar.set_value(float(_pieces) / maxi(_total, 1))
 		var path: String = "res://content".path_join(language).path_join(

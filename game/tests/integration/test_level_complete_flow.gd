@@ -606,3 +606,24 @@ func test_terminal_completion_can_claim_x2_while_continue_is_disabled() -> void:
 	assert_false(host.complete_ui.double_button.visible)
 	assert_eq(host.complete_ui.coins.value, b.config.get_int(&"economy.reward.level_complete") * 2)
 	assert_true(host.continue_button.disabled)
+
+
+func test_postcard_group_is_hidden_before_journey_unlock() -> void:
+	var host: LevelScreen = screen()
+	await wait_process_frames(3)
+	complete(host)
+	await wait_process_frames(5)
+	assert_false(host.complete_ui.postcard.is_visible_in_tree())
+	assert_false(host.complete_ui.progress_bar.is_visible_in_tree())
+	assert_false(host.complete_ui.credits.is_visible_in_tree())
+
+
+func test_postcard_group_is_visible_at_journey_unlock_with_missing_art_caption() -> void:
+	b.config.journey_slot = 2
+	var host: LevelScreen = screen()
+	await wait_process_frames(3)
+	complete(host)
+	await wait_process_frames(5)
+	assert_true(host.complete_ui.progress_bar.is_visible_in_tree())
+	assert_true(host.complete_ui.credits.is_visible_in_tree())
+	assert_true(host.complete_ui.credits.text.contains(host.tr("journey.location.missing_art")))

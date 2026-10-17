@@ -36,6 +36,7 @@ func _case(layout: String, pseudo: bool, hc: bool) -> void:
 	var economy: Node = load("res://services/economy.gd").new()
 	var content: Node = load("res://services/content.gd").new()
 	var config: Node = load("res://tests/integration/test_level_complete_flow.gd").CompleteConfig.new()
+	config.journey_slot = 2
 	var bus: Node = load("res://services/events.gd").new()
 	var service: Node = load("res://services/monetization.gd").new()
 	for node: Node in [save, progress, economy, content, config, bus, service]:

@@ -52,7 +52,9 @@ routes directly to postcard/next level; default P1 and P2 behavior must remain i
   CurrencyPills; count actual receipt stars and base reward once when visible.
   Receipt lookup supports ordinary and paid final completion; no live balance
   arithmetic to infer base reward. Existing LevelBonusUI alone presents chest burst.
-- Show committed location credits via LocationPostcard thumb when art exists,
+- Gate the whole postcard group (thumb, bar, credits/missing-art Caption) through
+  the existing committed Journey unlock policy, including persisted unlocks.
+  Show committed location credits via LocationPostcard thumb when art exists,
   CatalogProgressBar and translated piece counts. Missing art uses translated Caption,
   preserving progress. All spacing/type from Tokens, vertically centered column.
 - Secondary rewarded button with ad badge, canonical double_reward_slot/enable flag

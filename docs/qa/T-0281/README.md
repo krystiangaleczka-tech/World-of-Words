@@ -7,7 +7,8 @@ release SDK/store/privacy reviews remain separate gates.
 
 Actual ordinary or paid final completion receipts supply the earned star and base
 coin count-up. Bonus chest presentation remains with T-0280, separate from x2.
-Postcard credits read the same committed progress; unavailable art has the existing
+The postcard group appears only after the committed Journey unlock policy allows it;
+credits read the same committed progress; unavailable art has the existing
 translated missing-art caption. No generated content or economy policy changes.
 Canonical double unlock/flag/multiplier controls the optional ad-badged button.
 Only the existing Monetization rewarded flow invokes bound Economy.grant; its
@@ -31,7 +32,7 @@ watchdog and host teardown. Existing tests unchanged.
 24 native X11 PNGs show ready and doubled completion in
 COMPACT1080x1920/REGULAR1080x2340/TABLET1440x1920 × PL/PSEUDO × default100/HC130.
 Actual production controls and services use isolated content/Fake providers and
-controlled unlocks. Reduced motion stabilizes captures; normal motion is tested
+controlled unlocks (including explicit Journey unlock at slot2). Reduced motion stabilizes captures; normal motion is tested
 separately. Assertions verify on-screen number, numeric pills, postcard progress,
 credits and both actions, touch minimums, committed balances and base-only doubling.
 The compact PSEUDO HC130 images were inspected. Numeric pills reserve measured font
