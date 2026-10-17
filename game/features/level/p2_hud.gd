@@ -196,8 +196,12 @@ func refresh() -> void:
 	hint.visible = _unlocked("hint")
 	reveal.visible = _unlocked("reveal")
 	shuffle.visible = _unlocked("shuffle")
-	hint.set_amounts(wallet.items.hint, _config.get_int(&"economy.price.hint"))
-	reveal.set_amounts(wallet.items.reveal, _config.get_int(&"economy.price.reveal"))
+	var hint_price: int = _config.get_int(&"economy.price.hint")
+	var reveal_price: int = _config.get_int(&"economy.price.reveal")
+	if hint.count != wallet.items.hint or hint.price != hint_price:
+		hint.set_amounts(wallet.items.hint, hint_price)
+	if reveal.count != wallet.items.reveal or reveal.price != reveal_price:
+		reveal.set_amounts(wallet.items.reveal, reveal_price)
 	reveal.disabled = not _can_act.call()
 
 

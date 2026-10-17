@@ -12,6 +12,7 @@ const SAVE_SCRIPT: Script = preload("res://services/save.gd")
 const CONTENT_SCRIPT: Script = preload("res://services/content.gd")
 const PROGRESS_SCRIPT: Script = preload("res://services/progress.gd")
 
+var paid_tools_ui: LevelPaidTools
 var p2_hud: LevelP2Hud
 var controller: LevelController
 var board_view: BoardView
@@ -27,6 +28,10 @@ var debug_button: IconButton
 var completion_layer: VBoxContainer
 var completion_title: Label
 var continue_button: PrimaryButton
+var _paid_progress: PROGRESS_SCRIPT
+var _paid_port: AtomicProgressPort
+var _p2_economy: ECONOMY_SCRIPT
+var _p2_config: CONFIG_SCRIPT
 var _navigation: Node
 var _navigation_supplied: bool = false
 var _continued: bool = false
@@ -96,8 +101,9 @@ func _ready() -> void:
 	_area.add_child(wheel)
 	controller = LevelController.new()
 	add_child(controller)
-	progress = PROGRESS_SCRIPT.new()
-	add_child(progress)
+	progress = _paid_progress if _paid_progress != null else PROGRESS_SCRIPT.new()
+	if _paid_progress == null:
+		add_child(progress)
 	_connect_runtime()
 	_load_board()
 	if p2_hud != null:
@@ -106,9 +112,21 @@ func _ready() -> void:
 		_actions.visible = false
 		p2_hud.mount(self, _area, _save, _event_bus, _slot, hint_button, shuffle_button, _can_act)
 		p2_hud.meter.minimum_size_changed.connect(_layout_play_area, CONNECT_DEFERRED)
-		p2_hud.navigation_requested.connect(navigation_requested.emit)
-		p2_hud.shop_requested.connect(shop_requested.emit)
-		p2_hud.powerup_requested.connect(powerup_requested.emit)
+		p2_hud.navigation_requested.connect(_p2_navigate)
+		p2_hud.shop_requested.connect(_p2_shop)
+		p2_hud.powerup_requested.connect(_p2_tool)
+	if paid_tools_ui != null:
+		status_label.remove_theme_font_size_override("font_size")
+		status_label.remove_theme_color_override("font_color")
+		status_label.theme_type_variation = &"Caption"
+		var paid_error: Error = ERR_UNCONFIGURED
+		if paid_bindings_ready():
+			paid_error = controller.configure_paid_tools(_save, _paid_port)
+		if paid_error != OK:
+			controller.configure(null, progress, _event_bus)
+			progress.unbind_board()
+			_set_status("level.tool.unavailable")
+		paid_tools_ui.mount(self, controller)
 	_refresh_hud()
 	set_process(false)
 	_layout_play_area()
@@ -128,8 +146,55 @@ func configure_p2(economy: Node, config: Node) -> Error:
 		helper.free()
 		return error
 	p2_hud = helper
+	_p2_economy = economy
+	_p2_config = config
 	add_child(helper)
 	return OK
+
+
+## @api Opt in only with the exact ready durable owners, before mounting this screen.
+func configure_paid_tools(
+	owner: PROGRESS_SCRIPT, port: AtomicProgressPort, monetization: Node = null, ios: bool = false
+) -> Error:
+	if is_inside_tree() or paid_tools_ui != null:
+		return ERR_BUSY
+	if (
+		p2_hud == null
+		or port == null
+		or not port.certifies_tools(_save, owner, _p2_economy, _content, _p2_config)
+	):
+		return ERR_UNCONFIGURED
+	if _slot != owner.current_slot():
+		return ERR_INVALID_PARAMETER
+	var helper: LevelPaidTools = LevelPaidTools.new()
+	var error: Error = helper.configure(_save, _p2_economy, _p2_config, monetization, ios)
+	if error != OK:
+		helper.free()
+		return error
+	_paid_progress = owner
+	_paid_port = port
+	paid_tools_ui = helper
+	add_child(helper)
+	return OK
+
+
+func _p2_navigate(target: StringName) -> void:
+	if paid_tools_ui == null or (not controller.paid_locked() and not paid_tools_ui.modal_open()):
+		navigation_requested.emit(target)
+
+
+func _p2_shop() -> void:
+	if paid_tools_ui == null:
+		shop_requested.emit()
+	elif not controller.paid_locked():
+		paid_tools_ui.open_shop()
+
+
+func _p2_tool(kind: StringName) -> void:
+	if paid_tools_ui == null:
+		powerup_requested.emit(kind)
+	else:
+		paid_tools_ui.use_tool(kind)
 
 
 func _enter_tree() -> void:
@@ -285,6 +350,12 @@ func _refresh_hud() -> void:
 
 
 func _can_act() -> bool:
+	if (
+		paid_tools_ui != null
+		and controller != null
+		and (controller.paid_locked() or paid_tools_ui.modal_open())
+	):
+		return false
 	if p2_hud != null and not p2_hud.bindings_ready():
 		return false
 	return (
@@ -310,7 +381,7 @@ func _on_hint() -> void:
 		return
 	if p2_hud != null:
 		if hint_button.is_visible_in_tree():
-			powerup_requested.emit(&"hint")
+			_p2_tool(&"hint")
 		return
 	var cell: Vector2i = HintLogic.next_cell(controller.get_board())
 	if controller.hint() and cell in controller.get_board().revealed_cells():
@@ -366,7 +437,8 @@ func _load_board() -> void:
 		_set_status("level.state.missing_content")
 		wheel.set_locked(true)
 		return
-	progress.configure(_save, _content)
+	if _paid_progress == null:
+		progress.configure(_save, _content)
 	var board: BoardState = progress.restore_level(_content.level_for_slot(_slot))
 	if board == null:
 		_set_status("level.state.missing_content")
@@ -419,7 +491,10 @@ func _on_tile(index: int) -> void:
 
 func _on_state_changed() -> void:
 	_set_status("")
-	board_view.refresh()
+	if paid_tools_ui != null and controller.paid_feedback_active():
+		board_view.set_board(controller.get_board())
+	else:
+		board_view.refresh()
 	wheel.set_locked(controller.is_complete())
 	_refresh_hud()
 
@@ -585,7 +660,7 @@ func _exit_tree() -> void:
 		hint_button.pressed.disconnect(_on_hint)
 		shuffle_button.pressed.disconnect(_on_shuffle)
 		debug_button.pressed.disconnect(_on_debug)
-	if is_instance_valid(progress):
+	if is_instance_valid(progress) and (controller == null or not controller.paid_pending()):
 		progress.unbind_board()
 	if is_instance_valid(_area) and _area.resized.is_connected(_layout_play_area):
 		_area.resized.disconnect(_layout_play_area)
@@ -657,6 +732,15 @@ func _finish_completion_motion() -> void:
 
 ## @api Persist the current campaign board before Nav destroys its screen or backgrounds.
 func prepare_navigation() -> Error:
+	if controller != null and controller.paid_locked():
+		return ERR_BUSY
+	if (
+		paid_tools_ui != null
+		and (
+			paid_tools_ui.reward_busy() or (paid_tools_ui.modal_open() and paid_tools_ui.sheet.busy)
+		)
+	):
+		return ERR_BUSY
 	if controller == null or progress == null:
 		return ERR_UNCONFIGURED
 	var board: BoardState = controller.get_board()
@@ -682,3 +766,18 @@ func _new_postcard_piece() -> bool:
 		and _navigation.call("home_unlocked")
 		and _navigation.call("postcard_piece_count", _slot) > _postcard_pieces_before
 	)
+
+
+func paid_bindings_ready() -> bool:
+	return (
+		_paid_port != null
+		and _paid_port.certifies_tools(_save, _paid_progress, _p2_economy, _content, _p2_config)
+	)
+
+
+func show_paid_status(key: String) -> void:
+	_set_status(key)
+
+
+func refresh_paid_hud() -> void:
+	_refresh_hud()

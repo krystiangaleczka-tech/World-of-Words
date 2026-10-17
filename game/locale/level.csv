@@ -15,3 +15,14 @@ level.complete.title,Poziom ukończony,Level complete
 level.complete.continue,Kontynuuj,Continue
 level.complete.terminal,Ukończono dostępne poziomy,All available levels complete
 level.complete.retry,Nie można otworzyć poziomu. Spróbuj ponownie.,Could not open the level. Try again.
+level.tool.retry,Ponów zapis,Retry save
+level.tool.unavailable,Narzędzie jest teraz niedostępne.,This tool is unavailable right now.
+level.hint.options,Opcje podpowiedzi,Hint options
+level.hint.sheet_watch_ad,Obejrzyj reklamę i odbierz podpowiedź,Watch an ad to get a Hint
+level.hint.get_coins,Zdobądź monety,Get coins
+level.hint.not_now,Nie teraz,Not now
+level.hint.ad_unavailable,Brak dostępnej reklamy. Możesz otworzyć sklep.,No ad available right now. You can open the shop.
+level.hint.reward_info,Reklama przyznaje podpowiedź. Użyj jej przyciskiem Podpowiedź.,The ad grants a Hint item. Use it with the Hint button.
+level.hint.reward_added,Dodano podpowiedź. Użyj jej przyciskiem Podpowiedź.,Hint added. Use it with the Hint button.
+level.hint.no_reward,Reklama nie została ukończona. Nie dodano podpowiedzi.,Ad not finished. No Hint was added.
+level.hint.reward_retry,Nie zapisano nagrody. Ponów zapis bez kolejnej reklamy.,Reward was not saved. Retry without another ad.

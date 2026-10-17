@@ -121,6 +121,26 @@ func open() -> Error:
 	return error
 
 
+## @api Caller-owned alternatives replace this Sheet's content, without a nested modal.
+func open_alternative(content: Control, title: String) -> Error:
+	if busy:
+		return ERR_BUSY
+	var error: Error = configure_content(content)
+	if error != OK:
+		return error
+	title_key = title
+	return super.open()
+
+
+## @api Restore the actual provider-backed catalog within this same Sheet.
+func open_shop_content() -> Error:
+	if busy or not is_instance_valid(_service):
+		return ERR_BUSY if busy else ERR_UNCONFIGURED
+	title_key = "shop.sheet.title"
+	var error: Error = configure_content(_column)
+	return open() if error == OK else error
+
+
 func _refresh() -> void:
 	if not is_instance_valid(remove_card):
 		return
