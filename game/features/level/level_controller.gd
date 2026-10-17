@@ -2,6 +2,7 @@ class_name LevelController
 extends Node
 ## @api Per-level orchestration boundary. Views consume signals; services own persistence.
 
+signal player_word_committed
 signal result_ready(result: AttemptResult)
 signal state_changed
 signal completed
@@ -16,6 +17,7 @@ var _event_bus: Node
 var _pending: bool = false
 var _pending_result: AttemptResult
 var _pending_hint: bool = false
+var _pending_player: bool = false
 var _announced_complete: bool = false
 var _busy: bool = false
 var _persist_progress: bool = true
@@ -42,6 +44,7 @@ func configure(
 	_pending = false
 	_pending_result = null
 	_pending_hint = false
+	_pending_player = false
 	_announced_complete = false
 	return true
 
@@ -72,6 +75,7 @@ func submit(tiles: PackedInt32Array) -> AttemptResult:
 	if result.kind in [AttemptResult.Kind.LEVEL, AttemptResult.Kind.BONUS]:
 		_pending = true
 		_pending_result = result
+		_pending_player = true
 		return result if _commit() else null
 	_publish(result, false)
 	_busy = false
@@ -111,9 +115,13 @@ func _commit() -> bool:
 		return false
 	var result: AttemptResult = _pending_result
 	var was_hint: bool = _pending_hint
+	var was_player: bool = _pending_player and _persist_progress
 	_pending = false
 	_pending_result = null
 	_pending_hint = false
+	_pending_player = false
+	if was_player:
+		player_word_committed.emit()
 	state_changed.emit()
 	_publish(result, was_hint)
 	_busy = false
