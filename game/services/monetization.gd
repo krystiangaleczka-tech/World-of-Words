@@ -161,6 +161,19 @@ func expire_operation() -> void:
 		_release()
 
 
+## @api Exact read-only certification before a paid-tool screen uses this provider.
+func matches_tool_owners(save: Node, economy: Node, config: Node) -> bool:
+	return (
+		_configured()
+		and _save == save
+		and _config == config
+		and economy is ECONOMY_SCRIPT
+		and economy.atomic_save_matches(save)
+		and economy.tool_config_matches(config)
+		and (_shop_economy == null or _shop_economy == economy)
+	)
+
+
 func ads_ready() -> bool:
 	return _configured() and _sdk_ready
 

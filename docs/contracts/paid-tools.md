@@ -53,3 +53,29 @@ lease, Economy's registered immutable payload retains its original price, reward
 and journal limit. A remote price change cannot strand that pending operation or
 reprice a retry. Subsequent distinct operations use the new configuration. This
 never authorizes a forged/different approval, hash, request, board or owner.
+
+## Explicit Level caller (T-0278)
+LevelScreen.configure_paid_tools(progress, port, monetization=null, ios=false) must
+follow configure_p2 and precede mounting, with the exact certified owner pair,
+content, price configuration and current slot. Default Boot/Nav remain P1; simply
+showing P2 controls does not activate payment. A foreign provider is rejected by
+Monetization.matches_tool_owners. Provider-less fallback remains explicit/offline.
+
+LevelController.use_paid_tool keeps its exact request on an unresolved write and
+adopts the validated after board only after a matching issued Save receipt. The
+local paid_tool_committed signal carries newly revealed cells for presentation.
+An input/feedback lock rejects rapid/reentrant calls and free hint/word bypasses.
+Ordinary word submissions continue through their existing Progress path and retain
+BoardView geometry. A retained screen preserves its bound pending board and retry
+across exit/reentry; prepare_navigation returns busy until resolution. A caller
+must respect that result: forced screen destruction while ignoring it is unsupported.
+A whole process restart uses the file selection policy described above.
+
+Unaffordable operations open an existing ShopSheet with alternative catalog controls.
+Get coins replaces content within the same Sheet with the real owner-backed catalog
+or an explanatory offline StatePanel. An ad explicitly grants configured Hint items
+through the existing Economy.grant reward callback; it does not automatically use
+a Hint or Reveal. Pending reward writes retry without another ad and block dismissal.
+Success uses a catalog Toast and HintButton count pop: RewardBurst currently has no
+Hint-item variant, so this flow does not invent a new component state or coin reward.
+Payment-specific analytics integration remains T-0275; no P1 payment is fabricated.
