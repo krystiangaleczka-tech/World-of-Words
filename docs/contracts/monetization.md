@@ -270,3 +270,55 @@ command/result API and Settings still uses its explicit availability/intent hook
 Service serialization/result/timeout and Settings binding remain follow-up work;
 no native adapter, boot activation, endpoint, permission or legal certification is
 implied. The existing purpose-specific analytics decision contract is unchanged.
+
+## Service-owned privacy operation (T-0344)
+
+`Monetization.privacy_snapshot() -> Dictionary` returns fresh application state:
+`requirement:StringName` (unknown/not_required/required), `available:bool`,
+`state:StringName`, `error:Error`, `revision:int`. Availability means the live,
+connected, loaded owner has explicit REQUIRED provider evidence, independently of
+busy state. `privacy_changed` reports requirement/result transitions with increasing
+instance revision. `privacy_owner_matches(save:Node) -> bool` proves exact Save
+ownership without requiring IAP. Unconfigured/detached/lost bindings read
+unavailable/unknown/false. Configure reads existing provider evidence, resets idle,
+and disconnects the old provider; retained exit requires explicit reconfiguration.
+
+`request_privacy_options() -> Error` requires that owner and REQUIRED evidence.
+UNKNOWN/NOT_REQUIRED return ERR_UNAVAILABLE; no live binding returns
+ERR_UNCONFIGURED. Legal/Continue, ads presentation/earned settlement, IAP busy or
+restore settlement, privacy notification/dispatch return ERR_BUSY without replacing
+results. Accepted means requested/OK; only the provider's dedicated terminal signal
+can report completed/OK or failed/actual error. The operation stops ad readiness;
+normal future Continue must re-evaluate its consent gates before initializing ads.
+There is no implicit ad/ATT/Continue/store operation on acceptance or completion.
+
+`ConsentAdapter.privacy_options_completed(error:Error)` is optional authoritative
+terminal evidence for the current show_privacy_options operation. OK means form
+completion, never analytics or ad consent. Providers must suppress duplicates and
+obsolete callbacks. Legacy adapters without it time out. ConsentFake preserves its
+legacy consent_resolved/operation_failed notification, then checks its generation
+again before dedicated terminal: known UMP outcome -> OK, unknown -> ERR_INVALID_DATA,
+error -> FAILED. Reentrant supersession/reset prevents an obsolete terminal.
+
+Generic consent updates during privacy update UMP evidence without ending the form,
+opening another form, requesting ATT or initializing ads. Generic operation_failed
+alone cannot identify privacy completion. Requirement changes do not cancel/settle
+work. `expire_privacy_options() -> void` and the existing legal watchdog finish only
+a pending privacy operation as unknown/ERR_TIMEOUT and stop analytics relay. The
+same one-shot 120-second ALWAYS/ignore-time-scale timer is reused; no extra config
+or polling. Expiry from requested notification prevents stale provider dispatch.
+First terminal wins; late results outside requested cannot relabel it. A subsequent
+explicit retry dispatches once if still required, with adapter token suppression.
+
+Pending privacy and synchronous notification/dispatch reject configure/configure_iap,
+start_session, before_next_level, purchase, restore_purchases, unfinished recovery,
+product query, rewarded/Shop reward and restore settlement retry with ERR_BUSY.
+This guard remains active through terminal callbacks. Existing nonprivacy behavior
+is preserved; incoming verified receipts keep their existing settlement path.
+
+Only explicit analytics_resolved decisions relay Events.consent_changed, including
+privacy before start_session. Form results, UMP, ATT and requirement never imply a
+purpose decision. A successful close allows the provider's explicit decision after
+closing; failure/timeout stops relay. No new analytics event or persisted consent
+is added. Settings binding, boot/Nav activation, native callback correlation/provider
+mapping and device/legal certification remain follow-up gates.

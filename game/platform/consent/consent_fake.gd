@@ -62,6 +62,10 @@ func settle(token: int) -> bool:
 	if not _pending or token != _generation or _outcome == &"manual":
 		return false
 	_pending = false
+	var privacy: bool = _operation == &"show_privacy_options"
+	var result: Error = FAILED if _outcome == &"error" else OK
+	if _outcome == &"unknown":
+		result = ERR_INVALID_DATA
 	if _outcome == &"error":
 		operation_failed.emit()
 	elif _operation == &"request_att":
@@ -81,6 +85,8 @@ func settle(token: int) -> bool:
 			&"obtained": State.OBTAINED
 		}
 		consent_resolved.emit(states[_outcome])
+	if privacy and token == _generation:
+		privacy_options_completed.emit(result)
 	return true
 
 

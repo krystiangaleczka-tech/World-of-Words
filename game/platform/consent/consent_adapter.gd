@@ -8,6 +8,8 @@ signal att_resolved(status: AttStatus)
 signal analytics_resolved(allowed: bool)
 ## Independent provider requirement; getter must already reflect the emitted value.
 signal privacy_options_requirement_changed(requirement: PrivacyRequirement)
+## Optional terminal for current privacy form only; OK does not imply consent.
+signal privacy_options_completed(error: Error)
 signal operation_failed
 
 enum PrivacyRequirement { UNKNOWN, NOT_REQUIRED, REQUIRED }
