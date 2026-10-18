@@ -53,3 +53,9 @@ terminal evidence, same-Save liveness, a bounded watchdog and serialization with
 existing legal/ad/store work. Requirement and form closure never imply analytics
 consent. T-0288 still needs Settings binding and real provider/device verification;
 this unactivated contract invokes no SDK or global navigation route.
+
+T-0345 binds Privacy Options to T-0344 with provider-owned visibility, terminal-only
+feedback and retained-screen lifecycle. The next bounded wave comprises T-0346
+(readonly support draft owner + injected composer) and T-0347 (Settings support
+binding). Real support address/composer and native/legal/global activation stay
+explicit gates; no destination is invented or activated by these tasks.

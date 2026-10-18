@@ -53,3 +53,9 @@ settings.restore.unavailable,Przywracanie zakupów jest niedostępne.,Restore pu
 settings.restore.retry_save,Ponów zapis,Retry save
 settings.restore.busy,Sklep jest zajęty. Spróbuj ponownie.,The store is busy. Try again.
 settings.restore.success,Zakupy zostały przywrócone.,Purchases restored.
+settings.privacy.requested,Oczekiwanie na zakończenie opcji prywatności…,Waiting for privacy options to finish…
+settings.privacy.completed,Zamknięto opcje prywatności.,Privacy options closed.
+settings.privacy.failed,Nie udało się zakończyć opcji prywatności. Spróbuj ponownie.,Privacy options could not be completed. Try again.
+settings.privacy.unknown,Nie potwierdzono zakończenia opcji prywatności. Spróbuj ponownie.,Privacy options completion was not confirmed. Try again.
+settings.privacy.unavailable,Opcje prywatności są niedostępne.,Privacy options are unavailable.
+settings.privacy.busy,Trwa inna operacja. Spróbuj ponownie.,Another operation is in progress. Try again.
