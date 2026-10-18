@@ -20,6 +20,7 @@ var _root: String
 var _layer: CanvasLayer
 var _box: VBoxContainer
 var _kind: StringName = &""
+var _restore_started: bool = false
 var _lost_acknowledged: bool = false
 var _busy: bool = false
 var _pending_content_error: int = -1
@@ -97,6 +98,8 @@ func _show(kind: StringName) -> void:
 		var shell: ScreenScaffold = ScreenScaffold.new()
 		_layer.add_child(shell)
 		shell.body.add_child(_box)
+	if kind == &"lost" and _restore_started:
+		_box.restore_requested()
 	_box.primary_requested.connect(_primary)
 	_box.secondary_requested.connect(_secondary)
 
@@ -106,10 +109,11 @@ func _primary() -> void:
 		return
 	if _kind == &"error":
 		start(_host, _root)
-	elif _kind == &"lost":
+	elif _kind == &"lost" and not _restore_started:
 		_busy = true
 		var error: Error = _monetization.restore_purchases()
 		if error == OK:
+			_restore_started = true
 			_box.restore_requested()
 		else:
 			_box.show_status("recovery.status.restore_error")
