@@ -239,12 +239,17 @@ jobs:
         run: >-
           uv run python tools/android_debug_build.py
           --templates /root/.local/share/godot/export_templates/4.7.2.stable
+      - name: Report Android debug package size (download proxy)
+        run: >-
+          uv run python tools/check_app_size.py builds/world-of-words-debug.apk
+          --measurement debug-apk --report builds/android-debug-size.json
       - uses: actions/upload-artifact@v4
         with:
           name: world-of-words-android-debug
           path: |
             builds/world-of-words-debug.apk
             builds/android-debug-verification.txt
+            builds/android-debug-size.json
           if-no-files-found: error
           retention-days: 14
 
