@@ -36,5 +36,11 @@
       "content_version": "int"
     },
     "description": "Validated content version loaded"
+  },
+  "content_load_failed": {
+    "params": {
+      "error_code": "int"
+    },
+    "description": "Latest content startup failure reported after recovery; integer engine code only, no paths or exception text"
   }
 }

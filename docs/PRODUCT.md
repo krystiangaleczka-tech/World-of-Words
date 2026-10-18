@@ -546,7 +546,9 @@ provider chosen in S1 (for example Firebase reserves `first_open`, `session_star
 | Daily | `daily_start`, `daily_complete`, `calendar_month_complete`, `streak_updated`, `streak_freeze_used`, `streak_broken`, `streak_repaired` |
 | Ads | `ad_offer_shown`, `ad_shown`, `ad_reward_earned`, `ad_failed` |
 | IAP | `shop_opened`, `iap_purchase_started`, `iap_purchase_completed`, `iap_purchase_failed`, `iap_restore_completed` |
-| System | `settings_changed`, `save_corrupted`, `save_migrated`, `remote_config_applied`, `experiment_assigned`, `content_version_loaded` |
+| System | `settings_changed`, `save_corrupted`, `save_migrated`, `remote_config_applied`, `experiment_assigned`, `content_version_loaded`, `content_load_failed` |
+
+Content startup recovery reports `content_load_failed {error_code:int}` once normal Analytics becomes ready on a successful retry. Repeated failures coalesce to the latest engine error code; no paths or exception text are sent. This transient best-effort report is lost if startup never recovers.
 
 ### Funnels
 - F1 Onboarding: `app_boot` (first) → `level_complete` slot 1 → `consent_result` → `level_complete`

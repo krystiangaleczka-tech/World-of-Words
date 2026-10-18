@@ -142,12 +142,17 @@ func back() -> Error:
 	return error
 
 
-func enqueue(key: String, variant: StringName) -> Error:
+func enqueue(key: String, variant: StringName, first_screen: bool = false) -> Error:
 	if key.strip_edges().is_empty() or not Toast.GLYPHS.has(variant):
 		return ERR_INVALID_PARAMETER
-	var message: Dictionary = {"key": key.strip_edges(), "variant": variant}
+	var message: Dictionary = {
+		"key": key.strip_edges(), "variant": variant, "first_screen": first_screen
+	}
 	if not _messages.has(message):
-		_messages.append(message)
+		if first_screen:
+			_messages.push_front(message)
+		else:
+			_messages.append(message)
 	_show_next()
 	return OK
 
@@ -162,7 +167,8 @@ func _show_next() -> void:
 	):
 		return
 	if _nav.current_screen() != _nav.Screen.HOME:
-		return
+		if not _messages.front().first_screen or _nav.current_screen() != _nav.Screen.LEVEL:
+			return
 	if not is_instance_valid(_toast):
 		_layer = CanvasLayer.new()
 		_nav.add_child(_layer)

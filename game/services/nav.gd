@@ -39,6 +39,10 @@ const AUTOLOADS: PackedStringArray = [
 	"Platform",
 ]
 
+var boot_failure_stage: StringName:
+	get:
+		return _boot_failure_stage
+var _boot_failure_stage: StringName = &""
 var _screen: Screen = Screen.BOOT
 var _level_slot: int = 0
 var _host: Node = null
@@ -117,12 +121,15 @@ func start(host: Node, content_root: String = "res://content") -> Error:
 		configure(Save, Config, Content)
 	if _p2 != null:
 		_p2.busy = true
+	_boot_failure_stage = &"save"
 	var error: Error = _save.load()
 	if error == OK:
+		_boot_failure_stage = &"config"
 		error = _config.load()
 	var language: String = ""
 	if error == OK:
 		language = str(_save.get_setting(&"language"))
+		_boot_failure_stage = &"content"
 		error = _content.load_manifest(language, content_root)
 	if error == OK:
 		# Analytics is nonessential: a damaged telemetry queue must not block offline gameplay.
@@ -138,6 +145,7 @@ func start(host: Node, content_root: String = "res://content") -> Error:
 		if _content.level_for_slot(slot) == null:
 			error = ERR_INVALID_PARAMETER
 		else:
+			_boot_failure_stage = &"route"
 			TranslationServer.set_locale(language)
 			if _p2 != null and home_unlocked():
 				error = _p2.route(Screen.HOME, slot)
@@ -146,6 +154,8 @@ func start(host: Node, content_root: String = "res://content") -> Error:
 	Analytics._finish_listener_boot(error == OK)
 	if error != OK:
 		boot_failed.emit(error)
+	else:
+		_boot_failure_stage = &""
 	return error
 
 
@@ -176,7 +186,20 @@ func go_to_level(slot: int) -> Error:
 
 
 ## @api Enter Home (empty in P1). Only after boot reached a screen.
-func go_home() -> Error:
+func go_home(recovery: bool = false) -> Error:
+	if (
+		recovery
+		and _screen == Screen.BOOT
+		and _boot_failure_stage == &"content"
+		and is_instance_valid(_host)
+		and _host.is_inside_tree()
+		and _save.is_loaded()
+		and _config.has_key(&"meta.postcard.pieces")
+	):
+		if _p2 != null:
+			return _p2.route(Screen.HOME, 0)
+		_enter(Screen.HOME)
+		return OK
 	if _screen == Screen.BOOT:
 		return ERR_UNCONFIGURED
 	if _p2 != null:
@@ -298,12 +321,12 @@ func handle_back() -> Error:
 	return _p2.back() if _p2 != null else ERR_UNAVAILABLE
 
 
-func enqueue_toast(key: String, variant: StringName = &"info") -> Error:
-	return _p2.enqueue(key, variant) if _p2 != null else ERR_UNAVAILABLE
+func enqueue_toast(key: String, variant: StringName = &"info", first_screen: bool = false) -> Error:
+	return _p2.enqueue(key, variant, first_screen) if _p2 != null else ERR_UNAVAILABLE
 
 
 func _on_backup_restored() -> void:
-	enqueue_toast("nav.toast.backup_restored")
+	enqueue_toast("nav.toast.backup_restored", &"info", true)
 
 
 func _resume_slot() -> int:
