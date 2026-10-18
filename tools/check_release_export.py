@@ -14,7 +14,7 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-FORBIDDEN = ("features/debug/", "ui/gallery/", "tests/", "addons/gut/")
+FORBIDDEN = ("features/debug/", "services/debug/", "ui/gallery/", "tests/", "addons/gut/")
 REQUIRED = (
     "project.binary",
     ".godot/global_script_class_cache.cfg",
