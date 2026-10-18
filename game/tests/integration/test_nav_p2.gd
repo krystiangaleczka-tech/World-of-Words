@@ -405,13 +405,16 @@ func test_real_level_departure_persists_partial_board_without_enabling_atomic_ga
 	assert_eq(restored.controller.get_board().to_dict(), board.to_dict())
 
 
-func test_backup_restored_signal_queues_until_home() -> void:
+func test_backup_restored_signal_shows_on_level_without_repeating_on_home() -> void:
 	_start()
 	_b.save.backup_restored.emit()
-	assert_null(_toast())
+	assert_not_null(_toast())
+	assert_true(_toast().visible)
+	assert_eq(_toast().text_key, "nav.toast.backup_restored")
+	_toast().hide_message()
 	_saved_slot(2)
 	assert_eq(_b.nav.go_home(), OK)
-	assert_eq(_toast().text_key, "nav.toast.backup_restored")
+	assert_false(_toast().visible)
 	assert_eq(AppBackground.new().request(), ERR_UNAVAILABLE, "headless is never backgrounded")
 
 

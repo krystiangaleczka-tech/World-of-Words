@@ -1,0 +1,13 @@
+keys,pl,en
+recovery.error.title,Coś poszło nie tak,Something went wrong
+recovery.error.body,Nie udało się wczytać danych gry. Spróbuj ponownie.,Could not load game data. Try again.
+recovery.lost.title,Nie udało się odczytać postępu,Progress could not be loaded
+recovery.lost.body,Możesz przywrócić zakupy lub kontynuować od początku.,You can restore purchases or continue from the beginning.
+recovery.action.retry,Spróbuj ponownie,Try again
+recovery.action.home,Wróć do menu,Back to Home
+recovery.action.restore,Przywróć zakupy,Restore purchases
+recovery.action.continue,Kontynuuj,Continue
+recovery.status.requested,Zlecono przywrócenie zakupów.,Purchase restore requested.
+recovery.status.restore_error,Nie udało się zlecić przywrócenia zakupów. Spróbuj ponownie.,Could not request purchase restore. Try again.
+recovery.status.save_error,Nie udało się zapisać. Spróbuj ponownie.,Could not save. Try again.
+recovery.status.home_error,Menu jest teraz niedostępne. Spróbuj ponownie.,Home is currently unavailable. Try again.

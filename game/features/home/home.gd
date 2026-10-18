@@ -206,7 +206,7 @@ func refresh() -> void:
 				_slot = int(state.get("current_slot", 1))
 				_coins.set_value(int(view.sections.economy.coins), false)
 				_present_location(state)
-	_play.disabled = _slot < 1 or _slot > _content_count()
+	_play.disabled = _slot < 1 or _slot > _content_count() or _content.level_for_slot(_slot) == null
 	_settings.disabled = not ResourceLoader.exists("res://features/settings/settings.tscn")
 	_journey.implemented = ResourceLoader.exists("res://features/journey/journey.tscn")
 	_refresh_copy()

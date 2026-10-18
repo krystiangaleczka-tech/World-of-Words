@@ -1,0 +1,19 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://cdhsuxjqtxscf"
+
+[deps]
+
+files=["res://locale/recovery.pl.translation", "res://locale/recovery.en.translation"]
+
+source_file="res://locale/recovery.csv"
+dest_files=["res://locale/recovery.pl.translation", "res://locale/recovery.en.translation"]
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

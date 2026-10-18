@@ -42,13 +42,13 @@ func _payload(definition: Dictionary) -> Dictionary:
 	return result
 
 
-func test_all_47_events_accept_exact_typed_payloads_and_reject_wrong_shapes() -> void:
+func test_all_48_events_accept_exact_typed_payloads_and_reject_wrong_shapes() -> void:
 	var registry: AnalyticsRegistry = AnalyticsRegistry.new()
 	var definitions: Dictionary = {}
 	for document: Dictionary in _documents():
 		assert_eq(registry.append_document(document), OK)
 		definitions.merge(document)
-	assert_eq(definitions.size(), 47)
+	assert_eq(definitions.size(), 48)
 	for name: String in definitions:
 		var payload: Dictionary = _payload(definitions[name])
 		assert_true(registry.validate(StringName(name), payload), name)

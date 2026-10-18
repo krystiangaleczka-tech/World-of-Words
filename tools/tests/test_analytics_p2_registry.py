@@ -30,10 +30,11 @@ def test_catalog_is_exact_product_core_event_seed_once() -> None:
         r"`([a-z][a-z0-9_]*)`",
         "\n".join(line for line in table.splitlines() if line.startswith("|")),
     )
-    assert len(names) == len(set(names)) == 47
+    assert len(names) == len(set(names)) == 48
     registry, errors = check_registries.load_registry(ROOT, "analytics")
     assert errors == []
     assert set(registry) == set(names)
+    assert registry["content_load_failed"]["params"] == {"error_code": "int"}
     assert registry["invalid_word_submitted"]["params"] == {
         "language": "string",
         "slot": "int",

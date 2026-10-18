@@ -9,6 +9,7 @@ const AUDIO_LISTENER: Script = preload("res://services/audio/audio_listener.gd")
 var _audio_listener: Node
 var _locale_catalog: LocaleCatalog = LocaleCatalog.new()
 var _haptics_listener: HapticsListener
+var _recovery: RefCounted
 var _debug_diagnostics: RefCounted
 
 
@@ -27,9 +28,19 @@ func _ready() -> void:
 		push_warning("Sound cues unavailable: %s" % error_string(audio_error))
 	error = Nav.configure_p2()
 	if error == OK:
-		error = Nav.start(self, content_root)
+		_recovery = load("res://services/nav/startup_recovery.gd").new()
+		_recovery.configure(Nav, Save, Config, Content, Monetization, Analytics)
+		_recovery.started.connect(_finish_boot)
+		error = _recovery.start(self, content_root)
 	if error != OK:
-		push_warning("Boot stopped before the first screen: %s" % error_string(error))
+		# A recoverable presentation owns the next explicit retry.
+		if _recovery == null:
+			push_warning("Boot stopped before the first screen: %s" % error_string(error))
+		return
+
+
+func _finish_boot() -> void:
+	if is_instance_valid(_audio_listener):
 		return
 	_haptics_listener = HapticsListener.new()
 	_haptics_listener.configure(Events, Save, Platform)
@@ -44,7 +55,10 @@ func _ready() -> void:
 		var debug_tools: RefCounted = load("res://services/debug/tools.gd").new()
 		debug_tools.configure(Save, Economy, Config, Platform)
 		_debug_diagnostics = load("res://services/debug/diagnostics.gd").new()
-		if _debug_diagnostics.configure(clock, Save, Economy, Config, Analytics, Events) == OK:
+		if (
+			_debug_diagnostics.configure(Save.get_clock(), Save, Economy, Config, Analytics, Events)
+			== OK
+		):
 			debug_tools.diagnostics = _debug_diagnostics
 		Nav.configure(Save, Config, Content, debug_tools)
 		var overlay: CanvasLayer = load("res://features/debug/performance_overlay.gd").new()
@@ -54,6 +68,10 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	if _recovery != null:
+		if _recovery.started.is_connected(_finish_boot):
+			_recovery.started.disconnect(_finish_boot)
+		_recovery.close()
 	if _debug_diagnostics != null:
 		_debug_diagnostics.close()
 	_locale_catalog.unregister()
