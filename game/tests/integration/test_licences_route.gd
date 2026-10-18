@@ -245,3 +245,47 @@ func test_lost_profile_topbar_back_invalidates_route_and_restores_settings() -> 
 	assert_eq(s.route.snapshot().state, &"unavailable")
 	assert_true(s.settings.visible)
 	assert_false(s.licences.visible)
+
+
+func test_profile_loss_during_open_visibility_cleans_up_route() -> void:
+	var s: Dictionary = _stack()
+	var lose: Callable = func() -> void:
+		if not s.settings.visible and is_instance_valid(save):
+			save.free()
+	s.settings.visibility_changed.connect(lose)
+	assert_eq(s.route.open(), ERR_UNCONFIGURED)
+	s.settings.visibility_changed.disconnect(lose)
+	assert_eq(s.route.snapshot().state, &"unavailable")
+	assert_true(s.settings.visible)
+	assert_false(s.licences.visible)
+	assert_eq(s.settings.action_requested.get_connections().size(), 0)
+
+
+func test_profile_loss_during_return_visibility_restores_settings_and_disconnects() -> void:
+	var s: Dictionary = _stack()
+	assert_eq(s.route.open(), OK)
+	var lose: Callable = func() -> void:
+		if not s.licences.visible and is_instance_valid(save):
+			save.free()
+	s.licences.visibility_changed.connect(lose)
+	assert_true(s.route.handle_back())
+	s.licences.visibility_changed.disconnect(lose)
+	assert_eq(s.route.snapshot().state, &"unavailable")
+	assert_true(s.settings.visible)
+	assert_false(s.licences.visible)
+	assert_eq(s.settings.action_requested.get_connections().size(), 0)
+
+
+func test_reconfigure_before_deferred_return_cannot_steal_new_binding_focus() -> void:
+	var first: Dictionary = _stack()
+	var second: Dictionary = _stack()
+	await _settle()
+	second.route.free()
+	first.settings.rows[&"licences"].grab_focus()
+	assert_eq(first.route.open(), OK)
+	assert_true(first.route.handle_back())
+	assert_eq(first.route.configure(second.settings, second.licences), OK)
+	second.settings.rows[&"support"].grab_focus()
+	await _settle()
+	assert_true(second.settings.rows[&"support"].has_focus())
+	assert_eq(first.route.snapshot().state, &"settings")

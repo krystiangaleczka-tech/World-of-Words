@@ -6,6 +6,7 @@ var _licences: LicencesScreen
 var _bound: bool = false
 var _active: bool = false
 var _busy: bool = false
+var _generation: int = 0
 var _scroll: int = 0
 var _focus: WeakRef
 var _previous_theme: Theme
@@ -29,6 +30,7 @@ func configure(settings: Node, licences: Node) -> Error:
 	):
 		return ERR_UNCONFIGURED
 	_disconnect()
+	_generation += 1
 	_settings = settings
 	_licences = licences
 	_bound = true
@@ -68,6 +70,7 @@ func open() -> Error:
 	if error != OK:
 		return error
 	_busy = true
+	_generation += 1
 	_scroll = _settings.scroll.scroll_vertical
 	var focused: Control = _settings.get_viewport().gui_get_focus_owner()
 	_focus = (
@@ -80,10 +83,12 @@ func open() -> Error:
 	_sync_theme()
 	_settings.hide()
 	if not _valid() or not _active:
+		_lost()
 		_busy = false
 		return ERR_UNCONFIGURED
 	_licences.show()
 	if not _valid() or not _active:
+		_lost()
 		_busy = false
 		return ERR_UNCONFIGURED
 	_licences.scroll.grab_focus()
@@ -134,18 +139,21 @@ func _return() -> void:
 	_busy = true
 	_licences.hide()
 	if not _valid():
+		_lost()
 		_busy = false
 		return
 	_active = false
 	_licences.theme = _previous_theme
 	_settings.show()
 	if _valid():
-		_restore_settings.call_deferred()
+		_restore_settings.call_deferred(_generation)
+	else:
+		_lost()
 	_busy = false
 
 
-func _restore_settings() -> void:
-	if not _valid() or _active or not _settings.is_visible_in_tree():
+func _restore_settings(generation: int) -> void:
+	if generation != _generation or not _valid() or _active or not _settings.is_visible_in_tree():
 		return
 	_settings.scroll.scroll_vertical = _scroll
 	var focused: Control = _focus.get_ref() as Control if _focus != null else null
@@ -159,6 +167,7 @@ func _restore_settings() -> void:
 
 
 func _lost() -> void:
+	_generation += 1
 	var was_active: bool = _active
 	_active = false
 	_bound = false

@@ -66,7 +66,8 @@ Reference docs/DESIGN.md#settings and FR-SET-03.
 Actual scenes/Save: invalid/default binding, intent/open and duplicate guard,
 two-stage Back with scroll/focus restoration, Sheet blocking, synchronous reentry,
 other intents and Save unchanged, live theme/locale with verbatim legal data,
-owner/router exit/reentry/reconfigure and no duplicate listeners. Native12-case
+owner/router exit/reentry/reconfigure and no duplicate listeners; profile loss in
+both visibility transitions and reconfigure before deferred focus restoration. Native12-case
 geometry +36 index/detail/returned PNGs via WOW_LICENCES_ROUTE_CAPTURE_DIR.
 Full make check, fresh independent review and exact-head CI including Android.
 
