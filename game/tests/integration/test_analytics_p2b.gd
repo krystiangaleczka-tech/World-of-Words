@@ -558,3 +558,28 @@ func test_late_verified_callback_after_save_teardown_does_not_crash_or_finish() 
 	assert_eq(_params("iap_purchase_completed").size(), 0)
 	for entry: Dictionary in store.calls.entries:
 		assert_ne(entry.method, "finish")
+
+
+func test_ad_failure_observer_cannot_recursively_repeat_expiration() -> void:
+	_allow()
+	_ready_ads()
+	var counts: Array[int] = [0]
+	var observer: Callable = func(name: StringName, _params: Dictionary) -> void:
+		if name == &"ad_failed":
+			counts[0] += 1
+			if counts[0] < 3:
+				service.expire_operation()
+	events.p2_analytics.connect(observer)
+	var reward: Callable = economy.grant.bind(&"rewarded_hint", {"hint": 1})
+	assert_eq(service.request_rewarded(&"hint", reward), OK)
+	ads.ad_failed.emit("provider text")
+	assert_eq(counts[0], 1)
+	assert_eq(_params("ad_failed").size(), 1)
+	assert_eq(service.rewarded_state(), &"unavailable")
+	counts[0] = 0
+	assert_eq(service.request_rewarded(&"hint", reward), OK)
+	service.expire_operation()
+	assert_eq(counts[0], 1)
+	assert_eq(_params("ad_failed").size(), 2)
+	assert_eq(service.rewarded_state(), &"unavailable")
+	events.p2_analytics.disconnect(observer)

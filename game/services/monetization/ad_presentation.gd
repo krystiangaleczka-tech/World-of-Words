@@ -26,6 +26,7 @@ var _reason: StringName
 var _amounts: Dictionary = {}
 var _unavailable: bool = false
 var _generation: int = 0
+var _failed_generation: int = -1
 var _reserve: Callable
 var _reserved: bool = false
 var _save: SAVE
@@ -172,8 +173,7 @@ func _same_reward(placement: StringName, reward: Callable) -> bool:
 func expire() -> void:
 	if _kind == &"idle" or _kind == &"pending_reward":
 		return
-	_failure("timeout")
-	_end()
+	_fail_active("timeout")
 
 
 func _on_interstitial_loaded() -> void:
@@ -262,8 +262,7 @@ func _on_closed() -> void:
 
 func _on_failed(reason: String) -> void:
 	if _kind in [&"preload", &"reward_loading", &"interstitial", &"rewarded"]:
-		_failure("no_fill" if reason == "no_fill" else "provider_error")
-		_end()
+		_fail_active("no_fill" if reason == "no_fill" else "provider_error")
 
 
 func _end() -> void:
@@ -312,3 +311,14 @@ func _observe(name: StringName, params: Dictionary) -> void:
 	_notifying = true
 	telemetry.emit(name, params.duplicate(true))
 	_notifying = previous
+
+
+func _fail_active(code: String) -> void:
+	var generation: int = _generation
+	if _failed_generation == generation:
+		return
+	_failed_generation = generation
+	_failure(code)
+	# A synchronous observer may have closed/replaced the old operation.
+	if _generation == generation:
+		_end()
