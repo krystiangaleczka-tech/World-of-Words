@@ -6,8 +6,11 @@ signal consent_resolved(state: State)
 signal att_resolved(status: AttStatus)
 ## Explicit purpose-specific provider/legal decision; never inferred from UMP or ATT.
 signal analytics_resolved(allowed: bool)
+## Independent provider requirement; getter must already reflect the emitted value.
+signal privacy_options_requirement_changed(requirement: PrivacyRequirement)
 signal operation_failed
 
+enum PrivacyRequirement { UNKNOWN, NOT_REQUIRED, REQUIRED }
 enum State { UNKNOWN, REQUIRED, NOT_REQUIRED, OBTAINED }
 enum AttStatus { UNKNOWN, NOT_DETERMINED, RESTRICTED, DENIED, AUTHORIZED }
 
@@ -30,3 +33,8 @@ func request_att() -> void:
 ## @api show_privacy_options: provider operation.
 func show_privacy_options() -> void:
 	pass
+
+
+## @api UNKNOWN fails closed; never infer this requirement from UMP, ATT or analytics.
+func privacy_options_requirement() -> PrivacyRequirement:
+	return PrivacyRequirement.UNKNOWN

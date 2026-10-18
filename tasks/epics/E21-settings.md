@@ -41,3 +41,9 @@ T-0342 binds Settings Restore Purchases explicitly to same-Save Monetization,
 using T-0341 proof/status, settlement-only retry and deduplicated feedback. Unbound
 screens retain their intent route. Global Settings activation, native stores and
 remaining consent/privacy/browser/support actions are still open.
+
+T-0343 extracts the independent provider privacy-options requirement contract for
+T-0288: UNKNOWN/NOT_REQUIRED/REQUIRED observation, change notification and manual
+Fake control. UMP/ATT/analytics are not substitutes for that provider evidence.
+Follow-ups must add service-owned serialized command/result/watchdog and Settings
+binding; real provider mapping, global activation and device/legal gates stay open.

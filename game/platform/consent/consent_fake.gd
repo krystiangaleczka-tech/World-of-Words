@@ -5,6 +5,7 @@ extends ConsentAdapter
 var calls: FakeCalls = FakeCalls.new()
 var _outcomes: Dictionary[StringName, StringName] = {}
 var _immediate: Dictionary[StringName, bool] = {}
+var _privacy_requirement: PrivacyRequirement = PrivacyRequirement.UNKNOWN
 var _generation: int = 0
 var _analytics_token: int = 0
 var _operation: StringName = &""
@@ -101,6 +102,7 @@ func reset() -> void:
 	_outcomes.clear()
 	_immediate.clear()
 	calls.entries.clear()
+	set_privacy_options_requirement(PrivacyRequirement.UNKNOWN)
 
 
 func _cancel() -> void:
@@ -116,3 +118,18 @@ func _begin(operation: StringName) -> void:
 	_pending = true
 	if _immediate.get(operation, false):
 		settle(_generation)
+
+
+## @api Pure provider observation, independent of consent outcomes and operations.
+func privacy_options_requirement() -> PrivacyRequirement:
+	return _privacy_requirement
+
+
+## @api Manual provider evidence. Does not supersede or settle a pending operation.
+func set_privacy_options_requirement(requirement: int) -> Error:
+	if requirement not in PrivacyRequirement.values():
+		return ERR_INVALID_PARAMETER
+	if requirement != _privacy_requirement:
+		_privacy_requirement = requirement as PrivacyRequirement
+		privacy_options_requirement_changed.emit(_privacy_requirement)
+	return OK
