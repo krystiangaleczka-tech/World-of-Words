@@ -64,3 +64,9 @@ T-0346 prepares readonly localized support subject/body with the full committed
 installation ID and an explicitly injected editable-draft composer. Handoff is not
 sending/delivery. T-0347 still owns Settings binding; a real approved recipient,
 native composition/encoding and device verification are not configured here.
+
+T-0347 binds the Support row to T-0346 with exact same-Save ownership, short-ID
+presentation/full-ID draft, explicit retry and handoff-only feedback. The three-task
+wave T-0345..T-0347 adds no actual destination/SDK/global route. Remaining T-0288
+gates include privacy-policy browser, configured mail transport/recipient, licences
+caller/global navigation and real store/consent/mail/device/legal verification.

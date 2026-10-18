@@ -6,6 +6,7 @@ signal back_requested
 signal setting_requested(key: StringName, value: Variant)
 signal action_requested(action: StringName)
 
+const SUPPORT: Script = preload("res://services/settings_support.gd")
 const MONETIZATION: Script = preload("res://services/monetization.gd")
 const LANGUAGE: Script = preload("res://services/settings_language.gd")
 const RUNTIME: Script = preload("res://services/settings_runtime.gd")
@@ -40,6 +41,8 @@ var text_sheet: Sheet
 var text_options: Array[TextButton] = []
 var retry_button: TextButton
 var write_error: Label
+var support_message: Label
+var support_toast: Toast
 var privacy_message: Label
 var privacy_toast: Toast
 var restore_message: Label
@@ -55,6 +58,13 @@ var _runtime: RUNTIME
 var _save: SAVE
 var _column: VBoxContainer
 var _privacy_available: bool = false
+var _support_service: SUPPORT
+var _support_bound: bool = false
+var _support_dispatch: bool = false
+var _support_command_error: Error = OK
+var _support_error_revision: int = -1
+var _support_attempt: int = 0
+var _support_seen: String = ""
 var _privacy_service: MONETIZATION
 var _privacy_bound: bool = false
 var _privacy_dispatch: bool = false
@@ -282,6 +292,7 @@ func _enter_tree() -> void:
 	_connect_language()
 	_connect_restore()
 	_connect_privacy()
+	_connect_support()
 	if is_instance_valid(scroll):
 		_reconcile_after_entry.call_deferred()
 
@@ -332,6 +343,7 @@ func _ready() -> void:
 	_section("about")
 	_action(&"licences")
 	_action(&"support", &"value")
+	_build_support_controls()
 	information = CatalogSurface.label(&"Caption")
 	_column.add_child(information)
 	_build_apply_controls()
@@ -403,6 +415,8 @@ func _request_action(key: StringName) -> void:
 	if rows[key].is_visible_in_tree() and not rows[key].disabled and not rows[key].loading:
 		if key == &"text_size" and is_instance_valid(_runtime):
 			text_sheet.open()
+		elif key == &"support" and _support_bound:
+			_dispatch_support()
 		elif key == &"privacy_options" and _privacy_bound:
 			_dispatch_privacy()
 		elif key == &"restore" and _restore_bound:
@@ -471,6 +485,7 @@ func _refresh() -> void:
 			(child as Label).text = tr(child.get_meta(&"copy_key"))
 	_refresh_restore()
 	_refresh_privacy()
+	_refresh_support()
 
 
 func _changed(key: StringName) -> void:
@@ -494,6 +509,7 @@ func _exit_tree() -> void:
 	_disconnect_language()
 	_disconnect_restore()
 	_disconnect_privacy()
+	_disconnect_support()
 	if is_instance_valid(_save) and _save.setting_changed.is_connected(_changed):
 		_save.setting_changed.disconnect(_changed)
 
@@ -505,6 +521,7 @@ func _notification(what: int) -> void:
 	elif what == NOTIFICATION_VISIBILITY_CHANGED and is_inside_tree():
 		_refresh_restore()
 		_refresh_privacy()
+		_refresh_support()
 	elif what == NOTIFICATION_PREDELETE:
 		if is_instance_valid(_language_content):
 			_language_content.free()
@@ -792,3 +809,123 @@ func _refresh_privacy() -> void:
 		var success: bool = data.state == &"completed" and _privacy_command_error == OK
 		if privacy_toast.show_message(key, &"success" if success else &"error") == OK:
 			_privacy_seen = fingerprint
+
+
+## @api Explicit same-profile binding; the caller owns editable-draft handoff.
+func bind_support(service: Node) -> Error:
+	if _support_dispatch:
+		return ERR_BUSY
+	if not is_instance_valid(_save) or not service is SUPPORT or not service.owner_matches(_save):
+		return ERR_UNCONFIGURED
+	if is_instance_valid(_support_service) and service != _support_service:
+		if _support_service.snapshot().state == &"requested":
+			return ERR_BUSY
+	if service != _support_service:
+		_support_seen = ""
+		_support_attempt = 0
+	_disconnect_support()
+	_support_service = service
+	_support_bound = true
+	_support_command_error = OK
+	_connect_support()
+	_refresh_support()
+	return OK
+
+
+func _connect_support() -> void:
+	if is_inside_tree() and _support_bound:
+		if (
+			not is_instance_valid(_save)
+			or not is_instance_valid(_support_service)
+			or not _support_service.owner_matches(_save)
+		):
+			_support_lost()
+			return
+		if not _support_service.changed.is_connected(_support_changed):
+			_support_service.changed.connect(_support_changed)
+			_support_service.tree_exiting.connect(_support_lost)
+
+
+func _disconnect_support() -> void:
+	if is_instance_valid(_support_service):
+		if _support_service.changed.is_connected(_support_changed):
+			_support_service.changed.disconnect(_support_changed)
+		if _support_service.tree_exiting.is_connected(_support_lost):
+			_support_service.tree_exiting.disconnect(_support_lost)
+
+
+func _support_lost() -> void:
+	_support_command_error = OK
+	if is_instance_valid(support_toast):
+		support_toast.hide_message()
+	_disconnect_support()
+	_support_service = null
+	_refresh_support()
+
+
+func _support_changed() -> void:
+	_support_command_error = OK
+	_refresh_support()
+
+
+func _build_support_controls() -> void:
+	support_message = CatalogSurface.label(&"Caption")
+	support_message.visible = false
+	_column.add_child(support_message)
+	support_toast = Toast.new()
+	add_child(support_toast)
+
+
+func _dispatch_support() -> void:
+	if _support_dispatch or not is_instance_valid(_support_service):
+		return
+	_support_dispatch = true
+	support_toast.hide_message()
+	_support_attempt += 1
+	_support_command_error = OK
+	var error: Error = _support_service.request_draft()
+	_support_dispatch = false
+	if is_instance_valid(_support_service) and error != OK:
+		_support_command_error = error
+		_support_error_revision = _support_service.snapshot().revision
+	_refresh_support()
+
+
+func _refresh_support() -> void:
+	if not _support_bound or not is_instance_valid(support_message):
+		return
+	if (
+		is_instance_valid(_support_service)
+		and (not is_instance_valid(_save) or not _support_service.owner_matches(_save))
+	):
+		_support_lost()
+		return
+	var data: Dictionary = (
+		_support_service.snapshot()
+		if is_instance_valid(_support_service)
+		else {"state": &"unavailable", "available": false, "revision": 0}
+	)
+	if data.state == &"unavailable" or data.revision != _support_error_revision:
+		_support_command_error = OK
+	var key: String = "" if data.state == &"idle" else "settings.support." + str(data.state)
+	if _support_command_error != OK:
+		key = (
+			"settings.support.busy"
+			if _support_command_error == ERR_BUSY
+			else "settings.support.failed"
+		)
+	var row: ListRow = rows[&"support"]
+	row.loading = data.state == &"requested"
+	row.leading_icon = row.icon if row.loading else null
+	row.disabled = _support_dispatch or not data.available or row.loading
+	support_message.visible = not key.is_empty()
+	support_message.text = tr(key) if not key.is_empty() else ""
+	var terminal: bool = data.state in [&"handed_off", &"failed"] or _support_command_error != OK
+	var identity: int = (
+		_support_service.get_instance_id() if is_instance_valid(_support_service) else 0
+	)
+	var fingerprint: String = "%s/%s/%s/%s" % [identity, data.revision, _support_attempt, key]
+	if terminal and is_visible_in_tree() and fingerprint != _support_seen:
+		var success: bool = data.state == &"handed_off" and _support_command_error == OK
+		if support_toast.show_message(key, &"success" if success else &"error") == OK:
+			_support_seen = fingerprint
