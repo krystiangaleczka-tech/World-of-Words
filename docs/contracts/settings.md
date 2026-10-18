@@ -221,3 +221,24 @@ A detached screen cannot reconnect to a retained service that left the tree;
 it invalidates that binding and requires explicit valid rebind. Command rejection
 copy is scoped to the recorded snapshot revision, so newer results completed while
 detached supersede stale local errors.
+
+## Bound Privacy Options (T-0345)
+
+SettingsScreen.bind_privacy(service:Node)->Error requires actual Monetization and
+its exact loaded live Save proof. Invalid replacements preserve binding; pending
+old owner and dispatch reentry block replacement. Bound requirement alone controls
+row visibility, overriding the legacy injected flag. Unbound screens retain their
+availability/intent route. UNKNOWN/NOT_REQUIRED/lost owner hide the bound row.
+
+Requested is loading/disabled with a reserved leading slot and persistent wrapped
+Caption. Completed says only that privacy options closed; it never claims consent.
+Failure/timeout/busy copy allows explicit row retry if still required. Pending copy
+survives a requirement change hiding the row. New snapshot revisions supersede
+local command errors. Terminal/error Toast appears once per owner/revision/attempt,
+including completion while hidden/detached; only accepted Toast display marks seen.
+Locale/theme/retained refresh does not replay it. New attempts clear old Toast.
+
+Exit disconnects; retained entry and refresh revalidate the owner before reconnect.
+Owner loss fails closed until explicit valid rebind. Back does not cancel provider
+work. Global Settings/provider activation and real device/legal verification remain
+open, as do mail/browser actions. No provider, analytics or Save behavior changes.

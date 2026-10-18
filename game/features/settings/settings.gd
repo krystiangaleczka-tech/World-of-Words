@@ -40,6 +40,8 @@ var text_sheet: Sheet
 var text_options: Array[TextButton] = []
 var retry_button: TextButton
 var write_error: Label
+var privacy_message: Label
+var privacy_toast: Toast
 var restore_message: Label
 var restore_retry: TextButton
 var restore_toast: Toast
@@ -53,6 +55,13 @@ var _runtime: RUNTIME
 var _save: SAVE
 var _column: VBoxContainer
 var _privacy_available: bool = false
+var _privacy_service: MONETIZATION
+var _privacy_bound: bool = false
+var _privacy_dispatch: bool = false
+var _privacy_command_error: Error = OK
+var _privacy_error_revision: int = -1
+var _privacy_attempt: int = 0
+var _privacy_seen: String = ""
 var _restore_service: MONETIZATION
 var _restore_bound: bool = false
 var _restore_dispatch: bool = false
@@ -272,6 +281,7 @@ func _enter_tree() -> void:
 	_connect_runtime()
 	_connect_language()
 	_connect_restore()
+	_connect_privacy()
 	if is_instance_valid(scroll):
 		_reconcile_after_entry.call_deferred()
 
@@ -317,6 +327,7 @@ func _ready() -> void:
 	_build_restore_controls()
 	_section("privacy")
 	_action(&"privacy_options")
+	_build_privacy_controls()
 	_action(&"privacy_policy")
 	_section("about")
 	_action(&"licences")
@@ -392,6 +403,8 @@ func _request_action(key: StringName) -> void:
 	if rows[key].is_visible_in_tree() and not rows[key].disabled and not rows[key].loading:
 		if key == &"text_size" and is_instance_valid(_runtime):
 			text_sheet.open()
+		elif key == &"privacy_options" and _privacy_bound:
+			_dispatch_privacy()
 		elif key == &"restore" and _restore_bound:
 			_dispatch_restore(false)
 		elif key == &"language" and is_instance_valid(_language):
@@ -457,6 +470,7 @@ func _refresh() -> void:
 		if child is Label and child.has_meta(&"copy_key"):
 			(child as Label).text = tr(child.get_meta(&"copy_key"))
 	_refresh_restore()
+	_refresh_privacy()
 
 
 func _changed(key: StringName) -> void:
@@ -479,6 +493,7 @@ func _exit_tree() -> void:
 	_disconnect_runtime()
 	_disconnect_language()
 	_disconnect_restore()
+	_disconnect_privacy()
 	if is_instance_valid(_save) and _save.setting_changed.is_connected(_changed):
 		_save.setting_changed.disconnect(_changed)
 
@@ -489,6 +504,7 @@ func _notification(what: int) -> void:
 		_refresh()
 	elif what == NOTIFICATION_VISIBILITY_CHANGED and is_inside_tree():
 		_refresh_restore()
+		_refresh_privacy()
 	elif what == NOTIFICATION_PREDELETE:
 		if is_instance_valid(_language_content):
 			_language_content.free()
@@ -657,3 +673,122 @@ func _refresh_restore() -> void:
 		)
 		if restore_toast.show_message(toast_key, &"success" if success else &"error") == OK:
 			_restore_seen = fingerprint
+
+
+## @api Explicit same-profile binding; service requirement owns bound visibility.
+func bind_privacy(service: Node) -> Error:
+	if _privacy_dispatch:
+		return ERR_BUSY
+	if not service is MONETIZATION or not service.privacy_owner_matches(_save):
+		return ERR_UNCONFIGURED
+	if is_instance_valid(_privacy_service) and service != _privacy_service:
+		if _privacy_service.privacy_snapshot().state == &"requested":
+			return ERR_BUSY
+	if service != _privacy_service:
+		_privacy_seen = ""
+		_privacy_attempt = 0
+	_disconnect_privacy()
+	_privacy_service = service
+	_privacy_bound = true
+	_privacy_command_error = OK
+	_connect_privacy()
+	_refresh_privacy()
+	return OK
+
+
+func _connect_privacy() -> void:
+	if is_inside_tree() and _privacy_bound:
+		if (
+			not is_instance_valid(_privacy_service)
+			or not _privacy_service.privacy_owner_matches(_save)
+		):
+			_privacy_lost()
+			return
+		if not _privacy_service.privacy_changed.is_connected(_privacy_changed):
+			_privacy_service.privacy_changed.connect(_privacy_changed)
+			_privacy_service.tree_exiting.connect(_privacy_lost)
+
+
+func _disconnect_privacy() -> void:
+	if is_instance_valid(_privacy_service):
+		if _privacy_service.privacy_changed.is_connected(_privacy_changed):
+			_privacy_service.privacy_changed.disconnect(_privacy_changed)
+		if _privacy_service.tree_exiting.is_connected(_privacy_lost):
+			_privacy_service.tree_exiting.disconnect(_privacy_lost)
+
+
+func _privacy_lost() -> void:
+	_privacy_command_error = OK
+	if is_instance_valid(privacy_toast):
+		privacy_toast.hide_message()
+	_disconnect_privacy()
+	_privacy_service = null
+	_refresh_privacy()
+
+
+func _privacy_changed() -> void:
+	_privacy_command_error = OK
+	_refresh_privacy()
+
+
+func _build_privacy_controls() -> void:
+	privacy_message = CatalogSurface.label(&"Caption")
+	privacy_message.visible = false
+	_column.add_child(privacy_message)
+	privacy_toast = Toast.new()
+	add_child(privacy_toast)
+
+
+func _dispatch_privacy() -> void:
+	if _privacy_dispatch or not is_instance_valid(_privacy_service):
+		return
+	_privacy_dispatch = true
+	privacy_toast.hide_message()
+	_privacy_attempt += 1
+	_privacy_command_error = OK
+	var error: Error = _privacy_service.request_privacy_options()
+	_privacy_dispatch = false
+	if is_instance_valid(_privacy_service) and error != OK:
+		_privacy_command_error = error
+		_privacy_error_revision = _privacy_service.privacy_snapshot().revision
+	_refresh_privacy()
+
+
+func _refresh_privacy() -> void:
+	if not _privacy_bound or not is_instance_valid(privacy_message):
+		return
+	if is_instance_valid(_privacy_service) and not _privacy_service.privacy_owner_matches(_save):
+		_privacy_lost()
+		return
+	var data: Dictionary = (
+		_privacy_service.privacy_snapshot()
+		if is_instance_valid(_privacy_service)
+		else {"state": &"unavailable", "available": false, "revision": 0}
+	)
+	if data.state == &"unavailable" or data.revision != _privacy_error_revision:
+		_privacy_command_error = OK
+	var key: String = "" if data.state == &"idle" else "settings.privacy." + str(data.state)
+	if _privacy_command_error != OK:
+		key = (
+			"settings.privacy.busy"
+			if _privacy_command_error == ERR_BUSY
+			else "settings.privacy.failed"
+		)
+	var row: ListRow = rows[&"privacy_options"]
+	row.visible = data.available
+	row.loading = data.state == &"requested"
+	row.leading_icon = row.icon if row.loading else null
+	row.disabled = _privacy_dispatch or not data.available or row.loading
+	privacy_message.visible = not key.is_empty()
+	privacy_message.text = tr(key) if not key.is_empty() else ""
+	var terminal: bool = (
+		data.state in [&"completed", &"failed", &"unknown"] or _privacy_command_error != OK
+	)
+	var identity: int = (
+		_privacy_service.get_instance_id() if is_instance_valid(_privacy_service) else 0
+	)
+	var fingerprint: String = "%s/%s/%s/%s" % [identity, data.revision, _privacy_attempt, key]
+	if terminal and is_visible_in_tree() and fingerprint != _privacy_seen:
+		var success: bool = data.state == &"completed" and _privacy_command_error == OK
+		if privacy_toast.show_message(key, &"success" if success else &"error") == OK:
+			_privacy_seen = fingerprint
