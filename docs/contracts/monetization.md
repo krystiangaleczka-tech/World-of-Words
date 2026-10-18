@@ -244,3 +244,29 @@ rules remain authoritative; no save field, product or event is added.
 
 Native adapter activation and correct provider terminal suppression are still
 release gates. These interfaces do not certify a real store restore.
+
+## Independent privacy options requirement (T-0343)
+
+`ConsentAdapter.PrivacyRequirement` is UNKNOWN, NOT_REQUIRED or REQUIRED.
+`privacy_options_requirement() -> PrivacyRequirement` returns the current provider
+observation; the base adapter returns UNKNOWN. The independent
+`privacy_options_requirement_changed(requirement:PrivacyRequirement)` signal
+reports actual changes, after the getter has been updated. Native adapters must
+map authoritative provider privacy-options requirement, default/invalidate to
+UNKNOWN when that evidence is unavailable, and suppress duplicate notifications.
+Neither UMP State, ATT, analytics permission, calling a form nor its completion
+establishes this requirement. UNKNOWN fails closed for future visibility/opening.
+A getter read performs no SDK/provider work.
+
+ConsentFake's `set_privacy_options_requirement(requirement:int) -> Error` accepts
+only the closed enum and synchronously notifies changes. Invalid values preserve
+all state. This observation never cancels/settles pending operations or emits
+consent, ATT, failure or analytics decisions; pending tokens remain valid. reset()
+retains its existing cancellation/log/control cleanup, restores UNKNOWN and emits
+only if the requirement changed. Each instance owns its own observation.
+
+This is additive provider groundwork for T-0288. Monetization still has no privacy
+command/result API and Settings still uses its explicit availability/intent hooks.
+Service serialization/result/timeout and Settings binding remain follow-up work;
+no native adapter, boot activation, endpoint, permission or legal certification is
+implied. The existing purpose-specific analytics decision contract is unchanged.
