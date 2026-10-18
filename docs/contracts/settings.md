@@ -156,3 +156,23 @@ These are original-language legal data, not translated UI copy. T-0288 owns the
 licences view and translated navigation labels. No native SDK is currently
 activated; adding native providers, final assets or new source data requires
 updating the credits before release. This catalog is not legal/store approval.
+
+## Licences screen (T-0340)
+
+`LicencesScreen extends ScreenScaffold` in `features/settings/licences_screen.tscn`
+consumes the complete seven-entry SettingsCredits catalog. Its ListRow index opens
+an exact, untranslated plain-text notice, with a translated heading inside the
+vertical scroll area. The TopBar keeps the short licences title at every text size.
+No BBCode, hyperlinks or network action is interpreted from legal text.
+
+`select_notice(id:StringName) -> Error` rejects before-ready/unknown selections
+without mutation and starts a valid notice at its top, with scroll keyboard focus.
+`handle_back() -> void` returns detail to the list, restoring list scroll/focus;
+from the index it emits `back_requested`. Retained reentry preserves selection.
+Rows/TopBar and detail headings retranslate live; legal text stays byte-identical.
+Theme inheritance uses the caller's existing generated theme; no Save writes occur.
+
+Composition remains explicit: caller handles SettingsScreen.action_requested with
+`licences` by mounting this scene and handles back_requested to return. Integration
+tests exercise that actual route. Global Settings boot/Nav activation remains open,
+as do T-0288 restore/consent/browser/support integrations and physical-device review.

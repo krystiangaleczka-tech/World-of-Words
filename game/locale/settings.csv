@@ -36,3 +36,10 @@ settings.language.restore_preview,Zakończ podgląd języka,End language preview
 settings.language.failed,Nie udało się zmienić języka. Spróbuj ponownie.,Language could not be changed. Try again.
 settings.language.selected,Wybrany,Selected
 settings.language.preview_value,EN · debug,EN · debug
+settings.licences.godot,Silnik Godot,Godot engine
+settings.licences.copyrights,Godot — prawa autorskie,Godot — copyrights
+settings.licences.third_party,Godot — licencje bibliotek,Godot — third-party licences
+settings.licences.inter,Krój pisma Inter,Inter font
+settings.licences.lucide,Ikony Lucide i Feather,Lucide and Feather icons
+settings.licences.audio,Dźwięki,Audio
+settings.licences.sources,Źródła słów i częstotliwości,Word and frequency sources

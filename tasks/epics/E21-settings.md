@@ -26,3 +26,8 @@ current notices, without native SDK assumptions, and supplies Engine legal data.
 T-0288 still owns the licences screen, store/consent/browser/mail integrations,
 real configured support/privacy destinations and physical/native verification.
 T-0339 does not close those gates or imply a complete Settings action flow.
+
+T-0340 implements the T-0288 licences presentation using T-0339: catalog index,
+full notices, two-stage Back, translation/theme inheritance and native layout
+proof. The caller uses existing Settings action intent; global Nav activation,
+store/consent/browser/mail actions and their native gates remain open.

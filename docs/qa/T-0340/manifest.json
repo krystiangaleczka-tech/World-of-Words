@@ -1,0 +1,260 @@
+{
+  "schema": 1,
+  "engine": "4.7.2.stable",
+  "display": "X11",
+  "renderer": "gl_compatibility (llvmpipe)",
+  "images": [
+    {
+      "file": "COMPACT_PL_default100_index.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 71118,
+      "sha256": "fb7fe5f4ada0077dc76eb485186ce71289fc89e38d94abf7b582e551fed3a067"
+    },
+    {
+      "file": "COMPACT_PL_default100_notice_bottom.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 270948,
+      "sha256": "d4460b2b29d54865f287b1336ea0325f2a8e96863a96fb1fd36444281b057733"
+    },
+    {
+      "file": "COMPACT_PL_default100_notice_top.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 257988,
+      "sha256": "eaec37c44393d4abbef41e6a775d20d4e756440649d4387bc0dcd790ff04eaa7"
+    },
+    {
+      "file": "COMPACT_PL_hc130_index.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 80239,
+      "sha256": "47783595e95e440a0964cb3a1ea3d79691bba4a20603f08cd40dab1e96f76048"
+    },
+    {
+      "file": "COMPACT_PL_hc130_notice_bottom.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 213151,
+      "sha256": "bf5e232f3fd12c3df87c9d1cb4b6f48285aad16ad1d4bb41643c18c68de46f9a"
+    },
+    {
+      "file": "COMPACT_PL_hc130_notice_top.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 234038,
+      "sha256": "2ce6fc83015731ea2150c3000ae1fdb372ec6ebccfa1452d8cbb7a83b772ee0d"
+    },
+    {
+      "file": "COMPACT_PSEUDO_default100_index.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 85316,
+      "sha256": "eed1896e68279d50488593a2d35ca9e15a92759cbcd399477f0b14429b2cfd36"
+    },
+    {
+      "file": "COMPACT_PSEUDO_default100_notice_bottom.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 272098,
+      "sha256": "afadb68728bd420105fc89f9cd0569cfc7a9542af1dce16966080e7c01bd8f4f"
+    },
+    {
+      "file": "COMPACT_PSEUDO_default100_notice_top.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 261059,
+      "sha256": "544bb569511a40a26a0f4d93473aa756768fc6c6f4b4743a1b14f6ca19a1e154"
+    },
+    {
+      "file": "COMPACT_PSEUDO_hc130_index.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 108444,
+      "sha256": "5ac6b504dce72b2f345b285efb8ccd24070430cac69897ba8c5a105c923e2ad0"
+    },
+    {
+      "file": "COMPACT_PSEUDO_hc130_notice_bottom.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 214508,
+      "sha256": "670ff25f06db7c1b1d0dc55bb55b78f22cae7ff12e063e0dfbcb7c116a256d24"
+    },
+    {
+      "file": "COMPACT_PSEUDO_hc130_notice_top.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 229822,
+      "sha256": "c4587720d46c9279447b554d5535eb38474712eb5f9a5e690af8d3abea20fbce"
+    },
+    {
+      "file": "REGULAR_PL_default100_index.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 73851,
+      "sha256": "55763c5980a7102857ee69fd7310c66bba14b11939da682d4e338815bdd7c8bc"
+    },
+    {
+      "file": "REGULAR_PL_default100_notice_bottom.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 314756,
+      "sha256": "16ddc35b2d6ed1c97c24feef72e5a25856451815d9154e207b1c3e226c0fa0e2"
+    },
+    {
+      "file": "REGULAR_PL_default100_notice_top.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 325419,
+      "sha256": "6c6f2eebd900cce9fb62cf64b55e8e74e91db41f9abf2139523d7582d8882acc"
+    },
+    {
+      "file": "REGULAR_PL_hc130_index.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 82971,
+      "sha256": "a90943946526d5e9d960f80b8c62535bc4e5865168b3e355a1c1a85632cf2496"
+    },
+    {
+      "file": "REGULAR_PL_hc130_notice_bottom.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 265414,
+      "sha256": "ac854450fb37dd8e512cf1c473b1bf41689f538afef62823955f93601cb8bc44"
+    },
+    {
+      "file": "REGULAR_PL_hc130_notice_top.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 293126,
+      "sha256": "c38fa0080e9800bb62099d486afa23d3d7a0c31e252679dd134717ae782e5e61"
+    },
+    {
+      "file": "REGULAR_PSEUDO_default100_index.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 87994,
+      "sha256": "5477ef8e285fbc272812ec5c8682b7000ea5ef385a9fe624a867f71824d418e6"
+    },
+    {
+      "file": "REGULAR_PSEUDO_default100_notice_bottom.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 315992,
+      "sha256": "056e9982d2f131a72205ce1e941b13ab64b8846d3b6601b6c8c1d00ef3894373"
+    },
+    {
+      "file": "REGULAR_PSEUDO_default100_notice_top.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 328442,
+      "sha256": "31b3b71d3ecabaf67a98ec0301a8909c6f51f7028b078258e645bf3a1632b633"
+    },
+    {
+      "file": "REGULAR_PSEUDO_hc130_index.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 111122,
+      "sha256": "4d8b796e7e49dd91b8fd8867382ee3849bf392c6d38b0248f254ae1fb0deaf51"
+    },
+    {
+      "file": "REGULAR_PSEUDO_hc130_notice_bottom.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 266872,
+      "sha256": "5fd55eddbc0377ec85bbeab773b886af9a7298a888a0fe3cb8d11ceac3c9c544"
+    },
+    {
+      "file": "REGULAR_PSEUDO_hc130_notice_top.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 295038,
+      "sha256": "0faae5318a6bb817cac2416647989730ab3dffc95717f318b2dac4e0f7958b47"
+    },
+    {
+      "file": "TABLET_PL_default100_index.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 75875,
+      "sha256": "38e282ce50e2211459451e333675836cdd61fee6f245c23cfd9729bf2fb3f833"
+    },
+    {
+      "file": "TABLET_PL_default100_notice_bottom.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 276643,
+      "sha256": "56bbbd7456b49d876b9eb6a5de2ae3157078bdefc336121796811042fb3c1f84"
+    },
+    {
+      "file": "TABLET_PL_default100_notice_top.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 278130,
+      "sha256": "d58fa5519cc9e7a548ae0afa5501a5e7ec35cd053db991bbc5e4f7d2846302c9"
+    },
+    {
+      "file": "TABLET_PL_hc130_index.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 85502,
+      "sha256": "01b927c3926a5f2c023e3397b689bcd389da00a4527a3add11be3a80db00000f"
+    },
+    {
+      "file": "TABLET_PL_hc130_notice_bottom.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 225615,
+      "sha256": "89f23caad6bfbf2b13e2e8b64f13757def976c14a1e23f97620bf79929c10b0a"
+    },
+    {
+      "file": "TABLET_PL_hc130_notice_top.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 257063,
+      "sha256": "0866e62a99a9db512bf2dc680c474bc875bc218ca6d675dd26d5b7480bf64d8b"
+    },
+    {
+      "file": "TABLET_PSEUDO_default100_index.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 89670,
+      "sha256": "154a4a3979346e50bccbce649c03700aecd81d841a3f1787e0a4334a2181a826"
+    },
+    {
+      "file": "TABLET_PSEUDO_default100_notice_bottom.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 277879,
+      "sha256": "48169282a366838269dc424d984972224b0a07e887ad4fac8b92e0df38810c1d"
+    },
+    {
+      "file": "TABLET_PSEUDO_default100_notice_top.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 281140,
+      "sha256": "00e864028865ae0e60dbc85c0715f9b1c2368df9a5220cf75b0e8bd4cb258fac"
+    },
+    {
+      "file": "TABLET_PSEUDO_hc130_index.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 106128,
+      "sha256": "cbbeae0fc1bac291dfd653604e2cd46a615bcc741e089ac25d47265639016a7e"
+    },
+    {
+      "file": "TABLET_PSEUDO_hc130_notice_bottom.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 226842,
+      "sha256": "a723c43c5a6ef0d537341d180d2a2a9c2e26e2cb30ed0554da1835a77651ec57"
+    },
+    {
+      "file": "TABLET_PSEUDO_hc130_notice_top.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 253136,
+      "sha256": "672ddd87a1e20145f5de51067608a4c4d5caa3fe48559b2a6dbb41f90526f41b"
+    }
+  ]
+}
