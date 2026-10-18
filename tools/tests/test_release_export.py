@@ -63,6 +63,9 @@ def test_actual_zip_and_remaps_are_accepted_and_reported(tmp_path: Path) -> None
 @pytest.mark.parametrize(
     "path",
     [
+        "services/debug/tools.gd",
+        "services/debug/tools.gdc",
+        "services/debug/tools.gd.remap",
         "features/debug/debug.gd",
         "features/debug/performance_overlay.gdc",
         "features/debug/debug.tscn.remap",

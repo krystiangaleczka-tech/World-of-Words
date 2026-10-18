@@ -50,6 +50,7 @@ var _debug_enabled: bool = true
 var _screen_factory: Callable = Callable()
 # Load after asset import: UI dependencies include generated CSV translations.
 var _p2: RefCounted
+var _debug_tools: RefCounted
 var _continue_service: Node
 var _continue_economy: Node
 var _continue_intent: Vector2i = Vector2i.ZERO
@@ -64,10 +65,16 @@ func boot(clock: Clock) -> void:
 
 
 ## @api Replace the services start() uses (tests/tools only). Defaults are the autoloads.
-func configure(save: SAVE_SCRIPT, config: CONFIG_SCRIPT, content: CONTENT_SCRIPT) -> void:
+func configure(
+	save: SAVE_SCRIPT,
+	config: CONFIG_SCRIPT,
+	content: CONTENT_SCRIPT,
+	debug_tools: RefCounted = null
+) -> void:
 	if _p2 != null and _p2.busy:
 		return
 	if _save != null and (_save != save or _config != config or _content != content):
+		_debug_tools = null
 		_disconnect_continue()
 		if _p2 != null:
 			_p2.close()
@@ -83,6 +90,8 @@ func configure(save: SAVE_SCRIPT, config: CONFIG_SCRIPT, content: CONTENT_SCRIPT
 		_save.backup_restored.connect(_on_backup_restored)
 	_config = config
 	_content = content
+	if OS.is_debug_build() and debug_tools != null and debug_tools.matches_save(save):
+		_debug_tools = debug_tools
 
 
 ## @api Boot sequence: Save, Config, Content manifest, then Level for the saved slot.
@@ -239,6 +248,8 @@ func _enter(screen: Screen, reveal_latest: bool = false) -> void:
 				_mounted.call("configure", _save, _content, _config, self)
 			elif screen == Screen.DEBUG and _mounted.has_method("configure"):
 				_mounted.call("configure", _save, _content, self)
+				if _debug_tools != null and _mounted.has_method("configure_p2_tools"):
+					_mounted.call("configure_p2_tools", _debug_tools)
 			_host.add_child(_mounted)
 	_screen = screen
 	screen_changed.emit(screen)

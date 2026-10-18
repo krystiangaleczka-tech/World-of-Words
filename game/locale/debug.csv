@@ -19,3 +19,18 @@ debug.performance.unavailable,—,—
 debug.performance.fps,FPS: %s,FPS: %s
 debug.performance.latency,Wejście→render średnie/maks.: %s/%s ms,Input→render mean/max: %s/%s ms
 debug.performance.coverage,Próbki: %d · oczekujące: %d · utracone: %d,Samples: %d · pending: %d · dropped: %d
+debug.p2.coins_grant,Dodaj monety,Grant coins
+debug.p2.coins_remove,Usuń monety,Remove coins
+debug.p2.hint_grant,Dodaj podpowiedź,Grant Hint
+debug.p2.hint_remove,Usuń podpowiedź,Remove Hint
+debug.p2.reveal_grant,Dodaj odkrycie,Grant Reveal
+debug.p2.reveal_remove,Usuń odkrycie,Remove Reveal
+debug.p2.entitlement,Przełącz brak reklam wymuszonych,Toggle Remove Forced Ads
+debug.p2.fill,Fake reklamy: dostępne,Fake ads: fill
+debug.p2.no_fill,Fake reklamy: brak,Fake ads: no fill
+debug.p2.success,Fake zakup: sukces,Fake IAP: success
+debug.p2.cancel,Fake zakup: anulowanie,Fake IAP: cancel
+debug.p2.pending,Fake zakup: oczekiwanie,Fake IAP: pending
+debug.p2.crash_before_finish,Fake zakup: przerwanie przed finish,Fake IAP: crash before finish
+debug.p2.ok,Narzędzia P2,P2 tools
+debug.p2.error,Nie udało się wykonać akcji. Spróbuj ponownie.,Action failed. Try again.

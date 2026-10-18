@@ -13,6 +13,7 @@ var _save: SAVE_SCRIPT
 var _content: CONTENT_SCRIPT
 var _nav: NAV_SCRIPT
 var _translations: Array[Translation] = []
+var _p2_tools: RefCounted
 var _pending: bool = false
 var _failed: bool = false
 var _title: Label
@@ -42,6 +43,12 @@ func configure(save: SAVE_SCRIPT, content: CONTENT_SCRIPT, nav: NAV_SCRIPT) -> v
 	_nav = nav
 
 
+## @api Optional debug-only service port, injected before mount.
+func configure_p2_tools(port: RefCounted) -> void:
+	assert(not is_inside_tree())
+	_p2_tools = port
+
+
 func _ready() -> void:
 	if not OS.is_debug_build():
 		queue_free()
@@ -63,6 +70,19 @@ func _ready() -> void:
 	_button("Home", "debug.shell.home", _go_home)
 	_refresh_copy()
 	_show_confirmation(false)
+	if _p2_tools != null:
+		var panel: VBoxContainer = load("res://features/debug/p2_tools.gd").new()
+		panel.name = "P2Tools"
+		panel.configure(_p2_tools)
+		var parent: Node = body.get_parent()
+		parent.remove_child(body)
+		var scroll: ScrollContainer = ScrollContainer.new()
+		scroll.name = "DebugScroll"
+		scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		parent.add_child(scroll)
+		scroll.add_child(body)
+		body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		body.add_child(panel)
 
 
 func _create_level_tools() -> void:

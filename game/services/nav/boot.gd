@@ -35,6 +35,11 @@ func _ready() -> void:
 	_audio_listener.configure(Events, Audio)
 	add_child(_audio_listener)
 	if OS.is_debug_build():
+		if not Economy.is_ready():
+			Economy.configure(Save, Config, Events)
+		var debug_tools: RefCounted = load("res://services/debug/tools.gd").new()
+		debug_tools.configure(Save, Economy, Config, Platform)
+		Nav.configure(Save, Config, Content, debug_tools)
 		var overlay: CanvasLayer = load("res://features/debug/performance_overlay.gd").new()
 		overlay.name = "PerformanceOverlay"
 		overlay.configure(Audio.get_clock(), Nav)
