@@ -3,13 +3,14 @@
 extends ServiceStub
 ## @api Unactivated consent, ads and explicit verified IAP settlement.
 
+signal privacy_changed
 signal restore_changed
 signal shop_changed
 signal continuation_ready(completed_slot: int)
 signal audio_pause_requested(paused: bool)
 signal purchase_state_changed(product_id: String, state: StringName, error: Error)
 
-enum Step { IDLE, INFO, FORM, ATT, INITIALIZING }
+enum Step { IDLE, INFO, FORM, ATT, INITIALIZING, PRIVACY }
 
 const ECONOMY_SCRIPT: Script = preload("res://services/economy.gd")
 const SAVE_SCRIPT: Script = preload("res://services/save.gd")
@@ -45,6 +46,12 @@ var _shop_reservation: Dictionary = {}
 var _iap_flow: IapFlow
 var _shop_economy: ECONOMY_SCRIPT
 var _shop_reward: Callable
+var _privacy_state: StringName = &"idle"
+var _privacy_error: Error = OK
+var _privacy_revision: int = 0
+var _privacy_connected: bool = false
+var _privacy_notifying: bool = false
+var _privacy_dispatch: bool = false
 
 
 ## @api No implicit provider operation; reconfiguration disconnects old adapters.
@@ -57,7 +64,8 @@ func configure(
 	ios: bool
 ) -> Error:
 	if (
-		_iap_binding_busy()
+		_privacy_blocked()
+		or _iap_binding_busy()
 		or _slot > 0
 		or _step != Step.IDLE
 		or (is_instance_valid(_presentation) and _presentation.busy())
@@ -96,6 +104,8 @@ func configure(
 	_analytics_live = false
 	_analytics_decision = -1
 	_reported_consent = ""
+	_privacy_state = &"idle"
+	_privacy_error = OK
 	_levels_since_ad = int(_save.get_section(&"monetization")["levels_since_interstitial"])
 	_presentation = AdPresentation.new()
 	add_child(_presentation)
@@ -115,16 +125,21 @@ func configure(
 	_consent.consent_resolved.connect(_on_consent)
 	_consent.att_resolved.connect(_on_att)
 	_consent.analytics_resolved.connect(_on_analytics)
-	_consent.operation_failed.connect(expire_operation)
+	_consent.operation_failed.connect(_on_legal_failed)
+	_consent.privacy_options_completed.connect(_on_privacy_completed)
+	_consent.privacy_options_requirement_changed.connect(_on_privacy_requirement)
+	_privacy_connected = true
 	_ads.initialized.connect(_on_initialized)
 	_ads.ad_failed.connect(_on_ad_failed)
 	_events.economy_changed.connect(_on_shop_economy)
-	_emit_shop_changed()
+	_publish_privacy()
 	return OK
 
 
 ## @api Silent info refresh once per configured launch; never opens a form at boot.
 func start_session() -> Error:
+	if _privacy_blocked():
+		return ERR_BUSY
 	if not _configured():
 		return ERR_UNCONFIGURED
 	if _started:
@@ -138,6 +153,8 @@ func start_session() -> Error:
 
 ## @api Serialize campaign Continue with the completed slot, not the next slot.
 func before_next_level(completed_slot: int) -> Error:
+	if _privacy_blocked():
+		return ERR_BUSY
 	if not _configured():
 		return ERR_UNCONFIGURED
 	if completed_slot < 1:
@@ -157,6 +174,9 @@ func before_next_level(completed_slot: int) -> Error:
 
 ## @api Explicit cancellation/watchdog seam. Retry unresolved steps next Continue.
 func expire_operation() -> void:
+	if _step == Step.PRIVACY:
+		expire_privacy_options()
+		return
 	var legal_pending: bool = _step != Step.IDLE
 	if legal_pending:
 		_legal_timer.stop()
@@ -192,6 +212,8 @@ func rewarded_state() -> StringName:
 
 ## @api Explicit opt-in. Only a validated bound Economy.grant can settle an earned reward.
 func request_rewarded(placement: StringName, reward: Callable) -> Error:
+	if _privacy_blocked():
+		return ERR_BUSY
 	if is_instance_valid(_presentation) and _presentation.rewarded_state() == &"pending_reward":
 		var result: Error = _presentation.request_rewarded(placement, reward)
 		_emit_shop_changed()
@@ -265,6 +287,8 @@ func _reserve_shop_reward() -> Error:
 
 ## @api Explicit same-Save binding; no provider command or boot activation.
 func configure_iap(economy: Node, adapter: IapAdapter) -> Error:
+	if _privacy_blocked():
+		return ERR_BUSY
 	if _iap_binding_busy() or (is_instance_valid(_presentation) and _presentation.busy()):
 		return ERR_BUSY
 	if not _configured() or not economy is ECONOMY_SCRIPT or adapter == null:
@@ -335,10 +359,14 @@ func begin_shop_visit() -> void:
 
 
 func request_products() -> Error:
+	if _privacy_blocked():
+		return ERR_BUSY
 	return _iap_flow.query_products() if is_instance_valid(_iap_flow) else ERR_UNAVAILABLE
 
 
 func request_shop_reward() -> Error:
+	if _privacy_blocked():
+		return ERR_BUSY
 	if shop_snapshot().is_empty():
 		return ERR_UNCONFIGURED
 	if _presentation.rewarded_state() != &"pending_reward":
@@ -365,6 +393,8 @@ func purchase_state() -> StringName:
 
 
 func purchase(product_id: String) -> Error:
+	if _privacy_blocked():
+		return ERR_BUSY
 	if not is_instance_valid(_iap_flow):
 		return ERR_UNAVAILABLE
 	if _slot > 0 or _step != Step.IDLE or _presentation.busy():
@@ -373,10 +403,14 @@ func purchase(product_id: String) -> Error:
 
 
 func restore_purchases() -> Error:
+	if _privacy_blocked():
+		return ERR_BUSY
 	return _iap_flow.recover(true) if is_instance_valid(_iap_flow) else ERR_UNAVAILABLE
 
 
 func process_unfinished_transactions() -> Error:
+	if _privacy_blocked():
+		return ERR_BUSY
 	return _iap_flow.recover() if is_instance_valid(_iap_flow) else ERR_UNAVAILABLE
 
 
@@ -456,6 +490,10 @@ func _advance() -> void:
 
 
 func _on_consent(state: ConsentAdapter.State) -> void:
+	if _step == Step.PRIVACY:
+		_ump = state if state in ConsentAdapter.State.values() else ConsentAdapter.State.UNKNOWN
+		_report_consent()
+		return
 	if _step not in [Step.INFO, Step.FORM]:
 		return
 	var was_form: bool = _step == Step.FORM
@@ -491,7 +529,7 @@ func _on_att(status: ConsentAdapter.AttStatus) -> void:
 
 
 func _on_analytics(allowed: bool) -> void:
-	if _configured() and _started and _analytics_live:
+	if _configured() and (_started or _privacy_state != &"idle") and _analytics_live:
 		_analytics_decision = 1 if allowed else 0
 		_events.consent_changed.emit(allowed)
 		_report_consent()
@@ -527,7 +565,7 @@ func _after_consent() -> void:
 
 
 func _arm_legal() -> void:
-	if _step in [Step.INFO, Step.FORM]:
+	if _step in [Step.INFO, Step.FORM, Step.PRIVACY]:
 		_analytics_live = true
 	_legal_timer.start()
 
@@ -564,6 +602,7 @@ func _release() -> void:
 
 
 func _disconnect() -> void:
+	_privacy_connected = false
 	if is_instance_valid(_events) and _events.economy_changed.is_connected(_on_shop_economy):
 		_events.economy_changed.disconnect(_on_shop_economy)
 	_shop_economy = null
@@ -575,16 +614,31 @@ func _disconnect() -> void:
 	if is_instance_valid(_legal_timer):
 		_legal_timer.free()
 	if _consent != null:
-		_consent.consent_resolved.disconnect(_on_consent)
-		_consent.att_resolved.disconnect(_on_att)
-		_consent.analytics_resolved.disconnect(_on_analytics)
-		_consent.operation_failed.disconnect(expire_operation)
+		if _consent.consent_resolved.is_connected(_on_consent):
+			_consent.consent_resolved.disconnect(_on_consent)
+		if _consent.att_resolved.is_connected(_on_att):
+			_consent.att_resolved.disconnect(_on_att)
+		if _consent.analytics_resolved.is_connected(_on_analytics):
+			_consent.analytics_resolved.disconnect(_on_analytics)
+		if _consent.operation_failed.is_connected(_on_legal_failed):
+			_consent.operation_failed.disconnect(_on_legal_failed)
+		if _consent.privacy_options_completed.is_connected(_on_privacy_completed):
+			_consent.privacy_options_completed.disconnect(_on_privacy_completed)
+		if _consent.privacy_options_requirement_changed.is_connected(_on_privacy_requirement):
+			_consent.privacy_options_requirement_changed.disconnect(_on_privacy_requirement)
 	if _ads != null:
-		_ads.initialized.disconnect(_on_initialized)
-		_ads.ad_failed.disconnect(_on_ad_failed)
+		if _ads.initialized.is_connected(_on_initialized):
+			_ads.initialized.disconnect(_on_initialized)
+		if _ads.ad_failed.is_connected(_on_ad_failed):
+			_ads.ad_failed.disconnect(_on_ad_failed)
 
 
 func _exit_tree() -> void:
+	if _step == Step.PRIVACY:
+		_step = Step.IDLE
+		_privacy_state = &"unknown"
+		_privacy_error = ERR_UNAVAILABLE
+	_analytics_live = false
 	_disconnect()
 
 
@@ -651,6 +705,8 @@ func restore_snapshot() -> Dictionary:
 
 
 func retry_restore_settlement() -> Error:
+	if _privacy_blocked():
+		return ERR_BUSY
 	return _iap_flow.retry_restore_settlement() if is_instance_valid(_iap_flow) else ERR_UNAVAILABLE
 
 
@@ -669,3 +725,101 @@ func restore_owner_matches(save: Node) -> bool:
 		and _configured()
 		and is_instance_valid(_iap_flow)
 	)
+
+
+## @api Live connected owner proof, independent of an IAP binding.
+func privacy_owner_matches(save: Node) -> bool:
+	return (
+		is_inside_tree()
+		and _privacy_connected
+		and _configured()
+		and is_instance_valid(save)
+		and save == _save
+		and _save.is_loaded()
+	)
+
+
+## @api Fresh application state; requirement is never inferred from consent or ATT.
+func privacy_snapshot() -> Dictionary:
+	var live: bool = privacy_owner_matches(_save)
+	var requirement: int = (
+		_consent.privacy_options_requirement()
+		if live
+		else ConsentAdapter.PrivacyRequirement.UNKNOWN
+	)
+	var names: Array[StringName] = [&"unknown", &"not_required", &"required"]
+	if requirement < 0 or requirement >= names.size():
+		requirement = ConsentAdapter.PrivacyRequirement.UNKNOWN
+	return {
+		"requirement": names[requirement],
+		"available": live and requirement == ConsentAdapter.PrivacyRequirement.REQUIRED,
+		"state": _privacy_state if live else &"unavailable",
+		"error": _privacy_error if live else ERR_UNAVAILABLE,
+		"revision": _privacy_revision
+	}
+
+
+## @api Explicit acceptance only. Provider terminal evidence reports form completion.
+func request_privacy_options() -> Error:
+	if _privacy_blocked():
+		return ERR_BUSY
+	if not privacy_owner_matches(_save):
+		return ERR_UNCONFIGURED
+	if _step != Step.IDLE or _slot > 0 or _presentation.busy() or _iap_binding_busy():
+		return ERR_BUSY
+	if not privacy_snapshot().available:
+		return ERR_UNAVAILABLE
+	_privacy_dispatch = true
+	_step = Step.PRIVACY
+	_privacy_state = &"requested"
+	_privacy_error = OK
+	_sdk_ready = false
+	_arm_legal()
+	_publish_privacy()
+	if _step == Step.PRIVACY:
+		_consent.show_privacy_options()
+	_privacy_dispatch = false
+	return OK
+
+
+## @api Only privacy wait is expired; no provider or competing flow is started.
+func expire_privacy_options() -> void:
+	_finish_privacy(&"unknown", ERR_TIMEOUT)
+
+
+func _privacy_blocked() -> bool:
+	return _step == Step.PRIVACY or _privacy_notifying or _privacy_dispatch
+
+
+func _publish_privacy() -> void:
+	_privacy_revision += 1
+	var previous: bool = _privacy_notifying
+	_privacy_notifying = true
+	privacy_changed.emit()
+	_emit_shop_changed()
+	_privacy_notifying = previous
+
+
+func _on_privacy_requirement(_requirement: ConsentAdapter.PrivacyRequirement) -> void:
+	_publish_privacy()
+
+
+func _on_privacy_completed(error: Error) -> void:
+	_finish_privacy(&"completed" if error == OK else &"failed", error)
+
+
+func _finish_privacy(state: StringName, error: Error) -> void:
+	if _step != Step.PRIVACY:
+		return
+	_legal_timer.stop()
+	_step = Step.IDLE
+	_privacy_state = state
+	_privacy_error = error
+	if error != OK:
+		_analytics_live = false
+	_publish_privacy()
+
+
+func _on_legal_failed() -> void:
+	if _step != Step.PRIVACY:
+		expire_operation()

@@ -47,3 +47,9 @@ T-0288: UNKNOWN/NOT_REQUIRED/REQUIRED observation, change notification and manua
 Fake control. UMP/ATT/analytics are not substitutes for that provider evidence.
 Follow-ups must add service-owned serialized command/result/watchdog and Settings
 binding; real provider mapping, global activation and device/legal gates stay open.
+
+T-0344 adds service-owned Privacy Options acceptance/result, independent provider
+terminal evidence, same-Save liveness, a bounded watchdog and serialization with
+existing legal/ad/store work. Requirement and form closure never imply analytics
+consent. T-0288 still needs Settings binding and real provider/device verification;
+this unactivated contract invokes no SDK or global navigation route.
