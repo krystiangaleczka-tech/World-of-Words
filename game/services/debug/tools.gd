@@ -5,6 +5,7 @@ const SAVE: Script = preload("res://services/save.gd")
 const ECONOMY: Script = preload("res://services/economy.gd")
 const CONFIG: Script = preload("res://services/config.gd")
 const PLATFORM: Script = preload("res://platform/platform.gd")
+var diagnostics: RefCounted
 var _save: SAVE
 var _economy: ECONOMY
 var _config: CONFIG

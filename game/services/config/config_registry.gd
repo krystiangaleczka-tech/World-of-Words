@@ -101,3 +101,8 @@ func _valid_default(entry: Dictionary) -> bool:
 			or (entry["type"] == "string" and value is String)
 		)
 	)
+
+
+## @api Independent validated defaults for tooling; no metadata or writable references.
+func snapshot() -> Dictionary:
+	return _values.duplicate(true)

@@ -219,7 +219,7 @@ func _validate_placement(placement: StringName, reward: Callable) -> Error:
 
 
 func _local_day() -> String:
-	var bias_seconds: int = int(Time.get_time_zone_from_system()["bias"]) * 60
+	var bias_seconds: int = get_clock().time_zone_bias_minutes() * 60
 	return (
 		Time
 		. get_datetime_string_from_unix_time(get_clock().unix_time_seconds() + bias_seconds)
