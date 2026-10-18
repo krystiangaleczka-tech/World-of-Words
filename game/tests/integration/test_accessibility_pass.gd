@@ -49,29 +49,54 @@ func test_catalog_names_keys_touch_minimum_and_focus_in_both_locales() -> void:
 	assert_eq(catalog.register_all(), OK)
 	for language: String in ["pl", "en"]:
 		TranslationServer.set_locale(language)
-		var icon: IconButton = IconButton.new()
-		icon.configure_icon(preload("res://assets/icons/shuffle.svg"), "level.hud.shuffle")
-		var nav: NavTab = NavTab.new()
-		nav.configure(preload("res://assets/icons/route.svg"), "home.nav.journey")
-		var toggle: Toggle = Toggle.new()
-		toggle.configure(true, "ui.toggle.on")
-		var slider: CatalogSlider = CatalogSlider.new()
-		slider.configure(0.5, "settings.sound.music")
-		var hint: HintButton = HintButton.new()
-		hint.configure(&"hint", 3, 100)
-		var currency: CurrencyPill = CurrencyPill.new()
-		currency.action_enabled = true
-		for control: Control in [icon, nav, toggle, slider, hint, currency]:
-			add_child(control)
-			control.theme = load("res://ui/theme/generated/theme_hc_130.tres")
-			await wait_process_frames(2)
-			assert_false(control.accessibility_name.is_empty())
-			assert_false(control.accessibility_name.contains("ui."))
-			assert_false(control.accessibility_name.contains("settings."))
-			assert_gte(control.get_combined_minimum_size().x, float(Tokens.Touch.MIN_TARGET))
-			assert_gte(control.get_combined_minimum_size().y, float(Tokens.Touch.MIN_TARGET))
-			assert_eq(control.focus_mode, Control.FOCUS_ALL)
-			control.free()
+		for width: int in [1080, 1200, 1440]:
+			for mode: String in ["default_100", "hc_130"]:
+				var icon: IconButton = IconButton.new()
+				icon.configure_icon(preload("res://assets/icons/shuffle.svg"), "level.hud.shuffle")
+				var nav: NavTab = NavTab.new()
+				nav.configure(preload("res://assets/icons/route.svg"), "home.nav.journey")
+				var toggle: Toggle = Toggle.new()
+				toggle.configure(true, "ui.toggle.on")
+				var slider: CatalogSlider = CatalogSlider.new()
+				slider.configure(0.5, "settings.sound.music")
+				var hint: HintButton = HintButton.new()
+				hint.configure(&"hint", 3, 100)
+				var currency: CurrencyPill = CurrencyPill.new()
+				currency.action_enabled = true
+				var controls: Array[Control] = [icon, nav, toggle, slider, hint, currency]
+				var keys: Array[String] = [
+					"level.hud.shuffle",
+					"home.nav.journey",
+					"ui.toggle.on",
+					"settings.sound.music",
+					"ui.hint.hint",
+					"ui.currency.coins"
+				]
+				for index: int in controls.size():
+					var control: Control = controls[index]
+					var host: Control = Control.new()
+					host.size = Vector2(width, 1920)
+					host.theme = load("res://ui/theme/generated/theme_%s.tres" % mode)
+					add_child(host)
+					host.add_child(control)
+					await wait_process_frames(2)
+					assert_ne(tr(keys[index]), keys[index])
+					assert_eq(control.accessibility_name, tr(keys[index]))
+					assert_gte(
+						control.get_combined_minimum_size().x, float(Tokens.Touch.MIN_TARGET)
+					)
+					assert_gte(
+						control.get_combined_minimum_size().y, float(Tokens.Touch.MIN_TARGET)
+					)
+					assert_eq(control.focus_mode, Control.FOCUS_ALL)
+					if control == currency:
+						currency.action_enabled = false
+						assert_eq(currency.focus_mode, Control.FOCUS_NONE)
+						assert_true(currency.disabled)
+						assert_eq(currency.accessibility_name, tr(keys[index]))
+						currency.action_enabled = true
+						assert_eq(currency.focus_mode, Control.FOCUS_ALL)
+					host.free()
 	catalog.unregister()
 
 
