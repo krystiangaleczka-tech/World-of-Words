@@ -336,3 +336,25 @@ precedes one dispatch; invalidated owner/port suppresses it and loss during the 
 cannot claim handoff. Invalid return type/Error -> ERR_INVALID_DATA. Revisions are
 instance-local; Save and analytics are unchanged. T-0350 owns explicit Settings
 binding, while real URL/native browser/device/legal/global activation stay open.
+
+## Explicit policy presentation (T-0350)
+
+SettingsScreen.bind_policy(service:Node)->Error opts the existing privacy_policy row
+into exact same-Save SettingsPolicy ownership. Invalid replacements preserve the
+binding; dispatch/requested replacement is busy. Unbound screens retain intent.
+A nonvisual feature controller owns lifecycle and uses the existing row, Caption
+policy_message and policy_toast. Screen owns mounted controls and frees the
+unmounted controller. Binding, reads and entry never invoke the browser.
+
+Explicit row requests show loading/disabled, then generic handoff/failure feedback.
+Handoff certifies only passing the request to the browser, never page load/consent.
+Only committed content language reaches the injected port; Save remains unchanged.
+Retries require another press. Loss disables until valid rebind, without intent
+fallback. Exit disconnects; retained entry revalidates and reconnects once. Loss of
+Save before first mount or retained entry terminates safely with usable Back.
+
+Owner/revision/attempt deduplicates terminal Toast across visibility, detach,
+translation and theme changes; hidden completion displays once on return. Failed
+Toast display is not marked seen. New attempts hide old Toast; newer authoritative
+revision supersedes command rejection. Actual approved URL/native transport,
+physical-device/legal verification and global activation remain caller gates.

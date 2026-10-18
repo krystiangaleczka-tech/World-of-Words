@@ -69,3 +69,8 @@ settings.support.handed_off,Dokończ wiadomość w aplikacji pocztowej.,Finish y
 settings.support.failed,Nie udało się otworzyć szkicu wiadomości. Spróbuj ponownie.,The message draft could not be opened. Try again.
 settings.support.unavailable,Otwarcie szkicu wiadomości jest niedostępne.,Opening a message draft is unavailable.
 settings.support.busy,Trwa przygotowywanie wiadomości. Spróbuj ponownie.,A message is being prepared. Try again.
+settings.policy.requested,Przekazywanie żądania do przeglądarki…,Passing the request to your browser…
+settings.policy.handed_off,Żądanie otwarcia polityki przekazano do przeglądarki.,The request to open the policy was passed to your browser.
+settings.policy.failed,Nie udało się otworzyć polityki prywatności. Spróbuj ponownie.,The privacy policy could not be opened. Try again.
+settings.policy.unavailable,Otwarcie polityki prywatności jest niedostępne.,Opening the privacy policy is unavailable.
+settings.policy.busy,Trwa otwieranie polityki. Spróbuj ponownie.,A policy request is in progress. Try again.
