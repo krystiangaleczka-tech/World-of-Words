@@ -34,3 +34,6 @@ debug.p2.pending,Fake zakup: oczekiwanie,Fake IAP: pending
 debug.p2.crash_before_finish,Fake zakup: przerwanie przed finish,Fake IAP: crash before finish
 debug.p2.ok,Narzędzia P2,P2 tools
 debug.p2.error,Nie udało się wykonać akcji. Spróbuj ponownie.,Action failed. Try again.
+debug.p2.summary,Monety: %d · Podpowiedź: %d · Odkrycie: %d · Brak reklam wymuszonych: %s · Ponowienie: %s,Coins: %d · Hint: %d · Reveal: %d · Remove Forced Ads: %s · Retry: %s
+debug.p2.yes,Tak,Yes
+debug.p2.no,Nie,No

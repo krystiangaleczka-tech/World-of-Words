@@ -3,6 +3,7 @@ extends VBoxContainer
 
 const BUTTON: PackedScene = preload("res://ui/components/TextButton.tscn")
 var _port: RefCounted
+var _last_error: Error = OK
 var _status: Label
 var _buttons: Array[TextButton] = []
 var _handlers: Array[Callable] = []
@@ -62,18 +63,33 @@ func _iap(outcome: StringName) -> void:
 
 
 func _refresh(error: Error) -> void:
+	_last_error = error
+	var state: Dictionary = _port.snapshot()
+	if state.is_empty():
+		_status.text = tr("debug.p2.error")
+		return
+	var wallet: Dictionary = state.wallet
 	_status.text = (
 		"%s\n%s"
 		% [
 			tr("debug.p2.ok") if error == OK else tr("debug.p2.error"),
-			JSON.stringify(_port.snapshot())
+			(
+				tr("debug.p2.summary")
+				% [
+					wallet.coins,
+					wallet.items.hint,
+					wallet.items.reveal,
+					tr("debug.p2.yes") if state.remove_forced_ads else tr("debug.p2.no"),
+					tr("debug.p2.yes") if state.retry else tr("debug.p2.no")
+				]
+			)
 		]
 	)
 
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_TRANSLATION_CHANGED and is_instance_valid(_status):
-		_refresh(OK)
+		_refresh(_last_error)
 
 
 func _exit_tree() -> void:

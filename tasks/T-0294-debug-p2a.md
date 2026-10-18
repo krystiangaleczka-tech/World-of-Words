@@ -32,7 +32,7 @@ Expose FR-DEBUG-03 in debug builds using the injected durable wallet and current
 ## Context
 - PRODUCT.md FR-DEBUG-03/06: grant/remove coins/items, toggle Remove Forced Ads, fake fill/no-fill/cancel/pending/crash-before-finish; developer code excluded from Release.
 - ARCHITECTURE.md: only services call platform adapters; every balance change goes through Economy.
-- DESIGN.md#rules-quote-these-into-ui-tasks: catalog components, tokens and translated copy only.
+- docs/DESIGN.md#rules-quote-these-into-ui-tasks: catalog components, tokens and translated copy only.
 
 ## Current state
 - Debug screen configure(save,content,nav) injects owners before mount, and existing controls have fixed paths used by regression tests.

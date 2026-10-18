@@ -16,6 +16,7 @@ var config: CONFIG
 var platform: PLATFORM
 var port: RefCounted
 var events: EVENTS
+var locale: String
 
 
 class FixedClock:
@@ -26,6 +27,8 @@ class FixedClock:
 
 
 func before_each() -> void:
+	locale = TranslationServer.get_locale()
+	TranslationServer.set_locale("pl")
 	storage = FIXTURE.Storage.new()
 	save = SAVE.new()
 	economy = ECONOMY.new()
@@ -42,6 +45,10 @@ func before_each() -> void:
 	economy.configure(save, config, events)
 	port = TOOLS.new()
 	port.configure(save, economy, config, platform)
+
+
+func after_each() -> void:
+	TranslationServer.set_locale(locale)
 
 
 func test_wallet_grant_remove_validation_and_reload() -> void:
@@ -104,6 +111,12 @@ func test_disabled_cross_owner_and_dirty_sections_are_rejected() -> void:
 	section.remove_forced_ads = true
 	assert_eq(save.set_section(&"monetization", section), OK)
 	assert_eq(port.set_remove_forced_ads(false), ERR_BUSY)
+	var unready: ECONOMY = ECONOMY.new()
+	add_child_autofree(unready)
+	unready.configure(save, config, events)
+	port.configure(save, unready, config, platform)
+	assert_false(port.matches_save(save))
+	assert_true(port.snapshot().is_empty())
 
 
 func test_fake_controls_never_call_providers_or_grant_and_real_adapters_are_refused() -> void:
@@ -169,11 +182,14 @@ func test_nav_injects_actual_scrollable_panel_and_ui_actions() -> void:
 	assert_eq(economy.snapshot().items.hint, 1)
 	(panel.get_node("Entitlement") as TextButton).pressed.emit()
 	assert_true(port.snapshot().remove_forced_ads)
-	assert_true((panel.get_node("Wallet") as Label).text.contains("true"))
+	assert_true((panel.get_node("Wallet") as Label).text.contains("Brak reklam wymuszonych: Tak"))
 	for action: String in [
 		"fill", "no_fill", "success", "cancel", "pending", "crash_before_finish"
 	]:
 		(panel.get_node(action) as TextButton).pressed.emit()
 		assert_ne((panel.get_node(action) as TextButton).text, "debug.p2." + action)
 
+	TranslationServer.set_locale("en")
 	await wait_process_frames(2)
+	assert_true((panel.get_node("Wallet") as Label).text.contains("Remove Forced Ads: Yes"))
+	assert_false((panel.get_node("Wallet") as Label).text.contains("remove_forced_ads"))

@@ -27,7 +27,9 @@ func configure(
 
 
 func matches_save(save: SAVE) -> bool:
-	return _allowed() and _save == save and _economy.atomic_save_matches(save)
+	return (
+		_allowed() and _save == save and _economy.atomic_save_matches(save) and _economy.is_ready()
+	)
 
 
 func _allowed() -> bool:
