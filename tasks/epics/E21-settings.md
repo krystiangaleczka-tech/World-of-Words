@@ -70,3 +70,8 @@ presentation/full-ID draft, explicit retry and handoff-only feedback. The three-
 wave T-0345..T-0347 adds no actual destination/SDK/global route. Remaining T-0288
 gates include privacy-policy browser, configured mail transport/recipient, licences
 caller/global navigation and real store/consent/mail/device/legal verification.
+
+T-0348 supplies the reusable caller-owned Settings/licences route with two-stage
+Back, scroll/focus/theme restoration and loss/reentry ownership. Next T-0349 owns
+an injected browser handoff contract and T-0350 its Settings policy binding.
+This wave configures no real policy URL/transport or global Nav/native provider.
