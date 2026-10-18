@@ -75,3 +75,8 @@ T-0348 supplies the reusable caller-owned Settings/licences route with two-stage
 Back, scroll/focus/theme restoration and loss/reentry ownership. Next T-0349 owns
 an injected browser handoff contract and T-0350 its Settings policy binding.
 This wave configures no real policy URL/transport or global Nav/native provider.
+
+T-0349 owns policy-browser handoff through an explicit caller port receiving only
+committed content language. Accepted handoff is not document-load/consent proof.
+T-0350 binds this owner to Settings; actual approved policy destination/native
+transport and device/legal/global activation remain separate gates.

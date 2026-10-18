@@ -315,3 +315,24 @@ Loss/reparent/free/route exit disconnects, hides orphan licences and restores Se
 when active; retained entry requires explicit configure. Snapshot reports bound and
 settings/licences/unavailable. Global Nav activation and physical-device review
 remain open; this is reusable opt-in local routing, not a new global input listener.
+
+## Privacy-policy handoff owner (T-0349)
+
+Caller-owned services/settings_policy.gd exposes configure(save:Node,
+browser:Callable)->Error, owner_matches(save), snapshot() and request_policy().
+Valid binding requires actual loaded Save and a valid one-argument port; live
+ownership is exact and fails closed after exit until explicit reconfiguration.
+Snapshots are fresh available/state/error/revision dictionaries with idle/requested/
+handed_off/failed or unavailable. No UI locale registration or global route.
+
+The synchronous browser(language:String)->Error port receives only committed
+content language, never install_id, receipts, wallet or save data. Caller resolves
+an approved localized HTTPS policy URL and maps native handoff errors. No URL or
+transport is configured here. OK certifies accepted handoff, not page load, consent
+or legal approval. Configuration/read/locale/entry never auto-open or retry.
+
+Notifications and dispatch reject nested configure/request with ERR_BUSY. requested
+precedes one dispatch; invalidated owner/port suppresses it and loss during the call
+cannot claim handoff. Invalid return type/Error -> ERR_INVALID_DATA. Revisions are
+instance-local; Save and analytics are unchanged. T-0350 owns explicit Settings
+binding, while real URL/native browser/device/legal/global activation stay open.
