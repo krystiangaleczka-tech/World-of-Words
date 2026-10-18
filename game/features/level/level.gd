@@ -984,3 +984,11 @@ func can_offer_hint() -> bool:
 		and _slot == progress.current_slot()
 		and _can_act()
 	)
+
+
+## Internal copied side-effect observation from caller-owned Level presentation only.
+func _notify_analytics(name: StringName, params: Dictionary) -> void:
+	if is_instance_valid(_event_bus) and _event_bus.has_signal("p2_analytics"):
+		var values: Dictionary = params.duplicate(true)
+		values["slot"] = _slot
+		_event_bus.emit_signal("p2_analytics", name, values)

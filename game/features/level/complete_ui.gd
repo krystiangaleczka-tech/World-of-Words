@@ -27,6 +27,7 @@ var _reward: Callable
 var _presented: bool = false
 var _attempt: bool = false
 var _doubled: bool = false
+var _offer_observed: bool = false
 var _requesting: bool = false
 var _message_key: String = ""
 var _postcard_group: VBoxContainer
@@ -248,6 +249,14 @@ func _refresh() -> void:
 		key = "level.complete.no_ad"
 	message.text = tr(key) if not key.is_empty() else ""
 	message.visible = not key.is_empty()
+	if (
+		not _offer_observed
+		and double_button.is_visible_in_tree()
+		and not double_button.disabled
+		and state == &"ready"
+	):
+		_offer_observed = true
+		_service.observe_rewarded_offer(&"double_reward")
 	if _presented:
 		for pill: CurrencyPill in [coins, stars]:
 			pill.custom_minimum_size.x = (

@@ -117,6 +117,7 @@ func _show(trigger: StringName) -> void:
 	_host.hint_button.highlighted = true
 	_hold.start(float(Tokens.Motion.TOAST_HOLD) / 1000.0)
 	_host.stuck_offer_shown.emit(trigger)
+	_host._notify_analytics(&"hint_stuck_offer_shown", {"trigger": str(trigger)})
 
 
 func _hide() -> void:

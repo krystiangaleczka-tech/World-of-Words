@@ -36,6 +36,8 @@ var _last_visit: String = ""
 var _last_evaluated: String = ""
 var _history_failed: bool = false
 var _analytics_live: bool = false
+var _analytics_decision: int = -1
+var _reported_consent: String = ""
 var _shop_reservation: Dictionary = {}
 var _iap_flow: IapFlow
 var _shop_economy: ECONOMY_SCRIPT
@@ -89,10 +91,13 @@ func configure(
 	_last_evaluated = ""
 	_history_failed = false
 	_analytics_live = false
+	_analytics_decision = -1
+	_reported_consent = ""
 	_levels_since_ad = int(_save.get_section(&"monetization")["levels_since_interstitial"])
 	_presentation = AdPresentation.new()
 	add_child(_presentation)
 	_presentation.configure(_ads, _reserve_shop_reward, _save)
+	_presentation.telemetry.connect(_telemetry)
 	_presentation.changed.connect(_emit_shop_changed)
 	_presentation.finished.connect(_release)
 	_presentation.audio_paused.connect(_relay_audio_pause)
@@ -275,6 +280,7 @@ func configure_iap(economy: Node, adapter: IapAdapter) -> Error:
 	_iap_flow = IapFlow.new()
 	add_child(_iap_flow)
 	_iap_flow.configure(_save, economy, adapter)
+	_iap_flow.telemetry.connect(_telemetry)
 	_iap_flow.state_changed.connect(_on_purchase_state)
 	_iap_flow.changed.connect(_emit_shop_changed)
 	_shop_economy = economy
@@ -455,6 +461,7 @@ func _on_consent(state: ConsentAdapter.State) -> void:
 	_legal_timer.stop()
 	_step = Step.IDLE
 	_ump = state if state in ConsentAdapter.State.values() else ConsentAdapter.State.UNKNOWN
+	_report_consent()
 	if _ump == ConsentAdapter.State.UNKNOWN or (was_form and _ump == ConsentAdapter.State.REQUIRED):
 		_release()
 	else:
@@ -478,12 +485,15 @@ func _on_att(status: ConsentAdapter.AttStatus) -> void:
 		_att = ConsentAdapter.AttStatus.UNKNOWN
 		_release()
 	else:
+		_telemetry(&"att_result", {"status": ConsentAdapter.AttStatus.keys()[status].to_lower()})
 		_advance()
 
 
 func _on_analytics(allowed: bool) -> void:
 	if _configured() and _started and _analytics_live:
+		_analytics_decision = 1 if allowed else 0
 		_events.consent_changed.emit(allowed)
+		_report_consent()
 
 
 func _on_initialized() -> void:
@@ -575,3 +585,47 @@ func _disconnect() -> void:
 
 func _exit_tree() -> void:
 	_disconnect()
+
+
+func _report_consent() -> void:
+	if (
+		_analytics_decision < 0
+		or (
+			_ump
+			not in [
+				ConsentAdapter.State.REQUIRED,
+				ConsentAdapter.State.NOT_REQUIRED,
+				ConsentAdapter.State.OBTAINED
+			]
+		)
+	):
+		return
+	var status: String = ConsentAdapter.State.keys()[_ump].to_lower()
+	var signature: String = "%s:%d" % [status, _analytics_decision]
+	if signature == _reported_consent:
+		return
+	_reported_consent = signature
+	_telemetry(
+		&"consent_result",
+		{
+			"analytics_allowed": _analytics_decision == 1,
+			"ads_allowed":
+			_ump in [ConsentAdapter.State.NOT_REQUIRED, ConsentAdapter.State.OBTAINED],
+			"status": status
+		}
+	)
+
+
+func _telemetry(name: StringName, params: Dictionary) -> void:
+	if is_instance_valid(_events):
+		_events.p2_analytics.emit(name, params.duplicate(true))
+
+
+## @api View observation only; never authorizes or starts an ad/store operation.
+func observe_shop_opened(origin: StringName = &"unknown") -> void:
+	_telemetry(&"shop_opened", {"origin": "level" if origin == &"level" else "unknown"})
+
+
+func observe_rewarded_offer(placement: StringName) -> void:
+	if placement in [&"hint", &"double_reward", &"shop_coins"]:
+		_telemetry(&"ad_offer_shown", {"placement": str(placement), "ad_format": "rewarded"})

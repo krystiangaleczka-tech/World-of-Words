@@ -3,6 +3,7 @@ extends Node
 ## Explicit receipt processing. Provider adapters own verification and restore filtering.
 
 signal state_changed(product_id: String, state: StringName, error: Error)
+signal telemetry(name: StringName, params: Dictionary)
 signal changed
 
 const ECONOMY: Script = preload("res://services/economy.gd")
@@ -28,6 +29,9 @@ var _active: String = ""
 var _state: StringName = &"idle"
 var _last_product: String = ""
 var _last_error: Error = OK
+var _restore_observing: bool = false
+var _restore_terminal: bool = false
+var _restore_keys: Array[String] = []
 
 
 func configure(save: SAVE, economy: ECONOMY, adapter: IapAdapter) -> void:
@@ -51,6 +55,7 @@ func configure(save: SAVE, economy: ECONOMY, adapter: IapAdapter) -> void:
 	_adapter.products_received.connect(_on_products)
 	_adapter.transaction_updated.connect(_on_transaction)
 	_adapter.purchase_failed.connect(_on_failure)
+	_adapter.restore_completed.connect(_on_restore_completed)
 
 
 func busy() -> bool:
@@ -174,6 +179,9 @@ func recover(restore: bool = false) -> Error:
 		changed.emit()
 		return error
 	if restore:
+		_restore_observing = true
+		_restore_terminal = false
+		_restore_keys.clear()
 		_adapter.restore()
 	else:
 		_adapter.fetch_unfinished()
@@ -212,7 +220,12 @@ func _on_transaction(source: StoreTransaction) -> void:
 		_notify("", &"failed", ERR_INVALID_DATA)
 		return
 	var transaction: StoreTransaction = StoreTransaction.new(
-		source.store_key, source.product_id, source.state
+		source.store_key,
+		source.product_id,
+		source.state,
+		source.price_micros,
+		source.price_currency,
+		source.restored
 	)
 	var processed: bool = (
 		is_instance_valid(_save)
@@ -260,10 +273,18 @@ func _drain() -> Error:
 	var error: Error = OK
 	while not _queue.is_empty():
 		var transaction: StoreTransaction = _queue[0]
+		var fresh: bool = false
+		if _owners_ready():
+			fresh = (
+				transaction.store_key
+				not in _save.committed_view().sections.monetization.processed_transactions
+			)
 		error = _settle(transaction)
 		if error != OK:
 			_notify(transaction.product_id, &"settling", error)
 			break
+		if fresh and not transaction.restored:
+			_purchase_completed(transaction)
 		_adapter.finish(
 			StoreTransaction.new(transaction.store_key, transaction.product_id, transaction.state)
 		)
@@ -272,6 +293,7 @@ func _drain() -> Error:
 		_pending_keys.erase(transaction.store_key)
 		if _active != transaction.product_id:
 			_notify(transaction.product_id, &"completed", OK)
+	_maybe_restore_completed()
 	_draining = false
 	changed.emit()
 	return error
@@ -315,6 +337,17 @@ func _notify(product: String, next: StringName, error: Error) -> void:
 	_last_error = error
 	var was_notifying: bool = _notifying
 	_notifying = true
+	if product in PRODUCTS:
+		if next == &"purchasing":
+			telemetry.emit(&"iap_purchase_started", {"product_id": product})
+		elif next in [&"cancelled", &"failed", &"unknown"]:
+			telemetry.emit(
+				&"iap_purchase_failed",
+				{
+					"product_id": product,
+					"error_code": "timeout" if next == &"unknown" else str(next)
+				}
+			)
 	state_changed.emit(product, next, error)
 	changed.emit()
 	_notifying = was_notifying
@@ -325,3 +358,65 @@ func _exit_tree() -> void:
 		_adapter.products_received.disconnect(_on_products)
 		_adapter.transaction_updated.disconnect(_on_transaction)
 		_adapter.purchase_failed.disconnect(_on_failure)
+		_adapter.restore_completed.disconnect(_on_restore_completed)
+
+
+func _purchase_completed(transaction: StoreTransaction) -> void:
+	if (
+		transaction.price_micros < 0
+		or transaction.price_micros > 9007199254740991
+		or transaction.price_currency.length() != 3
+	):
+		return
+	for character: String in transaction.price_currency:
+		if character < "A" or character > "Z":
+			return
+	_observe(
+		&"iap_purchase_completed",
+		{
+			"product_id": transaction.product_id,
+			"price_micros": transaction.price_micros,
+			"price_currency": transaction.price_currency
+		}
+	)
+
+
+func _on_restore_completed(transactions: Array[StoreTransaction]) -> void:
+	if not _restore_observing or _restore_terminal:
+		return
+	for transaction: StoreTransaction in transactions:
+		if (
+			transaction == null
+			or transaction.product_id != PRODUCTS[0]
+			or transaction.state != StoreTransaction.State.PURCHASED
+			or transaction.store_key.is_empty()
+			or transaction.store_key != transaction.store_key.strip_edges()
+		):
+			_restore_observing = false
+			_restore_keys.clear()
+			return
+		if transaction.store_key not in _restore_keys:
+			_restore_keys.append(transaction.store_key)
+	_restore_terminal = true
+	_maybe_restore_completed()
+
+
+func _maybe_restore_completed() -> void:
+	if not _restore_observing or not _restore_terminal or not _owners_ready():
+		return
+	var processed: Array = _save.committed_view().sections.monetization.processed_transactions
+	for key: String in _restore_keys:
+		if key not in processed:
+			return
+	var count: int = _restore_keys.size()
+	_restore_observing = false
+	_restore_terminal = false
+	_restore_keys.clear()
+	_observe(&"iap_restore_completed", {"restored_count": count})
+
+
+func _observe(name: StringName, params: Dictionary) -> void:
+	var previous: bool = _notifying
+	_notifying = true
+	telemetry.emit(name, params.duplicate(true))
+	_notifying = previous

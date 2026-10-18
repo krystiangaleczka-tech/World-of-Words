@@ -23,6 +23,9 @@ var offline_panel: StatePanel
 var reward_burst: RewardBurst
 var toast: Toast
 var status_label: Label
+var _shop_observed: bool = false
+var _offer_observed: bool = false
+var _origin: StringName = &"unknown"
 var _had_snapshot: bool = false
 var _last_coins: int = 0
 var _last_owned: bool = false
@@ -36,7 +39,7 @@ var _message_key: String = ""
 var _restore_failure_revision: int = -1
 
 
-func configure(service: SERVICE, ios: bool) -> Error:
+func configure(service: SERVICE, ios: bool, origin: StringName = &"unknown") -> Error:
 	if not is_instance_valid(service) or service.shop_snapshot().is_empty():
 		return ERR_UNCONFIGURED
 	if state != &"closed" and _service != service:
@@ -44,6 +47,7 @@ func configure(service: SERVICE, ios: bool) -> Error:
 	_disconnect_service()
 	_service = service
 	_ios = ios
+	_origin = origin
 	_connect_service()
 	_refresh()
 	return OK
@@ -228,6 +232,7 @@ func _refresh() -> void:
 	if key.is_empty() and snapshot.catalog_state != &"ready":
 		key = "shop.state.loading" if snapshot.catalog_state == &"loading" else "shop.state.offline"
 	status_label.text = tr(key) if not key.is_empty() else ""
+	_observe_visible_catalog(reward)
 	status_label.visible = (
 		not key.is_empty() and not (offline_panel.visible and key == "shop.state.offline")
 	)
@@ -273,6 +278,8 @@ func _buy(id: String) -> void:
 
 
 func _clear_feedback(_reason: StringName) -> void:
+	_shop_observed = false
+	_offer_observed = false
 	reward_burst.cancel()
 	toast.hide_message()
 
@@ -332,3 +339,19 @@ func _notification(what: int) -> void:
 func _exit_tree() -> void:
 	_disconnect_service()
 	super._exit_tree()
+
+
+func _observe_visible_catalog(reward: StringName) -> void:
+	if state not in [&"opening", &"open"] or not _column.is_visible_in_tree():
+		return
+	if not _shop_observed:
+		_shop_observed = true
+		_service.observe_shop_opened(_origin)
+	if (
+		not _offer_observed
+		and reward == &"ready"
+		and not free_card.disabled
+		and not free_card.loading
+	):
+		_offer_observed = true
+		_service.observe_rewarded_offer(&"shop_coins")

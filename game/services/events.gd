@@ -32,3 +32,6 @@ signal feature_unlocked(language: String, feature: StringName, slot: int)
 
 ## @api One newly committed teaching/coach action; registered analytics parameter only.
 signal onboarding_step(step: int)
+
+## @api Copied P2b observations only; AnalyticsListener owns the closed event allowlist.
+signal p2_analytics(name: StringName, params: Dictionary)
