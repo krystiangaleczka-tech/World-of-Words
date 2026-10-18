@@ -304,3 +304,11 @@ func _activate(checked: Dictionary) -> void:
 func _exit_tree() -> void:
 	if _request != null:
 		_request.cancel_request()
+
+
+## @api Independent active values, excluding cache/endpoint/install metadata.
+func active_values() -> Dictionary:
+	var result: Dictionary = _registry.snapshot()
+	for key: String in _overrides:
+		result[StringName(key)] = _overrides[key]
+	return result

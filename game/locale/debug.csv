@@ -37,3 +37,13 @@ debug.p2.error,Nie udało się wykonać akcji. Spróbuj ponownie.,Action failed.
 debug.p2.summary,Monety: %d · Podpowiedź: %d · Odkrycie: %d · Brak reklam wymuszonych: %s · Ponowienie: %s,Coins: %d · Hint: %d · Reveal: %d · Remove Forced Ads: %s · Retry: %s
 debug.p2.yes,Tak,Yes
 debug.p2.no,Nie,No
+debug.time.day_minus,Poprzedni dzień,Previous day
+debug.time.day_plus,Następny dzień,Next day
+debug.time.zone_minus,Strefa: godzina wcześniej,Timezone: hour earlier
+debug.time.zone_plus,Strefa: godzina później,Timezone: hour later
+debug.time.reset,Resetuj zegar,Reset clock
+debug.time.refresh,Odśwież diagnostykę,Refresh diagnostics
+debug.time.summary,Przesunięcie dni: %d · Strefa UTC (min): %d,Day offset: %d · UTC timezone (min): %d
+debug.time.config,Aktywna konfiguracja,Active configuration
+debug.time.buckets,Grupy eksperymentów,Experiment buckets
+debug.time.events,Bieżące zdarzenia analityczne,Live analytics events

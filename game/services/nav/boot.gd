@@ -9,10 +9,14 @@ const AUDIO_LISTENER: Script = preload("res://services/audio/audio_listener.gd")
 var _audio_listener: Node
 var _locale_catalog: LocaleCatalog = LocaleCatalog.new()
 var _haptics_listener: HapticsListener
+var _debug_diagnostics: RefCounted
 
 
 func _ready() -> void:
-	Nav.boot(Clock.new())
+	var clock: Clock = Clock.new()
+	if OS.is_debug_build():
+		clock = load("res://services/debug/clock.gd").new(clock)
+	Nav.boot(clock)
 	var error: Error = _locale_catalog.register_all()
 	if error != OK:
 		push_warning("Boot locale registration failed: %s" % error_string(error))
@@ -39,6 +43,9 @@ func _ready() -> void:
 			Economy.configure(Save, Config, Events)
 		var debug_tools: RefCounted = load("res://services/debug/tools.gd").new()
 		debug_tools.configure(Save, Economy, Config, Platform)
+		_debug_diagnostics = load("res://services/debug/diagnostics.gd").new()
+		if _debug_diagnostics.configure(clock, Save, Economy, Config, Analytics, Events) == OK:
+			debug_tools.diagnostics = _debug_diagnostics
 		Nav.configure(Save, Config, Content, debug_tools)
 		var overlay: CanvasLayer = load("res://features/debug/performance_overlay.gd").new()
 		overlay.name = "PerformanceOverlay"
@@ -47,6 +54,8 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	if _debug_diagnostics != null:
+		_debug_diagnostics.close()
 	_locale_catalog.unregister()
 
 

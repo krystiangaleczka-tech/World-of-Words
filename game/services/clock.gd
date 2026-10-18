@@ -16,3 +16,8 @@ func monotonic_msec() -> int:
 ## @api Monotonic microseconds for render-boundary diagnostics only.
 func monotonic_usec() -> int:
 	return Time.get_ticks_usec()
+
+
+## @api Local calendar offset from UTC, injected independently of elapsed time.
+func time_zone_bias_minutes() -> int:
+	return int(Time.get_time_zone_from_system()["bias"])

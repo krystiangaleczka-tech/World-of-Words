@@ -33,6 +33,10 @@ func _ready() -> void:
 	for outcome: String in ["success", "cancel", "pending", "crash_before_finish"]:
 		_action(outcome, "debug.p2." + outcome, _iap.bind(StringName(outcome)))
 	_refresh(OK)
+	if _port.diagnostics != null:
+		var panel: VBoxContainer = load("res://features/debug/diagnostics.gd").new()
+		panel.configure(_port.diagnostics)
+		add_child(panel)
 
 
 func _action(node_name: String, key: String, handler: Callable) -> void:

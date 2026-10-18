@@ -1,6 +1,9 @@
 extends ServiceStub
 ## @api Registry validation plus explicit stub or durable consent-gated runtime delivery.
 
+## @api Local acceptance notification; copies registered params, never common identifiers.
+signal event_accepted(name: StringName, params: Dictionary)
+
 enum Mode { NONE, STUB, RUNTIME }
 enum ConsentState { UNKNOWN, ALLOWED, DENIED }
 
@@ -193,6 +196,7 @@ func track(name: StringName, params: Dictionary = {}) -> Error:
 	if error != OK:
 		return error
 	_pending = candidate
+	event_accepted.emit(name, params.duplicate(true))
 	return flush() if _consent == ConsentState.ALLOWED else OK
 
 
@@ -237,6 +241,7 @@ func _track_stub(name: StringName, params: Dictionary) -> Error:
 	if _pending.size() >= _capacity:
 		return ERR_OUT_OF_MEMORY
 	_pending.append({"name": str(name), "params": params.duplicate(true)})
+	event_accepted.emit(name, params.duplicate(true))
 	return OK
 
 
@@ -412,3 +417,8 @@ func _exit_tree() -> void:
 		and _event_bus.consent_changed.is_connected(_on_consent_changed)
 	):
 		_event_bus.consent_changed.disconnect(_on_consent_changed)
+
+
+## @api Independent active assignment context; contains no installation identity.
+func experiment_buckets() -> Dictionary:
+	return _buckets.duplicate(true)
