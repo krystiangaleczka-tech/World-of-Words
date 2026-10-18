@@ -51,6 +51,13 @@ func configure(save: SAVE, economy: ECONOMY, adapter: IapAdapter) -> void:
 	_catalog_timer.wait_time = AdPresentation.OPERATION_TIMEOUT_SECONDS
 	add_child(_catalog_timer)
 	_catalog_timer.timeout.connect(_catalog_timeout)
+	_restore_timer = Timer.new()
+	_restore_timer.one_shot = true
+	_restore_timer.ignore_time_scale = true
+	_restore_timer.process_mode = Node.PROCESS_MODE_ALWAYS
+	_restore_timer.wait_time = AdPresentation.OPERATION_TIMEOUT_SECONDS
+	add_child(_restore_timer)
+	_restore_timer.timeout.connect(expire_restore)
 	_timer = Timer.new()
 	_timer.one_shot = true
 	_timer.ignore_time_scale = true
@@ -63,13 +70,6 @@ func configure(save: SAVE, economy: ECONOMY, adapter: IapAdapter) -> void:
 	_adapter.purchase_failed.connect(_on_failure)
 	_adapter.restore_completed.connect(_on_restore_completed)
 	_adapter.restore_failed.connect(_on_restore_failed)
-	_restore_timer = Timer.new()
-	_restore_timer.one_shot = true
-	_restore_timer.ignore_time_scale = true
-	_restore_timer.process_mode = Node.PROCESS_MODE_ALWAYS
-	_restore_timer.wait_time = AdPresentation.OPERATION_TIMEOUT_SECONDS
-	add_child(_restore_timer)
-	_restore_timer.timeout.connect(expire_restore)
 
 
 func busy() -> bool:
