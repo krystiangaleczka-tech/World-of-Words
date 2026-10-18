@@ -45,6 +45,7 @@ def test_quoted_unicode_multiline_copy_and_readonly(tmp_path):
         'keys,pl,en\nprobe.main.title,"unfinished,Title\n',
         'keys,pl,en\nprobe.main.title,"quoted"junk,Title\n',
         "keys,pl,en\nprobe.main.title,T,Ti\x00tle\n",
+        'keys,pl,en\nprobe.main.title,Ty"tuł,Title\n',
     ],
 )
 def test_invalid_csv_fails_with_physical_path_and_line(tmp_path, text):
@@ -120,3 +121,11 @@ def test_cli_from_other_cwd_success_and_failure_without_writes(tmp_path):
     failed = subprocess.run(command + ["--root", str(tmp_path)], capture_output=True, text=True)
     assert failed.returncode == 1 and "arguments differ" in failed.stderr
     assert path.read_bytes() == before
+
+
+def test_bare_quote_after_multiline_cell_reports_physical_line(tmp_path):
+    source(
+        tmp_path, text='keys,pl,en\nprobe.main.title,"a\nb",Title\nprobe.main.next,Ty"tuł,Next\n'
+    )
+    with pytest.raises(ValueError, match="probe.csv:4: malformed CSV quoting"):
+        load_catalog(tmp_path)

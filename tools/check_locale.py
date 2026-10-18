@@ -42,6 +42,27 @@ def signature(text: str) -> tuple[str, ...]:
     return tuple(result)
 
 
+def quote_error(text: str) -> int | None:
+    """csv.strict checks closing quotes, but accepts bare quotes in plain fields."""
+    state = "start"
+    line = 1
+    for index, char in enumerate(text):
+        if state == "quoted":
+            if char == '"':
+                state = "closed"
+        elif state == "closed" and char == '"':
+            state = "quoted"
+        elif char in ",\r\n":
+            state = "start"
+        elif state == "closed" or (char == '"' and state != "start"):
+            return line
+        else:
+            state = "quoted" if char == '"' else "plain"
+        if char == "\n" or (char == "\r" and text[index + 1 : index + 2] != "\n"):
+            line += 1
+    return line if state == "quoted" else None
+
+
 def load_catalog(root: Path) -> dict[str, dict[str, str]]:
     catalog: dict[str, dict[str, str]] = {}
     errors: list[str] = []
@@ -54,6 +75,11 @@ def load_catalog(root: Path) -> dict[str, dict[str, str]]:
         count = 0
         try:
             with path.open(encoding="utf-8", newline="") as stream:
+                bad_quote = quote_error(stream.read())
+                if bad_quote is not None:
+                    errors.append(f"{label}:{bad_quote}: malformed CSV quoting")
+                    continue
+                stream.seek(0)
                 reader = csv.reader(stream, strict=True)
                 if next(reader, None) != ["keys", "pl", "en"]:
                     raise ValueError("expected exact keys,pl,en header")
