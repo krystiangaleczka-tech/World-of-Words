@@ -184,3 +184,40 @@ not Events telemetry. Requested is acceptance, not restored/empty success. Only
 completed permits an aggregate result/count. Unknown requires an explicit retry;
 settling requires retry_restore_settlement without a second provider restore.
 No Settings row binding or global activation is added by this contract task.
+
+## Bound Restore Purchases (T-0342)
+
+`SettingsScreen.bind_restore(service:Node) -> Error` opts into T-0341. It requires
+actual Monetization and the same loaded Save used by configure(save), proved by
+readonly `Monetization.restore_owner_matches(save:Node) -> bool`. Foreign/invalid
+bindings preserve the existing owner. Pending requested/settling work cannot be
+replaced with another service; reentrant dispatch cannot rebind. Unbound callers
+retain their original action_requested(restore) route, without an implicit provider.
+
+Bound row intent dispatches once and never echoes action_requested. Requested
+shows loading and blocks duplicates, with no acceptance Toast. The existing
+ListRow's loading texture reserves its leading slot, keeping the spinner clear of
+wrapped labels. Settling stops the provider spinner, disables another restore and
+shows a settlement-only retry. The retry drains existing receipts; it never asks
+the store for another restore. Failed/unknown permit a new explicit row request.
+
+A wrapped persistent Caption reports exact proved count (Label: N), verified empty,
+failed, unknown, waiting-for-save or unavailable. Terminal results and rejected
+commands use existing Toast; failed settlement retries also announce their error.
+A new attempt clears old success Toast. Service identity, snapshot revision and
+explicit attempt suppress replay on refresh, translation or retained reentry.
+A notice is marked seen only after Toast actually accepts it: early tree entry
+cannot consume a result before the child is mounted. Hidden/detached completion
+appears once on return. All labels/copy translate live through settings.csv.
+
+Exit disconnects service signals; retained entry reconnects once and resyncs. Back
+can leave while work remains owned by Monetization. Service loss clears loading
+and fails closed, retaining bound intent ownership until explicit valid rebind.
+No gameplay flow listens to telemetry. This activates no SDK or global Settings
+route, changes no saved setting/receipt behavior, and closes no physical store gate.
+
+Owner identity/liveness is revalidated on retained entry and every restore refresh.
+A detached screen cannot reconnect to a retained service that left the tree;
+it invalidates that binding and requires explicit valid rebind. Command rejection
+copy is scoped to the recorded snapshot revision, so newer results completed while
+detached supersede stale local errors.

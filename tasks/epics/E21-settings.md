@@ -36,3 +36,8 @@ T-0341 supplies service-owned restore results before T-0288 UI binding: accepted
 settling, completed, failed and unknown, with committed-key proof and bounded
 provider wait. Telemetry is not application state. Native adapter activation and
 Settings action wiring remain open.
+
+T-0342 binds Settings Restore Purchases explicitly to same-Save Monetization,
+using T-0341 proof/status, settlement-only retry and deduplicated feedback. Unbound
+screens retain their intent route. Global Settings activation, native stores and
+remaining consent/privacy/browser/support actions are still open.

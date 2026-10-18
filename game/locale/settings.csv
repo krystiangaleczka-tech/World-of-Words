@@ -43,3 +43,13 @@ settings.licences.inter,Krój pisma Inter,Inter font
 settings.licences.lucide,Ikony Lucide i Feather,Lucide and Feather icons
 settings.licences.audio,Dźwięki,Audio
 settings.licences.sources,Źródła słów i częstotliwości,Word and frequency sources
+settings.restore.requested,Sprawdzanie zakupów…,Checking purchases…
+settings.restore.settling,Zakupy czekają na zapis. Ponów zapis.,Purchases are waiting to be saved. Retry saving.
+settings.restore.completed,Przywrócone zakupy: %s,Restored purchases: %s
+settings.restore.empty,Brak zakupów do przywrócenia.,No purchases to restore.
+settings.restore.failed,Nie udało się przywrócić zakupów. Spróbuj ponownie.,Purchases could not be restored. Try again.
+settings.restore.unknown,Nie otrzymano odpowiedzi sklepu. Spróbuj ponownie.,No response from the store. Try again.
+settings.restore.unavailable,Przywracanie zakupów jest niedostępne.,Restore purchases is unavailable.
+settings.restore.retry_save,Ponów zapis,Retry save
+settings.restore.busy,Sklep jest zajęty. Spróbuj ponownie.,The store is busy. Try again.
+settings.restore.success,Zakupy zostały przywrócone.,Purchases restored.

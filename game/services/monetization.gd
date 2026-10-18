@@ -657,3 +657,15 @@ func retry_restore_settlement() -> Error:
 func expire_restore() -> void:
 	if is_instance_valid(_iap_flow):
 		_iap_flow.expire_restore()
+
+
+## @api Settings must bind the actual loaded profile and a live service.
+func restore_owner_matches(save: Node) -> bool:
+	return (
+		is_inside_tree()
+		and is_instance_valid(save)
+		and save == _save
+		and _save.is_loaded()
+		and _configured()
+		and is_instance_valid(_iap_flow)
+	)

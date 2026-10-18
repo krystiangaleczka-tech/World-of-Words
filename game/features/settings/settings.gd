@@ -6,6 +6,7 @@ signal back_requested
 signal setting_requested(key: StringName, value: Variant)
 signal action_requested(action: StringName)
 
+const MONETIZATION: Script = preload("res://services/monetization.gd")
 const LANGUAGE: Script = preload("res://services/settings_language.gd")
 const RUNTIME: Script = preload("res://services/settings_runtime.gd")
 const SAVE: Script = preload("res://services/save.gd")
@@ -39,6 +40,9 @@ var text_sheet: Sheet
 var text_options: Array[TextButton] = []
 var retry_button: TextButton
 var write_error: Label
+var restore_message: Label
+var restore_retry: TextButton
+var restore_toast: Toast
 var _language_content: VBoxContainer
 var _language: LANGUAGE
 var _text_content: VBoxContainer
@@ -49,6 +53,13 @@ var _runtime: RUNTIME
 var _save: SAVE
 var _column: VBoxContainer
 var _privacy_available: bool = false
+var _restore_service: MONETIZATION
+var _restore_bound: bool = false
+var _restore_dispatch: bool = false
+var _restore_command_error: Error = OK
+var _restore_error_revision: int = -1
+var _restore_attempt: int = 0
+var _restore_seen: String = ""
 
 
 func configure(save: Node) -> Error:
@@ -260,6 +271,7 @@ func _enter_tree() -> void:
 	_connect_save()
 	_connect_runtime()
 	_connect_language()
+	_connect_restore()
 	if is_instance_valid(scroll):
 		_reconcile_after_entry.call_deferred()
 
@@ -302,6 +314,7 @@ func _ready() -> void:
 	_section("purchases")
 	_action(&"shop")
 	_action(&"restore")
+	_build_restore_controls()
 	_section("privacy")
 	_action(&"privacy_options")
 	_action(&"privacy_policy")
@@ -379,6 +392,8 @@ func _request_action(key: StringName) -> void:
 	if rows[key].is_visible_in_tree() and not rows[key].disabled and not rows[key].loading:
 		if key == &"text_size" and is_instance_valid(_runtime):
 			text_sheet.open()
+		elif key == &"restore" and _restore_bound:
+			_dispatch_restore(false)
 		elif key == &"language" and is_instance_valid(_language):
 			_open_language()
 		else:
@@ -441,6 +456,7 @@ func _refresh() -> void:
 	for child: Node in _column.get_children():
 		if child is Label and child.has_meta(&"copy_key"):
 			(child as Label).text = tr(child.get_meta(&"copy_key"))
+	_refresh_restore()
 
 
 func _changed(key: StringName) -> void:
@@ -462,6 +478,7 @@ func _exit_tree() -> void:
 	super._exit_tree()
 	_disconnect_runtime()
 	_disconnect_language()
+	_disconnect_restore()
 	if is_instance_valid(_save) and _save.setting_changed.is_connected(_changed):
 		_save.setting_changed.disconnect(_changed)
 
@@ -470,6 +487,8 @@ func _notification(what: int) -> void:
 	super._notification(what)
 	if what == NOTIFICATION_TRANSLATION_CHANGED:
 		_refresh()
+	elif what == NOTIFICATION_VISIBILITY_CHANGED and is_inside_tree():
+		_refresh_restore()
 	elif what == NOTIFICATION_PREDELETE:
 		if is_instance_valid(_language_content):
 			_language_content.free()
@@ -478,3 +497,163 @@ func _notification(what: int) -> void:
 		for control: Control in controls.values():
 			if is_instance_valid(control):
 				control.free()
+
+
+## @api Explicit same-profile binding; unbound screens retain action intent.
+func bind_restore(service: Node) -> Error:
+	if _restore_dispatch:
+		return ERR_BUSY
+	if not service is MONETIZATION or not service.restore_owner_matches(_save):
+		return ERR_UNCONFIGURED
+	if is_instance_valid(_restore_service) and service != _restore_service:
+		if _restore_service.restore_snapshot().state in [&"requested", &"settling"]:
+			return ERR_BUSY
+	if service != _restore_service:
+		_restore_seen = ""
+		_restore_attempt = 0
+	_disconnect_restore()
+	_restore_service = service
+	_restore_bound = true
+	_restore_command_error = OK
+	_connect_restore()
+	_refresh_restore()
+	return OK
+
+
+func _connect_restore() -> void:
+	if is_inside_tree() and _restore_bound:
+		if (
+			not is_instance_valid(_restore_service)
+			or not _restore_service.restore_owner_matches(_save)
+		):
+			_restore_lost()
+			return
+		if not _restore_service.restore_changed.is_connected(_restore_changed):
+			_restore_service.restore_changed.connect(_restore_changed)
+			_restore_service.tree_exiting.connect(_restore_lost)
+
+
+func _disconnect_restore() -> void:
+	if is_instance_valid(_restore_service):
+		if _restore_service.restore_changed.is_connected(_restore_changed):
+			_restore_service.restore_changed.disconnect(_restore_changed)
+		if _restore_service.tree_exiting.is_connected(_restore_lost):
+			_restore_service.tree_exiting.disconnect(_restore_lost)
+
+
+func _restore_lost() -> void:
+	_restore_command_error = OK
+	if is_instance_valid(restore_toast):
+		restore_toast.hide_message()
+	_disconnect_restore()
+	_restore_service = null
+	_refresh_restore()
+
+
+func _restore_changed() -> void:
+	_restore_command_error = OK
+	_refresh_restore()
+
+
+func _build_restore_controls() -> void:
+	restore_message = CatalogSurface.label(&"Caption")
+	restore_message.visible = false
+	_column.add_child(restore_message)
+	restore_retry = TextButton.new()
+	restore_retry.text_key = "settings.restore.retry_save"
+	restore_retry.visible = false
+	restore_retry.pressed.connect(_dispatch_restore.bind(true))
+	_column.add_child(restore_retry)
+	restore_toast = Toast.new()
+	add_child(restore_toast)
+
+
+func _dispatch_restore(settlement: bool) -> void:
+	if _restore_dispatch or not is_instance_valid(_restore_service):
+		return
+	if settlement and (not restore_retry.is_visible_in_tree() or restore_retry.disabled):
+		return
+	_restore_dispatch = true
+	restore_toast.hide_message()
+	_restore_attempt += 1
+	_restore_command_error = OK
+	var error: Error = (
+		_restore_service.retry_restore_settlement()
+		if settlement
+		else _restore_service.restore_purchases()
+	)
+	_restore_dispatch = false
+	if is_instance_valid(_restore_service):
+		if error != OK and _restore_service.restore_snapshot().state != &"settling":
+			_restore_command_error = error
+			_restore_error_revision = _restore_service.restore_snapshot().revision
+	_refresh_restore()
+
+
+func _refresh_restore() -> void:
+	if not _restore_bound or not is_instance_valid(restore_message) or not rows.has(&"restore"):
+		return
+	if is_instance_valid(_restore_service) and not _restore_service.restore_owner_matches(_save):
+		_restore_lost()
+		return
+	var data: Dictionary = (
+		_restore_service.restore_snapshot()
+		if is_instance_valid(_restore_service)
+		else {
+			"state": &"unavailable", "restored_count": -1, "error": ERR_UNAVAILABLE, "revision": 0
+		}
+	)
+	if data.state == &"unavailable" or data.revision != _restore_error_revision:
+		_restore_command_error = OK
+	var key: String = ""
+	match data.state:
+		&"requested":
+			key = "settings.restore.requested"
+		&"settling":
+			key = "settings.restore.settling"
+		&"completed":
+			key = (
+				"settings.restore.empty"
+				if data.restored_count == 0
+				else "settings.restore.completed"
+			)
+		&"failed":
+			key = "settings.restore.failed"
+		&"unknown":
+			key = "settings.restore.unknown"
+		&"unavailable":
+			key = "settings.restore.unavailable"
+	if _restore_command_error != OK:
+		key = (
+			"settings.restore.busy"
+			if _restore_command_error == ERR_BUSY
+			else "settings.restore.failed"
+		)
+	rows[&"restore"].loading = data.state == &"requested"
+	# Reuse the catalog loading icon slot to keep its spinner clear of wrapped text.
+	rows[&"restore"].leading_icon = rows[&"restore"].icon if rows[&"restore"].loading else null
+	rows[&"restore"].disabled = (
+		_restore_dispatch or data.state in [&"requested", &"settling", &"unavailable"]
+	)
+	restore_retry.visible = data.state == &"settling"
+	restore_retry.disabled = _restore_dispatch
+	restore_message.visible = not key.is_empty()
+	restore_message.text = tr(key) if not key.is_empty() else ""
+	if key == "settings.restore.completed":
+		restore_message.text = tr(key) % str(data.restored_count)
+	var terminal: bool = (
+		data.state in [&"completed", &"failed", &"unknown"]
+		or _restore_command_error != OK
+		or (data.state == &"settling" and data.error != OK)
+	)
+	var identity: int = (
+		_restore_service.get_instance_id() if is_instance_valid(_restore_service) else 0
+	)
+	var fingerprint: String = "%s/%s/%s/%s" % [identity, data.revision, _restore_attempt, key]
+	if terminal and is_visible_in_tree() and fingerprint != _restore_seen:
+		var success: bool = data.state == &"completed" and _restore_command_error == OK
+		var toast_key: String = (
+			"settings.restore.success" if key == "settings.restore.completed" else key
+		)
+		if restore_toast.show_message(toast_key, &"success" if success else &"error") == OK:
+			_restore_seen = fingerprint
