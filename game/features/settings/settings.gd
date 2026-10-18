@@ -6,6 +6,7 @@ signal back_requested
 signal setting_requested(key: StringName, value: Variant)
 signal action_requested(action: StringName)
 
+const POLICY_BINDING: Script = preload("res://features/settings/policy_binding.gd")
 const SUPPORT: Script = preload("res://services/settings_support.gd")
 const MONETIZATION: Script = preload("res://services/monetization.gd")
 const LANGUAGE: Script = preload("res://services/settings_language.gd")
@@ -41,6 +42,12 @@ var text_sheet: Sheet
 var text_options: Array[TextButton] = []
 var retry_button: TextButton
 var write_error: Label
+var policy_message: Label:
+	get:
+		return _policy.message
+var policy_toast: Toast:
+	get:
+		return _policy.toast
 var support_message: Label
 var support_toast: Toast
 var privacy_message: Label
@@ -48,6 +55,7 @@ var privacy_toast: Toast
 var restore_message: Label
 var restore_retry: TextButton
 var restore_toast: Toast
+var _policy: POLICY_BINDING = POLICY_BINDING.new()
 var _language_content: VBoxContainer
 var _language: LANGUAGE
 var _text_content: VBoxContainer
@@ -340,6 +348,7 @@ func _ready() -> void:
 	_action(&"privacy_options")
 	_build_privacy_controls()
 	_action(&"privacy_policy")
+	_policy.mount(self, rows[&"privacy_policy"], _save if is_instance_valid(_save) else null)
 	_section("about")
 	_action(&"licences")
 	_action(&"support", &"value")
@@ -415,6 +424,8 @@ func _request_action(key: StringName) -> void:
 	if rows[key].is_visible_in_tree() and not rows[key].disabled and not rows[key].loading:
 		if key == &"text_size" and is_instance_valid(_runtime):
 			text_sheet.open()
+		elif key == &"privacy_policy" and _policy.is_bound():
+			_policy.request()
 		elif key == &"support" and _support_bound:
 			_dispatch_support()
 		elif key == &"privacy_options" and _privacy_bound:
@@ -486,6 +497,7 @@ func _refresh() -> void:
 	_refresh_restore()
 	_refresh_privacy()
 	_refresh_support()
+	_policy.refresh()
 
 
 func _changed(key: StringName) -> void:
@@ -522,7 +534,10 @@ func _notification(what: int) -> void:
 		_refresh_restore()
 		_refresh_privacy()
 		_refresh_support()
+		_policy.refresh()
 	elif what == NOTIFICATION_PREDELETE:
+		if is_instance_valid(_policy) and _policy.get_parent() == null:
+			_policy.free()
 		if is_instance_valid(_language_content):
 			_language_content.free()
 		if is_instance_valid(_text_content):
@@ -929,3 +944,10 @@ func _refresh_support() -> void:
 		var success: bool = data.state == &"handed_off" and _support_command_error == OK
 		if support_toast.show_message(key, &"success" if success else &"error") == OK:
 			_support_seen = fingerprint
+
+
+## @api Explicit policy handoff binding; no auto-open on bind or refresh.
+func bind_policy(service: Node) -> Error:
+	if not is_instance_valid(_save):
+		return ERR_UNCONFIGURED
+	return _policy.bind(service, _save)

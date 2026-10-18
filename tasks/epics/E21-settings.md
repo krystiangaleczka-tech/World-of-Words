@@ -80,3 +80,10 @@ T-0349 owns policy-browser handoff through an explicit caller port receiving onl
 committed content language. Accepted handoff is not document-load/consent proof.
 T-0350 binds this owner to Settings; actual approved policy destination/native
 transport and device/legal/global activation remain separate gates.
+
+T-0350 binds the Privacy Policy row to T-0349 through a nonvisual feature controller,
+with same-Save ownership, explicit handoff, retry and retained lifecycle feedback.
+The T-0348..T-0350 wave closes reusable local licences routing and injected browser
+presentation. T-0288 still requires approved policy URL/mail recipient/native
+transport, real store/consent integration, global activation and device/legal
+verification; this wave does not infer or configure those external resources.
