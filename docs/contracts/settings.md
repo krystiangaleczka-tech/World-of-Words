@@ -242,3 +242,30 @@ Exit disconnects; retained entry and refresh revalidate the owner before reconne
 Owner loss fails closed until explicit valid rebind. Back does not cancel provider
 work. Global Settings/provider activation and real device/legal verification remain
 open, as do mail/browser actions. No provider, analytics or Save behavior changes.
+
+## Support draft owner (T-0346)
+
+Caller-owned services/settings_support.gd exposes configure(save:Node,
+composer:Callable)->Error, owner_matches(save), draft(), snapshot() and
+request_draft()->Error. The live actual loaded Save and valid two-argument port
+must match; invalid replacement preserves binding. Retained exit invalidates it
+until explicit configure. The service owns an existing LocaleCatalog registration,
+removing its copies on exit; it never changes the selected locale.
+
+A fresh readonly draft contains only subject/body: translated edit instruction,
+blank space, full committed install_id once, current application version and
+committed content language. Snapshot supplies availability, idle/requested/
+handed_off/failed (or unavailable), actual Error, increasing revision and short ID.
+No Save mutation, wallet/receipt dump, persisted history or telemetry is involved.
+
+The explicit composer(subject:String,body:String)->Error port opens an editable
+draft only, never sends mail. Caller owns the approved support recipient, native
+URI encoding and error mapping. This wave introduces no destination or real
+transport. OK certifies handoff, never message sending/delivery. Failure permits
+explicit retry; invalid return type/error becomes ERR_INVALID_DATA. Binding and
+reading perform no provider work. requested is notified before one dispatch;
+owner/port invalidation suppresses it. Loss during the call cannot claim handoff.
+Notifications and dispatch reject configure/request reentry with ERR_BUSY.
+
+T-0347 owns Settings binding and copy for handoff/failure. Real configured support
+address, platform composer and device/encoding verification remain external gates.

@@ -59,3 +59,8 @@ feedback and retained-screen lifecycle. The next bounded wave comprises T-0346
 (readonly support draft owner + injected composer) and T-0347 (Settings support
 binding). Real support address/composer and native/legal/global activation stay
 explicit gates; no destination is invented or activated by these tasks.
+
+T-0346 prepares readonly localized support subject/body with the full committed
+installation ID and an explicitly injected editable-draft composer. Handoff is not
+sending/delivery. T-0347 still owns Settings binding; a real approved recipient,
+native composition/encoding and device verification are not configured here.

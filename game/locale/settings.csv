@@ -59,3 +59,8 @@ settings.privacy.failed,Nie udało się zakończyć opcji prywatności. Spróbuj
 settings.privacy.unknown,Nie potwierdzono zakończenia opcji prywatności. Spróbuj ponownie.,Privacy options completion was not confirmed. Try again.
 settings.privacy.unavailable,Opcje prywatności są niedostępne.,Privacy options are unavailable.
 settings.privacy.busy,Trwa inna operacja. Spróbuj ponownie.,Another operation is in progress. Try again.
+settings.support.subject,Pomoc dotycząca gry,Game support
+settings.support.instruction,Opisz problem poniżej:,Describe the problem below:
+settings.support.install_id,Identyfikator instalacji: %s,Installation ID: %s
+settings.support.version,Wersja aplikacji: %s,App version: %s
+settings.support.language,Język treści: %s,Content language: %s
