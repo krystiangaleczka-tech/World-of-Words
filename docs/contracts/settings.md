@@ -269,3 +269,27 @@ Notifications and dispatch reject configure/request reentry with ERR_BUSY.
 
 T-0347 owns Settings binding and copy for handoff/failure. Real configured support
 address, platform composer and device/encoding verification remain external gates.
+
+## Bound Support draft (T-0347)
+
+SettingsScreen.bind_support(service:Node)->Error requires the actual caller-owned
+SettingsSupport and exact live Save proof. Invalid replacement preserves the
+binding; requested owner/dispatch reentry blocks replacement. Unbound support
+retains its original action intent. Binding/refresh never opens a composer.
+
+Bound row dispatches request_draft once without echo. Requested is loading/disabled
+with its reserved leading slot. Persistent wrapped Caption and terminal/error Toast
+report preparation, handoff, failure, busy or unavailable. Handoff asks the player
+to finish in the mail app; it never claims sent/delivered. Only the short ID is
+visible in Settings; full committed UUID stays in the explicit draft payload.
+Retries are explicit row presses; unavailable remains disabled until valid rebind.
+
+Owner/revision/attempt deduplicates feedback across hide/reentry/locale/theme,
+including terminal while detached. New attempts clear old Toast; failed display
+is not marked seen. Revision changes supersede local rejection copy. Disconnect on
+exit; retained entry and refresh revalidate owner/port before reconnecting once.
+Loss fails closed with no legacy fallback. Back remains usable, settings unchanged.
+
+The explicit support presentation is ready for a real caller, but approved mail
+recipient/transport/native URI encoding, device verification and global Settings
+activation remain open, together with privacy-policy browser integration.

@@ -64,3 +64,8 @@ settings.support.instruction,Opisz problem poniżej:,Describe the problem below:
 settings.support.install_id,Identyfikator instalacji: %s,Installation ID: %s
 settings.support.version,Wersja aplikacji: %s,App version: %s
 settings.support.language,Język treści: %s,Content language: %s
+settings.support.requested,Przygotowywanie szkicu wiadomości…,Preparing a message draft…
+settings.support.handed_off,Dokończ wiadomość w aplikacji pocztowej.,Finish your message in the mail app.
+settings.support.failed,Nie udało się otworzyć szkicu wiadomości. Spróbuj ponownie.,The message draft could not be opened. Try again.
+settings.support.unavailable,Otwarcie szkicu wiadomości jest niedostępne.,Opening a message draft is unavailable.
+settings.support.busy,Trwa przygotowywanie wiadomości. Spróbuj ponownie.,A message is being prepared. Try again.

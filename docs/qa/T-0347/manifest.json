@@ -1,0 +1,259 @@
+{
+  "engine": "Godot 4.7.2",
+  "display": "x11",
+  "renderer": "gl_compatibility",
+  "images": [
+    {
+      "file": "COMPACT_PL_default100_failed.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 129886,
+      "sha256": "60bb37eeece224bd5b89c6dde026a1b8de6e304ec07599de4c32386dd9c70529"
+    },
+    {
+      "file": "COMPACT_PL_default100_handed_off.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 128630,
+      "sha256": "77f47fe8452930b5a63d5bd91d2c6163c2690efd6ce6517ac1ef57fa7d440900"
+    },
+    {
+      "file": "COMPACT_PL_default100_ready.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 108681,
+      "sha256": "796695e2e961852cd7ad66131d62017472b8553cf93b39e7da83ce882f9bb3a7"
+    },
+    {
+      "file": "COMPACT_PL_hc130_failed.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 150161,
+      "sha256": "28619382eea5ef13e439331f630b6ace3a9ed25db118b197e9c7a5ba1d5b00f3"
+    },
+    {
+      "file": "COMPACT_PL_hc130_handed_off.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 138294,
+      "sha256": "0b23a6a6f8dedba93a47ef58bd7557e524230b86041e933ba73c223563479dc9"
+    },
+    {
+      "file": "COMPACT_PL_hc130_ready.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 122583,
+      "sha256": "959fe8eecea3c8a4211867db77267219c0b0e5acbb569dd07f8c62a84e346e85"
+    },
+    {
+      "file": "COMPACT_PSEUDO_default100_failed.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 159021,
+      "sha256": "324768ab668d74fe029e3784c39cb44de574ec6ebaf95123730d59b3fe46c134"
+    },
+    {
+      "file": "COMPACT_PSEUDO_default100_handed_off.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 147650,
+      "sha256": "c1946495923c314122cf40dc7402de94f22ceb4038013e80d268613d37eba45c"
+    },
+    {
+      "file": "COMPACT_PSEUDO_default100_ready.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 129336,
+      "sha256": "62888fb33c86fb879a6ab9caf29ddf81ad1a5b3b993c4707731ebdd05463b83b"
+    },
+    {
+      "file": "COMPACT_PSEUDO_hc130_failed.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 179093,
+      "sha256": "f10727ba2c525738311eb4e66af3b99ed5d67278f637581762e30e7bb7a5c433"
+    },
+    {
+      "file": "COMPACT_PSEUDO_hc130_handed_off.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 170755,
+      "sha256": "0a59429d25b49519b35bb5ad9a3257d9d71b918d74b363156235b465ee58d608"
+    },
+    {
+      "file": "COMPACT_PSEUDO_hc130_ready.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 147896,
+      "sha256": "983b47d9975be3abd1ec1ec4888d38dbc2ba259376adfb3ceb2ecfb9f8d567b6"
+    },
+    {
+      "file": "REGULAR_PL_default100_failed.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 160282,
+      "sha256": "47ba9a6db29bcc17f5b94f6f30923c90bc41648c8aca4a433ca5286787488390"
+    },
+    {
+      "file": "REGULAR_PL_default100_handed_off.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 153393,
+      "sha256": "72a6767e3650e090880828071af28ccda2980f53631cc41e5aa3011a7363baba"
+    },
+    {
+      "file": "REGULAR_PL_default100_ready.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 138673,
+      "sha256": "b305559876348fc4f3da81d6defb8b0cb433d4f68ba45cc3b1989613a637f464"
+    },
+    {
+      "file": "REGULAR_PL_hc130_failed.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 181913,
+      "sha256": "afc7b58c228219252ffdf3787d67687182163fec9661b1215b202dcb789c254d"
+    },
+    {
+      "file": "REGULAR_PL_hc130_handed_off.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 168894,
+      "sha256": "21667e9218f44b1ffe14fd596d2de70ec3707596f805cf6ae90d6aecca2d45c8"
+    },
+    {
+      "file": "REGULAR_PL_hc130_ready.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 156659,
+      "sha256": "ad116794c798dab4a15a1796c0b6d43ec8033283d065ebdaadac12a1188a65b8"
+    },
+    {
+      "file": "REGULAR_PSEUDO_default100_failed.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 194236,
+      "sha256": "73f34fb707f45a898c3d361d840c5cbe6ac254c16e16df4ceb29d2e9e2dd9090"
+    },
+    {
+      "file": "REGULAR_PSEUDO_default100_handed_off.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 183205,
+      "sha256": "0511fcdb3e35201564f5884225a19474204656b246fc05dd96c4c1732d35ddf6"
+    },
+    {
+      "file": "REGULAR_PSEUDO_default100_ready.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 164084,
+      "sha256": "84c3251ad6fe1496222e2a6187cb38d6d122a2986adbabeb7cb5280d8424a266"
+    },
+    {
+      "file": "REGULAR_PSEUDO_hc130_failed.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 211124,
+      "sha256": "eaf391bbec2738ed70acd6cde6519bd0df83b274906122f92938a7b14925a182"
+    },
+    {
+      "file": "REGULAR_PSEUDO_hc130_handed_off.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 207372,
+      "sha256": "423eed21c77917af918306564786942568a4608b0a58121902b441ece5330ac9"
+    },
+    {
+      "file": "REGULAR_PSEUDO_hc130_ready.png",
+      "width": 1080,
+      "height": 2340,
+      "bytes": 187758,
+      "sha256": "baf41cb1b5c424fdc751a64bcc39c7767c0c22952961a1fafbc4b350c4f7cdf9"
+    },
+    {
+      "file": "TABLET_PL_default100_failed.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 134669,
+      "sha256": "a130ddae4d7c326cba696060940c420c27ea71df747aecaebbb38f568f357d40"
+    },
+    {
+      "file": "TABLET_PL_default100_handed_off.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 133400,
+      "sha256": "ac295ecea1a2cc2185eac3bee60f9ea5708e5a1b1728b893c39103621e6559cd"
+    },
+    {
+      "file": "TABLET_PL_default100_ready.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 113435,
+      "sha256": "5ff713af48912880a073fda432a0bfc85877c3ca9c64bf3bdefc9a24e23e6d57"
+    },
+    {
+      "file": "TABLET_PL_hc130_failed.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 156293,
+      "sha256": "25ff413384c318426c3b056bc8690706c19a3167b9694449fc1b74025c3f0576"
+    },
+    {
+      "file": "TABLET_PL_hc130_handed_off.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 144413,
+      "sha256": "9c1f5e0644b0094b340edd3445eb7bff9842577248be3dd2b51886e32e2186ea"
+    },
+    {
+      "file": "TABLET_PL_hc130_ready.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 127927,
+      "sha256": "e5dd9fea5ba216b1dbd4e48f44baba3a81e5c89bba7847503e3f9f955f20282e"
+    },
+    {
+      "file": "TABLET_PSEUDO_default100_failed.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 165250,
+      "sha256": "72cd8f28cacfa07576f4a4ce1b318b76eee2c3b3e9beb8ed8b1d679be5fefc0d"
+    },
+    {
+      "file": "TABLET_PSEUDO_default100_handed_off.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 153075,
+      "sha256": "35e4a9ea0202519c7bdf24e9ecdeb89129b9fe829a2bd0dcd8cf913d04863fe1"
+    },
+    {
+      "file": "TABLET_PSEUDO_default100_ready.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 134463,
+      "sha256": "8ec2710243c95d33c0a882e92d9401d60164868fc9fa9313579ed3df56c15e0e"
+    },
+    {
+      "file": "TABLET_PSEUDO_hc130_failed.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 186362,
+      "sha256": "41291de0576d7602221ff920ec025497d65ae7e7a8a4db44de9bfd79948f7e48"
+    },
+    {
+      "file": "TABLET_PSEUDO_hc130_handed_off.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 177907,
+      "sha256": "bf8be59b7941f2a3ce17b24d2ffbb82a1563e2c19e29f100173f3c74b4d07dcd"
+    },
+    {
+      "file": "TABLET_PSEUDO_hc130_ready.png",
+      "width": 1440,
+      "height": 1920,
+      "bytes": 153611,
+      "sha256": "09e792a419154bf038aca45e57fc9878291d89599ff5cb2ba9ea2cab834f34d3"
+    }
+  ]
+}
