@@ -17,6 +17,45 @@ const SCREEN_NAMES: PackedStringArray = [
 	"DEBUG",
 ]
 
+const P2_EVENTS: Array[StringName] = [
+	&"consent_result",
+	&"att_result",
+	&"ad_offer_shown",
+	&"ad_shown",
+	&"ad_reward_earned",
+	&"ad_failed",
+	&"shop_opened",
+	&"iap_purchase_started",
+	&"iap_purchase_completed",
+	&"iap_purchase_failed",
+	&"iap_restore_completed",
+	&"hint_stuck_offer_shown"
+]
+
+const P2_ENUMS: Dictionary[StringName, Dictionary] = {
+	&"consent_result": {"status": ["required", "not_required", "obtained"]},
+	&"att_result": {"status": ["authorized", "denied", "restricted"]},
+	&"ad_offer_shown":
+	{
+		"placement": ["hint", "double_reward", "shop_coins", "campaign_continue"],
+		"ad_format": ["rewarded", "interstitial"]
+	},
+	&"ad_shown":
+	{
+		"placement": ["hint", "double_reward", "shop_coins", "campaign_continue"],
+		"ad_format": ["rewarded", "interstitial"]
+	},
+	&"ad_reward_earned": {"placement": ["hint", "double_reward", "shop_coins"]},
+	&"ad_failed":
+	{
+		"placement": ["hint", "double_reward", "shop_coins", "campaign_continue"],
+		"ad_format": ["rewarded", "interstitial"],
+		"error_code": ["no_fill", "provider_error", "timeout"]
+	},
+	&"iap_purchase_failed": {"error_code": ["cancelled", "failed", "timeout"]},
+	&"shop_opened": {"origin": ["level", "unknown"]}
+}
+
 var _analytics: Node
 var _save: SAVE_SCRIPT
 var _content: CONTENT_SCRIPT
@@ -96,6 +135,8 @@ func configure(
 	_events.postcard_piece_revealed.connect(_on_postcard_piece_revealed)
 	_events.location_complete.connect(_on_location_complete)
 	_events.feature_unlocked.connect(_on_feature_unlocked)
+	_events.onboarding_step.connect(_on_onboarding_step)
+	_events.p2_analytics.connect(_on_p2_analytics)
 	_configured = true
 	return OK
 
@@ -300,6 +341,33 @@ func _on_feature_unlocked(language: String, feature: StringName, slot: int) -> v
 		_track(&"feature_unlocked", {"feature": str(feature), "slot": slot})
 
 
+func _on_onboarding_step(step: int) -> void:
+	if step in OnboardingState.STEPS.values():
+		_track(&"onboarding_step", {"step": step})
+
+
+func _on_p2_analytics(name: StringName, params: Dictionary) -> void:
+	if name not in P2_EVENTS:
+		return
+	var bounds: Dictionary = P2_ENUMS.get(name, {})
+	for key: String in bounds:
+		if params.get(key) not in bounds[key]:
+			return
+	if str(name).begins_with("iap_purchase_") and params.get("product_id") not in IapFlow.PRODUCTS:
+		return
+	if (
+		name == &"hint_stuck_offer_shown"
+		and (
+			not _active()
+			or _completed
+			or params.get("slot") != _slot
+			or params.get("trigger") not in ["idle", "invalid_streak"]
+		)
+	):
+		return
+	_track(name, params.duplicate(true))
+
+
 func _on_setting_changed(setting: StringName) -> void:
 	_track(&"settings_changed", {"setting": str(setting)})
 
@@ -353,6 +421,8 @@ func _disconnect() -> void:
 		_disconnect_signal(_events.postcard_piece_revealed, _on_postcard_piece_revealed)
 		_disconnect_signal(_events.location_complete, _on_location_complete)
 		_disconnect_signal(_events.feature_unlocked, _on_feature_unlocked)
+		_disconnect_signal(_events.onboarding_step, _on_onboarding_step)
+		_disconnect_signal(_events.p2_analytics, _on_p2_analytics)
 	_configured = false
 	_boot_pending = false
 	_boot_screen = -1

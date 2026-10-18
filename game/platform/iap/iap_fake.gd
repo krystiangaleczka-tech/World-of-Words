@@ -125,7 +125,16 @@ func settle(token: int) -> bool:
 	elif _operation == &"purchase":
 		_deliver_purchase(token)
 	else:
-		_replay(token, _owned if _operation == &"restore" else _records)
+		var restoring: bool = _operation == &"restore"
+		var batch: Array[StoreTransaction] = []
+		if restoring:
+			for transaction: StoreTransaction in _owned.values():
+				var copied: StoreTransaction = _copy(transaction)
+				copied.restored = true
+				batch.append(copied)
+		_replay(token, _owned if restoring else _records, restoring)
+		if restoring and _generation == token:
+			restore_completed.emit(batch)
 	return true
 
 
@@ -180,6 +189,12 @@ func _deliver_purchase(token: int) -> void:
 	elif _outcome == &"failed":
 		state = StoreTransaction.State.FAILED
 	var transaction: StoreTransaction = StoreTransaction.new("fake_iap_%d" % _sequence, id, state)
+	for product: Dictionary in _products:
+		if product["id"] == id:
+			if product.get("price_micros") is int:
+				transaction.price_micros = product["price_micros"]
+			if product.get("price_currency") is String:
+				transaction.price_currency = product["price_currency"]
 	if state in [StoreTransaction.State.PURCHASED, StoreTransaction.State.PENDING]:
 		_records[transaction.store_key] = transaction
 		_remember_owned(transaction)
@@ -210,12 +225,16 @@ func _remember_owned(transaction: StoreTransaction) -> void:
 			_owned[transaction.store_key] = _copy(transaction)
 
 
-func _replay(token: int, records: Dictionary[String, StoreTransaction]) -> void:
+func _replay(
+	token: int, records: Dictionary[String, StoreTransaction], restoring: bool = false
+) -> void:
 	var batch: Array[StoreTransaction] = []
 	var keys: Array[String] = records.keys()
 	keys.sort()
 	for key: String in keys:
-		batch.append(_copy(records[key]))
+		var copied: StoreTransaction = _copy(records[key])
+		copied.restored = restoring
+		batch.append(copied)
 	for transaction: StoreTransaction in batch:
 		if _generation != token:
 			return
@@ -223,7 +242,14 @@ func _replay(token: int, records: Dictionary[String, StoreTransaction]) -> void:
 
 
 func _copy(transaction: StoreTransaction) -> StoreTransaction:
-	return StoreTransaction.new(transaction.store_key, transaction.product_id, transaction.state)
+	return StoreTransaction.new(
+		transaction.store_key,
+		transaction.product_id,
+		transaction.state,
+		transaction.price_micros,
+		transaction.price_currency,
+		transaction.restored
+	)
 
 
 func _cancel() -> void:

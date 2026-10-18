@@ -77,8 +77,10 @@ without this explicit binding all three IAP commands remain ERR_UNAVAILABLE.
 purchase_state() -> StringName and purchase_state_changed(product_id: String,
 state: StringName, error: Error) report idle/purchasing/pending/settling/completed/
 cancelled/failed/unknown. Commands returning OK mean accepted, not purchase success.
-Each verified transaction update is serialized independently; the frozen adapter
-has no end-of-fetch/restore signal, so no aggregate completion is fabricated.
+Each verified transaction update is serialized independently. Legacy adapters may
+omit terminal restore evidence; no aggregate completion is inferred from command
+acceptance, individual updates or an unfinished-transaction fetch. T-0328 adds the
+optional explicit terminal evidence described below.
 
 Only valid PURCHASED updates for the two canonical P2 products can settle. Pending,
 deferred, cancelled and failed cannot grant or finish. Adapters own verification
@@ -150,3 +152,50 @@ Restore acceptance shows only “purchase check requested”. Actual failure sup
 that caption (including repeated errors after older failures); no receipt means no
 invented “restored”/“nothing to restore”, no aggregate success or endless spinner.
 Native SDK activation, physical-device approval and store approval remain open.
+
+
+## P2b observer receipts (T-0328)
+
+`Events.p2_analytics(name:StringName, params:Dictionary)` carries copied notifications
+from the existing service/presentation owners. AnalyticsListener owns a closed event
+allowlist and sends through normal Analytics.track validation, consent and durable
+FIFO only. Save onboarding, settings, Progress unlocks and Config remain single
+producers; no listener decides rewards, navigation, permissions or initialization.
+
+Consent reports require an explicit purpose-specific analytics decision plus known
+UMP status. Denial/revocation reaches Analytics before the consent observation;
+therefore a denied consent-result event is dropped by the same policy as all other
+events. ATT authorization is independent. Enum statuses and bounded failure codes
+replace arbitrary provider text.
+
+Ad shown/earned/failure follow accepted presentation callbacks; reward-earned means
+the provider callback, not successful wallet settlement. A pending grant retry does
+not replay that callback. Rewarded offer notifications follow actual visible enabled
+Shop/Hint/x2 controls, once per visit. Interstitial offer follows the policy-approved
+dispatch decision. Preload failure may report unavailable without claiming shown.
+
+`StoreTransaction.new(key,product,status,micros=-1,currency="",from_restore=false)` accepts optional
+verified provider price and origin metadata. Verified restore updates must set
+from_restore=true; overlapping unrelated purchases retain their purchase attribution.
+The queue copies all metadata. Never parse localized price
+text or derive grants from this metadata. Only a fresh durably processed transaction
+with a safe nonnegative integer price and uppercase three-letter currency emits
+`iap_purchase_completed`. Missing/invalid metadata skips that observation while
+existing grant/acknowledgement behavior continues. Processed-key replay does not
+replay completed; telemetry remains best effort across process interruption and does
+not add a persistent analytics dedupe ledger. Keys/receipts never enter event params.
+
+`IapAdapter.restore_completed(transactions:Array[StoreTransaction])` is an optional
+authoritative final verified nonconsumable batch for a requested restore. Adapters
+must suppress duplicate/superseded operations. IapFake snapshots/copies the owned
+batch, replays it, and emits terminal evidence only for the still-current successful
+operation (including empty success); failed/superseded operations cannot emit it.
+Native adapters must implement equivalent evidence before aggregate reporting.
+
+IapFlow observes the current restore without changing gameplay busy/pending/grant
+rules. It reports a unique nonconsumable key count only when the terminal batch has
+arrived AND every listed key exists in the committed processed-key set. Failed
+writes keep observation evidence transiently until the existing explicit settlement
+retry succeeds. Restore replay does not become a new purchase-completed event.
+Unfinished fetch is not restore, and invalid/consumable batches cannot report success.
+No store key or provider price/currency is persisted by this observer change.

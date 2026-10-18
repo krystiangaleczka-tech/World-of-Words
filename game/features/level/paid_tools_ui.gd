@@ -30,6 +30,7 @@ var _reward_seen_busy: bool = false
 var _reward_before: int
 var _reward_message: String = ""
 var _shop_ready: bool = false
+var _offer_observed: bool = false
 var _catalog: LocaleCatalog = LocaleCatalog.new()
 
 
@@ -56,7 +57,7 @@ func mount(host: LevelScreen, controller: LevelController) -> void:
 	retry.pressed.connect(_retry)
 	sheet = ShopSheet.new()
 	host.add_child(sheet)
-	_shop_ready = is_instance_valid(_service) and sheet.configure(_service, _ios) == OK
+	_shop_ready = is_instance_valid(_service) and sheet.configure(_service, _ios, &"level") == OK
 	_options = VBoxContainer.new()
 	_options.add_theme_constant_override("separation", Tokens.Space.M)
 	watch_ad = SecondaryButton.new()
@@ -99,6 +100,7 @@ func use_tool(kind: StringName) -> void:
 			_service.begin_shop_visit()
 		_refresh_options()
 		sheet.open_alternative(_options, "level.hint.options")
+		_refresh_options()
 	elif result.error != OK and result.state != "busy":
 		_host.show_paid_status(
 			(
@@ -189,6 +191,16 @@ func _refresh_options() -> void:
 	elif not _reward_message.is_empty():
 		key = _reward_message
 	message.text = tr(key)
+	if (
+		not _offer_observed
+		and _options.is_visible_in_tree()
+		and sheet.state in [&"opening", &"open"]
+		and not watch_ad.disabled
+		and not watch_ad.loading
+		and state == &"ready"
+	):
+		_offer_observed = true
+		_service.observe_rewarded_offer(&"hint")
 
 
 func _paid(kind: StringName, cells: Array[Vector2i]) -> void:
@@ -236,6 +248,7 @@ func _refresh() -> void:
 
 
 func _dismissed(_reason: StringName) -> void:
+	_offer_observed = false
 	_refresh.call_deferred()
 
 

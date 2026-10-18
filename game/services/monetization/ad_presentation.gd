@@ -2,6 +2,7 @@ class_name AdPresentation
 extends Node
 ## Internal Fake-era presentation owner; no boot/UI activation or IAP processing.
 
+signal telemetry(name: StringName, params: Dictionary)
 signal changed
 signal finished
 signal audio_paused(paused: bool)
@@ -90,12 +91,14 @@ func show_interstitial() -> void:
 	_kind = &"interstitial"
 	_interstitial_ready = false
 	_opened = false
+	_placement = &"campaign_continue"
 	_timer.start()
+	_observe(&"ad_offer_shown", {"placement": str(_placement), "ad_format": "interstitial"})
 	_ads.show_interstitial()
 
 
 func request_rewarded(placement: StringName, reward: Callable) -> Error:
-	if _settling or _dispatching:
+	if _settling or _dispatching or _notifying:
 		return ERR_BUSY
 	if _kind == &"pending_reward":
 		if not _same_reward(placement, reward):
@@ -169,6 +172,7 @@ func _same_reward(placement: StringName, reward: Callable) -> bool:
 func expire() -> void:
 	if _kind == &"idle" or _kind == &"pending_reward":
 		return
+	_failure("timeout")
 	_end()
 
 
@@ -193,6 +197,13 @@ func _on_opened() -> void:
 	if _kind not in [&"interstitial", &"rewarded"] or _opened:
 		return
 	_opened = true
+	_observe(
+		&"ad_shown",
+		{
+			"placement": str(_placement),
+			"ad_format": "interstitial" if _kind == &"interstitial" else "rewarded"
+		}
+	)
 	var generation: int = _generation
 	if _kind == &"interstitial":
 		interstitial_opened.emit()
@@ -204,7 +215,9 @@ func _on_reward() -> void:
 	if _kind != &"rewarded" or not _opened or _earned:
 		return
 	_earned = true
+	var placement: String = str(_placement)
 	_settle_reward()
+	_observe(&"ad_reward_earned", {"placement": placement})
 
 
 func _settle_reward() -> Error:
@@ -247,8 +260,9 @@ func _on_closed() -> void:
 		_end()
 
 
-func _on_failed(_reason: String) -> void:
+func _on_failed(reason: String) -> void:
 	if _kind in [&"preload", &"reward_loading", &"interstitial", &"rewarded"]:
+		_failure("no_fill" if reason == "no_fill" else "provider_error")
 		_end()
 
 
@@ -279,3 +293,22 @@ func _exit_tree() -> void:
 	_ads.reward_earned.disconnect(_on_reward)
 	_ads.ad_closed.disconnect(_on_closed)
 	_ads.ad_failed.disconnect(_on_failed)
+
+
+func _failure(code: String) -> void:
+	var interstitial: bool = _kind in [&"preload", &"interstitial"]
+	_observe(
+		&"ad_failed",
+		{
+			"placement": "campaign_continue" if interstitial else str(_placement),
+			"ad_format": "interstitial" if interstitial else "rewarded",
+			"error_code": code
+		}
+	)
+
+
+func _observe(name: StringName, params: Dictionary) -> void:
+	var previous: bool = _notifying
+	_notifying = true
+	telemetry.emit(name, params.duplicate(true))
+	_notifying = previous

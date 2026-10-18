@@ -5,6 +5,9 @@ extends RefCounted
 signal products_received(products: Array[Dictionary])
 signal transaction_updated(transaction: StoreTransaction)
 signal purchase_failed(reason: String)
+## @api Terminal verified nonconsumable batch for the current requested restore only.
+## Adapters suppress superseded callbacks; empty success is an empty batch.
+signal restore_completed(transactions: Array[StoreTransaction])
 
 
 ## @api query_products: provider operation.
