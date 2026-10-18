@@ -24,5 +24,21 @@ tooling ahead of external release prerequisites; no roadmap IDs or rows changed.
 Fourteen new tests cover exact boundaries, actual bytes/hash, summary append,
 warning-only over-budget behavior, invalid input/output and artifact overwrite
 protection including hard links, plus real CI step ordering and artifact wiring.
-Full local checks, independent review and exact-head CI evidence are recorded in
-the PR. The CI artifact measurement will be recorded here after verification.
+Local make check passed: Godot 1002 tests / 34043 assertions, pipeline 329 tests,
+tools 588 tests. Registry, content, UI guards and 14 generated theme outputs passed.
+Independent fresh Sol review: PASS from the generated review pack.
+
+Implementation commit `3427846` passed all 16 checks in
+[CI run 39137857128](https://github.com/krystiangaleczka-tech/World-of-Words/actions/runs/39137857128).
+Downloaded `world-of-words-android-debug` artifact `12141000250`; independently
+streamed the enclosed APK and compared its byte count and SHA256 to the enclosed
+`android-debug-size.json`:
+
+- Exact APK size: 30,283,665 bytes (30.283665 decimal MB), 37.85458125% of budget.
+- SHA256: `ae114f9db7dec5fbdf4b02414dddc040675cf98e391eb7442f0613234b2c3d02`.
+- Warning: false; over budget: false. Both values independently recomputed.
+
+The same run's gallery artifact `12140363279` passed all 180 image size/hash and
+complete-matrix checks; a native Actions/PL/default screenshot was visually inspected.
+Final documentation commit CI and its independently checked APK are recorded in
+PR #221; the implementation measurement above identifies its exact source run.
