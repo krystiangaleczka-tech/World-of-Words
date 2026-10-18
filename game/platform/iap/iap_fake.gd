@@ -115,7 +115,10 @@ func settle(token: int) -> bool:
 		return false
 	_pending = false
 	if _outcome == &"error":
+		var restoring: bool = _operation == &"restore"
 		purchase_failed.emit("error")
+		if restoring and _generation == token:
+			restore_failed.emit(ERR_UNAVAILABLE)
 	elif _operation == &"query_products":
 		var result: Array[Dictionary] = []
 		for product: Dictionary in _products:

@@ -8,6 +8,8 @@ signal purchase_failed(reason: String)
 ## @api Terminal verified nonconsumable batch for the current requested restore only.
 ## Adapters suppress superseded callbacks; empty success is an empty batch.
 signal restore_completed(transactions: Array[StoreTransaction])
+## @api Current restore only; same superseded-callback suppression as restore_completed.
+signal restore_failed(error: Error)
 
 
 ## @api query_products: provider operation.
