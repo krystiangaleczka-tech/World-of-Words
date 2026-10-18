@@ -17,7 +17,7 @@ touch:
   - tools/tests/test_gallery_screenshots.py
   - docs/qa/T-0327/**
   - tasks/T-0327-gallery-screenshots.md
-revision: 1
+revision: 2
 ---
 
 ## Goal
@@ -38,7 +38,7 @@ Provide the CI gallery artifact required by DESIGN: actual Compatibility screens
 - New gallery/capture.gd SceneTree script defers work until autoloads exist, instantiates the real GalleryShell and drives only its public configure/preview APIs. Render every PAGES entry × three SIZES × PL/PSEUDO × default100/HC130, with reduced motion and no debug safe insets. Current count is 180 images; adding a catalog page automatically expands it. No duplicated component/page construction or fabricated UI.
 - Force real Compatibility/X11 drawing, settle a fixed frame count, save actual unscaled preview PNGs at each target size, check nonempty/nonuniform image data, and fail on errors. Record page/layout/locale/theme/size/file matrix and actual engine/display/renderer metadata in manifest.json. Use names <page>_<class>_<lang>_<state>.png. No reference-device or pixel-diff claim.
 - New standard-library Python runner pins/checks Godot, imports assets, runs capture under xvfb-run when DISPLAY is absent, and always sets LIBGL_ALWAYS_SOFTWARE=1 and Dummy audio. Existing DISPLAY may be used for local native verification. Capture import/render logs; reject nonzero engine exits or engine ERROR/SCRIPT ERROR logs even if exit is zero.
-- Output must be an empty directory under builds; reject stale/nonempty directories or paths outside builds rather than deleting user files. Validate exact complete matrix coverage, unique safe filenames, PNG framing/CRCs/dimensions and actual Compatibility metadata. Add per-image byte counts/SHA256, then generate an offline HTML image index. Missing/truncated/corrupt/incomplete output fails.
+- Output must be an empty directory under builds; reject stale/nonempty directories or paths outside builds rather than deleting user files. Validate exact complete matrix coverage, unique safe filenames, PNG framing/CRCs/dimensions and bounded IDAT decompression/scanline framing and actual Compatibility metadata. Add per-image byte counts/SHA256, then generate an offline HTML image index. Missing/truncated/corrupt/incomplete output fails.
 - Path filter covers game/ui/**, game/features/** and game/locale/**, plus this tool/capture/workflow during development. Use a verified base commit and git diff --no-renames with NUL names so deletes and renames out of UI still trigger capture. Irrelevant docs-only changes skip rendering and remain a successful check.
 - Add PR-only CI job with checkout/full history, safe Git directory, change filtering, explicitly authorized Ubuntu packages xvfb/xauth/Mesa/X11 libraries, and Compatibility software rendering. No Docker image rebuild or new secrets/permissions. Upload builds/gallery (logs, PNGs, manifest and index) as a PR artifact even if rendering failed, preserving the failing job status; do not hide missing artifacts. Timeout bounds the job.
 

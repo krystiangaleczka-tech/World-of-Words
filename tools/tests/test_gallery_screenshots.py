@@ -223,3 +223,29 @@ def test_index_escapes_labels(tmp_path: Path) -> None:
     assert "<script>" not in content
     assert "&lt;script&gt;&quot;" in content
     assert 'src="safe.png"' in content
+
+
+@pytest.mark.parametrize("mutation", ["empty", "invalid", "truncated", "rows", "filter"])
+def test_png_rejects_crc_valid_but_undecodable_image(tmp_path: Path, mutation: str) -> None:
+    width, height = 2, 2
+    rows = (b"\0" + b"\x12\x34\x56" * width) * height
+    payload = zlib.compress(rows)
+    if mutation == "empty":
+        payload = b""
+    elif mutation == "invalid":
+        payload = b"not a zlib stream"
+    elif mutation == "truncated":
+        payload = payload[:-2]
+    elif mutation == "rows":
+        payload = zlib.compress(rows[:-1])
+    else:
+        payload = zlib.compress(b"\x05" + rows[1:])
+    path = tmp_path / "broken.png"
+    path.write_bytes(
+        gallery.PNG
+        + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))
+        + chunk(b"IDAT", payload)
+        + chunk(b"IEND", b"")
+    )
+    with pytest.raises(ValueError):
+        gallery.png_size(path)

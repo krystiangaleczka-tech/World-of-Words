@@ -66,7 +66,8 @@ def png_size(path: Path) -> tuple[int, int]:
         raise ValueError(f"invalid PNG signature: {path.name}")
     offset = len(PNG)
     dimensions = None
-    saw_data = False
+    compressed = bytearray()
+    channels = 0
     while offset < len(data):
         if offset + 12 > len(data):
             raise ValueError("truncated PNG chunk")
@@ -82,14 +83,43 @@ def png_size(path: Path) -> tuple[int, int]:
         if dimensions is None:
             if kind != b"IHDR" or length != 13:
                 raise ValueError("PNG must start with IHDR")
-            dimensions = struct.unpack_from(">II", payload)
+            width, height, depth, color, compression, filtering, interlace = struct.unpack(
+                ">IIBBBBB", payload
+            )
+            if (
+                not 0 < width <= 1440
+                or not 0 < height <= 2340
+                or depth != 8
+                or color not in (2, 6)
+                or compression
+                or filtering
+                or interlace
+            ):
+                raise ValueError("unsupported preview PNG header")
+            dimensions = (width, height)
+            channels = 3 if color == 2 else 4
         elif kind == b"IHDR":
             raise ValueError("duplicate PNG header")
         if kind == b"IDAT":
-            saw_data = True
+            compressed.extend(payload)
         if kind == b"IEND":
-            if length or end != len(data) or not saw_data:
+            if length or end != len(data) or not compressed:
                 raise ValueError("invalid PNG end")
+            stride = dimensions[0] * channels + 1
+            expected = dimensions[1] * stride
+            decoder = zlib.decompressobj()
+            try:
+                raw = decoder.decompress(compressed, expected + 1)
+            except zlib.error as exc:
+                raise ValueError("invalid PNG compressed image") from exc
+            if (
+                len(raw) != expected
+                or not decoder.eof
+                or decoder.unused_data
+                or decoder.unconsumed_tail
+                or any(raw[row] > 4 for row in range(0, len(raw), stride))
+            ):
+                raise ValueError("invalid PNG scanlines or truncated image stream")
             return dimensions
         offset = end
     raise ValueError("PNG has no end chunk")
