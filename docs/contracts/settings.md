@@ -215,3 +215,9 @@ can leave while work remains owned by Monetization. Service loss clears loading
 and fails closed, retaining bound intent ownership until explicit valid rebind.
 No gameplay flow listens to telemetry. This activates no SDK or global Settings
 route, changes no saved setting/receipt behavior, and closes no physical store gate.
+
+Owner identity/liveness is revalidated on retained entry and every restore refresh.
+A detached screen cannot reconnect to a retained service that left the tree;
+it invalidates that binding and requires explicit valid rebind. Command rejection
+copy is scoped to the recorded snapshot revision, so newer results completed while
+detached supersede stale local errors.

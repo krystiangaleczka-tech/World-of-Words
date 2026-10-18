@@ -57,6 +57,7 @@ var _restore_service: MONETIZATION
 var _restore_bound: bool = false
 var _restore_dispatch: bool = false
 var _restore_command_error: Error = OK
+var _restore_error_revision: int = -1
 var _restore_attempt: int = 0
 var _restore_seen: String = ""
 
@@ -520,7 +521,13 @@ func bind_restore(service: Node) -> Error:
 
 
 func _connect_restore() -> void:
-	if is_inside_tree() and is_instance_valid(_restore_service):
+	if is_inside_tree() and _restore_bound:
+		if (
+			not is_instance_valid(_restore_service)
+			or not _restore_service.restore_owner_matches(_save)
+		):
+			_restore_lost()
+			return
 		if not _restore_service.restore_changed.is_connected(_restore_changed):
 			_restore_service.restore_changed.connect(_restore_changed)
 			_restore_service.tree_exiting.connect(_restore_lost)
@@ -535,6 +542,7 @@ func _disconnect_restore() -> void:
 
 
 func _restore_lost() -> void:
+	_restore_command_error = OK
 	if is_instance_valid(restore_toast):
 		restore_toast.hide_message()
 	_disconnect_restore()
@@ -578,11 +586,15 @@ func _dispatch_restore(settlement: bool) -> void:
 	if is_instance_valid(_restore_service):
 		if error != OK and _restore_service.restore_snapshot().state != &"settling":
 			_restore_command_error = error
+			_restore_error_revision = _restore_service.restore_snapshot().revision
 	_refresh_restore()
 
 
 func _refresh_restore() -> void:
 	if not _restore_bound or not is_instance_valid(restore_message) or not rows.has(&"restore"):
+		return
+	if is_instance_valid(_restore_service) and not _restore_service.restore_owner_matches(_save):
+		_restore_lost()
 		return
 	var data: Dictionary = (
 		_restore_service.restore_snapshot()
@@ -591,6 +603,8 @@ func _refresh_restore() -> void:
 			"state": &"unavailable", "restored_count": -1, "error": ERR_UNAVAILABLE, "revision": 0
 		}
 	)
+	if data.state == &"unavailable" or data.revision != _restore_error_revision:
+		_restore_command_error = OK
 	var key: String = ""
 	match data.state:
 		&"requested":

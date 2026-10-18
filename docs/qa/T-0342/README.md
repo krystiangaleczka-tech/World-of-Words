@@ -14,11 +14,13 @@ COMPACT/PSEUDO/HC130 states; loading spinner has its own catalog leading slot,
 Caption feedback wraps, status/count are readable, and settlement retry is visible
 without a provider spinner. Complete/empty results require service proof.
 
-Native suite passed 12/12 tests, 361 assertions, including 72 capture assertions.
+Native suite passed 14/14 tests, 393 assertions, including 72 capture assertions.
 Headless geometry runs the same behavior without claiming rendered output. Real
 Save/Economy/Monetization and controlled store cover ownership, duplicates, busy,
 failure/timeout, durable retry without another restore, reentry/hidden feedback,
-service loss/rebind, Back, keyboard, live copy/theme and nested dispatch. Full local
+service loss/rebind (including a retained owner leaving the tree while Settings
+is detached), stale command error supersession, Back, keyboard, live copy/theme
+and nested dispatch. Full local
 check, independent review and exact-head CI evidence are recorded in the PR.
 
 Reproduce with a native X11 DISPLAY, from repository root:
