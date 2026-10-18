@@ -1,0 +1,4 @@
+[gd_resource type="Resource" format=3]
+
+[resource]
+metadata/notice = "# Original P1 placeholder recordings\n\nThe six PCM WAV recordings in this directory were synthesized for World of Words\nfrom simple sine waves by tools/generate_placeholder_audio.py. No sampled or\nthird-party recording was used. They are dedicated to the public domain under\nCC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/ .\n\nThese are provisional effects, not the final sound direction. Audibility and\ncomfort on the reference Android remain part of Chris's device QA.\n"

@@ -139,3 +139,20 @@ choice; `restore_preview` restores the actual content locale. Preview changes UI
 locale only, never Save/Content, is clearly labelled and resets when its owner
 leaves the tree. Passing debug_preview=false always yields production choices;
 release builds cannot enable preview even when a caller requests it.
+
+## Offline credits catalog (T-0339)
+
+`SettingsCredits extends RefCounted` exposes static `entries() -> Array[Dictionary]`.
+Each call returns seven fresh dictionaries with `id:StringName` and `notice:String`:
+godot, godot-copyrights, godot-licenses, inter, lucide, audio, pl-sources. Engine
+licence text is verbatim; all third-party copyright data is preserved as indented
+JSON, alongside every full Engine licence text in sorted-name order. Font/icon
+notices come from their existing exportable metadata without editing legal text.
+Audio and content notices come from generated Resource metadata, never raw files
+at runtime. `python tools/generate_credits.py --check` is enforced by tools tests;
+regeneration embeds the current canonical NOTICE files. No export filter change.
+
+These are original-language legal data, not translated UI copy. T-0288 owns the
+licences view and translated navigation labels. No native SDK is currently
+activated; adding native providers, final assets or new source data requires
+updating the credits before release. This catalog is not legal/store approval.
