@@ -176,3 +176,11 @@ Composition remains explicit: caller handles SettingsScreen.action_requested wit
 `licences` by mounting this scene and handles back_requested to return. Integration
 tests exercise that actual route. Global Settings boot/Nav activation remains open,
 as do T-0288 restore/consent/browser/support integrations and physical-device review.
+
+## Restore result dependency (T-0341)
+
+Future T-0288 restore UI consumes Monetization.restore_snapshot/restore_changed,
+not Events telemetry. Requested is acceptance, not restored/empty success. Only
+completed permits an aggregate result/count. Unknown requires an explicit retry;
+settling requires retry_restore_settlement without a second provider restore.
+No Settings row binding or global activation is added by this contract task.

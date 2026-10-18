@@ -5,6 +5,7 @@ extends Node
 signal state_changed(product_id: String, state: StringName, error: Error)
 signal telemetry(name: StringName, params: Dictionary)
 signal changed
+signal restore_changed
 
 const ECONOMY: Script = preload("res://services/economy.gd")
 const SAVE: Script = preload("res://services/save.gd")
@@ -29,6 +30,11 @@ var _active: String = ""
 var _state: StringName = &"idle"
 var _last_product: String = ""
 var _last_error: Error = OK
+var _restore_timer: Timer
+var _restore_state: StringName = &"idle"
+var _restore_count: int = -1
+var _restore_error: Error = OK
+var _restore_revision: int = 0
 var _restore_observing: bool = false
 var _restore_terminal: bool = false
 var _restore_keys: Array[String] = []
@@ -45,6 +51,13 @@ func configure(save: SAVE, economy: ECONOMY, adapter: IapAdapter) -> void:
 	_catalog_timer.wait_time = AdPresentation.OPERATION_TIMEOUT_SECONDS
 	add_child(_catalog_timer)
 	_catalog_timer.timeout.connect(_catalog_timeout)
+	_restore_timer = Timer.new()
+	_restore_timer.one_shot = true
+	_restore_timer.ignore_time_scale = true
+	_restore_timer.process_mode = Node.PROCESS_MODE_ALWAYS
+	_restore_timer.wait_time = AdPresentation.OPERATION_TIMEOUT_SECONDS
+	add_child(_restore_timer)
+	_restore_timer.timeout.connect(expire_restore)
 	_timer = Timer.new()
 	_timer.one_shot = true
 	_timer.ignore_time_scale = true
@@ -56,6 +69,7 @@ func configure(save: SAVE, economy: ECONOMY, adapter: IapAdapter) -> void:
 	_adapter.transaction_updated.connect(_on_transaction)
 	_adapter.purchase_failed.connect(_on_failure)
 	_adapter.restore_completed.connect(_on_restore_completed)
+	_adapter.restore_failed.connect(_on_restore_failed)
 
 
 func busy() -> bool:
@@ -168,6 +182,8 @@ func purchase(product: String) -> Error:
 
 
 func recover(restore: bool = false) -> Error:
+	if restore and _restore_observing:
+		return ERR_BUSY
 	if not _owners_ready():
 		return ERR_UNCONFIGURED
 	if _notifying or _querying or _draining or _dispatching or not _active.is_empty():
@@ -182,7 +198,10 @@ func recover(restore: bool = false) -> Error:
 		_restore_observing = true
 		_restore_terminal = false
 		_restore_keys.clear()
-		_adapter.restore()
+		_restore_timer.start()
+		_set_restore(&"requested", -1, OK)
+		if _restore_observing:
+			_adapter.restore()
 	else:
 		_adapter.fetch_unfinished()
 	_dispatching = false
@@ -359,6 +378,7 @@ func _exit_tree() -> void:
 		_adapter.transaction_updated.disconnect(_on_transaction)
 		_adapter.purchase_failed.disconnect(_on_failure)
 		_adapter.restore_completed.disconnect(_on_restore_completed)
+		_adapter.restore_failed.disconnect(_on_restore_failed)
 
 
 func _purchase_completed(transaction: StoreTransaction) -> void:
@@ -392,12 +412,12 @@ func _on_restore_completed(transactions: Array[StoreTransaction]) -> void:
 			or transaction.store_key.is_empty()
 			or transaction.store_key != transaction.store_key.strip_edges()
 		):
-			_restore_observing = false
-			_restore_keys.clear()
+			_end_restore(&"failed", ERR_INVALID_DATA)
 			return
 		if transaction.store_key not in _restore_keys:
 			_restore_keys.append(transaction.store_key)
 	_restore_terminal = true
+	_restore_timer.stop()
 	_maybe_restore_completed()
 
 
@@ -407,11 +427,14 @@ func _maybe_restore_completed() -> void:
 	var processed: Array = _save.committed_view().sections.monetization.processed_transactions
 	for key: String in _restore_keys:
 		if key not in processed:
+			_set_restore(&"settling", -1, _restore_error if _restore_state == &"settling" else OK)
 			return
 	var count: int = _restore_keys.size()
 	_restore_observing = false
 	_restore_terminal = false
 	_restore_keys.clear()
+	_restore_timer.stop()
+	_set_restore(&"completed", count, OK)
 	_observe(&"iap_restore_completed", {"restored_count": count})
 
 
@@ -420,3 +443,57 @@ func _observe(name: StringName, params: Dictionary) -> void:
 	_notifying = true
 	telemetry.emit(name, params.duplicate(true))
 	_notifying = previous
+
+
+## @api Transient authoritative result; no mutable owner data escapes.
+func restore_snapshot() -> Dictionary:
+	return {
+		"state": _restore_state,
+		"restored_count": _restore_count,
+		"error": _restore_error,
+		"revision": _restore_revision
+	}
+
+
+func _set_restore(next: StringName, count: int, error: Error) -> void:
+	if _restore_state == next and _restore_count == count and _restore_error == error:
+		return
+	_restore_state = next
+	_restore_count = count
+	_restore_error = error
+	_restore_revision += 1
+	var previous: bool = _notifying
+	_notifying = true
+	restore_changed.emit()
+	_notifying = previous
+
+
+func _end_restore(next: StringName, error: Error) -> void:
+	_restore_observing = false
+	_restore_terminal = false
+	_restore_keys.clear()
+	_restore_timer.stop()
+	_set_restore(next, -1, error)
+
+
+func _on_restore_failed(error: Error) -> void:
+	if _restore_observing and not _restore_terminal:
+		_end_restore(&"failed", error if error != OK else ERR_UNAVAILABLE)
+
+
+## @api Provider silence is unknown, never empty success; receipts remain authoritative.
+func expire_restore() -> void:
+	if _restore_observing and not _restore_terminal:
+		_end_restore(&"unknown", ERR_TIMEOUT)
+
+
+## @api Retry only existing durable work; do not ask the store to restore again.
+func retry_restore_settlement() -> Error:
+	if _notifying or _draining or _dispatching:
+		return ERR_BUSY
+	if not _restore_observing or not _restore_terminal:
+		return ERR_UNAVAILABLE
+	var error: Error = _drain()
+	if error != OK:
+		_set_restore(&"settling", -1, error)
+	return error

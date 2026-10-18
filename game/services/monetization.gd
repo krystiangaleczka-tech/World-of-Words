@@ -1,6 +1,9 @@
+# gdlint: disable=max-public-methods
+# The existing service facade also owns the explicit restore result API.
 extends ServiceStub
 ## @api Unactivated consent, ads and explicit verified IAP settlement.
 
+signal restore_changed
 signal shop_changed
 signal continuation_ready(completed_slot: int)
 signal audio_pause_requested(paused: bool)
@@ -54,7 +57,7 @@ func configure(
 	ios: bool
 ) -> Error:
 	if (
-		(is_instance_valid(_iap_flow) and _iap_flow.busy())
+		_iap_binding_busy()
 		or _slot > 0
 		or _step != Step.IDLE
 		or (is_instance_valid(_presentation) and _presentation.busy())
@@ -262,10 +265,7 @@ func _reserve_shop_reward() -> Error:
 
 ## @api Explicit same-Save binding; no provider command or boot activation.
 func configure_iap(economy: Node, adapter: IapAdapter) -> Error:
-	if (
-		(is_instance_valid(_iap_flow) and _iap_flow.busy())
-		or (is_instance_valid(_presentation) and _presentation.busy())
-	):
+	if _iap_binding_busy() or (is_instance_valid(_presentation) and _presentation.busy()):
 		return ERR_BUSY
 	if not _configured() or not economy is ECONOMY_SCRIPT or adapter == null:
 		return ERR_UNCONFIGURED
@@ -283,6 +283,7 @@ func configure_iap(economy: Node, adapter: IapAdapter) -> Error:
 	_iap_flow.telemetry.connect(_telemetry)
 	_iap_flow.state_changed.connect(_on_purchase_state)
 	_iap_flow.changed.connect(_emit_shop_changed)
+	_iap_flow.restore_changed.connect(_on_restore_changed)
 	_shop_economy = economy
 	_shop_reward = Callable()
 	_emit_shop_changed()
@@ -629,3 +630,30 @@ func observe_shop_opened(origin: StringName = &"unknown") -> void:
 func observe_rewarded_offer(placement: StringName) -> void:
 	if placement in [&"hint", &"double_reward", &"shop_coins"]:
 		_telemetry(&"ad_offer_shown", {"placement": str(placement), "ad_format": "rewarded"})
+
+
+func _iap_binding_busy() -> bool:
+	return (
+		is_instance_valid(_iap_flow)
+		and (_iap_flow.busy() or _iap_flow.restore_snapshot().state in [&"requested", &"settling"])
+	)
+
+
+func _on_restore_changed() -> void:
+	restore_changed.emit()
+
+
+## @api Explicit restore result; UI must not consume analytics as application state.
+func restore_snapshot() -> Dictionary:
+	if is_instance_valid(_iap_flow):
+		return _iap_flow.restore_snapshot()
+	return {"state": &"unavailable", "restored_count": -1, "error": ERR_UNAVAILABLE, "revision": 0}
+
+
+func retry_restore_settlement() -> Error:
+	return _iap_flow.retry_restore_settlement() if is_instance_valid(_iap_flow) else ERR_UNAVAILABLE
+
+
+func expire_restore() -> void:
+	if is_instance_valid(_iap_flow):
+		_iap_flow.expire_restore()

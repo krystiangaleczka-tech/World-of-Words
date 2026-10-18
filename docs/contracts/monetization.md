@@ -199,3 +199,48 @@ writes keep observation evidence transiently until the existing explicit settlem
 retry succeeds. Restore replay does not become a new purchase-completed event.
 Unfinished fetch is not restore, and invalid/consumable batches cannot report success.
 No store key or provider price/currency is persisted by this observer change.
+
+## Application restore results (T-0341)
+
+`Monetization.restore_snapshot() -> Dictionary` and `restore_changed` expose
+application state owned by IapFlow, independently of analytics. Fresh snapshots
+contain `state:StringName`, `restored_count:int`, `error:Error`, `revision:int`.
+Before binding they are unavailable/-1/ERR_UNAVAILABLE/0; the bound flow starts
+idle/-1/OK/0. A changed result increments the instance-local revision. No result
+is persisted and no caller receives mutable owner containers.
+
+| State | Meaning | Count |
+| --- | --- | --- |
+| requested | Accepted request, waiting for authoritative provider terminal result | -1 |
+| settling | Verified terminal batch exists; some keys lack committed proof | -1 |
+| completed | All unique verified nonconsumable keys have committed proof | Unique batch size, including 0 |
+| failed | Explicit restore failure or malformed batch | -1 |
+| unknown | Provider wait expired without terminal evidence | -1 |
+
+`IapAdapter.restore_failed(error:Error)` is optional authoritative failure for the
+current restore only. Adapters must suppress superseded callbacks, as with
+restore_completed. IapFake preserves purchase_failed compatibility, then checks its
+operation generation again before restore_failed. Generic purchase_failed is never
+interpreted as restore failure: an unrelated purchase can fail during a restore.
+The first accepted terminal outcome wins; duplicates cannot change its result.
+
+One ALWAYS/ignore-time-scale Timer bounds provider wait to existing
+AdPresentation.OPERATION_TIMEOUT_SECONDS. `expire_restore()` uses the same timeout
+path; a timeout during the requested notification also prevents stale dispatch.
+Timeout does not revoke entitlement or discard valid receipt updates; late batch
+results cannot relabel that expired request as successful. A new explicit restore
+can start after failure/timeout/completion. Duplicate in-progress restore and
+IAP/consent reconfiguration return ERR_BUSY. Existing purchase/catalog/unfinished
+policies remain unchanged. Restore notifications guard reentrant commands.
+
+A valid batch stops provider wait, even when durable settlement needs attention.
+`retry_restore_settlement() -> Error` drains existing receipts only: no new store
+restore/query/fetch/purchase. Failure retains evidence and reports the actual retry
+error; existing unfinished recovery may also complete it. Settling retains the
+last retry error until completion or another explicit retry result. UI must offer
+explicit settlement recovery instead of presenting it as a provider spinner.
+The existing Economy grant, committed-key acknowledgement and analytics completion
+rules remain authoritative; no save field, product or event is added.
+
+Native adapter activation and correct provider terminal suppression are still
+release gates. These interfaces do not certify a real store restore.

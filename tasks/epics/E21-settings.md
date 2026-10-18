@@ -31,3 +31,8 @@ T-0340 implements the T-0288 licences presentation using T-0339: catalog index,
 full notices, two-stage Back, translation/theme inheritance and native layout
 proof. The caller uses existing Settings action intent; global Nav activation,
 store/consent/browser/mail actions and their native gates remain open.
+
+T-0341 supplies service-owned restore results before T-0288 UI binding: accepted,
+settling, completed, failed and unknown, with committed-key proof and bounded
+provider wait. Telemetry is not application state. Native adapter activation and
+Settings action wiring remain open.
