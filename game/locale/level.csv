@@ -33,3 +33,5 @@ level.complete.double,Podwój monety,Double coins
 level.complete.no_ad,Reklama jest teraz niedostępna.,No ad is available right now.
 level.complete.pieces,Pocztówka: %d / %d,Postcard: %d / %d
 level.tutorial.connect,Połącz litery aby ułożyć słowo,Connect letters to make words
+level.accessibility.name,Poziom,Level
+level.accessibility.summary,Poziom: %d. Słowa: %d / %d. Bonus: %d. Litery: %s.,Level: %d. Words: %d / %d. Bonus: %d. Letters: %s.
