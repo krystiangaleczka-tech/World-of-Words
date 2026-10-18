@@ -316,3 +316,43 @@ jobs:
           path: builds/economy/
           if-no-files-found: error
           retention-days: 14
+
+  gallery-screenshots:
+    name: Gallery screenshots
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    container:
+      image: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Detect gallery changes including deletions
+        id: changes
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.sha }}
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          uv run python tools/gallery_screenshots.py --filter-only --base "$BASE_REF" --github-output "$GITHUB_OUTPUT"
+      - name: Install native software-rendering runtime
+        if: steps.changes.outputs.render == 'true'
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends xvfb xauth libgl1-mesa-dri libxcursor1 libxinerama1 libxrandr2 libxi6
+      - name: Render and verify the complete catalog matrix
+        if: steps.changes.outputs.render == 'true'
+        run: uv run python tools/gallery_screenshots.py --output builds/gallery
+      - name: Skip unchanged gallery
+        if: steps.changes.outputs.render != 'true'
+        run: echo "SKIP gallery screenshots - no relevant UI changes"
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.changes.outputs.render == 'true'
+        with:
+          name: gallery-screenshots
+          path: builds/gallery/
+          if-no-files-found: error
+          retention-days: 7
