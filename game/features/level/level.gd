@@ -483,6 +483,21 @@ func _on_continue() -> void:
 
 func _refresh_hud() -> void:
 	var board: BoardState = controller.get_board() if controller != null else null
+	accessibility_name = tr("level.accessibility.name")
+	accessibility_description = (
+		(
+			tr("level.accessibility.summary")
+			% [
+				_slot,
+				board.found_words().size(),
+				board.get_level().word_count(),
+				board.bonus_words().size(),
+				" ".join(board.get_level().get_letters())
+			]
+		)
+		if board != null
+		else tr("level.state.missing_content")
+	)
 	level_label.text = tr("level.hud.level_n") % _slot
 	bonus_label.text = (
 		tr("level.hud.bonus_count") % (board.bonus_words().size() if board != null else 0)

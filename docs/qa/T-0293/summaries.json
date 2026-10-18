@@ -1,0 +1,50 @@
+{
+	"COMPACT_PL_default100": {
+		"description": "Poziom: 1. Słowa: 0 / 1. Bonus: 0. Litery: K O T.",
+		"name": "Poziom"
+	},
+	"COMPACT_PL_hc130": {
+		"description": "Poziom: 1. Słowa: 0 / 1. Bonus: 0. Litery: K O T.",
+		"name": "Poziom"
+	},
+	"COMPACT_PSEUDO_default100": {
+		"description": "[___________[________Ṕôźíôm̀̀: 1. Ŝłôŵá: 0 / 1. ßôήüš: 0. Łíŧéŕý: ĸ Ö Ŧ.________]___________]",
+		"name": "[_[_Ṕôźíôm̀̀_]_]"
+	},
+	"COMPACT_PSEUDO_hc130": {
+		"description": "[___________[________Ṕôźíôm̀̀: 1. Ŝłôŵá: 0 / 1. ßôήüš: 0. Łíŧéŕý: ĸ Ö Ŧ.________]___________]",
+		"name": "[_[_Ṕôźíôm̀̀_]_]"
+	},
+	"REGULAR_PL_default100": {
+		"description": "Poziom: 1. Słowa: 0 / 1. Bonus: 0. Litery: K O T.",
+		"name": "Poziom"
+	},
+	"REGULAR_PL_hc130": {
+		"description": "Poziom: 1. Słowa: 0 / 1. Bonus: 0. Litery: K O T.",
+		"name": "Poziom"
+	},
+	"REGULAR_PSEUDO_default100": {
+		"description": "[___________[________Ṕôźíôm̀̀: 1. Ŝłôŵá: 0 / 1. ßôήüš: 0. Łíŧéŕý: ĸ Ö Ŧ.________]___________]",
+		"name": "[_[_Ṕôźíôm̀̀_]_]"
+	},
+	"REGULAR_PSEUDO_hc130": {
+		"description": "[___________[________Ṕôźíôm̀̀: 1. Ŝłôŵá: 0 / 1. ßôήüš: 0. Łíŧéŕý: ĸ Ö Ŧ.________]___________]",
+		"name": "[_[_Ṕôźíôm̀̀_]_]"
+	},
+	"TABLET_PL_default100": {
+		"description": "Poziom: 1. Słowa: 0 / 1. Bonus: 0. Litery: K O T.",
+		"name": "Poziom"
+	},
+	"TABLET_PL_hc130": {
+		"description": "Poziom: 1. Słowa: 0 / 1. Bonus: 0. Litery: K O T.",
+		"name": "Poziom"
+	},
+	"TABLET_PSEUDO_default100": {
+		"description": "[___________[________Ṕôźíôm̀̀: 1. Ŝłôŵá: 0 / 1. ßôήüš: 0. Łíŧéŕý: ĸ Ö Ŧ.________]___________]",
+		"name": "[_[_Ṕôźíôm̀̀_]_]"
+	},
+	"TABLET_PSEUDO_hc130": {
+		"description": "[___________[________Ṕôźíôm̀̀: 1. Ŝłôŵá: 0 / 1. ßôήüš: 0. Łíŧéŕý: ĸ Ö Ŧ.________]___________]",
+		"name": "[_[_Ṕôźíôm̀̀_]_]"
+	}
+}
