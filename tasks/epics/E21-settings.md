@@ -18,3 +18,11 @@ its durable paid-tool preflight; this wave does not certify or bypass that contr
 
 ## Exit
 Immediate persisted settings, coherent UI/content locale and native device review.
+
+## T-0288 preparation split (T-0339)
+Phase-2 rolling-wave planning extracts the offline legal catalog as T-0339 on
+merged font/icon resources and release export tooling. It packages canonical
+current notices, without native SDK assumptions, and supplies Engine legal data.
+T-0288 still owns the licences screen, store/consent/browser/mail integrations,
+real configured support/privacy destinations and physical/native verification.
+T-0339 does not close those gates or imply a complete Settings action flow.
