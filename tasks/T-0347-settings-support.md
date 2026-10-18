@@ -65,7 +65,8 @@ Actual Save/SettingsSupport and controlled composer: binding/invalid/foreign/
 legacy; exact full-ID handoff and short row ID; requested duplicate/reentry guards;
 error/retry/Back; hidden/detached handoff and Toast dedupe; owner/port loss including
 retained owner exit while screen detached and explicit rebind; live translation/
-keyboard; no Save mutation. Native twelve-case geometry with 36 ready/handed_off/
+keyboard; freed Save on retained entry terminates loss with unavailable/disabled
+Support, no composer/intent and usable Back; no Save mutation. Native twelve-case geometry with 36 ready/handed_off/
 failed PNGs via WOW_SETTINGS_SUPPORT_CAPTURE_DIR. Full make check, fresh review,
 all exact-head CI including Android.
 

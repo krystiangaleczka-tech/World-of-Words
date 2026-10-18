@@ -895,8 +895,8 @@ func _refresh_support() -> void:
 	if not _support_bound or not is_instance_valid(support_message):
 		return
 	if (
-		not is_instance_valid(_save)
-		or (is_instance_valid(_support_service) and not _support_service.owner_matches(_save))
+		is_instance_valid(_support_service)
+		and (not is_instance_valid(_save) or not _support_service.owner_matches(_save))
 	):
 		_support_lost()
 		return

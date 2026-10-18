@@ -282,3 +282,21 @@ func test_native_twelve_case_support_feedback() -> void:
 					await _capture(view, name_value + "_" + state)
 				_views.erase(view)
 				view.free()
+
+
+func test_freed_save_on_retained_entry_terminates_loss_and_keeps_back_usable() -> void:
+	var view: SubViewport = _view()
+	var screen: SettingsScreen = _screen(view)
+	watch_signals(screen)
+	view.remove_child(screen)
+	save.free()
+	view.add_child(screen)
+	await _settle()
+	assert_eq(screen.support_message.text, tr("settings.support.unavailable"))
+	assert_true(screen.rows[&"support"].disabled)
+	assert_false(screen.rows[&"support"].loading)
+	screen.rows[&"support"].pressed.emit()
+	assert_eq(composer.calls.size(), 0)
+	assert_signal_not_emitted(screen, "action_requested")
+	screen.back.pressed.emit()
+	assert_signal_emit_count(screen, "back_requested", 1)
