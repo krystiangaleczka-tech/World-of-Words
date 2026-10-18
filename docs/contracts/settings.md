@@ -293,3 +293,25 @@ Loss fails closed with no legacy fallback. Back remains usable, settings unchang
 The explicit support presentation is ready for a real caller, but approved mail
 recipient/transport/native URI encoding, device verification and global Settings
 activation remain open, together with privacy-policy browser integration.
+
+## Explicit licences route (T-0348)
+
+Caller-owned features/settings/licences_route.gd composes ready sibling Settings
+and Licences screens in one viewport. configure(settings,licences)->Error validates
+visible Settings/hidden Licences and a loaded Settings snapshot without opening or
+resetting either. Invalid replacements preserve binding; active/dispatch is busy.
+Licences action intent or open() hides Settings and shows the existing screen,
+unless a Settings Sheet is active. Other intents are untouched; no Save mutation.
+
+Active licences adopts Settings' live theme, restoring its previous caller theme
+on return/loss. Scroll, weak focus and legal selection remain caller-owned.
+handle_back()->bool consumes only active licences: detail -> index -> Settings.
+TopBar Back uses the same existing licence behavior. Deferred Settings restoration
+checks ownership/visibility/current visit so it does not steal focus from a new
+active visit. Missing old focus falls back to the licences row.
+
+Visibility callback reentry is guarded; ownership is checked after transitions.
+Loss/reparent/free/route exit disconnects, hides orphan licences and restores Settings
+when active; retained entry requires explicit configure. Snapshot reports bound and
+settings/licences/unavailable. Global Nav activation and physical-device review
+remain open; this is reusable opt-in local routing, not a new global input listener.
