@@ -13,6 +13,7 @@ from .config import LanguageConfig, TierRules, canonical_bytes, parse_json
 from .ingest.source import load_pin as source_pin
 from .stages import P1_STAGES, _write_atomic, read_artifact
 from .validate import SchemaRegistry, validate_level
+from .validate.locks import load_release_lock, verify_release_lock
 from .validate.manifest import validate_manifest_metadata
 
 
@@ -111,8 +112,18 @@ def validate_levels(levels: list[dict], index: WordIndex, registry: SchemaRegist
 
 
 def validate_content(
-    root: Path, config: LanguageConfig, content_root: Path, *, prepare: bool = False
+    root: Path,
+    config: LanguageConfig,
+    content_root: Path,
+    *,
+    prepare: bool = False,
+    require_lock: bool = False,
 ) -> int | None:
+    if type(require_lock) is not bool:
+        raise ValueError("require_lock must be bool")
+    lock = load_release_lock(root, config.lang)
+    if require_lock and lock is None:
+        raise ValueError("Released campaign lock required")
     directory = content_root / config.lang
     evidence_path = root / "content-evidence" / f"{config.lang}.json"
     if evidence_path.is_symlink() or any(p.is_symlink() for p in evidence_path.parents):
@@ -120,11 +131,15 @@ def validate_content(
     if evidence_path.exists() and not evidence_path.is_file():
         raise ValueError("Evidence must be a regular file")
     if not directory.exists() and not directory.is_symlink() and not evidence_path.exists():
+        if lock is not None:
+            raise ValueError("Released campaign content missing")
         if prepare:
             raise ValueError("Cannot prepare evidence without content")
         return None
     registry = SchemaRegistry(root)
     levels, manifest_raw = bundle(directory, registry)
+    if lock is not None:
+        verify_release_lock(lock, levels)
     expected = provenance(root, config)
     if prepare:
         tiers, _raw = read_artifact(root, config, next(s for s in P1_STAGES if s.name == "tiers"))

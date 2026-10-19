@@ -68,3 +68,8 @@ T-0362 integrates read-only content validation; T-0363 guards export/publication
 No existing prototype is declared released and no baseline is created. Actual
 release cutting/lock updates remain later T-0302 work requiring the real release
 boundary. Remaining token/difficulty validation and production/human gates stay open.
+
+T-0362 enforces an existing released-prefix lock before content evidence work.
+Strict validate-content --require-release-lock rejects absence; default absent-lock
+behavior remains pre-release P1. Valid appends and independent repair validation stay
+available. T-0363 will guard export/publication; no real release baseline is inferred.

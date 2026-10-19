@@ -47,3 +47,19 @@ without the release-cut process and Chris's approval. Lock updates/release cutti
 remaining T-0301 token/difficulty hard rules, production content/calibration and
 human review remain open. T-0360's generic preview remains explicitly unverified
 for released geometry; this contract alone does not change that report.
+
+## Content validation gate (T-0362)
+
+`validate_content(...,require_lock=False)` now loads the canonical lock before any
+initial-content SKIP. Every existing lock is enforced on the complete bundled
+campaign, before provenance processing or evidence writes, including prepare=True.
+Missing content with an existing lock cannot SKIP. Malformed/unsafe locks are always
+errors, never treated as absent or overwritten. Ordinary read-only validation and
+all tier/bonus/handmade/provenance checks remain in force after the geometry guard.
+
+`uv run wg validate-content --require-release-lock` requires an existing valid lock;
+absence fails with exit1/stderr. The API keyword requires bool and has the same
+behavior. Without the flag, absent locks preserve the pre-release P1 validation path;
+a successful P1 check without a lock is not released geometry certification.
+Valid appended content and independently validated repairs are allowed. Neither
+normal validation nor --prepare-evidence creates or updates release lock files.
