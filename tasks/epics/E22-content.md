@@ -52,3 +52,12 @@ already protected. Authored/released candidates stay fixed, duplicate/repetition
 policy is checked against future/past, and blocked greedy selection returns no
 partial plan. T-0360 still binds real input scores/provenance and reports preview;
 production calibration, released geometry proof and publishing remain separate.
+
+T-0359 preserves all fixed future identities while selecting free candidates by
+nearest score then ID, with duplicate rejection evidence and no partial result.
+T-0360 closes this planning wave with an explicit readonly JSON preview: fresh common-
+config scores, source/request hashes and structured success/blocked reports. Supplied
+handmade/seed declarations are not approval. Released geometry, tier/bonus/source
+approval, seed provenance and production calibration remain explicitly unverified;
+lock enforcement is later T-0301/T-0302 work, not an existing implemented export check.
+No production content, P1 handler activation, parameter defaults or publication.
