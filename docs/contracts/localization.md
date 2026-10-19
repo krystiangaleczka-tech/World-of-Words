@@ -62,7 +62,9 @@ analysis. Concrete dynamic states still need service/screen tests and review.
 
 Every shipped language manifest is checked for copy references: legacy manifests
 explicitly report no named travel copy. Grouped named metadata needs bilingual
-region/location name keys; derived location.<id>.fact either exists or is reported
+region/location name keys. Landmark entries retain the existing slot/landmark
+record shape and boolean flag, without invented names or numeric range validation;
+derived location.<id>.fact either exists or is reported
 pending, matching existing Postcard pending-copy behavior. No content schema,
 partition/hash/artwork validation is replaced or changed. Current legacy campaign
 does not certify named locations/facts. Source/import/reference integrity does not

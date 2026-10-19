@@ -198,3 +198,30 @@ def test_cli_from_other_cwd_no_writes_and_nonzero_failure(tmp_path):
     good = subprocess.run(command + ["--json"], cwd=tmp_path, capture_output=True, text=True)
     assert good.returncode == 0, good.stderr
     assert not json.loads(good.stdout)["errors"]
+
+
+@pytest.mark.parametrize(
+    "entry",
+    [
+        42,
+        {},
+        {"name_key": "missing.main.name"},
+        {"slot": 1},
+        {"slot": 1, "landmark": "yes"},
+        {"slot": 1, "landmark": True, "name_key": "probe.main.title"},
+    ],
+)
+def test_landmarks_reject_malformed_or_invented_named_records(tmp_path, entry):
+    root = fixture(tmp_path)
+    data = named()
+    data["landmarks"] = [entry]
+    manifest(root, data)
+    assert audit(root)["errors"]
+
+
+def test_canonical_landmarks_need_no_invented_translation_name(tmp_path):
+    root = fixture(tmp_path)
+    data = named()
+    data["landmarks"] = [{"slot": 1, "landmark": True}, {"slot": 2, "landmark": False}]
+    manifest(root, data)
+    assert audit(root)["errors"] == []

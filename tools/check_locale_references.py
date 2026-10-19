@@ -126,6 +126,13 @@ def audit(root: Path) -> dict:
             if fields:
                 if len(fields) != 3 or not isinstance(data["landmarks"], list):
                     raise ValueError("named metadata requires regions/locations/landmarks arrays")
+                for landmark in data["landmarks"]:
+                    if (
+                        not isinstance(landmark, dict)
+                        or set(landmark) != {"slot", "landmark"}
+                        or not isinstance(landmark["landmark"], bool)
+                    ):
+                        raise ValueError("landmarks require slot/landmark records, not named copy")
                 for kind in ("regions", "locations"):
                     entries = data[kind]
                     if not isinstance(entries, list) or not entries:

@@ -17,7 +17,7 @@ touch:
   - docs/qa/T-0353/**
   - tasks/epics/E21-settings.md
   - tasks/T-0353-locale-references.md
-revision: 1
+revision: 2
 ---
 
 ## Goal
@@ -50,7 +50,9 @@ explicit pending copy when missing. No static reference/travel-copy audit exists
   expand arbitrary strings, add suppression lists or claim full dataflow analysis.
 - For every shipped */manifest.json: legacy metadata-free records report legacy
   (not approved names/facts). When named metadata exists require grouped nonempty
-  regions/locations arrays, landmarks array, each name_key in bilingual catalog;
+  regions/locations arrays, landmarks array, each region/location name_key in bilingual catalog;
+  landmark entries retain the existing slot/landmark record shape with a boolean
+  landmark flag, no invented name_key; numeric slot ranges remain outside this audit;
   location IDs must be nonempty strings and each derived fact key must exist in
   catalog OR be reported pending, matching current runtime fallback. Malformed
   metadata fails closed. This is copy-reference validation, not content schema,
