@@ -91,3 +91,9 @@ T-0365 binds immutable release proposals to the canonical bundle, exact evidence
 current language/schema context and old semantic lock. Existing readonly validation
 runs between snapshots, detecting stale inputs. No evidence/lock preparation or
 writes; real release approval and remaining P2 production gates stay external.
+
+T-0366 closes explicit lock tooling: default release-lock command is readonly,
+--apply requires the reviewed plan hash and revalidation under a cooperating-writer
+mutex before atomic canonical lock replacement. Tests write only temporary fixtures;
+actual release approval/baseline remains Chris's separate action. No manifest v1.1,
+remaining P2 hard-rule or production approval is inferred from these tools.
