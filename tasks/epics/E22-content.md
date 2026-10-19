@@ -80,3 +80,9 @@ any output/check/no-op/version/staging path. Strict build --require-release-lock
 covers normal and --check exports, including custom output. No actual baseline,
 release cut/update or production content is created; remaining T-0301/T-0302 and
 classification/calibration/human release gates remain open.
+
+## Explicit release tooling wave (T-0364..T-0366)
+T-0364 proposes append-only immutable locks without replacing any old hashes;
+T-0365 binds a readonly proposal to validated content; T-0366 provides explicit
+guarded updates. Tests use temporary baselines only. A real release cut and Chris's
+approval remain external actions, along with production/calibration/content gates.
