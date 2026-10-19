@@ -56,3 +56,32 @@ bytes identifies provenance; input key order does not alter results.
 Fixture weights prove mechanics only. Production configuration/calibration,
 frequency coverage policy, stage integration and released-content scoring remain
 open. This module neither mutates a level nor changes P1 difficulty0.0.
+
+## Duplicate/repetition evidence (T-0356)
+
+`wordgame_pipeline.dedupe.audit_duplicates(records, policy, config)` returns an
+immutable tuple of DuplicateConflict(left_id,right_id,reasons,shared_words,jaccard).
+Each explicit record has id,pool,slot,letters,words,seed_word: normalized formable
+selected words, authoritative seed among them, unique identity and pool/position.
+Caller owns prior tier/geometry/source validation. No seed is guessed from RNG or
+word ordering. Bonus words are not analysis inputs. All records validate before
+any pair result is constructed; no partial result or input mutation on failure.
+
+Explicit immutable DuplicatePolicy requires threshold0..1 and seed_spacing>=100.
+No production threshold defaults. Pairs are ordered by(pool,slot,id), independent
+of input order. Reasons retain this order:
+
+- letter_multiset: equal sorted tiles, preserving multiplicity and diacritics.
+- word_jaccard: selected intersection/union strictly above configured threshold.
+- word_spacing: any shared crossword word at campaign slot distance below100.
+- seed_spacing: equal explicit seed words below configured campaign seed distance.
+
+Exact minimum distance or threshold is allowed by that rule. Multiset/Jaccard
+comparisons span campaign/daily. Campaign slots and daily positions do not share
+a clock, so spacing compares campaign only; daily pacing is a future policy.
+Shared words are sorted; multiple reasons for one pair remain visible.
+
+This is pair evidence, not a greedy filter, sequence planner or replacement hard
+validator. It never selects, deletes, reorders or exports levels. Production
+threshold review, seed provenance wiring, classification, scoring calibration,
+curve/sequence integration, production content and publishing remain open.
