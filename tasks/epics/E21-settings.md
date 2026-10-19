@@ -100,3 +100,10 @@ T-0352 proves exact CSV/imported resource parity for every PL/EN cell, whole-cat
 locale cycles, current formatted copy and registration ownership/rollback. It
 adds no runtime behavior or wording. T-0353 still owns bounded static references
 and shipped location metadata; human editorial/native/content gates remain open.
+
+T-0353 completes the bounded automated localization wave with AST/static scene-key
+checks and shipped travel-copy reference reporting.347 bilingual keys and372 static
+references pass;22 literal dynamic prefixes/templates remain explicitly bounded
+by runtime tests. Current65-slot campaign is legacy, with no named travel copy.
+T-0289 editorial/plural approval and future location names/facts still need Chris;
+these three tasks do not claim that human gate is complete or activate EN content.
