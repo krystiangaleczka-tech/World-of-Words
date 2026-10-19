@@ -187,3 +187,41 @@ def test_bad_direct_constructors_and_cutoffs(tmp_path):
         with pytest.raises(ValueError):
             plan_release_lock(tmp_path, content, cutoff)
     assert plan == original
+
+
+@pytest.mark.parametrize("kind", ["content", "config", "schema", "baseline"])
+def test_each_snapshot_binding_rejects_mid_validation_changes(tmp_path, monkeypatch, kind):
+    import wordgame_pipeline.release_plan as module
+
+    _config, content = setup(tmp_path)
+    proposed = plan_release_lock(tmp_path, content, 15).proposed
+    actual = module.validate_content
+
+    def changed(*args, **kwargs):
+        result = actual(*args, **kwargs)
+        if kind == "baseline":
+            path = tmp_path / "locks/pl.lock.json"
+            path.parent.mkdir()
+            path.write_bytes(canonical_bytes(proposed.to_dict()))
+        elif kind == "schema":
+            path = tmp_path / "schema/level.schema.json"
+            path.write_bytes(path.read_bytes() + b"\n")
+        elif kind == "config":
+            path = tmp_path / "config/pl.yaml"
+            data = json.loads(path.read_bytes())
+            data["tier_rules"]["base_min_arf"] += 1
+            path.write_bytes(canonical_bytes(data))
+        else:
+            path = content / "pl/manifest.json"
+            manifest = json.loads(path.read_bytes())
+            pack_path = content / "pl" / manifest["packs"][0]["file"]
+            pack = json.loads(pack_path.read_bytes())
+            pack["levels"][-1]["seed"] += 1
+            pack_path.write_bytes(canonical_bytes(pack))
+            manifest["packs"][0]["sha256"] = hashlib.sha256(pack_path.read_bytes()).hexdigest()
+            path.write_bytes(canonical_bytes(manifest))
+        return result
+
+    monkeypatch.setattr(module, "validate_content", changed)
+    with pytest.raises(ValueError, match="inputs changed"):
+        plan_release_lock(tmp_path, content, 15)
