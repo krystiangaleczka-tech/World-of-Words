@@ -107,3 +107,23 @@ This is a region-local calculation. Caller owns reviewed parameters, actual regi
 location mapping, landmark authorship, released-slot protection and assignment.
 Classification, calibration, whole-campaign scheduling and stage activation remain
 open; P1 exports, shipped slots and production configuration are unchanged.
+
+## Protected slot ownership (T-0358)
+
+`sequence.slots.SlotPlan` holds immutable Region/Location partitions and authored/
+released Reservation tuples. Regions and locations cover1..total in canonical
+order, without gaps/overlap or duplicate IDs. Locations stay wholly in their
+referenced region. IDs reject Unicode control/format characters. Counts remain
+manifest-safe. Construction validates all nested types and ownership invariants.
+
+Authored reservations cover existing slots1–15 and every regional landmark;
+additional authored regular slots are allowed. Released IDs form prefix1..R and
+must agree with authored IDs on overlap. No candidate may reserve distinct slots
+across either collection. This reserves identity, not released geometry hashes;
+existing export lock validation remains authoritative.
+
+`plan.requirement(slot)` computes one CurveTarget and returns exact region/location,
+fixed ID and authored/released flags. Huge explicit regions do not allocate their
+slots. No candidate selection/content write is performed. T-0359 will allocate
+against this plan; T-0360 will compose explicit preview/report. Actual parameters,
+source/seed/tier proof, released hashes and publishing remain separate gates.

@@ -39,3 +39,10 @@ a generated target. Region-local queries allocate no campaign; parameters are
 fixtures/caller-owned, not approved production calibration. Slot assignment,
 region/location integration, released locks and actual sequence activation remain
 open together with the production content/human gates above.
+
+## Protected planning wave (T-0358..T-0360)
+T-0358 validates region/location partitions and authored/released identity
+reservations; T-0359 selects deterministic candidate assignments against curve and
+duplicate constraints; T-0360 composes a readonly preview/report. Onboarding and
+landmarks require authored proof; released identity cannot move. Existing export
+owns locked geometry; no production parameters, publication or AI call is inferred.
