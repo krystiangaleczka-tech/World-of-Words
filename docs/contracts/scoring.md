@@ -34,3 +34,25 @@ requires the private repository, API key/spend cap and human preflight; T-0297
 classification suggestions, calibration, sequencing and production content remain
 open. Existing P1 handlers/exports still write difficulty0.0. No published slots,
 source words, config values, shipped content or save format change in this wave.
+
+## Explicit bounded scoring (T-0355)
+
+ScoringConfig.from_dict accepts only version1 JSON-compatible YAML with every raw
+feature present exactly once. Each rule has finite nonnegative weight/minimum/
+maximum, strict minimum<maximum and higher/lower difficulty direction. At least
+one weight must be positive. Frozen rules/config validate direct constructors too.
+`load_scoring(path)` reads only the explicitly supplied path; no defaults, production
+weights, interpolation, network calls or config writes. Duplicate keys fail through
+the existing strict parser. to_dict returns a fresh normalized configuration.
+
+`score_features` requires exact finite nonnegative raw values. Clamp raw to each
+rule range, normalize to[0,1], invert lower direction, and compute a weighted mean.
+Weights are divided by their largest value before normalization to avoid overflow
+from individually finite large weights. Immutable explanations contain raw,
+normalized and weighted contributions in FEATURE_NAMES order. Stable fsum total
+is bounded to[0,1] against floating rounding. SHA256 of canonical normalized config
+bytes identifies provenance; input key order does not alter results.
+
+Fixture weights prove mechanics only. Production configuration/calibration,
+frequency coverage policy, stage integration and released-content scoring remain
+open. This module neither mutates a level nor changes P1 difficulty0.0.

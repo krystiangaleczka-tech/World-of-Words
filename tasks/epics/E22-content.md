@@ -20,3 +20,8 @@ cap and human authorization; no call is inferred. T-0297 suggestion integration,
 production weights/calibration, curve/sequence integration, handmade levels1–15,
 200-level production build and Chris's lexical/playtest review remain open.
 No new content word, travel name/fact or release approval is invented by this wave.
+
+T-0355 adds an immutable explicit range/direction/weight configuration and bounded
+weighted score with per-feature explanation/config hash. No default production
+weights are supplied. It remains offline/unactivated; T-0356 audits candidate
+repetition, while production classification/calibration/sequence gates stay open.
