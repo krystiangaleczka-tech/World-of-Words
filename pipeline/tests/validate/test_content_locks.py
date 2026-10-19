@@ -178,6 +178,8 @@ def test_truncated_released_prefix_rejected_after_valid_bundle(tmp_path):
     save_pack(manifest, pack_path, pack)
     data = json.loads(manifest.read_bytes())
     data["slots"] = data["packs"][0]["last"] = 29
+    data["packs"][0]["file"] = "packs/c-0001-0029.json"
+    pack_path.rename(pack_path.with_name("c-0001-0029.json"))
     manifest.write_bytes(canonical_bytes(data))
     with pytest.raises(ValueError, match="Released campaign prefix missing"):
         validate_content(tmp_path, config, content, prepare=True)
