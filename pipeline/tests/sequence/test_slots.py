@@ -166,3 +166,10 @@ def test_unreleased_authored_regular_and_released_onboarding_both_need_proof():
         replace(value, authored=value.authored[1:])
     with pytest.raises(ValueError):
         replace(value, released=(Reservation(1, "c1"), Reservation(2, "c1")))
+
+
+def test_released_regular_slot_cannot_reuse_future_authored_identity():
+    value = plan()
+    released = tuple(Reservation(s, f"c{s}") for s in range(1, 16)) + (Reservation(16, "c18"),)
+    with pytest.raises(ValueError, match="multiple slots"):
+        replace(value, released=released)
