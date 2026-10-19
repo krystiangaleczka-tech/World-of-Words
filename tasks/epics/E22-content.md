@@ -25,3 +25,10 @@ T-0355 adds an immutable explicit range/direction/weight configuration and bound
 weighted score with per-feature explanation/config hash. No default production
 weights are supplied. It remains offline/unactivated; T-0356 audits candidate
 repetition, while production classification/calibration/sequence gates stay open.
+
+T-0356 closes this bounded offline wave with immutable pair evidence for identical
+letter multisets, selected-word Jaccard and campaign crossword/seed repetition.
+All crossword words retain the existing100-slot minimum; bonus and incomparable
+daily positions cannot change campaign spacing. Explicit policy thresholds and
+seed provenance are caller-owned. No candidate selection or content regeneration
+is activated; T-0296..T-0307 production/integration/human gates remain open.
