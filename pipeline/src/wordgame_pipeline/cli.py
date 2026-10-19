@@ -36,12 +36,17 @@ def main(argv: list[str] | None = None) -> int:
     validate.add_argument("--root", type=Path, default=Path("pipeline"))
     validate.add_argument("--content-root", type=Path, default=Path("game/content"))
     validate.add_argument("--prepare-evidence", action="store_true")
+    validate.add_argument("--require-release-lock", action="store_true")
     args = parser.parse_args(argv)
     try:
         config = load_config(args.root, args.lang)
         if args.command == "validate-content":
             count = validate_content(
-                args.root, config, args.content_root, prepare=args.prepare_evidence
+                args.root,
+                config,
+                args.content_root,
+                prepare=args.prepare_evidence,
+                require_lock=args.require_release_lock,
             )
             print(
                 "SKIP content-validate: no campaign or evidence yet (T-0131)"
