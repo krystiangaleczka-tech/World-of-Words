@@ -61,3 +61,10 @@ handmade/seed declarations are not approval. Released geometry, tier/bonus/sourc
 approval, seed provenance and production calibration remain explicitly unverified;
 lock enforcement is later T-0301/T-0302 work, not an existing implemented export check.
 No production content, P1 handler activation, parameter defaults or publication.
+
+## Release geometry wave (T-0361..T-0363)
+T-0361 defines strict immutable released-prefix locks and exact geometry hashes;
+T-0362 integrates read-only content validation; T-0363 guards export/publication.
+No existing prototype is declared released and no baseline is created. Actual
+release cutting/lock updates remain later T-0302 work requiring the real release
+boundary. Remaining token/difficulty validation and production/human gates stay open.
