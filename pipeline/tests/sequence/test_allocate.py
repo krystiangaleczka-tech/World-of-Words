@@ -162,3 +162,11 @@ def test_language_record_validation_and_malformed_call_shapes():
     item = candidates()[0]
     item.record(1)["letters"].clear()
     assert item.letters
+
+
+def test_released_nonauthored_reservation_rejects_authored_candidate():
+    value, pool = plan(released=16), list(candidates())
+    pool[15] = replace(pool[15], authored=True)
+    with pytest.raises(AllocationError) as error:
+        allocate(value, pool, POLICY, LANGUAGE)
+    assert error.value.code == "fixed_incompatible" and error.value.slot == 16

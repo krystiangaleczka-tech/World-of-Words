@@ -99,7 +99,7 @@ def allocate(
         if identity not in pool:
             raise AllocationError("fixed_missing", slot)
         requirement, candidate = plan.requirement(slot), pool[identity]
-        if (requirement.authored and not candidate.authored) or (
+        if (requirement.authored != candidate.authored) or (
             requirement.curve.kind == "landmark"
         ) != candidate.landmark:
             raise AllocationError("fixed_incompatible", slot)
