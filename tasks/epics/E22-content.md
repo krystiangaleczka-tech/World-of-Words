@@ -32,3 +32,10 @@ All crossword words retain the existing100-slot minimum; bonus and incomparable
 daily positions cannot change campaign spacing. Explicit policy thresholds and
 seed provenance are caller-owned. No candidate selection or content regeneration
 is activated; T-0296..T-0307 production/integration/human gates remain open.
+
+T-0357 prepares the independent regional target portion of T-0300: explicit trend,
+saw-tooth and landmark/recovery calculations, with onboarding1–15 never assigned
+a generated target. Region-local queries allocate no campaign; parameters are
+fixtures/caller-owned, not approved production calibration. Slot assignment,
+region/location integration, released locks and actual sequence activation remain
+open together with the production content/human gates above.

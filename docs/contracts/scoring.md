@@ -85,3 +85,25 @@ This is pair evidence, not a greedy filter, sequence planner or replacement hard
 validator. It never selects, deletes, reorders or exports levels. Production
 threshold review, seed provenance wiring, classification, scoring calibration,
 curve/sequence integration, production content and publishing remain open.
+
+## Regional targets (T-0357)
+
+`wordgame_pipeline.sequence.CurveConfig` accepts explicit version1 JSON-compatible
+YAML only: first,last,base,trend,period,amplitude,landmark_spike,breather_drop and
+landmarks. Integer region bounds/period are manifest-safe; unit parameters are
+finite0..1, spike/drop positive. Landmarks are unique ordered slots above15 inside
+the region, with a following in-region nonlandmark slot. No production curve file
+or default numbers are supplied. Constructors/loaders validate; to_dict is fresh.
+
+`target_for_slot` computes one in-region slot without allocating a region or
+assigning content. Slots1–15 always return onboarding with no target/baseline.
+For other slots offset=slot-first and saw=(offset%period)/(period-1); the ordinary
+baseline is clamped base+trend*offset+amplitude*saw. Landmark adds a bounded spike.
+Its next slot takes the smaller of baseline-drop and previous landmark target-drop,
+bounded at0. nextafter toward0 preserves strictly easier recovery when a tiny
+positive drop would round away. Output explains ordinary baseline and final target.
+
+This is a region-local calculation. Caller owns reviewed parameters, actual region/
+location mapping, landmark authorship, released-slot protection and assignment.
+Classification, calibration, whole-campaign scheduling and stage activation remain
+open; P1 exports, shipped slots and production configuration are unchanged.
