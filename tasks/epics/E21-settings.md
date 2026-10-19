@@ -87,3 +87,11 @@ The T-0348..T-0350 wave closes reusable local licences routing and injected brow
 presentation. T-0288 still requires approved policy URL/mail recipient/native
 transport, real store/consent integration, global activation and device/legal
 verification; this wave does not infer or configure those external resources.
+
+## T-0289 localization wave (T-0351..T-0353)
+After the Settings wave, T-0351 validates exact bilingual CSV sources and ordered
+format arguments. T-0352 verifies every actual imported PL/EN resource against its
+source and registration ownership. T-0353 checks static key references and shipped
+location metadata. These tasks automate integrity; Chris's PL wording/plural and
+actual location-content approval remain open. No EN campaign or real destination
+is inferred. Existing T-0290..T-0295 implementations are already merged.
