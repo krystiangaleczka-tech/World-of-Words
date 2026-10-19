@@ -46,3 +46,9 @@ reservations; T-0359 selects deterministic candidate assignments against curve a
 duplicate constraints; T-0360 composes a readonly preview/report. Onboarding and
 landmarks require authored proof; released identity cannot move. Existing export
 owns locked geometry; no production parameters, publication or AI call is inferred.
+
+T-0359 assigns free slots by nearest explicit score/ID with all future reservations
+already protected. Authored/released candidates stay fixed, duplicate/repetition
+policy is checked against future/past, and blocked greedy selection returns no
+partial plan. T-0360 still binds real input scores/provenance and reports preview;
+production calibration, released geometry proof and publishing remain separate.

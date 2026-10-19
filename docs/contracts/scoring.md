@@ -127,3 +127,25 @@ fixed ID and authored/released flags. Huge explicit regions do not allocate thei
 slots. No candidate selection/content write is performed. T-0359 will allocate
 against this plan; T-0360 will compose explicit preview/report. Actual parameters,
 source/seed/tier proof, released hashes and publishing remain separate gates.
+
+## Deterministic protected allocation (T-0359)
+
+`sequence.allocate.allocate(plan,candidates,policy,language)` validates every
+immutable ScoredCandidate and normalized/formable record before choosing content.
+Comparable0..1 scores and authoritative seeds are caller-owned; T-0360 will bind
+fresh scores to common explicit configuration. Authored/landmark flags must match
+fixed requirements. Every fixed candidate must exist and fixed pairs must pass
+current duplicate policy. Released identity is never moved to improve difficulty.
+
+All future fixed IDs are reserved before greedy work. Free slots ascend; candidates
+rank by absolute target distance then ID. Unreserved authored candidates cannot
+be moved automatically. Each trial is checked against ALL fixed future and chosen
+past records, including canonical every-word100-slot spacing. Rejections preserve
+exact duplicate evidence. Output assignments explain mode/deviation/rejections;
+unused IDs are sorted. Inputs and previously returned frozen records stay intact.
+
+AllocationError reports fixed_missing, fixed_incompatible, pool_too_small,
+fixed_conflict or greedy_blocked with slot/conflict/rejection tuples. No partial
+assignment is returned on failure. Greedy failure is not proof that no global
+solution exists; no backtracking or automatic constraint relaxation is attempted.
+This remains preview allocation, not publication or replacement export lock proof.
