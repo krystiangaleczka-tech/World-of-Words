@@ -1,0 +1,1986 @@
+{
+  "keys": 347,
+  "references": [
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 67,
+      "key": "debug.shell.reset"
+    },
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 68,
+      "key": "debug.shell.confirm"
+    },
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 69,
+      "key": "debug.shell.cancel"
+    },
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 70,
+      "key": "debug.shell.home"
+    },
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 93,
+      "key": "debug.level.previous"
+    },
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 99,
+      "key": "debug.level.next"
+    },
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 101,
+      "key": "debug.level.open"
+    },
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 102,
+      "key": "debug.level.answers"
+    },
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 105,
+      "key": "debug.level.complete"
+    },
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 148,
+      "key": "debug.level.answers"
+    },
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 306,
+      "key": "debug.shell.title"
+    },
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 310,
+      "key": "debug.shell.app_version"
+    },
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 314,
+      "key": "debug.shell.content_version"
+    },
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 316,
+      "key": "debug.level.error"
+    },
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 319,
+      "key": "debug.shell.error"
+    },
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 319,
+      "key": "debug.shell.prompt"
+    },
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 323,
+      "key": "debug.level.slot_n"
+    },
+    {
+      "path": "game/features/debug/debug.gd",
+      "line": 335,
+      "key": "debug.level.answers"
+    },
+    {
+      "path": "game/features/debug/diagnostics.gd",
+      "line": 21,
+      "key": "debug.time.day_minus"
+    },
+    {
+      "path": "game/features/debug/diagnostics.gd",
+      "line": 21,
+      "key": "debug.time.day_plus"
+    },
+    {
+      "path": "game/features/debug/diagnostics.gd",
+      "line": 26,
+      "key": "debug.time.zone_minus"
+    },
+    {
+      "path": "game/features/debug/diagnostics.gd",
+      "line": 26,
+      "key": "debug.time.zone_plus"
+    },
+    {
+      "path": "game/features/debug/diagnostics.gd",
+      "line": 29,
+      "key": "debug.time.reset"
+    },
+    {
+      "path": "game/features/debug/diagnostics.gd",
+      "line": 30,
+      "key": "debug.time.refresh"
+    },
+    {
+      "path": "game/features/debug/diagnostics.gd",
+      "line": 54,
+      "key": "debug.p2.error"
+    },
+    {
+      "path": "game/features/debug/diagnostics.gd",
+      "line": 57,
+      "key": "debug.time.summary"
+    },
+    {
+      "path": "game/features/debug/diagnostics.gd",
+      "line": 58,
+      "key": "debug.time.config"
+    },
+    {
+      "path": "game/features/debug/diagnostics.gd",
+      "line": 60,
+      "key": "debug.time.buckets"
+    },
+    {
+      "path": "game/features/debug/diagnostics.gd",
+      "line": 62,
+      "key": "debug.time.events"
+    },
+    {
+      "path": "game/features/debug/p2_tools.gd",
+      "line": 30,
+      "key": "debug.p2.entitlement"
+    },
+    {
+      "path": "game/features/debug/p2_tools.gd",
+      "line": 73,
+      "key": "debug.p2.error"
+    },
+    {
+      "path": "game/features/debug/p2_tools.gd",
+      "line": 79,
+      "key": "debug.p2.error"
+    },
+    {
+      "path": "game/features/debug/p2_tools.gd",
+      "line": 79,
+      "key": "debug.p2.ok"
+    },
+    {
+      "path": "game/features/debug/p2_tools.gd",
+      "line": 81,
+      "key": "debug.p2.summary"
+    },
+    {
+      "path": "game/features/debug/p2_tools.gd",
+      "line": 86,
+      "key": "debug.p2.no"
+    },
+    {
+      "path": "game/features/debug/p2_tools.gd",
+      "line": 86,
+      "key": "debug.p2.yes"
+    },
+    {
+      "path": "game/features/debug/p2_tools.gd",
+      "line": 87,
+      "key": "debug.p2.no"
+    },
+    {
+      "path": "game/features/debug/p2_tools.gd",
+      "line": 87,
+      "key": "debug.p2.yes"
+    },
+    {
+      "path": "game/features/debug/performance_overlay.gd",
+      "line": 116,
+      "key": "debug.performance.unavailable"
+    },
+    {
+      "path": "game/features/debug/performance_overlay.gd",
+      "line": 120,
+      "key": "debug.performance.fps"
+    },
+    {
+      "path": "game/features/debug/performance_overlay.gd",
+      "line": 122,
+      "key": "debug.performance.latency"
+    },
+    {
+      "path": "game/features/debug/performance_overlay.gd",
+      "line": 128,
+      "key": "debug.performance.coverage"
+    },
+    {
+      "path": "game/features/home/home.gd",
+      "line": 30,
+      "key": "home.main.location"
+    },
+    {
+      "path": "game/features/home/home.gd",
+      "line": 112,
+      "key": "home.nav.settings"
+    },
+    {
+      "path": "game/features/home/home.gd",
+      "line": 140,
+      "key": "home.art.body"
+    },
+    {
+      "path": "game/features/home/home.gd",
+      "line": 140,
+      "key": "home.art.title"
+    },
+    {
+      "path": "game/features/home/home.gd",
+      "line": 151,
+      "key": "home.main.play"
+    },
+    {
+      "path": "game/features/home/home.gd",
+      "line": 157,
+      "key": "home.nav.journey"
+    },
+    {
+      "path": "game/features/home/home.gd",
+      "line": 166,
+      "key": "onboarding.coach.journey"
+    },
+    {
+      "path": "game/features/home/home.gd",
+      "line": 188,
+      "key": "home.main.location"
+    },
+    {
+      "path": "game/features/home/home.gd",
+      "line": 189,
+      "key": "home.main.unavailable"
+    },
+    {
+      "path": "game/features/home/home.gd",
+      "line": 232,
+      "key": "home.nav.journey"
+    },
+    {
+      "path": "game/features/home/home.gd",
+      "line": 285,
+      "key": "home.main.complete"
+    },
+    {
+      "path": "game/features/home/home.gd",
+      "line": 315,
+      "key": "home.main.route_failed"
+    },
+    {
+      "path": "game/features/home/home.gd",
+      "line": 333,
+      "key": "home.main.progress"
+    },
+    {
+      "path": "game/features/home/home.gd",
+      "line": 337,
+      "key": "home.main.level_n"
+    },
+    {
+      "path": "game/features/home/home.gd",
+      "line": 342,
+      "key": "home.nav.unavailable"
+    },
+    {
+      "path": "game/features/home/home.gd",
+      "line": 343,
+      "key": "home.nav.unavailable"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 57,
+      "key": "journey.main.back"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 63,
+      "key": "journey.main.title"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 82,
+      "key": "journey.main.retry"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 82,
+      "key": "journey.main.unavailable"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 99,
+      "key": "journey.main.title"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 108,
+      "key": "journey.main.title"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 169,
+      "key": "journey.location.title"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 172,
+      "key": "journey.location.locked"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 174,
+      "key": "journey.location.complete"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 174,
+      "key": "journey.location.current"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 178,
+      "key": "postcard.main.open"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 198,
+      "key": "journey.location.missing_art"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 249,
+      "key": "journey.main.back_failed"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 251,
+      "key": "journey.region.complete"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 256,
+      "key": "journey.location.pieces"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 259,
+      "key": "journey.location.completed_range"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 263,
+      "key": "journey.location.completed_none"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 266,
+      "key": "journey.location.unlock"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 268,
+      "key": "postcard.main.open_hint"
+    },
+    {
+      "path": "game/features/journey/journey.gd",
+      "line": 272,
+      "key": "journey.location.missing_art"
+    },
+    {
+      "path": "game/features/journey/postcard.gd",
+      "line": 27,
+      "key": "postcard.main.location"
+    },
+    {
+      "path": "game/features/journey/postcard.gd",
+      "line": 70,
+      "key": "postcard.main.back"
+    },
+    {
+      "path": "game/features/journey/postcard.gd",
+      "line": 98,
+      "key": "postcard.art.body"
+    },
+    {
+      "path": "game/features/journey/postcard.gd",
+      "line": 98,
+      "key": "postcard.art.title"
+    },
+    {
+      "path": "game/features/journey/postcard.gd",
+      "line": 106,
+      "key": "postcard.main.continue"
+    },
+    {
+      "path": "game/features/journey/postcard.gd",
+      "line": 139,
+      "key": "postcard.main.location"
+    },
+    {
+      "path": "game/features/journey/postcard.gd",
+      "line": 141,
+      "key": "postcard.main.unavailable"
+    },
+    {
+      "path": "game/features/journey/postcard.gd",
+      "line": 155,
+      "key": "postcard.main.location"
+    },
+    {
+      "path": "game/features/journey/postcard.gd",
+      "line": 158,
+      "key": "postcard.main.terminal"
+    },
+    {
+      "path": "game/features/journey/postcard.gd",
+      "line": 242,
+      "key": "postcard.main.route_failed"
+    },
+    {
+      "path": "game/features/journey/postcard.gd",
+      "line": 248,
+      "key": "postcard.main.route_failed"
+    },
+    {
+      "path": "game/features/journey/postcard.gd",
+      "line": 263,
+      "key": "postcard.main.fact_pending"
+    },
+    {
+      "path": "game/features/journey/postcard.gd",
+      "line": 264,
+      "key": "postcard.main.credits"
+    },
+    {
+      "path": "game/features/journey/postcard.gd",
+      "line": 266,
+      "key": "postcard.main.complete"
+    },
+    {
+      "path": "game/features/level/bonus_ui.gd",
+      "line": 73,
+      "key": "level.bonus.at_complete"
+    },
+    {
+      "path": "game/features/level/bonus_ui.gd",
+      "line": 79,
+      "key": "level.bonus.reward"
+    },
+    {
+      "path": "game/features/level/complete_ui.gd",
+      "line": 85,
+      "key": "level.complete.double"
+    },
+    {
+      "path": "game/features/level/complete_ui.gd",
+      "line": 194,
+      "key": "level.complete.no_ad"
+    },
+    {
+      "path": "game/features/level/complete_ui.gd",
+      "line": 230,
+      "key": "level.complete.no_ad"
+    },
+    {
+      "path": "game/features/level/complete_ui.gd",
+      "line": 241,
+      "key": "level.complete.double"
+    },
+    {
+      "path": "game/features/level/complete_ui.gd",
+      "line": 241,
+      "key": "level.tool.retry"
+    },
+    {
+      "path": "game/features/level/complete_ui.gd",
+      "line": 243,
+      "key": "level.hud.level_n"
+    },
+    {
+      "path": "game/features/level/complete_ui.gd",
+      "line": 244,
+      "key": "level.complete.pieces"
+    },
+    {
+      "path": "game/features/level/complete_ui.gd",
+      "line": 246,
+      "key": "journey.location.missing_art"
+    },
+    {
+      "path": "game/features/level/complete_ui.gd",
+      "line": 247,
+      "key": "level.hint.reward_retry"
+    },
+    {
+      "path": "game/features/level/complete_ui.gd",
+      "line": 249,
+      "key": "level.complete.no_ad"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 151,
+      "key": "level.tool.unavailable"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 316,
+      "key": "level.complete.retry"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 407,
+      "key": "level.hud.debug"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 418,
+      "key": "level.hud.shuffle"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 424,
+      "key": "level.hud.free_hint"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 442,
+      "key": "level.complete.continue"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 450,
+      "key": "level.complete.terminal"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 450,
+      "key": "level.complete.title"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 481,
+      "key": "level.complete.retry"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 486,
+      "key": "level.accessibility.name"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 489,
+      "key": "level.accessibility.summary"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 499,
+      "key": "level.state.missing_content"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 501,
+      "key": "level.hud.level_n"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 503,
+      "key": "level.hud.bonus_count"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 525,
+      "key": "level.state.persistence_failed"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 557,
+      "key": "level.state.persistence_failed"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 597,
+      "key": "level.state.missing_content"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 604,
+      "key": "level.state.missing_content"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 698,
+      "key": "level.complete.terminal"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 698,
+      "key": "level.complete.title"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 710,
+      "key": "level.state.persistence_failed"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 800,
+      "key": "level.complete.terminal"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 802,
+      "key": "level.complete.title"
+    },
+    {
+      "path": "game/features/level/level.gd",
+      "line": 981,
+      "key": "level.state.persistence_failed"
+    },
+    {
+      "path": "game/features/level/p2_hud.gd",
+      "line": 72,
+      "key": "home.nav.journey"
+    },
+    {
+      "path": "game/features/level/p2_hud.gd",
+      "line": 74,
+      "key": "home.nav.settings"
+    },
+    {
+      "path": "game/features/level/p2_hud.gd",
+      "line": 87,
+      "key": "level.hud.shuffle"
+    },
+    {
+      "path": "game/features/level/p2_hud.gd",
+      "line": 150,
+      "key": "level.hud.level_n"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 55,
+      "key": "level.tool.retry"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 64,
+      "key": "level.hint.sheet_watch_ad"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 70,
+      "key": "level.hint.get_coins"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 73,
+      "key": "level.hint.not_now"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 76,
+      "key": "shop.offline.title"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 76,
+      "key": "shop.state.offline"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 93,
+      "key": "level.tool.unavailable"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 102,
+      "key": "level.hint.options"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 107,
+      "key": "level.state.persistence_failed"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 109,
+      "key": "level.tool.unavailable"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 125,
+      "key": "shop.sheet.title"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 150,
+      "key": "level.hint.ad_unavailable"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 168,
+      "key": "level.hint.reward_added"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 170,
+      "key": "level.hint.ad_unavailable"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 170,
+      "key": "level.hint.no_reward"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 173,
+      "key": "level.hint.reward_added"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 175,
+      "key": "level.hint.reward_added"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 180,
+      "key": "level.hint.sheet_watch_ad"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 180,
+      "key": "level.tool.retry"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 187,
+      "key": "level.hint.ad_unavailable"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 187,
+      "key": "level.hint.reward_info"
+    },
+    {
+      "path": "game/features/level/paid_tools_ui.gd",
+      "line": 190,
+      "key": "level.hint.reward_retry"
+    },
+    {
+      "path": "game/features/level/stuck_offer.gd",
+      "line": 27,
+      "key": "level.hint.offer"
+    },
+    {
+      "path": "game/features/level/stuck_offer.gd",
+      "line": 150,
+      "key": "level.hint.offer"
+    },
+    {
+      "path": "game/features/level/tutorial_ui.gd",
+      "line": 45,
+      "key": "level.tutorial.connect"
+    },
+    {
+      "path": "game/features/level/tutorial_ui.gd",
+      "line": 64,
+      "key": "level.state.persistence_failed"
+    },
+    {
+      "path": "game/features/level/tutorial_ui.gd",
+      "line": 69,
+      "key": "level.state.persistence_failed"
+    },
+    {
+      "path": "game/features/level/tutorial_ui.gd",
+      "line": 148,
+      "key": "level.tutorial.connect"
+    },
+    {
+      "path": "game/features/recovery/startup.gd",
+      "line": 33,
+      "key": "recovery.error.title"
+    },
+    {
+      "path": "game/features/recovery/startup.gd",
+      "line": 33,
+      "key": "recovery.lost.title"
+    },
+    {
+      "path": "game/features/recovery/startup.gd",
+      "line": 34,
+      "key": "recovery.error.body"
+    },
+    {
+      "path": "game/features/recovery/startup.gd",
+      "line": 34,
+      "key": "recovery.lost.body"
+    },
+    {
+      "path": "game/features/recovery/startup.gd",
+      "line": 35,
+      "key": "recovery.action.restore"
+    },
+    {
+      "path": "game/features/recovery/startup.gd",
+      "line": 35,
+      "key": "recovery.action.retry"
+    },
+    {
+      "path": "game/features/recovery/startup.gd",
+      "line": 40,
+      "key": "recovery.action.continue"
+    },
+    {
+      "path": "game/features/recovery/startup.gd",
+      "line": 40,
+      "key": "recovery.action.home"
+    },
+    {
+      "path": "game/features/recovery/startup.gd",
+      "line": 69,
+      "key": "recovery.lost.body"
+    },
+    {
+      "path": "game/features/recovery/startup.gd",
+      "line": 69,
+      "key": "recovery.lost.title"
+    },
+    {
+      "path": "game/features/recovery/startup.gd",
+      "line": 70,
+      "key": "recovery.status.requested"
+    },
+    {
+      "path": "game/features/settings/licences.gd",
+      "line": 9,
+      "key": "settings.licences.godot"
+    },
+    {
+      "path": "game/features/settings/licences.gd",
+      "line": 10,
+      "key": "settings.licences.copyrights"
+    },
+    {
+      "path": "game/features/settings/licences.gd",
+      "line": 11,
+      "key": "settings.licences.third_party"
+    },
+    {
+      "path": "game/features/settings/licences.gd",
+      "line": 12,
+      "key": "settings.licences.inter"
+    },
+    {
+      "path": "game/features/settings/licences.gd",
+      "line": 13,
+      "key": "settings.licences.lucide"
+    },
+    {
+      "path": "game/features/settings/licences.gd",
+      "line": 14,
+      "key": "settings.licences.audio"
+    },
+    {
+      "path": "game/features/settings/licences.gd",
+      "line": 15,
+      "key": "settings.licences.sources"
+    },
+    {
+      "path": "game/features/settings/licences.gd",
+      "line": 60,
+      "key": "settings.main.back"
+    },
+    {
+      "path": "game/features/settings/licences.gd",
+      "line": 63,
+      "key": "settings.about.licences"
+    },
+    {
+      "path": "game/features/settings/policy_binding.gd",
+      "line": 134,
+      "key": "settings.policy.busy"
+    },
+    {
+      "path": "game/features/settings/policy_binding.gd",
+      "line": 134,
+      "key": "settings.policy.failed"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 16,
+      "key": "settings.display.text_size"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 17,
+      "key": "settings.language.row"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 18,
+      "key": "settings.purchases.remove_forced_ads"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 19,
+      "key": "settings.purchases.restore"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 20,
+      "key": "settings.privacy.options"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 21,
+      "key": "settings.privacy.policy"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 22,
+      "key": "settings.about.licences"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 23,
+      "key": "settings.about.support"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 26,
+      "key": "settings.sound.effects"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 27,
+      "key": "settings.sound.music"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 28,
+      "key": "settings.sound.haptics"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 29,
+      "key": "settings.display.reduced_motion"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 30,
+      "key": "settings.display.high_contrast"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 154,
+      "key": "settings.write.error"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 158,
+      "key": "settings.write.retry"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 167,
+      "key": "settings.display.scale100"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 167,
+      "key": "settings.display.scale115"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 167,
+      "key": "settings.display.scale130"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 173,
+      "key": "settings.display.text_size"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 213,
+      "key": "settings.language.row"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 227,
+      "key": "settings.language.other"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 230,
+      "key": "settings.language.selected"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 241,
+      "key": "settings.write.retry"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 271,
+      "key": "settings.language.failed"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 276,
+      "key": "settings.language.preview_value"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 278,
+      "key": "settings.language.other"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 361,
+      "key": "settings.main.back"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 364,
+      "key": "settings.main.title"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 456,
+      "key": "settings.write.error"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 474,
+      "key": "settings.display.scale100"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 474,
+      "key": "settings.display.scale115"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 474,
+      "key": "settings.display.scale130"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 479,
+      "key": "settings.language.english"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 479,
+      "key": "settings.language.polish"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 486,
+      "key": "settings.purchases.owned"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 491,
+      "key": "settings.about.version"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 611,
+      "key": "settings.restore.retry_save"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 659,
+      "key": "settings.restore.requested"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 661,
+      "key": "settings.restore.settling"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 664,
+      "key": "settings.restore.empty"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 666,
+      "key": "settings.restore.completed"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 669,
+      "key": "settings.restore.failed"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 671,
+      "key": "settings.restore.unknown"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 673,
+      "key": "settings.restore.unavailable"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 676,
+      "key": "settings.restore.busy"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 678,
+      "key": "settings.restore.failed"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 690,
+      "key": "settings.restore.completed"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 704,
+      "key": "settings.restore.completed"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 704,
+      "key": "settings.restore.success"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 805,
+      "key": "settings.privacy.busy"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 807,
+      "key": "settings.privacy.failed"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 928,
+      "key": "settings.support.busy"
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 930,
+      "key": "settings.support.failed"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 9,
+      "key": "shop.state.loading"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 10,
+      "key": "shop.state.pending"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 11,
+      "key": "shop.state.retry"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 12,
+      "key": "shop.state.success"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 13,
+      "key": "shop.state.cancelled"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 14,
+      "key": "shop.state.failed"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 15,
+      "key": "shop.state.unknown"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 63,
+      "key": "shop.sheet.title"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 74,
+      "key": "shop.action.retry"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 74,
+      "key": "shop.offline.title"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 74,
+      "key": "shop.state.offline"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 78,
+      "key": "shop.remove_forced_ads.body"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 78,
+      "key": "shop.remove_forced_ads.title"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 79,
+      "key": "shop.coins_pack.title"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 83,
+      "key": "shop.free_coins.body"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 83,
+      "key": "shop.free_coins.title"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 88,
+      "key": "shop.sheet.restore"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 123,
+      "key": "shop.state.offline"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 143,
+      "key": "shop.sheet.title"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 156,
+      "key": "shop.state.offline"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 168,
+      "key": "shop.coins.added"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 170,
+      "key": "shop.purchase.thanks"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 203,
+      "key": "shop.action.retry"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 203,
+      "key": "shop.free_coins.watch"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 210,
+      "key": "shop.state.retry"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 213,
+      "key": "shop.free_coins.capped"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 216,
+      "key": "shop.free_coins.unavailable"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 218,
+      "key": "shop.free_coins.body"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 225,
+      "key": "shop.restore.requested"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 233,
+      "key": "shop.state.loading"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 233,
+      "key": "shop.state.offline"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 237,
+      "key": "shop.state.offline"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 252,
+      "key": "shop.state.owned"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 256,
+      "key": "shop.action.buy"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 256,
+      "key": "shop.action.retry"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 260,
+      "key": "shop.remove_forced_ads.body"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 263,
+      "key": "shop.state.offline"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 299,
+      "key": "shop.restore.requested"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 301,
+      "key": "shop.state.failed"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 308,
+      "key": "shop.state.failed"
+    },
+    {
+      "path": "game/features/shop/shop.gd",
+      "line": 308,
+      "key": "shop.state.pending"
+    },
+    {
+      "path": "game/services/nav.gd",
+      "line": 329,
+      "key": "nav.toast.backup_restored"
+    },
+    {
+      "path": "game/services/nav/startup_recovery.gd",
+      "line": 119,
+      "key": "recovery.status.restore_error"
+    },
+    {
+      "path": "game/services/nav/startup_recovery.gd",
+      "line": 132,
+      "key": "recovery.status.save_error"
+    },
+    {
+      "path": "game/services/nav/startup_recovery.gd",
+      "line": 140,
+      "key": "recovery.status.home_error"
+    },
+    {
+      "path": "game/services/settings_language.gd",
+      "line": 11,
+      "key": "settings.language.polish"
+    },
+    {
+      "path": "game/services/settings_language.gd",
+      "line": 12,
+      "key": "settings.language.english"
+    },
+    {
+      "path": "game/services/settings_language.gd",
+      "line": 13,
+      "key": "settings.language.german"
+    },
+    {
+      "path": "game/services/settings_language.gd",
+      "line": 76,
+      "key": "settings.language.other"
+    },
+    {
+      "path": "game/services/settings_language.gd",
+      "line": 85,
+      "key": "settings.language.preview_en"
+    },
+    {
+      "path": "game/services/settings_language.gd",
+      "line": 85,
+      "key": "settings.language.restore_preview"
+    },
+    {
+      "path": "game/services/settings_support.gd",
+      "line": 56,
+      "key": "settings.support.instruction"
+    },
+    {
+      "path": "game/services/settings_support.gd",
+      "line": 59,
+      "key": "settings.support.install_id"
+    },
+    {
+      "path": "game/services/settings_support.gd",
+      "line": 61,
+      "key": "settings.support.version"
+    },
+    {
+      "path": "game/services/settings_support.gd",
+      "line": 64,
+      "key": "settings.support.language"
+    },
+    {
+      "path": "game/services/settings_support.gd",
+      "line": 66,
+      "key": "settings.support.subject"
+    },
+    {
+      "path": "game/ui/components/Badge.gd",
+      "line": 5,
+      "key": "ui.badge.locked"
+    },
+    {
+      "path": "game/ui/components/Badge.gd",
+      "line": 6,
+      "key": "ui.badge.new"
+    },
+    {
+      "path": "game/ui/components/BonusMeter.gd",
+      "line": 6,
+      "key": "ui.bonus.open"
+    },
+    {
+      "path": "game/ui/components/BonusMeter.gd",
+      "line": 7,
+      "key": "ui.bonus.title"
+    },
+    {
+      "path": "game/ui/components/BonusMeter.gd",
+      "line": 88,
+      "key": "ui.bonus.already"
+    },
+    {
+      "path": "game/ui/components/BonusMeter.gd",
+      "line": 112,
+      "key": "ui.bonus.open"
+    },
+    {
+      "path": "game/ui/components/Card.gd",
+      "line": 15,
+      "key": "ui.badge.locked"
+    },
+    {
+      "path": "game/ui/components/Card.gd",
+      "line": 177,
+      "key": "ui.badge.locked"
+    },
+    {
+      "path": "game/ui/components/CurrencyPill.gd",
+      "line": 12,
+      "key": "ui.currency.coins"
+    },
+    {
+      "path": "game/ui/components/CurrencyPill.gd",
+      "line": 12,
+      "key": "ui.currency.stars"
+    },
+    {
+      "path": "game/ui/components/HintButton.gd",
+      "line": 38,
+      "key": "level.hud.hint"
+    },
+    {
+      "path": "game/ui/components/HintButton.gd",
+      "line": 50,
+      "key": "ui.hint.hint"
+    },
+    {
+      "path": "game/ui/components/HintButton.gd",
+      "line": 50,
+      "key": "ui.hint.reveal"
+    },
+    {
+      "path": "game/ui/components/LocationPostcard.gd",
+      "line": 5,
+      "key": "ui.postcard.complete"
+    },
+    {
+      "path": "game/ui/components/LocationPostcard.gd",
+      "line": 6,
+      "key": "ui.postcard.progress"
+    },
+    {
+      "path": "game/ui/components/NavTab.gd",
+      "line": 78,
+      "key": "ui.nav.selected"
+    },
+    {
+      "path": "game/ui/components/ProgressBar.gd",
+      "line": 5,
+      "key": "ui.progress.complete"
+    },
+    {
+      "path": "game/ui/components/RewardBurst.gd",
+      "line": 13,
+      "key": "ui.reward.coins"
+    },
+    {
+      "path": "game/ui/components/RewardBurst.gd",
+      "line": 14,
+      "key": "ui.reward.stars"
+    },
+    {
+      "path": "game/ui/components/RewardBurst.gd",
+      "line": 15,
+      "key": "ui.reward.chest"
+    },
+    {
+      "path": "game/ui/components/RewardBurst.gd",
+      "line": 16,
+      "key": "ui.reward.piece"
+    },
+    {
+      "path": "game/ui/components/Sheet.gd",
+      "line": 71,
+      "key": "ui.sheet.close"
+    },
+    {
+      "path": "game/ui/components/Toggle.gd",
+      "line": 71,
+      "key": "ui.toggle.off"
+    },
+    {
+      "path": "game/ui/components/Toggle.gd",
+      "line": 71,
+      "key": "ui.toggle.on"
+    },
+    {
+      "path": "game/ui/components/WordPreview.gd",
+      "line": 141,
+      "key": "level.feedback.level"
+    },
+    {
+      "path": "game/ui/components/WordPreview.gd",
+      "line": 144,
+      "key": "level.feedback.bonus"
+    },
+    {
+      "path": "game/ui/components/WordPreview.gd",
+      "line": 147,
+      "key": "level.feedback.already_found"
+    },
+    {
+      "path": "game/ui/components/WordPreview.gd",
+      "line": 150,
+      "key": "level.feedback.invalid"
+    },
+    {
+      "path": "game/ui/gallery/actions.gd",
+      "line": 25,
+      "key": "gallery.actions.play"
+    },
+    {
+      "path": "game/ui/gallery/actions.gd",
+      "line": 27,
+      "key": "gallery.actions.sublabel"
+    },
+    {
+      "path": "game/ui/gallery/actions.gd",
+      "line": 31,
+      "key": "gallery.actions.ad"
+    },
+    {
+      "path": "game/ui/gallery/actions.gd",
+      "line": 34,
+      "key": "gallery.actions.cancel"
+    },
+    {
+      "path": "game/ui/gallery/content.gd",
+      "line": 20,
+      "key": "gallery.content.title"
+    },
+    {
+      "path": "game/ui/gallery/content.gd",
+      "line": 23,
+      "key": "gallery.content.action"
+    },
+    {
+      "path": "game/ui/gallery/content.gd",
+      "line": 25,
+      "key": "gallery.content.action"
+    },
+    {
+      "path": "game/ui/gallery/content.gd",
+      "line": 27,
+      "key": "gallery.content.action"
+    },
+    {
+      "path": "game/ui/gallery/content.gd",
+      "line": 29,
+      "key": "gallery.content.action"
+    },
+    {
+      "path": "game/ui/gallery/content.gd",
+      "line": 30,
+      "key": "gallery.content.locked"
+    },
+    {
+      "path": "game/ui/gallery/content.gd",
+      "line": 36,
+      "key": "gallery.content.subtitle"
+    },
+    {
+      "path": "game/ui/gallery/content.gd",
+      "line": 46,
+      "key": "gallery.content.title"
+    },
+    {
+      "path": "game/ui/gallery/content.gd",
+      "line": 47,
+      "key": "gallery.content.subtitle"
+    },
+    {
+      "path": "game/ui/gallery/content.gd",
+      "line": 54,
+      "key": "gallery.content.title"
+    },
+    {
+      "path": "game/ui/gallery/content.gd",
+      "line": 62,
+      "key": "gallery.content.title"
+    },
+    {
+      "path": "game/ui/gallery/content.gd",
+      "line": 74,
+      "key": "gallery.content.subtitle"
+    },
+    {
+      "path": "game/ui/gallery/content.gd",
+      "line": 75,
+      "key": "gallery.content.action"
+    },
+    {
+      "path": "game/ui/gallery/controls.gd",
+      "line": 9,
+      "key": "level.hud.shuffle"
+    },
+    {
+      "path": "game/ui/gallery/currency.gd",
+      "line": 27,
+      "key": "gallery.currency.progress"
+    },
+    {
+      "path": "game/ui/gallery/currency.gd",
+      "line": 32,
+      "key": "gallery.currency.replay"
+    },
+    {
+      "path": "game/ui/gallery/debug_components.gd",
+      "line": 12,
+      "key": "debug.shell.home"
+    },
+    {
+      "path": "game/ui/gallery/gallery.gd",
+      "line": 120,
+      "key": "gallery.shell.provisional"
+    },
+    {
+      "path": "game/ui/gallery/gallery.gd",
+      "line": 199,
+      "key": "gallery.shell.provisional"
+    },
+    {
+      "path": "game/ui/gallery/icons.gd",
+      "line": 23,
+      "key": "level.hud.shuffle"
+    },
+    {
+      "path": "game/ui/gallery/icons.gd",
+      "line": 39,
+      "key": "gallery.icons.badges"
+    },
+    {
+      "path": "game/ui/gallery/overlays.gd",
+      "line": 16,
+      "key": "gallery.overlays.title"
+    },
+    {
+      "path": "game/ui/gallery/overlays.gd",
+      "line": 21,
+      "key": "gallery.overlays.body"
+    },
+    {
+      "path": "game/ui/gallery/overlays.gd",
+      "line": 24,
+      "key": "gallery.overlays.close"
+    },
+    {
+      "path": "game/ui/gallery/overlays.gd",
+      "line": 28,
+      "key": "gallery.overlays.open"
+    },
+    {
+      "path": "game/ui/gallery/powerups.gd",
+      "line": 53,
+      "key": "gallery.powerups.replay"
+    },
+    {
+      "path": "game/ui/gallery/rewards.gd",
+      "line": 56,
+      "key": "gallery.rewards.replay"
+    },
+    {
+      "path": "game/ui/gallery/rewards.gd",
+      "line": 60,
+      "key": "gallery.rewards.reveal"
+    },
+    {
+      "path": "game/ui/gallery/samples.gd",
+      "line": 8,
+      "key": "gallery.samples.pangram"
+    },
+    {
+      "path": "game/ui/gallery/samples.gd",
+      "line": 9,
+      "key": "gallery.samples.restore"
+    },
+    {
+      "path": "game/ui/gallery/samples.gd",
+      "line": 10,
+      "key": "gallery.samples.numeric"
+    },
+    {
+      "path": "game/ui/gallery/samples.gd",
+      "line": 11,
+      "key": "gallery.samples.wheel"
+    },
+    {
+      "path": "game/ui/gallery/samples.gd",
+      "line": 28,
+      "key": "gallery.samples.grid"
+    },
+    {
+      "path": "game/ui/gallery/scaffold.gd",
+      "line": 19,
+      "key": "gallery.scaffold.title"
+    },
+    {
+      "path": "game/ui/gallery/scaffold.gd",
+      "line": 21,
+      "key": "gallery.scaffold.body"
+    },
+    {
+      "path": "game/ui/gallery/scaffold.gd",
+      "line": 28,
+      "key": "gallery.scaffold.footer"
+    },
+    {
+      "path": "game/ui/gallery/scaffold.gd",
+      "line": 62,
+      "key": "gallery.scaffold.overflow"
+    },
+    {
+      "path": "game/ui/gallery/settings_controls.gd",
+      "line": 20,
+      "key": "gallery.settings.sound"
+    },
+    {
+      "path": "game/ui/gallery/settings_controls.gd",
+      "line": 24,
+      "key": "gallery.settings.sound"
+    },
+    {
+      "path": "game/ui/gallery/settings_controls.gd",
+      "line": 32,
+      "key": "gallery.settings.music"
+    },
+    {
+      "path": "game/ui/gallery/settings_controls.gd",
+      "line": 32,
+      "key": "gallery.settings.sound"
+    },
+    {
+      "path": "game/ui/gallery/settings_controls.gd",
+      "line": 36,
+      "key": "gallery.settings.music"
+    },
+    {
+      "path": "game/ui/gallery/settings_controls.gd",
+      "line": 36,
+      "key": "gallery.settings.sound"
+    },
+    {
+      "path": "game/ui/gallery/settings_controls.gd",
+      "line": 45,
+      "key": "gallery.settings.tab"
+    },
+    {
+      "path": "game/ui/gallery/settings_controls.gd",
+      "line": 46,
+      "key": "gallery.settings.locked"
+    },
+    {
+      "path": "game/ui/gallery/tutorial.gd",
+      "line": 23,
+      "key": "gallery.tutorial.replay"
+    },
+    {
+      "path": "game/ui/gallery/tutorial.gd",
+      "line": 27,
+      "key": "gallery.tutorial.hide"
+    },
+    {
+      "path": "game/ui/gallery/tutorial.gd",
+      "line": 82,
+      "key": "gallery.tutorial.caption"
+    },
+    {
+      "path": "game/ui/gallery/wheel.gd",
+      "line": 42,
+      "key": "level.hud.shuffle"
+    }
+  ],
+  "dynamic": [
+    {
+      "path": "game/features/debug/p2_tools.gd",
+      "line": 27,
+      "expression": "debug.p2."
+    },
+    {
+      "path": "game/features/debug/p2_tools.gd",
+      "line": 32,
+      "expression": "debug.p2."
+    },
+    {
+      "path": "game/features/debug/p2_tools.gd",
+      "line": 34,
+      "expression": "debug.p2."
+    },
+    {
+      "path": "game/features/journey/postcard.gd",
+      "line": 157,
+      "expression": "location.%s.fact"
+    },
+    {
+      "path": "game/features/onboarding/feature_coaches.gd",
+      "line": 137,
+      "expression": "onboarding.coach."
+    },
+    {
+      "path": "game/features/onboarding/feature_coaches.gd",
+      "line": 240,
+      "expression": "onboarding.coach."
+    },
+    {
+      "path": "game/features/onboarding/feature_coaches.gd",
+      "line": 274,
+      "expression": "onboarding.coach."
+    },
+    {
+      "path": "game/features/settings/policy_binding.gd",
+      "line": 132,
+      "expression": "settings.policy."
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 373,
+      "expression": "settings.section."
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 375,
+      "expression": "settings.section."
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 802,
+      "expression": "settings.privacy."
+    },
+    {
+      "path": "game/features/settings/settings.gd",
+      "line": 925,
+      "expression": "settings.support."
+    },
+    {
+      "path": "game/ui/gallery/actions.gd",
+      "line": 18,
+      "expression": "gallery.actions."
+    },
+    {
+      "path": "game/ui/gallery/content.gd",
+      "line": 21,
+      "expression": "gallery.actions."
+    },
+    {
+      "path": "game/ui/gallery/content.gd",
+      "line": 73,
+      "expression": "gallery.content."
+    },
+    {
+      "path": "game/ui/gallery/gallery.gd",
+      "line": 190,
+      "expression": "gallery.page."
+    },
+    {
+      "path": "game/ui/gallery/gallery.gd",
+      "line": 197,
+      "expression": "gallery.shell."
+    },
+    {
+      "path": "game/ui/gallery/icons.gd",
+      "line": 32,
+      "expression": "gallery.actions."
+    },
+    {
+      "path": "game/ui/gallery/overlays.gd",
+      "line": 12,
+      "expression": "gallery.overlays."
+    },
+    {
+      "path": "game/ui/gallery/overlays.gd",
+      "line": 41,
+      "expression": "gallery.overlays."
+    },
+    {
+      "path": "game/ui/gallery/powerups.gd",
+      "line": 24,
+      "expression": "gallery.powerups."
+    },
+    {
+      "path": "game/ui/gallery/powerups.gd",
+      "line": 38,
+      "expression": "gallery.powerups."
+    }
+  ],
+  "metadata": [
+    {
+      "path": "game/content/pl/manifest.json",
+      "legacy": true,
+      "named_locations": 0,
+      "pending_facts": []
+    }
+  ],
+  "errors": []
+}

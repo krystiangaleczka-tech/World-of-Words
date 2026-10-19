@@ -44,3 +44,26 @@ plural neutrality. Controlled two-language user resources cover independent
 registrations, outside owners, final release and corrupt-later-resource rollback
 followed by explicit repaired retry. This is CI/runtime-resource evidence; no new
 mobile screen-reader, visual, editorial or English-content claim is made.
+
+## Bounded static references and travel metadata (T-0353)
+
+`tools/check_locale_references.py` parses production GDScript in features/ui/services
+using the existing AST. It checks literal tr/TranslationServer.translate calls,
+closed UI *_key fields and key-shaped literals rooted in existing locale areas
+(including constant maps). Empty optional fields are allowed. Scenes reuse existing
+text guards and validate literal UI key fields. Comments/non-key identifiers are
+ignored. Unknown static keys and unreadable/malformed inputs fail with path/line
+errors. JSON output is deterministic and read only; tools pytest audits actual
+current sources. Historical docs/qa/T-0353 evidence is not a regeneration gate.
+
+Literal dynamic prefixes/templates are reported separately, without executing or
+fully resolving arbitrary expressions. This bounded guard is not complete dataflow
+analysis. Concrete dynamic states still need service/screen tests and review.
+
+Every shipped language manifest is checked for copy references: legacy manifests
+explicitly report no named travel copy. Grouped named metadata needs bilingual
+region/location name keys; derived location.<id>.fact either exists or is reported
+pending, matching existing Postcard pending-copy behavior. No content schema,
+partition/hash/artwork validation is replaced or changed. Current legacy campaign
+does not certify named locations/facts. Source/import/reference integrity does not
+close Chris's wording/plural/native or future travel-content review gates.
