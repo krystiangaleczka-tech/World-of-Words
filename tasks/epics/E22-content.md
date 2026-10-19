@@ -86,3 +86,8 @@ T-0364 proposes append-only immutable locks without replacing any old hashes;
 T-0365 binds a readonly proposal to validated content; T-0366 provides explicit
 guarded updates. Tests use temporary baselines only. A real release cut and Chris's
 approval remain external actions, along with production/calibration/content gates.
+
+T-0365 binds immutable release proposals to the canonical bundle, exact evidence,
+current language/schema context and old semantic lock. Existing readonly validation
+runs between snapshots, detecting stale inputs. No evidence/lock preparation or
+writes; real release approval and remaining P2 production gates stay external.

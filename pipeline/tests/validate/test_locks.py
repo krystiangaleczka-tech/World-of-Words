@@ -187,7 +187,7 @@ def test_loader_path_safety(tmp_path, kind):
 
 @pytest.mark.parametrize("kind", ["fifo", "file_symlink", "parent_symlink"])
 def test_loader_replacement_races_fail_before_read(tmp_path, monkeypatch, kind):
-    import wordgame_pipeline.validate.locks as module
+    import wordgame_pipeline.filesystem as module
 
     path = tmp_path / "locks/pl.lock.json"
     path.parent.mkdir()
