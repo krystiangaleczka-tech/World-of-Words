@@ -149,3 +149,46 @@ fixed_conflict or greedy_blocked with slot/conflict/rejection tuples. No partial
 assignment is returned on failure. Greedy failure is not proof that no global
 solution exists; no backtracking or automatic constraint relaxation is attempted.
 This remains preview allocation, not publication or replacement export lock proof.
+
+## Readonly sequence preview (T-0360)
+
+`python -m wordgame_pipeline.sequence.preview INPUT.json` composes features, fresh
+scores, protected ownership and deterministic allocation without stage activation.
+Run with the repository environment (`uv run python -m ...`). Its exact version1
+JSON object contains schema_version, language="pl", scoring (T-0355 config),
+duplicate_policy={jaccard_threshold,seed_spacing}, plan and candidates. Plan has
+regions=[{id,curve:T-0357 config}], locations=[{id,region,first,last}] and ordered
+authored/released=[{slot,candidate_id}]. Candidates are exact
+{id,level,frequencies,seed_word} objects: an exported campaign level, exact selected-
+form ARF map (null means missing; zero means known) and explicit selected seed.
+No production values or seed choice defaults are provided.
+
+Every level passes the local structural schema and raw-feature geometry checks.
+Entry ID and source campaign ID/slot agree; any fixed candidate's source slot must
+match its reservation. Authored/landmark flags derive from the supplied level, not
+independent flags. The same explicit scoring config recomputes every candidate;
+stored difficulty is ignored. These are source declarations, not proof of approved
+handmade content or authoritative seed discovery. Tier/bonus semantics and source
+approval are not certified by schema/geometry validation.
+
+The deterministic report contains scope=planning-preview, status=ok/blocked,
+canonical request/config hashes, exact local level-schema hash, sorted candidate
+source-level hashes and full scoring explanations. Ordered assignment rows include
+slot/region/location/curve/fixed flags, candidate ID, fresh difficulty, deviation,
+mode and rejected alternatives. Successful reports also list sorted unused IDs.
+A blocked greedy/fixed/pool result includes failure code/slot/rejections/conflicts
+and empty assignments/unused, never a partial plan or global-unsatisfiable claim.
+Input list order affects request identity, but candidate permutations cannot affect
+assignment/evidence order. There are no timestamps or machine-specific paths.
+
+Exit0 emits canonical JSON success, exit2 canonical JSON blocked; malformed input
+exits1 with stderr and empty stdout. Duplicate keys/nonfinite JSON are rejected.
+Only the named request and package-local language/schema files are read, independent
+of cwd; the command writes stdout only. No output option or content/config writes.
+
+Every report explicitly leaves released_geometry, tier_bonus_source_approval,
+seed_provenance and production_calibration unverified, even on status=ok. Existing
+planning notes naming export lock authority describe the intended release boundary:
+actual released geometry lock enforcement remains T-0301/T-0302 work. No identity
+reservation or input hash substitutes for comparison to the committed release lock.
+Production calibration, content integration and human release gates remain open.
