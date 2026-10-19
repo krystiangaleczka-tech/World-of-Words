@@ -5,6 +5,7 @@ from collections import Counter
 from collections.abc import Mapping
 from dataclasses import dataclass
 from itertools import combinations
+from unicodedata import category
 
 from ..config import LanguageConfig
 from ..tiers.core import valid_word
@@ -58,7 +59,7 @@ def _record(data: object, config: LanguageConfig) -> _Record:
         not isinstance(identity, str)
         or not identity
         or identity != identity.strip()
-        or any(ord(c) < 32 for c in identity)
+        or any(category(c) in {"Cc", "Cf"} for c in identity)
         or not isinstance(pool, str)
         or pool not in ("campaign", "daily")
         or type(slot) is not int

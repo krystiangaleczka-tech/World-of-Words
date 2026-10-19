@@ -170,3 +170,9 @@ def test_cross_pool_multisets_and_zero_threshold_with_disjoint_words():
     assert (
         audit_duplicates([a, record("c", 1, "DOM", ("DOM",), "DOM", "daily")], policy, CONFIG) == ()
     )
+
+
+@pytest.mark.parametrize("identity", ["a\u007fb", "a\u0085b", "a\u200bb"])
+def test_unicode_control_and_format_characters_in_identity_are_rejected(identity):
+    with pytest.raises(ValueError):
+        audit_duplicates([record(identity)], POLICY, CONFIG)
