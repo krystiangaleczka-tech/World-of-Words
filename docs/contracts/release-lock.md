@@ -32,6 +32,9 @@ repairs still pass their independent validation gates. No input mutation or writ
 None for the existing pre-release P1 path. Empty/malformed/duplicate-key/nonfinite
 files fail; an empty levels list cannot act as a lock. Symlinks (including dangling
 or parent links), non-directory ancestors and nonregular files fail before reading.
+The loader walks directory descriptors with no-follow protection, opens the final
+entry nonblocking and checks its descriptor is regular before reading. Deterministic
+file/ancestor replacement races cannot redirect it through symlinks or block on FIFO.
 The loader never creates, updates, deletes or repairs a lock. Callers must not turn
 malformed existing locks into absence or silently replace their hashes.
 

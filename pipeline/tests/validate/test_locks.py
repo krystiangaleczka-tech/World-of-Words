@@ -183,3 +183,38 @@ def test_loader_path_safety(tmp_path, kind):
             path.mkdir()
     with pytest.raises(ValueError):
         load_release_lock(tmp_path, "pl")
+
+
+@pytest.mark.parametrize("kind", ["fifo", "file_symlink", "parent_symlink"])
+def test_loader_replacement_races_fail_before_read(tmp_path, monkeypatch, kind):
+    import wordgame_pipeline.validate.locks as module
+
+    path = tmp_path / "locks/pl.lock.json"
+    path.parent.mkdir()
+    path.write_bytes(canonical_bytes(lock_for(campaign()[:1]).to_dict()))
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    (outside / path.name).write_text("must not read")
+    original = module.os.open
+    replaced = False
+
+    def race(name, flags, *args, **kwargs):
+        nonlocal replaced
+        trigger = "locks" if kind == "parent_symlink" else path.name
+        if name == trigger and not replaced:
+            replaced = True
+            if kind == "parent_symlink":
+                path.parent.rename(tmp_path / "old-locks")
+                path.parent.symlink_to(outside, target_is_directory=True)
+            else:
+                path.unlink()
+                if kind == "fifo":
+                    os.mkfifo(path)
+                else:
+                    path.symlink_to(outside / path.name)
+        return original(name, flags, *args, **kwargs)
+
+    monkeypatch.setattr(module.os, "open", race)
+    with pytest.raises(ValueError):
+        load_release_lock(tmp_path, "pl")
+    assert replaced and (outside / path.name).read_text() == "must not read"

@@ -59,7 +59,7 @@ Hash sensitivity to each locked field/order/coordinates and stability for allowe
 metadata/bonus changes/key order; immutable roundtrip and strict constructor/input
 fields/types/prefix/identity/hash; verify append/missing/reorder/change and complete
 input validation; safe missing/valid/malformed/duplicate/nonfinite/file/ancestor/
-symlink/FIFO paths; no mutations/writes. Full check/fresh pack review/exact CI.
+symlink/FIFO paths and deterministic replacement races; no mutations/writes. Full check/fresh pack review/exact CI.
 
 ## Rollback
 Revert unused contract; no release baseline or shipped files have changed.
