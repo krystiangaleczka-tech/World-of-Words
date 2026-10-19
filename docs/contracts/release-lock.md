@@ -129,3 +129,33 @@ Proposal snapshots detect stale inputs under the existing single-writer contract
 they are not a hostile concurrent filesystem transaction. Passing P1 validation and
 hash identity does not certify outstanding P2 gates or actual human release approval.
 This service writes no files; explicit guarded command integration follows T-0366.
+
+## Explicit lock command (T-0366)
+
+`uv run wg release-lock --released-through N` emits canonical JSON with status=proposal,
+plan_sha256 and the complete version1 proposal. Root/content paths and lang options
+match validate-content. Default mode writes nothing. Review the proposal and the
+actual release boundary before using `--apply --expected-plan-sha256 HASH`; HASH must
+be the exact proposal identity just reviewed. Hash without --apply or --apply without
+hash fails. Success status is written or unchanged; errors exit1 with stderr/empty
+stdout. No alternate lock target or protected-geometry override is available.
+
+`release_apply.apply_release_lock(...,expected_sha256=HASH,approved=True)` is the
+explicit API. It validates/recomputes before creating the canonical locks directory,
+uses nonblocking flock on its verified no-follow directory descriptor to serialize
+cooperating tool writers, revalidates under that mutex, writes/fsyncs an exclusive
+owned temporary file and rechecks proposal identity immediately before atomic
+replacement. Stale hashes, unsafe locks, protected changes and competing writes fail.
+No-op preserves old baseline bytes/mtime. Failed pre-replace writes preserve the old
+baseline and clean owned temporary files; a collided unowned file is never deleted.
+A failure after directory creation may leave the empty locks directory. Content,
+evidence and export artifacts are not written by this command.
+
+This Linux/Docker tool retains the existing single-writer content/config contract;
+there is no concurrent uncooperative-writer, multi-file or power-loss transaction
+guarantee. The apply flag expresses operator intent; it cannot verify store release
+or human approval. Chris must approve an actual open-testing/production/App Store
+release before applying a real baseline. Implementation/tests in T-0364..T-0366 use
+temporary fixtures only: the repository's prototype remains without a release lock.
+Manifest v1.1/regions integration, remaining hard rules and production/human gates
+are separate; this completes the bounded lock-update tooling portion of T-0302.

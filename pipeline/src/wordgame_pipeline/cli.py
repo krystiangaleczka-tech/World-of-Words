@@ -6,12 +6,14 @@ from pathlib import Path
 
 from .annotate import handlers_for as annotation_handlers
 from .candidates import handlers_for as candidate_handlers
-from .config import load_config
+from .config import canonical_bytes, load_config
 from .content import validate_content
 from .export import handlers_for as export_handlers
 from .export.publish import publish
 from .grid import handlers_for as grid_handlers
 from .ingest import handlers_for
+from .release_apply import apply_release_lock
+from .release_plan import plan_release_lock
 from .stages import P1_STAGES, artifact_path, read_artifact, run_build, select_stages
 from .tiers import handlers_for as tier_handlers
 from .validate import SchemaRegistry
@@ -38,9 +40,45 @@ def main(argv: list[str] | None = None) -> int:
     validate.add_argument("--content-root", type=Path, default=Path("game/content"))
     validate.add_argument("--prepare-evidence", action="store_true")
     validate.add_argument("--require-release-lock", action="store_true")
+    release = commands.add_parser("release-lock")
+    release.add_argument("--lang", default="pl")
+    release.add_argument("--root", type=Path, default=Path("pipeline"))
+    release.add_argument("--content-root", type=Path, default=Path("game/content"))
+    release.add_argument("--released-through", type=int, required=True)
+    release.add_argument("--apply", action="store_true")
+    release.add_argument("--expected-plan-sha256")
     args = parser.parse_args(argv)
     try:
         config = load_config(args.root, args.lang)
+        if args.command == "release-lock":
+            if args.apply:
+                if args.expected_plan_sha256 is None:
+                    raise ValueError("--apply requires --expected-plan-sha256")
+                plan, changed = apply_release_lock(
+                    args.root,
+                    args.content_root,
+                    args.released_through,
+                    expected_sha256=args.expected_plan_sha256,
+                    approved=True,
+                )
+                status = "written" if changed else "unchanged"
+            else:
+                if args.expected_plan_sha256 is not None:
+                    raise ValueError("--expected-plan-sha256 requires --apply")
+                plan = plan_release_lock(args.root, args.content_root, args.released_through)
+                status = "proposal"
+            print(
+                canonical_bytes(
+                    dict(
+                        schema_version=1,
+                        status=status,
+                        plan_sha256=plan.sha256,
+                        proposal=plan.to_dict(),
+                    )
+                ).decode("utf-8"),
+                end="",
+            )
+            return 0
         if args.command == "validate-content":
             count = validate_content(
                 args.root,
