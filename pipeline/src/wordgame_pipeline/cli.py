@@ -31,6 +31,7 @@ def main(argv: list[str] | None = None) -> int:
     build.add_argument("--content-version", type=int)
     build.add_argument("--output", type=Path)
     build.add_argument("--check", action="store_true")
+    build.add_argument("--require-release-lock", action="store_true")
     validate = commands.add_parser("validate-content")
     validate.add_argument("--lang", default="pl")
     validate.add_argument("--root", type=Path, default=Path("pipeline"))
@@ -56,6 +57,8 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         selected = select_stages(args.first, args.last)
         exporting = selected[-1].name == "export"
+        if args.require_release_lock and not exporting:
+            raise ValueError("--require-release-lock requires export selection")
         if args.check and (not exporting or selected[0].name != "export" or args.plan):
             raise ValueError("--check requires --from export --to export without --plan")
         if exporting and not args.plan:
@@ -68,14 +71,15 @@ def main(argv: list[str] | None = None) -> int:
                 print(artifact_path(args.root, config.lang, stage).relative_to(args.root))
         elif args.check:
             previous, _raw = read_artifact(args.root, config, P1_STAGES[-2])
-            payload = export_handlers(args.root, args.slots, args.content_version)["export"](
-                config, previous
-            )
+            payload = export_handlers(
+                args.root, args.slots, args.content_version, require_lock=args.require_release_lock
+            )["export"](config, previous)
             publish(
                 payload,
                 args.output or args.root.parent / "game/content/pl",
                 SchemaRegistry(args.root),
                 check=True,
+                require_lock=args.require_release_lock,
             )
         else:
             for path in run_build(
@@ -88,7 +92,12 @@ def main(argv: list[str] | None = None) -> int:
                     **candidate_handlers(args.root),
                     **grid_handlers(args.root),
                     **validation_handlers(args.root),
-                    **export_handlers(args.root, args.slots, args.content_version),
+                    **export_handlers(
+                        args.root,
+                        args.slots,
+                        args.content_version,
+                        require_lock=args.require_release_lock,
+                    ),
                 },
                 args.first,
                 args.last,
@@ -100,6 +109,7 @@ def main(argv: list[str] | None = None) -> int:
                     payload,
                     args.output or args.root.parent / "game/content/pl",
                     SchemaRegistry(args.root),
+                    require_lock=args.require_release_lock,
                 )
     except (OSError, ValueError, TypeError) as exc:
         print(f"wg: {exc}", file=sys.stderr)

@@ -55,6 +55,7 @@ def validate_with(validator: Draft202012Validator, value: object, prefix: str = 
 
 class SchemaRegistry:
     def __init__(self, root: Path) -> None:
+        self.root = root.absolute()
         self.raw = {
             name: (root / "schema" / f"{name}.schema.json").read_bytes()
             for name in ("level", "pack", "manifest")

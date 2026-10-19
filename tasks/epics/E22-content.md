@@ -73,3 +73,10 @@ T-0362 enforces an existing released-prefix lock before content evidence work.
 Strict validate-content --require-release-lock rejects absence; default absent-lock
 behavior remains pre-release P1. Valid appends and independent repair validation stay
 available. T-0363 will guard export/publication; no real release baseline is inferred.
+
+T-0363 closes the protection wave: export verifies locks before returning a stage
+payload and publish independently reloads the canonical registry-root lock before
+any output/check/no-op/version/staging path. Strict build --require-release-lock
+covers normal and --check exports, including custom output. No actual baseline,
+release cut/update or production content is created; remaining T-0301/T-0302 and
+classification/calibration/human release gates remain open.

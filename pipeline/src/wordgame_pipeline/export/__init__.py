@@ -9,6 +9,7 @@ from ..config import LanguageConfig, canonical_bytes
 from ..stages import P1_STAGES, StageHandler, read_artifact
 from ..validate import SchemaRegistry, validate_level
 from ..validate import handlers_for as validation_handlers
+from ..validate.locks import load_release_lock, verify_release_lock
 
 
 def assemble(
@@ -117,14 +118,31 @@ def assemble(
     return {"options": {"slots": slots, "content_version": version}, "files": files}
 
 
-def handlers_for(root: Path, slots: int, version: int) -> dict[str, StageHandler]:
+def handlers_for(
+    root: Path, slots: int, version: int, *, require_lock: bool = False
+) -> dict[str, StageHandler]:
     def export(config: LanguageConfig, previous: object) -> object:
+        if type(require_lock) is not bool:
+            raise ValueError("require_lock must be bool")
+        lock = load_release_lock(root, config.lang)
+        if require_lock and lock is None:
+            raise ValueError("Released campaign lock required")
         checked = validation_handlers(root)["validate"](config, previous)
         if not isinstance(previous, dict) or previous.get("validation") != checked["validation"]:
             raise ValueError("Stale validation evidence; rebuild validate")
         tiers, _raw = read_artifact(root, config, next(s for s in P1_STAGES if s.name == "tiers"))
-        return assemble(
+        payload = assemble(
             checked, slots, version, WordIndex(tiers["records"], config), SchemaRegistry(root)
         )
+        if lock is not None:
+            verify_release_lock(
+                lock,
+                [
+                    level
+                    for entry in payload["files"]["manifest.json"]["packs"]
+                    for level in payload["files"][entry["file"]]["levels"]
+                ],
+            )
+        return payload
 
     return {"export": export}
