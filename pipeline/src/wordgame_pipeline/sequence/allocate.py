@@ -83,7 +83,7 @@ class AllocationError(ValueError):
 
 
 def allocate(
-    plan: SlotPlan, candidates: list | tuple, policy: DuplicatePolicy, language
+    plan: SlotPlan, candidates: list | tuple, policy: DuplicatePolicy, language: LanguageConfig
 ) -> Allocation:
     if not isinstance(plan, SlotPlan) or not isinstance(candidates, (list, tuple)):
         raise ValueError("Expected slot plan and finite candidate collection")
