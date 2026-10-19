@@ -207,3 +207,14 @@ def test_invalid_configuration_and_impossible_feature_contribution_reject():
         score_features(raw(), None)
     with pytest.raises(ValueError):
         FeatureScore(FEATURE_NAMES[0], 0, 0.5, 0.6)
+
+
+def test_shifted_positive_range_clamps_and_normalizes_in_both_directions():
+    data = settings()
+    data["features"]["letter_count"].update(weight=1, minimum=2, maximum=6)
+    for value, expected in [(0, 0), (2, 0), (4, 0.5), (6, 1), (100, 1)]:
+        features = raw() | {"letter_count": value}
+        data["features"]["letter_count"]["direction"] = "higher"
+        assert score_features(features, ScoringConfig.from_dict(data)).total == expected
+        data["features"]["letter_count"]["direction"] = "lower"
+        assert score_features(features, ScoringConfig.from_dict(data)).total == 1 - expected
