@@ -63,3 +63,28 @@ behavior. Without the flag, absent locks preserve the pre-release P1 validation 
 a successful P1 check without a lock is not released geometry certification.
 Valid appended content and independently validated repairs are allowed. Neither
 normal validation nor --prepare-evidence creates or updates release lock files.
+
+## Export and publication gate (T-0363)
+
+The root-aware export handler now loads the canonical lock and verifies the entire
+assembled campaign before returning it, so a lock failure cannot replace the export
+stage artifact. The actual `publish` API independently reloads and verifies the lock
+before output checks, check/no-op/version returns, directory creation or staging.
+SchemaRegistry retains its absolute construction root to anchor publication's lock
+source even after cwd changes. A custom output path cannot change the lock source.
+No optional caller-provided lock object can bypass loading an existing canonical file.
+
+`uv run wg build --lang pl --from export --to export --slots N --content-version V
+--require-release-lock` requires an existing valid lock at both gates. The keyword
+require_lock=True is also available on export.handlers_for and publish; it must be
+bool. --check enforces the same guards and remains read-only. A strict flag with a
+non-export selection fails; --plan only lists paths and performs no export/lock read.
+Without the flag, missing locks preserve pre-release P1 behavior; malformed/unsafe
+existing locks always fail. Valid appends and independently valid bonus/metadata
+repairs retain existing content-version and publication rollback requirements.
+
+This enforces existing baselines; it does not create or update them. No prototype
+has been declared released by this wave. Release cutting, lock extension, explicit
+human overrides and remaining production gates are still separate. Publication
+retains its existing single-writer contract, without a concurrent release-lock writer
+or cross-file transaction guarantee. Generic T-0360 preview remains unverified.

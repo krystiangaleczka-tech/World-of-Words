@@ -8,6 +8,7 @@ from pathlib import Path
 
 from ..config import canonical_bytes, parse_json
 from ..validate import SchemaRegistry
+from ..validate.locks import load_release_lock, verify_release_lock
 
 
 def _existing(output: Path, registry: SchemaRegistry) -> dict[str, bytes]:
@@ -53,7 +54,19 @@ def _existing(output: Path, registry: SchemaRegistry) -> dict[str, bytes]:
     return files
 
 
-def publish(payload: dict, output: Path, registry: SchemaRegistry, *, check: bool = False) -> None:
+def publish(
+    payload: dict,
+    output: Path,
+    registry: SchemaRegistry,
+    *,
+    check: bool = False,
+    require_lock: bool = False,
+) -> None:
+    if type(require_lock) is not bool:
+        raise ValueError("require_lock must be bool")
+    lock = load_release_lock(registry.root, "pl")
+    if require_lock and lock is None:
+        raise ValueError("Released campaign lock required")
     files = {name: canonical_bytes(document) for name, document in payload["files"].items()}
     # Only an exporter-generated file set may reach disk, even for API callers.
     manifest = payload["files"]["manifest.json"]
@@ -65,6 +78,15 @@ def publish(payload: dict, output: Path, registry: SchemaRegistry, *, check: boo
         registry.validate_schema("pack", payload["files"][entry["file"]])
         if hashlib.sha256(files[entry["file"]]).hexdigest() != entry["sha256"]:
             raise ValueError("Export pack hash mismatch")
+    if lock is not None:
+        verify_release_lock(
+            lock,
+            [
+                level
+                for entry in manifest["packs"]
+                for level in payload["files"][entry["file"]]["levels"]
+            ],
+        )
     old = _existing(output, registry)
     if check:
         if old != files:
