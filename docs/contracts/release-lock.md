@@ -88,3 +88,20 @@ has been declared released by this wave. Release cutting, lock extension, explic
 human overrides and remaining production gates are still separate. Publication
 retains its existing single-writer contract, without a concurrent release-lock writer
 or cross-file transaction guarantee. Generic T-0360 preview remains unverified.
+
+## Append-only proposal (T-0364)
+
+`extend_release_lock(previous,levels,released_through)` creates an immutable in-memory
+prefix proposal. The explicit cutoff is a real integer1..9999 within the complete
+campaign and cannot shrink the old released prefix. Every projection and campaign
+position validates, including the unlocked tail beyond the cutoff. Any old prefix
+must verify before constructing an extension: changed/missing/reordered released
+geometry is an error, never a new baseline hash. Old entries are retained exactly;
+only newly included slots are hashed for append. Same cutoff validates and returns
+an equal lock. Metadata/bonus repairs do not change protected hashes.
+
+A missing previous lock permits an initial proposal only, without disk writes or
+release authority. The caller still owns complete content/tier/source validation
+and real release approval. T-0365 will bind a readonly proposal to validated content;
+T-0366 will add an explicit guarded update command. No actual release is cut by
+installing or testing these helpers, and no current prototype is declared released.

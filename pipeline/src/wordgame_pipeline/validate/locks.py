@@ -160,3 +160,31 @@ def load_release_lock(root: Path, lang: str) -> ReleaseLock | None:
     finally:
         os.close(directory)
     return ReleaseLock.from_dict(parse_json(raw))
+
+
+def extend_release_lock(
+    previous: ReleaseLock | None, levels: list | tuple, released_through: int
+) -> ReleaseLock:
+    """Propose an explicit prefix; callers own approval and full semantic gates."""
+    if previous is not None and not isinstance(previous, ReleaseLock):
+        raise ValueError("Expected previous release lock or None")
+    if (
+        not isinstance(levels, (list, tuple))
+        or type(released_through) is not int
+        or not 1 <= released_through <= min(len(levels), MAX_SLOT)
+        or (previous is not None and released_through < len(previous.levels))
+    ):
+        raise ValueError("Invalid release cutoff or attempted prefix shrink")
+    if previous is None:
+        # A temporary first entry enables the existing complete-campaign validator.
+        first = levels[0]
+        previous = ReleaseLock("pl", (LockedSlot(1, "pl-c-000001", geometry_sha256(first)),))
+    verify_release_lock(previous, levels)
+    return ReleaseLock(
+        "pl",
+        previous.levels
+        + tuple(
+            LockedSlot(level["slot"], level["id"], geometry_sha256(level))
+            for level in levels[len(previous.levels) : released_through]
+        ),
+    )
