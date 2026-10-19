@@ -95,3 +95,8 @@ source and registration ownership. T-0353 checks static key references and shipp
 location metadata. These tasks automate integrity; Chris's PL wording/plural and
 actual location-content approval remain open. No EN campaign or real destination
 is inferred. Existing T-0290..T-0295 implementations are already merged.
+
+T-0352 proves exact CSV/imported resource parity for every PL/EN cell, whole-catalog
+locale cycles, current formatted copy and registration ownership/rollback. It
+adds no runtime behavior or wording. T-0353 still owns bounded static references
+and shipped location metadata; human editorial/native/content gates remain open.

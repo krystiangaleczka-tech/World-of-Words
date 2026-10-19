@@ -28,3 +28,19 @@ no geometry or copy changes are made here. Chris still approves Polish prose and
 plural-neutral wording. Shipped campaign names/facts are reviewed only when actual
 metadata exists; legacy virtual campaign placeholders do not certify a finished
 travel catalog. EN translations do not activate an English content campaign.
+
+## Imported-resource proof (T-0352)
+
+`test_locale_parity.gd` enumerates every actual CSV cell and independently loads
+its PL/EN Translation resource with cache ignore. Resource locale and exact
+get_message value must match source, so server fallback cannot hide a missing or
+wrong-language import. The registered catalog is separately checked over repeated
+PL/EN/pl_PL/en_US cycles and idempotent register calls. Test restores locale and
+pseudolocalization, and releases only its own registrations.
+
+All current formatted messages render source/import with count boundaries1/2/5/21
+and non-ASCII string arguments. This proves engine compatibility, not grammatical
+plural neutrality. Controlled two-language user resources cover independent
+registrations, outside owners, final release and corrupt-later-resource rollback
+followed by explicit repaired retry. This is CI/runtime-resource evidence; no new
+mobile screen-reader, visual, editorial or English-content claim is made.
