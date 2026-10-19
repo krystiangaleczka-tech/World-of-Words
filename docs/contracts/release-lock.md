@@ -105,3 +105,27 @@ release authority. The caller still owns complete content/tier/source validation
 and real release approval. T-0365 will bind a readonly proposal to validated content;
 T-0366 will add an explicit guarded update command. No actual release is cut by
 installing or testing these helpers, and no current prototype is declared released.
+
+## Validated readonly release proposal (T-0365)
+
+`release_plan.plan_release_lock(root,content_root,released_through)` runs the existing
+readonly P1 content/evidence validator between two snapshots. A missing campaign or
+evidence, changed snapshot, unsafe/malformed lock, stale provenance or invalid
+semantics fails. Evidence is never prepared or repaired by planning. Only then does
+the append-only helper propose a prefix. Existing hashes cannot be rebaselined.
+
+Frozen ReleasePlan retains old/proposed locks, campaign count, exact manifest and
+evidence SHA256 and a validation-context hash covering normalized language config,
+exact local schemas and evidence. Its fresh version1 scope=release-lock-proposal
+report includes old semantic lock hash/null, proposed lock/hash and explicit cutoff.
+`plan.sha256` identifies canonical report bytes, including final newline. Every
+relevant content/config/schema/evidence/prefix/cutoff change affects proposal identity
+or fails validation; equivalent old-lock key order/whitespace preserves identity.
+No paths/timestamps appear. Direct constructors validate hashes/counts/old overlap.
+
+`filesystem.directory_fd` and `read_regular` share the previous loader's no-follow,
+nonblocking descriptor reads; lock safety/static/replacement tests remain in force.
+Proposal snapshots detect stale inputs under the existing single-writer contract;
+they are not a hostile concurrent filesystem transaction. Passing P1 validation and
+hash identity does not certify outstanding P2 gates or actual human release approval.
+This service writes no files; explicit guarded command integration follows T-0366.

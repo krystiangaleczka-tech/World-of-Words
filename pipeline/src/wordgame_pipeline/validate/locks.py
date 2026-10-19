@@ -1,13 +1,12 @@
 """Released identity/geometry guard; never create or update a release baseline."""
 
 import hashlib
-import os
 import re
-import stat
 from dataclasses import dataclass
 from pathlib import Path
 
 from ..config import canonical_bytes, parse_json
+from ..filesystem import read_regular
 from .schema import json_value
 
 MAX_SLOT = 9999  # Current four-digit campaign pack filename contract.
@@ -130,36 +129,8 @@ def verify_release_lock(lock: ReleaseLock, levels: list | tuple) -> None:
 def load_release_lock(root: Path, lang: str) -> ReleaseLock | None:
     if lang != "pl":
         raise ValueError("Released locks support language pl only")
-    path = (root / "locks" / f"{lang}.lock.json").absolute()
-    directory_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
-    directory = os.open(path.anchor, directory_flags)
-    try:
-        try:
-            for component in path.parts[1:-1]:
-                child = os.open(component, directory_flags, dir_fd=directory)
-                os.close(directory)
-                directory = child
-            descriptor = os.open(
-                path.name,
-                os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC,
-                dir_fd=directory,
-            )
-            try:
-                if not stat.S_ISREG(os.fstat(descriptor).st_mode):
-                    raise ValueError("Release lock must be a regular file")
-                with os.fdopen(descriptor, encoding="utf-8", closefd=False) as stream:
-                    raw = stream.read()
-            finally:
-                os.close(descriptor)
-        except FileNotFoundError:
-            return None
-        except OSError as exc:
-            raise ValueError(
-                "Release lock path must use real directories and a regular file"
-            ) from exc
-    finally:
-        os.close(directory)
-    return ReleaseLock.from_dict(parse_json(raw))
+    raw = read_regular(root / "locks" / f"{lang}.lock.json")
+    return None if raw is None else ReleaseLock.from_dict(parse_json(raw.decode("utf-8")))
 
 
 def extend_release_lock(
