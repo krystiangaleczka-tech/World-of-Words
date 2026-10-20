@@ -7,8 +7,24 @@ from pathlib import Path
 
 import pytest
 
-from tools.android_debug_build import run, validate_assets, validate_manifest
+from tools.android_debug_build import run, stamp_debug_version, validate_assets, validate_manifest
 
+PRESETS = """[preset.0]
+name="Android Debug"
+platform="Android"
+
+[preset.0.options]
+version/code=1
+version/name="0.1.0"
+
+[preset.1]
+name="Android Release"
+platform="Android"
+
+[preset.1.options]
+version/code=1
+version/name="0.1.0"
+"""
 BADGING = """package: name='org.worldofwords.prototype.debug' versionCode='1'
 sdkVersion:'24'
 targetSdkVersion:'36'
@@ -77,3 +93,15 @@ def test_actual_archive_contract(tmp_path: Path, defect: str) -> None:
 def test_export_errors_are_fatal_and_readable(script: str) -> None:
     with pytest.raises(RuntimeError, match="bad"):
         run([sys.executable, "-c", script], os.environ.copy())
+
+
+def test_debug_version_gets_build_suffix_and_release_is_untouched() -> None:
+    stamped = stamp_debug_version(PRESETS, "f60524d")
+    assert stamped.count('version/name="0.1.0 (f60524d)"') == 1
+    assert stamped.index('version/name="0.1.0 (f60524d)"') < stamped.index("[preset.1]")
+    assert stamped.endswith('version/name="0.1.0"\n')
+
+
+def test_missing_debug_preset_is_rejected() -> None:
+    with pytest.raises(ValueError, match="Android Debug"):
+        stamp_debug_version(PRESETS.replace('name="Android Debug"', 'name="Other"'), "abc")
