@@ -589,7 +589,7 @@ Content startup recovery reports `content_load_failed {error_code:int}` once nor
 | Phase | Campaign content | Other content |
 |---|---|---|
 | P1 | 30–50 PL levels from pipeline v0 (spike S4) + ~10 hand-made | — |
-| P2 | 150–200 production PL levels (tiers, AI classification, Chris's review); levels 1–15 hand-made; 1 region with 3–4 locations and their postcards | — |
+| P2 | 150–200 production PL levels (licensed-source tiers, deterministic offline lexical review without AI API costs, Chris's review); levels 1–15 hand-made; 1 region with 3–4 locations and their postcards | — |
 | P3 | ~500 PL levels before soft launch, 1000+ after; landmarks hand-made; more regions | Daily pool; monthly postcards; EN content after PL works, then DE |
 
 Language rules: Polish rules are fixed by decision `0004-language-rules-pl` (diacritics as separate
