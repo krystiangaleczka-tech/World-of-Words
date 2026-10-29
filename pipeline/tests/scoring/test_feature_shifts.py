@@ -26,8 +26,10 @@ def config(active):
 
 
 def raw():
-    return {name: 8 if name == "letter_count" else 4 if name == "word_count" else 0
-            for name in FEATURE_NAMES}
+    return {
+        name: 8 if name == "letter_count" else 4 if name == "word_count" else 0
+        for name in FEATURE_NAMES
+    }
 
 
 def test_signed_contribution_explanation_and_tie_order():
@@ -41,9 +43,12 @@ def test_signed_contribution_explanation_and_tie_order():
     assert review_feature_shifts(
         raw(), config("letter_count"), config("word_count"), minimum_delta=0.5
     ) == (changes[0],)
-    assert review_feature_shifts(
-        raw(), config("letter_count"), config("letter_count"), minimum_delta=0
-    ) == ()
+    assert (
+        review_feature_shifts(
+            raw(), config("letter_count"), config("letter_count"), minimum_delta=0
+        )
+        == ()
+    )
     with pytest.raises(FrozenInstanceError):
         changes[0].delta = 0
 
@@ -51,8 +56,9 @@ def test_signed_contribution_explanation_and_tie_order():
 @pytest.mark.parametrize("cutoff", [True, None, -1, 1.1, float("nan"), "0.1", 10**400])
 def test_invalid_cutoff_rejected(cutoff):
     with pytest.raises(ValueError):
-        review_feature_shifts(raw(), config("letter_count"), config("word_count"),
-                              minimum_delta=cutoff)
+        review_feature_shifts(
+            raw(), config("letter_count"), config("word_count"), minimum_delta=cutoff
+        )
 
 
 def test_invalid_features_are_rejected_without_partial_report():
@@ -60,7 +66,8 @@ def test_invalid_features_are_rejected_without_partial_report():
     for value in (True, -1, float("inf")):
         bad = features | {"word_count": value}
         with pytest.raises(ValueError):
-            review_feature_shifts(bad, config("letter_count"), config("word_count"),
-                                  minimum_delta=0)
+            review_feature_shifts(
+                bad, config("letter_count"), config("word_count"), minimum_delta=0
+            )
     with pytest.raises(ValueError):
         review_feature_shifts(features, None, config("word_count"), minimum_delta=0)
