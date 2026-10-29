@@ -254,7 +254,7 @@ def test_planner_rejects_nested_branch_or_no_changes(tmp_path: Path) -> None:
     _commit(tmp_path)
     assert _run(tmp_path).returncode == 0
 
-    assert _git(tmp_path, "switch", "-c", "plan/e22/nested").returncode == 0
+    assert _git(tmp_path, "switch", "-c", "plan/nested/wave").returncode == 0
     result = _run(tmp_path)
     assert result.returncode == 1
     assert "must match t/NNNN-*" in result.stderr
