@@ -42,7 +42,7 @@ def review_grid_batch(
         sorted(
             rows,
             key=lambda row: (
-                not row.quality.meets_minimum,
+                row.quality.meets_minimum,
                 row.quality.crossings,
                 row.candidate_id,
             ),
