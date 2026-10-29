@@ -132,3 +132,17 @@ def test_no_default_viewport_or_body_rect_is_inferred():
             body_height=600,
             tokens=tokens,
         )
+
+
+@pytest.mark.parametrize(
+    "declaration",
+    ["const CELL_MIN: bool = true", "const CELL_MIN: int = -1", "const CELL_MIN = 64"],
+)
+def test_malformed_required_token_duplicates_are_rejected(tmp_path, declaration):
+    path = tmp_path / "tokens.gd"
+    original = TOKENS.read_text(encoding="utf-8")
+    path.write_text(
+        original.replace("const CELL_MIN: int = 64", "const CELL_MIN: int = 64\n\t" + declaration)
+    )
+    with pytest.raises(ValueError, match="canonical token"):
+        load_compact_tokens(path)

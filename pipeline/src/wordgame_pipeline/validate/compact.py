@@ -5,6 +5,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 
+DECLARATION = re.compile(r"\s+const\s+([A-Z_]+)\b")
 TOKEN = re.compile(r"\tconst ([A-Z_]+): (int|float) = ([0-9]+(?:\.[0-9]+)?)")
 
 
@@ -48,13 +49,16 @@ def load_compact_tokens(path: Path) -> CompactTokens:
     for line in raw.splitlines():
         if line.startswith("class "):
             section = line.removeprefix("class ").split(":", 1)[0]
-        match = TOKEN.fullmatch(line)
-        if not match:
+        declaration = DECLARATION.match(line)
+        if declaration is None:
             continue
-        name, kind, value = match.groups()
-        key = (section, name)
+        key = (section, declaration.group(1))
         if key not in needed:
             continue
+        match = TOKEN.fullmatch(line)
+        if match is None:
+            raise ValueError(f"Malformed canonical token {key}")
+        _, kind, value = match.groups()
         if key in found or kind != needed[key][0]:
             raise ValueError(f"Duplicate or mistyped canonical token {key}")
         found[key] = int(value) if kind == "int" else float(value)
