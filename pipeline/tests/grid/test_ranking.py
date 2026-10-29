@@ -10,14 +10,10 @@ ROTATED = (("KOT", 0, 0, "h"), ("TOK", 2, 0, "v"))
 
 
 def test_equal_valid_alternatives_break_ties_by_id():
-    result = rank_layouts(
-        {"z": CROSSED, "a": ROTATED}, ("KOT", "TOK"), minimum_crossings=1
-    )
+    result = rank_layouts({"z": CROSSED, "a": ROTATED}, ("KOT", "TOK"), minimum_crossings=1)
     assert tuple(row.identity for row in result) == ("a", "z")
     assert all(row.quality.crossings == 1 and row.quality.meets_minimum for row in result)
-    assert result == rank_layouts(
-        {"a": ROTATED, "z": CROSSED}, ("TOK", "KOT"), minimum_crossings=1
-    )
+    assert result == rank_layouts({"a": ROTATED, "z": CROSSED}, ("TOK", "KOT"), minimum_crossings=1)
     with pytest.raises(FrozenInstanceError):
         result[0].identity = "oops"
 
