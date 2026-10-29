@@ -9,7 +9,7 @@ executor: sol
 think: med
 ui: none
 status: review
-depends_on: [T-0296]
+depends_on: [T-0127]
 touch:
   - pipeline/src/wordgame_pipeline/classify/__init__.py
   - pipeline/src/wordgame_pipeline/classify/disagreement.py
