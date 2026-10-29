@@ -5,7 +5,6 @@ from dataclasses import FrozenInstanceError
 import pytest
 from wordgame_pipeline.grid.ranking import rank_layouts
 
-
 CROSSED = (("KOT", 0, 0, "v"), ("TOK", 0, 2, "h"))
 ROTATED = (("KOT", 0, 0, "h"), ("TOK", 2, 0, "v"))
 
