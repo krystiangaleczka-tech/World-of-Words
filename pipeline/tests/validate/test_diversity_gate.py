@@ -46,8 +46,12 @@ def test_every_word_spacing_and_seed_boundaries():
 
     one = dict(id="a", pool="campaign", slot=1, letters=list("KOT"), words=["KOT"], seed_word="KOT")
     two = dict(
-        id="b", pool="campaign", slot=100, letters=list("KOTA"),
-        words=["KOT", "KAT"], seed_word="KOT",
+        id="b",
+        pool="campaign",
+        slot=100,
+        letters=list("KOTA"),
+        words=["KOT", "KAT"],
+        seed_word="KOT",
     )
     assert "word_spacing" in audit_duplicates([one, two], POLICY, CONFIG)[0].reasons
     two["slot"] = 101
