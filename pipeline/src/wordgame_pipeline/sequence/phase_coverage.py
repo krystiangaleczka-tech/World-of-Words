@@ -19,9 +19,7 @@ class PhaseCoverage:
     released: int
 
 
-def summarize_phase_coverage(
-    plan: SlotPlan, *, first: int, last: int
-) -> tuple[PhaseCoverage, ...]:
+def summarize_phase_coverage(plan: SlotPlan, *, first: int, last: int) -> tuple[PhaseCoverage, ...]:
     """Group immutable plan requirements, with no estimated targets or assignment."""
     if (
         not isinstance(plan, SlotPlan)
