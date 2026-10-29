@@ -3,6 +3,7 @@
 import math
 from dataclasses import dataclass
 
+from .curve import target_for_slot
 from .slots import SlotPlan
 
 
@@ -26,7 +27,9 @@ def review_region_targets(plan: SlotPlan) -> tuple[RegionTargetReview, ...]:
         targets = []
         onboarding = 0
         for slot in range(region.curve.first, region.curve.last + 1):
-            curve = plan.requirement(slot).curve
+            # The already-validated region supplies the curve directly; calling
+            # SlotPlan.requirement here rebuilds reservation maps per slot.
+            curve = target_for_slot(slot, region.curve)
             if curve.target is None:
                 onboarding += 1
             else:
