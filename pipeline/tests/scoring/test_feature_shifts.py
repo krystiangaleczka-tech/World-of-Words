@@ -3,8 +3,8 @@
 from dataclasses import FrozenInstanceError
 
 import pytest
-from wordgame_pipeline.scoring.features import FEATURE_NAMES
 from wordgame_pipeline.scoring.feature_shifts import review_feature_shifts
+from wordgame_pipeline.scoring.features import FEATURE_NAMES
 from wordgame_pipeline.scoring.model import ScoringConfig
 
 
