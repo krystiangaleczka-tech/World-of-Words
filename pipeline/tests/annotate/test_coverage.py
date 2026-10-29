@@ -14,8 +14,7 @@ CONFIG = load_config(Path(__file__).resolve().parents[2], "pl")
 def test_nullable_zero_low_and_known_arf():
     report = audit_arf_coverage(
         ("TOK", "DOM", "KOT", "LAS"),
-        {"TOK": Frequency(0, 0), "DOM": Frequency(5, 1),
-         "KOT": None, "LAS": Frequency(2, 0.1)},
+        {"TOK": Frequency(0, 0), "DOM": Frequency(5, 1), "KOT": None, "LAS": Frequency(2, 0.1)},
         CONFIG,
         low_arf=2,
     )
@@ -25,10 +24,8 @@ def test_nullable_zero_low_and_known_arf():
 
 
 def test_order_independent_and_empty():
-    a = audit_arf_coverage(("TOK", "KOT"), {"TOK": None, "KOT": Frequency(0, 0)},
-                           CONFIG, low_arf=0)
-    b = audit_arf_coverage(("KOT", "TOK"), {"KOT": Frequency(0, 0), "TOK": None},
-                           CONFIG, low_arf=0)
+    a = audit_arf_coverage(("TOK", "KOT"), {"TOK": None, "KOT": Frequency(0, 0)}, CONFIG, low_arf=0)
+    b = audit_arf_coverage(("KOT", "TOK"), {"KOT": Frequency(0, 0), "TOK": None}, CONFIG, low_arf=0)
     assert a == b
     assert audit_arf_coverage((), {}, CONFIG, low_arf=0) == ArfCoverage(0, 0, (), (), ())
 
