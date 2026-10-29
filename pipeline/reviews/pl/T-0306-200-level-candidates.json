@@ -1,0 +1,4364 @@
+{
+  "schema_version": 1,
+  "lang": "pl",
+  "status": "proposed",
+  "provenance": {
+    "compact_input_git_blob_sha1": "b879469e6985c55f402314ac7afb3106bf850349",
+    "first65_pack_git_blob_sha1": "46319d1406e391fbc159526cb57fe946c9af1961",
+    "lexical_review_git_blob_sha1": "cded0f5dd087e0a14577a65942b591d6bbef20da"
+  },
+  "policy": {
+    "first_new_slot": 66,
+    "last_new_slot": 200,
+    "crossword_word_spacing": 100,
+    "existing_slots_preserved": 65,
+    "api_ai_cost_pln": 0
+  },
+  "levels": [
+    {
+      "slot": 66,
+      "band": 2,
+      "letters": [
+        "A",
+        "C",
+        "M",
+        "O",
+        "S"
+      ],
+      "words": [
+        "MOC",
+        "SAMO"
+      ],
+      "grid": [
+        {
+          "w": "MOC",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "SAMO",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 67,
+      "band": 2,
+      "letters": [
+        "A",
+        "C",
+        "M",
+        "R",
+        "U"
+      ],
+      "words": [
+        "CUMA",
+        "RAM"
+      ],
+      "grid": [
+        {
+          "w": "CUMA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "RAM",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 68,
+      "band": 2,
+      "letters": [
+        "A",
+        "M",
+        "O",
+        "R",
+        "T"
+      ],
+      "words": [
+        "MAT",
+        "ROTA"
+      ],
+      "grid": [
+        {
+          "w": "MAT",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "ROTA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 69,
+      "band": 2,
+      "letters": [
+        "D",
+        "N",
+        "O",
+        "R",
+        "T"
+      ],
+      "words": [
+        "DNO",
+        "TRON"
+      ],
+      "grid": [
+        {
+          "w": "DNO",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "TRON",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 70,
+      "band": 2,
+      "letters": [
+        "A",
+        "M",
+        "O",
+        "P",
+        "S"
+      ],
+      "words": [
+        "OSPA",
+        "SAM"
+      ],
+      "grid": [
+        {
+          "w": "OSPA",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "SAM",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 71,
+      "band": 2,
+      "letters": [
+        "A",
+        "M",
+        "O",
+        "T",
+        "Ł"
+      ],
+      "words": [
+        "MAŁO",
+        "TAM"
+      ],
+      "grid": [
+        {
+          "w": "MAŁO",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "TAM",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 72,
+      "band": 2,
+      "letters": [
+        "C",
+        "H",
+        "R",
+        "S",
+        "U"
+      ],
+      "words": [
+        "RUCH",
+        "RUS"
+      ],
+      "grid": [
+        {
+          "w": "RUCH",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "RUS",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 73,
+      "band": 2,
+      "letters": [
+        "A",
+        "C",
+        "N",
+        "O",
+        "R"
+      ],
+      "words": [
+        "NOC",
+        "NORA"
+      ],
+      "grid": [
+        {
+          "w": "NOC",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        },
+        {
+          "w": "NORA",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 74,
+      "band": 2,
+      "letters": [
+        "A",
+        "C",
+        "N",
+        "O",
+        "Y"
+      ],
+      "words": [
+        "CYNA",
+        "ONA"
+      ],
+      "grid": [
+        {
+          "w": "CYNA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "ONA",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 75,
+      "band": 2,
+      "letters": [
+        "C",
+        "E",
+        "H",
+        "I",
+        "K"
+      ],
+      "words": [
+        "CIEK",
+        "ICH"
+      ],
+      "grid": [
+        {
+          "w": "CIEK",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "ICH",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 76,
+      "band": 2,
+      "letters": [
+        "A",
+        "M",
+        "R",
+        "T",
+        "W"
+      ],
+      "words": [
+        "TRWA",
+        "WAM"
+      ],
+      "grid": [
+        {
+          "w": "TRWA",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "WAM",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 77,
+      "band": 2,
+      "letters": [
+        "A",
+        "M",
+        "R",
+        "T",
+        "Y"
+      ],
+      "words": [
+        "RATY",
+        "TYM"
+      ],
+      "grid": [
+        {
+          "w": "RATY",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "TYM",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 78,
+      "band": 2,
+      "letters": [
+        "K",
+        "L",
+        "O",
+        "S",
+        "Z"
+      ],
+      "words": [
+        "KOSZ",
+        "SOL"
+      ],
+      "grid": [
+        {
+          "w": "KOSZ",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "SOL",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 79,
+      "band": 2,
+      "letters": [
+        "A",
+        "J",
+        "K",
+        "K",
+        "R"
+      ],
+      "words": [
+        "JAK",
+        "KARK"
+      ],
+      "grid": [
+        {
+          "w": "JAK",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        },
+        {
+          "w": "KARK",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 80,
+      "band": 2,
+      "letters": [
+        "A",
+        "J",
+        "K",
+        "N",
+        "R"
+      ],
+      "words": [
+        "JAR",
+        "KRAN"
+      ],
+      "grid": [
+        {
+          "w": "JAR",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        },
+        {
+          "w": "KRAN",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 81,
+      "band": 2,
+      "letters": [
+        "D",
+        "K",
+        "K",
+        "O",
+        "R"
+      ],
+      "words": [
+        "KOD",
+        "KROK"
+      ],
+      "grid": [
+        {
+          "w": "KOD",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        },
+        {
+          "w": "KROK",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 82,
+      "band": 2,
+      "letters": [
+        "O",
+        "S",
+        "T",
+        "Z",
+        "Ł"
+      ],
+      "words": [
+        "STO",
+        "SZŁO"
+      ],
+      "grid": [
+        {
+          "w": "STO",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        },
+        {
+          "w": "SZŁO",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 83,
+      "band": 2,
+      "letters": [
+        "A",
+        "C",
+        "L",
+        "P",
+        "Ż"
+      ],
+      "words": [
+        "PLAC",
+        "ŻAL"
+      ],
+      "grid": [
+        {
+          "w": "PLAC",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "ŻAL",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 84,
+      "band": 2,
+      "letters": [
+        "A",
+        "G",
+        "H",
+        "R",
+        "T"
+      ],
+      "words": [
+        "GRA",
+        "HART"
+      ],
+      "grid": [
+        {
+          "w": "GRA",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        },
+        {
+          "w": "HART",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 85,
+      "band": 2,
+      "letters": [
+        "A",
+        "G",
+        "K",
+        "O",
+        "R"
+      ],
+      "words": [
+        "KARO",
+        "OGAR"
+      ],
+      "grid": [
+        {
+          "w": "KARO",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "OGAR",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 86,
+      "band": 2,
+      "letters": [
+        "A",
+        "G",
+        "K",
+        "O",
+        "Z"
+      ],
+      "words": [
+        "GAZ",
+        "KOZA"
+      ],
+      "grid": [
+        {
+          "w": "GAZ",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "KOZA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 87,
+      "band": 2,
+      "letters": [
+        "A",
+        "D",
+        "E",
+        "G",
+        "R"
+      ],
+      "words": [
+        "DERA",
+        "GRAD"
+      ],
+      "grid": [
+        {
+          "w": "DERA",
+          "x": 3,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "GRAD",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 88,
+      "band": 2,
+      "letters": [
+        "A",
+        "D",
+        "E",
+        "K",
+        "R"
+      ],
+      "words": [
+        "DAR",
+        "DERKA"
+      ],
+      "grid": [
+        {
+          "w": "DAR",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        },
+        {
+          "w": "DERKA",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 89,
+      "band": 2,
+      "letters": [
+        "A",
+        "D",
+        "E",
+        "L",
+        "P"
+      ],
+      "words": [
+        "APEL",
+        "PAD"
+      ],
+      "grid": [
+        {
+          "w": "APEL",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "PAD",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 90,
+      "band": 2,
+      "letters": [
+        "A",
+        "G",
+        "R",
+        "U",
+        "Z"
+      ],
+      "words": [
+        "GRUZ",
+        "RAZ"
+      ],
+      "grid": [
+        {
+          "w": "GRUZ",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "RAZ",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 91,
+      "band": 3,
+      "letters": [
+        "A",
+        "I",
+        "N",
+        "P",
+        "R",
+        "Ł"
+      ],
+      "words": [
+        "PIŁA",
+        "RAN"
+      ],
+      "grid": [
+        {
+          "w": "PIŁA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "RAN",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 92,
+      "band": 3,
+      "letters": [
+        "A",
+        "K",
+        "S",
+        "T",
+        "Z",
+        "Ł"
+      ],
+      "words": [
+        "AKT",
+        "SZAŁ"
+      ],
+      "grid": [
+        {
+          "w": "AKT",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "SZAŁ",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 93,
+      "band": 3,
+      "letters": [
+        "A",
+        "L",
+        "O",
+        "P",
+        "R",
+        "S"
+      ],
+      "words": [
+        "OPAL",
+        "RAS"
+      ],
+      "grid": [
+        {
+          "w": "OPAL",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "RAS",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 94,
+      "band": 3,
+      "letters": [
+        "A",
+        "L",
+        "O",
+        "P",
+        "R",
+        "T"
+      ],
+      "words": [
+        "ATOL",
+        "OPAR"
+      ],
+      "grid": [
+        {
+          "w": "ATOL",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "OPAR",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 95,
+      "band": 3,
+      "letters": [
+        "A",
+        "L",
+        "O",
+        "P",
+        "R",
+        "W"
+      ],
+      "words": [
+        "LWA",
+        "POLAR"
+      ],
+      "grid": [
+        {
+          "w": "LWA",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "POLAR",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 96,
+      "band": 3,
+      "letters": [
+        "A",
+        "B",
+        "S",
+        "Z",
+        "Ć",
+        "Ł"
+      ],
+      "words": [
+        "BAĆ",
+        "SZŁA"
+      ],
+      "grid": [
+        {
+          "w": "BAĆ",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        },
+        {
+          "w": "SZŁA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 97,
+      "band": 3,
+      "letters": [
+        "A",
+        "L",
+        "O",
+        "P",
+        "S",
+        "W"
+      ],
+      "words": [
+        "POLA",
+        "WAS"
+      ],
+      "grid": [
+        {
+          "w": "POLA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "WAS",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 98,
+      "band": 3,
+      "letters": [
+        "A",
+        "K",
+        "S",
+        "T",
+        "U",
+        "Z"
+      ],
+      "words": [
+        "KAT",
+        "KUSZA"
+      ],
+      "grid": [
+        {
+          "w": "KAT",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        },
+        {
+          "w": "KUSZA",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 99,
+      "band": 3,
+      "letters": [
+        "A",
+        "L",
+        "O",
+        "P",
+        "R",
+        "Ć"
+      ],
+      "words": [
+        "LAĆ",
+        "PORA"
+      ],
+      "grid": [
+        {
+          "w": "LAĆ",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        },
+        {
+          "w": "PORA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 100,
+      "band": 3,
+      "letters": [
+        "A",
+        "D",
+        "H",
+        "M",
+        "R",
+        "U"
+      ],
+      "words": [
+        "DAM",
+        "HURA"
+      ],
+      "grid": [
+        {
+          "w": "DAM",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        },
+        {
+          "w": "HURA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 101,
+      "band": 3,
+      "letters": [
+        "D",
+        "K",
+        "M",
+        "O",
+        "O",
+        "Y"
+      ],
+      "words": [
+        "DOMY",
+        "OKO"
+      ],
+      "grid": [
+        {
+          "w": "DOMY",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "OKO",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 102,
+      "band": 3,
+      "letters": [
+        "D",
+        "K",
+        "M",
+        "O",
+        "R",
+        "Y"
+      ],
+      "words": [
+        "MODY",
+        "ROK"
+      ],
+      "grid": [
+        {
+          "w": "MODY",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "ROK",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 103,
+      "band": 3,
+      "letters": [
+        "B",
+        "K",
+        "R",
+        "U",
+        "Z",
+        "Ą"
+      ],
+      "words": [
+        "BĄK",
+        "KURZ"
+      ],
+      "grid": [
+        {
+          "w": "BĄK",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        },
+        {
+          "w": "KURZ",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 104,
+      "band": 3,
+      "letters": [
+        "A",
+        "I",
+        "N",
+        "R",
+        "T",
+        "Y"
+      ],
+      "words": [
+        "ANI",
+        "NARTY"
+      ],
+      "grid": [
+        {
+          "w": "ANI",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        },
+        {
+          "w": "NARTY",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 105,
+      "band": 3,
+      "letters": [
+        "A",
+        "L",
+        "O",
+        "R",
+        "S",
+        "T"
+      ],
+      "words": [
+        "RAT",
+        "SOLA"
+      ],
+      "grid": [
+        {
+          "w": "RAT",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        },
+        {
+          "w": "SOLA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 106,
+      "band": 3,
+      "letters": [
+        "A",
+        "L",
+        "O",
+        "R",
+        "U",
+        "Z"
+      ],
+      "words": [
+        "ROLA",
+        "URAZ"
+      ],
+      "grid": [
+        {
+          "w": "ROLA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "URAZ",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 107,
+      "band": 3,
+      "letters": [
+        "C",
+        "K",
+        "N",
+        "O",
+        "T",
+        "Y"
+      ],
+      "words": [
+        "CYK",
+        "KNOT"
+      ],
+      "grid": [
+        {
+          "w": "CYK",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        },
+        {
+          "w": "KNOT",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 108,
+      "band": 3,
+      "letters": [
+        "A",
+        "B",
+        "M",
+        "M",
+        "R",
+        "T"
+      ],
+      "words": [
+        "BRAT",
+        "MAM"
+      ],
+      "grid": [
+        {
+          "w": "BRAT",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "MAM",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 109,
+      "band": 3,
+      "letters": [
+        "A",
+        "O",
+        "P",
+        "R",
+        "Z",
+        "Ł"
+      ],
+      "words": [
+        "ROPA",
+        "ZŁA"
+      ],
+      "grid": [
+        {
+          "w": "ROPA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "ZŁA",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 110,
+      "band": 3,
+      "letters": [
+        "I",
+        "K",
+        "O",
+        "P",
+        "R",
+        "T"
+      ],
+      "words": [
+        "KORT",
+        "PIK"
+      ],
+      "grid": [
+        {
+          "w": "KORT",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "PIK",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 111,
+      "band": 3,
+      "letters": [
+        "A",
+        "G",
+        "I",
+        "K",
+        "R",
+        "Ó"
+      ],
+      "words": [
+        "GÓR",
+        "IKRA"
+      ],
+      "grid": [
+        {
+          "w": "GÓR",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "IKRA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 112,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "D",
+        "E",
+        "K",
+        "R"
+      ],
+      "words": [
+        "ARKA",
+        "KREDA"
+      ],
+      "grid": [
+        {
+          "w": "ARKA",
+          "x": 0,
+          "y": 4,
+          "dir": "h"
+        },
+        {
+          "w": "KREDA",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 113,
+      "band": 3,
+      "letters": [
+        "I",
+        "K",
+        "O",
+        "P",
+        "S",
+        "Ł"
+      ],
+      "words": [
+        "KŁOS",
+        "PIŁ"
+      ],
+      "grid": [
+        {
+          "w": "KŁOS",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "PIŁ",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 114,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "G",
+        "P",
+        "R",
+        "Ó"
+      ],
+      "words": [
+        "PARA",
+        "RÓG"
+      ],
+      "grid": [
+        {
+          "w": "PARA",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "RÓG",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 115,
+      "band": 3,
+      "letters": [
+        "A",
+        "B",
+        "M",
+        "O",
+        "S",
+        "Ł"
+      ],
+      "words": [
+        "BAS",
+        "SMOŁA"
+      ],
+      "grid": [
+        {
+          "w": "BAS",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        },
+        {
+          "w": "SMOŁA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 116,
+      "band": 3,
+      "letters": [
+        "A",
+        "E",
+        "N",
+        "O",
+        "R",
+        "S"
+      ],
+      "words": [
+        "RANO",
+        "SEN"
+      ],
+      "grid": [
+        {
+          "w": "RANO",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "SEN",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 117,
+      "band": 3,
+      "letters": [
+        "A",
+        "E",
+        "N",
+        "O",
+        "R",
+        "T"
+      ],
+      "words": [
+        "ERA",
+        "NOTA"
+      ],
+      "grid": [
+        {
+          "w": "ERA",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        },
+        {
+          "w": "NOTA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 118,
+      "band": 3,
+      "letters": [
+        "I",
+        "K",
+        "O",
+        "S",
+        "T",
+        "W"
+      ],
+      "words": [
+        "KOS",
+        "TKWI"
+      ],
+      "grid": [
+        {
+          "w": "KOS",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        },
+        {
+          "w": "TKWI",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 119,
+      "band": 3,
+      "letters": [
+        "I",
+        "K",
+        "O",
+        "S",
+        "T",
+        "Z"
+      ],
+      "words": [
+        "KIT",
+        "SZOK"
+      ],
+      "grid": [
+        {
+          "w": "KIT",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        },
+        {
+          "w": "SZOK",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 120,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "D",
+        "H",
+        "O",
+        "W"
+      ],
+      "words": [
+        "AHA",
+        "OWAD"
+      ],
+      "grid": [
+        {
+          "w": "AHA",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "OWAD",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 121,
+      "band": 3,
+      "letters": [
+        "A",
+        "I",
+        "K",
+        "L",
+        "M",
+        "O"
+      ],
+      "words": [
+        "MILA",
+        "OKA"
+      ],
+      "grid": [
+        {
+          "w": "MILA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "OKA",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 122,
+      "band": 3,
+      "letters": [
+        "A",
+        "I",
+        "K",
+        "L",
+        "N",
+        "P"
+      ],
+      "words": [
+        "KLAP",
+        "LIN"
+      ],
+      "grid": [
+        {
+          "w": "KLAP",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "LIN",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 123,
+      "band": 3,
+      "letters": [
+        "A",
+        "I",
+        "K",
+        "L",
+        "P",
+        "T"
+      ],
+      "words": [
+        "KITA",
+        "PAL"
+      ],
+      "grid": [
+        {
+          "w": "KITA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "PAL",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 124,
+      "band": 3,
+      "letters": [
+        "A",
+        "I",
+        "K",
+        "L",
+        "T",
+        "U"
+      ],
+      "words": [
+        "LUKA",
+        "TAKI"
+      ],
+      "grid": [
+        {
+          "w": "LUKA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "TAKI",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 125,
+      "band": 3,
+      "letters": [
+        "A",
+        "I",
+        "K",
+        "L",
+        "T",
+        "W"
+      ],
+      "words": [
+        "LAT",
+        "WITKA"
+      ],
+      "grid": [
+        {
+          "w": "LAT",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "WITKA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 126,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "D",
+        "I",
+        "J",
+        "R"
+      ],
+      "words": [
+        "ARIA",
+        "DAJ"
+      ],
+      "grid": [
+        {
+          "w": "ARIA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "DAJ",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 127,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "D",
+        "I",
+        "L",
+        "N"
+      ],
+      "words": [
+        "DNA",
+        "LIANA"
+      ],
+      "grid": [
+        {
+          "w": "DNA",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "LIANA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 128,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "D",
+        "I",
+        "M",
+        "N"
+      ],
+      "words": [
+        "MANIA",
+        "NAD"
+      ],
+      "grid": [
+        {
+          "w": "MANIA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "NAD",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 129,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "D",
+        "I",
+        "R",
+        "T"
+      ],
+      "words": [
+        "RAD",
+        "TIARA"
+      ],
+      "grid": [
+        {
+          "w": "RAD",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "TIARA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 130,
+      "band": 3,
+      "letters": [
+        "A",
+        "I",
+        "K",
+        "M",
+        "P",
+        "Ł"
+      ],
+      "words": [
+        "MAK",
+        "ŁAPKI"
+      ],
+      "grid": [
+        {
+          "w": "ŁAPKI",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "MAK",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 131,
+      "band": 3,
+      "letters": [
+        "B",
+        "K",
+        "O",
+        "S",
+        "Z",
+        "Ł"
+      ],
+      "words": [
+        "BOK",
+        "SZKŁO"
+      ],
+      "grid": [
+        {
+          "w": "BOK",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "SZKŁO",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 132,
+      "band": 3,
+      "letters": [
+        "A",
+        "K",
+        "P",
+        "R",
+        "S",
+        "Ł"
+      ],
+      "words": [
+        "PARK",
+        "ŁASK"
+      ],
+      "grid": [
+        {
+          "w": "ŁASK",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        },
+        {
+          "w": "PARK",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 133,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "D",
+        "K",
+        "L",
+        "S"
+      ],
+      "words": [
+        "LASKA",
+        "SAD"
+      ],
+      "grid": [
+        {
+          "w": "LASKA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "SAD",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 134,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "D",
+        "K",
+        "O",
+        "P"
+      ],
+      "words": [
+        "APKA",
+        "POD"
+      ],
+      "grid": [
+        {
+          "w": "APKA",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "POD",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 135,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "D",
+        "K",
+        "P",
+        "U"
+      ],
+      "words": [
+        "KAPA",
+        "UDA"
+      ],
+      "grid": [
+        {
+          "w": "KAPA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "UDA",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 136,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "D",
+        "K",
+        "P",
+        "W"
+      ],
+      "words": [
+        "PAKA",
+        "WAD"
+      ],
+      "grid": [
+        {
+          "w": "PAKA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "WAD",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 137,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "D",
+        "L",
+        "L",
+        "Ó"
+      ],
+      "words": [
+        "LALA",
+        "LÓD"
+      ],
+      "grid": [
+        {
+          "w": "LALA",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "LÓD",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 138,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "N",
+        "O",
+        "O",
+        "P"
+      ],
+      "words": [
+        "ONO",
+        "PANA"
+      ],
+      "grid": [
+        {
+          "w": "ONO",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "PANA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 139,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "N",
+        "O",
+        "R",
+        "T"
+      ],
+      "words": [
+        "ARA",
+        "ORNAT"
+      ],
+      "grid": [
+        {
+          "w": "ARA",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        },
+        {
+          "w": "ORNAT",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 140,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "N",
+        "O",
+        "T",
+        "W"
+      ],
+      "words": [
+        "TONA",
+        "WATA"
+      ],
+      "grid": [
+        {
+          "w": "TONA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "WATA",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 141,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "N",
+        "P",
+        "R",
+        "S"
+      ],
+      "words": [
+        "NAS",
+        "PRASA"
+      ],
+      "grid": [
+        {
+          "w": "NAS",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "PRASA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 142,
+      "band": 3,
+      "letters": [
+        "A",
+        "E",
+        "K",
+        "L",
+        "N",
+        "T"
+      ],
+      "words": [
+        "ALE",
+        "KANT"
+      ],
+      "grid": [
+        {
+          "w": "ALE",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        },
+        {
+          "w": "KANT",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 143,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "N",
+        "R",
+        "S",
+        "T"
+      ],
+      "words": [
+        "RANT",
+        "RASA"
+      ],
+      "grid": [
+        {
+          "w": "RANT",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "RASA",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 144,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "N",
+        "R",
+        "T",
+        "Y"
+      ],
+      "words": [
+        "RANY",
+        "RATA"
+      ],
+      "grid": [
+        {
+          "w": "RANY",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "RATA",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 145,
+      "band": 3,
+      "letters": [
+        "A",
+        "E",
+        "K",
+        "N",
+        "O",
+        "T"
+      ],
+      "words": [
+        "NOTKA",
+        "TEKA"
+      ],
+      "grid": [
+        {
+          "w": "NOTKA",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "TEKA",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 146,
+      "band": 3,
+      "letters": [
+        "A",
+        "E",
+        "K",
+        "O",
+        "R",
+        "T"
+      ],
+      "words": [
+        "AKTOR",
+        "KRET"
+      ],
+      "grid": [
+        {
+          "w": "AKTOR",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "KRET",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 147,
+      "band": 3,
+      "letters": [
+        "A",
+        "E",
+        "K",
+        "O",
+        "T",
+        "T"
+      ],
+      "words": [
+        "TAK",
+        "TOTEK"
+      ],
+      "grid": [
+        {
+          "w": "TAK",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        },
+        {
+          "w": "TOTEK",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 148,
+      "band": 3,
+      "letters": [
+        "A",
+        "K",
+        "M",
+        "O",
+        "S",
+        "Ł"
+      ],
+      "words": [
+        "SOK",
+        "SŁOMA"
+      ],
+      "grid": [
+        {
+          "w": "SŁOMA",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "SOK",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 149,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "K",
+        "L",
+        "O",
+        "P"
+      ],
+      "words": [
+        "KOPA",
+        "PALA"
+      ],
+      "grid": [
+        {
+          "w": "KOPA",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "PALA",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 150,
+      "band": 3,
+      "letters": [
+        "A",
+        "A",
+        "K",
+        "L",
+        "R",
+        "S"
+      ],
+      "words": [
+        "KARA",
+        "SKALA"
+      ],
+      "grid": [
+        {
+          "w": "KARA",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        },
+        {
+          "w": "SKALA",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 151,
+      "band": 4,
+      "letters": [
+        "A",
+        "B",
+        "C",
+        "H",
+        "O",
+        "R",
+        "T"
+      ],
+      "words": [
+        "OCH",
+        "TABOR"
+      ],
+      "grid": [
+        {
+          "w": "OCH",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        },
+        {
+          "w": "TABOR",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 152,
+      "band": 4,
+      "letters": [
+        "A",
+        "A",
+        "B",
+        "C",
+        "P",
+        "Y",
+        "Z"
+      ],
+      "words": [
+        "ABY",
+        "CZAPA"
+      ],
+      "grid": [
+        {
+          "w": "ABY",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "CZAPA",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 153,
+      "band": 4,
+      "letters": [
+        "A",
+        "A",
+        "K",
+        "P",
+        "R",
+        "T",
+        "W"
+      ],
+      "words": [
+        "KARTA",
+        "PAW"
+      ],
+      "grid": [
+        {
+          "w": "KARTA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "PAW",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 154,
+      "band": 4,
+      "letters": [
+        "A",
+        "C",
+        "E",
+        "I",
+        "L",
+        "N",
+        "P"
+      ],
+      "words": [
+        "NIE",
+        "PALCE"
+      ],
+      "grid": [
+        {
+          "w": "NIE",
+          "x": 0,
+          "y": 4,
+          "dir": "h"
+        },
+        {
+          "w": "PALCE",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 155,
+      "band": 4,
+      "letters": [
+        "A",
+        "B",
+        "K",
+        "L",
+        "N",
+        "O",
+        "R"
+      ],
+      "words": [
+        "BAL",
+        "KONAR"
+      ],
+      "grid": [
+        {
+          "w": "BAL",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        },
+        {
+          "w": "KONAR",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 156,
+      "band": 4,
+      "letters": [
+        "A",
+        "B",
+        "C",
+        "E",
+        "K",
+        "L",
+        "P"
+      ],
+      "words": [
+        "BAK",
+        "PALEC"
+      ],
+      "grid": [
+        {
+          "w": "BAK",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        },
+        {
+          "w": "PALEC",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 157,
+      "band": 4,
+      "letters": [
+        "A",
+        "A",
+        "E",
+        "K",
+        "O",
+        "R",
+        "T"
+      ],
+      "words": [
+        "KARATE",
+        "KTO"
+      ],
+      "grid": [
+        {
+          "w": "KARATE",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "KTO",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 158,
+      "band": 4,
+      "letters": [
+        "A",
+        "A",
+        "C",
+        "F",
+        "K",
+        "N",
+        "P"
+      ],
+      "words": [
+        "FAN",
+        "PACKA"
+      ],
+      "grid": [
+        {
+          "w": "FAN",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        },
+        {
+          "w": "PACKA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 159,
+      "band": 4,
+      "letters": [
+        "A",
+        "A",
+        "E",
+        "K",
+        "P",
+        "R",
+        "T"
+      ],
+      "words": [
+        "KARETA",
+        "PAR"
+      ],
+      "grid": [
+        {
+          "w": "KARETA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "PAR",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 160,
+      "band": 4,
+      "letters": [
+        "A",
+        "K",
+        "L",
+        "M",
+        "N",
+        "O",
+        "R"
+      ],
+      "words": [
+        "MOL",
+        "NORKA"
+      ],
+      "grid": [
+        {
+          "w": "MOL",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        },
+        {
+          "w": "NORKA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 161,
+      "band": 4,
+      "letters": [
+        "A",
+        "E",
+        "I",
+        "K",
+        "N",
+        "O",
+        "R"
+      ],
+      "words": [
+        "NERKI",
+        "ORKA"
+      ],
+      "grid": [
+        {
+          "w": "NERKI",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "ORKA",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 162,
+      "band": 4,
+      "letters": [
+        "A",
+        "E",
+        "I",
+        "K",
+        "O",
+        "R",
+        "T"
+      ],
+      "words": [
+        "KIERAT",
+        "TOK"
+      ],
+      "grid": [
+        {
+          "w": "KIERAT",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "TOK",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 163,
+      "band": 4,
+      "letters": [
+        "A",
+        "K",
+        "N",
+        "R",
+        "T",
+        "U",
+        "Y"
+      ],
+      "words": [
+        "KUR",
+        "TYRAN"
+      ],
+      "grid": [
+        {
+          "w": "KUR",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "TYRAN",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 164,
+      "band": 4,
+      "letters": [
+        "A",
+        "K",
+        "N",
+        "O",
+        "P",
+        "R",
+        "T"
+      ],
+      "words": [
+        "KANTOR",
+        "OKAP"
+      ],
+      "grid": [
+        {
+          "w": "KANTOR",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "OKAP",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 165,
+      "band": 4,
+      "letters": [
+        "A",
+        "K",
+        "N",
+        "O",
+        "R",
+        "T",
+        "Z"
+      ],
+      "words": [
+        "KONTRA",
+        "OKAZ"
+      ],
+      "grid": [
+        {
+          "w": "KONTRA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "OKAZ",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 166,
+      "band": 4,
+      "letters": [
+        "A",
+        "K",
+        "N",
+        "O",
+        "R",
+        "Z",
+        "Ł"
+      ],
+      "words": [
+        "ORKAN",
+        "ZŁO"
+      ],
+      "grid": [
+        {
+          "w": "ORKAN",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "ZŁO",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 167,
+      "band": 4,
+      "letters": [
+        "A",
+        "G",
+        "R",
+        "S",
+        "U",
+        "Z",
+        "Ż"
+      ],
+      "words": [
+        "GRUSZA",
+        "ŻAR"
+      ],
+      "grid": [
+        {
+          "w": "GRUSZA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "ŻAR",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 168,
+      "band": 4,
+      "letters": [
+        "A",
+        "A",
+        "L",
+        "M",
+        "O",
+        "P",
+        "R"
+      ],
+      "words": [
+        "PLAMA",
+        "POR"
+      ],
+      "grid": [
+        {
+          "w": "PLAMA",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "POR",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 169,
+      "band": 4,
+      "letters": [
+        "A",
+        "A",
+        "B",
+        "D",
+        "R",
+        "T",
+        "Ą"
+      ],
+      "words": [
+        "DĄB",
+        "RABAT"
+      ],
+      "grid": [
+        {
+          "w": "DĄB",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "RABAT",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 170,
+      "band": 4,
+      "letters": [
+        "A",
+        "C",
+        "H",
+        "K",
+        "M",
+        "R",
+        "U"
+      ],
+      "words": [
+        "KAR",
+        "MUCHA"
+      ],
+      "grid": [
+        {
+          "w": "KAR",
+          "x": 0,
+          "y": 4,
+          "dir": "h"
+        },
+        {
+          "w": "MUCHA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 171,
+      "band": 4,
+      "letters": [
+        "A",
+        "B",
+        "D",
+        "E",
+        "O",
+        "W",
+        "Z"
+      ],
+      "words": [
+        "BEZA",
+        "ODZEW"
+      ],
+      "grid": [
+        {
+          "w": "BEZA",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "ODZEW",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 172,
+      "band": 4,
+      "letters": [
+        "A",
+        "A",
+        "B",
+        "K",
+        "N",
+        "R",
+        "T"
+      ],
+      "words": [
+        "BAN",
+        "KATAR"
+      ],
+      "grid": [
+        {
+          "w": "BAN",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        },
+        {
+          "w": "KATAR",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 173,
+      "band": 4,
+      "letters": [
+        "A",
+        "A",
+        "B",
+        "K",
+        "O",
+        "R",
+        "T"
+      ],
+      "words": [
+        "KRATA",
+        "OBA"
+      ],
+      "grid": [
+        {
+          "w": "KRATA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "OBA",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 174,
+      "band": 4,
+      "letters": [
+        "A",
+        "H",
+        "K",
+        "R",
+        "S",
+        "U",
+        "Z"
+      ],
+      "words": [
+        "ARKUSZ",
+        "HAK"
+      ],
+      "grid": [
+        {
+          "w": "ARKUSZ",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "HAK",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 175,
+      "band": 4,
+      "letters": [
+        "A",
+        "C",
+        "E",
+        "K",
+        "L",
+        "P",
+        "R"
+      ],
+      "words": [
+        "KRA",
+        "PLACEK"
+      ],
+      "grid": [
+        {
+          "w": "KRA",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "PLACEK",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 176,
+      "band": 5,
+      "letters": [
+        "A",
+        "C",
+        "E",
+        "I",
+        "K",
+        "L",
+        "R"
+      ],
+      "words": [
+        "CELA",
+        "KIER"
+      ],
+      "grid": [
+        {
+          "w": "CELA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "KIER",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 177,
+      "band": 5,
+      "letters": [
+        "A",
+        "A",
+        "B",
+        "K",
+        "R",
+        "S",
+        "Y"
+      ],
+      "words": [
+        "BARY",
+        "KASA"
+      ],
+      "grid": [
+        {
+          "w": "BARY",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "KASA",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 178,
+      "band": 5,
+      "letters": [
+        "A",
+        "B",
+        "C",
+        "E",
+        "I",
+        "K",
+        "T"
+      ],
+      "words": [
+        "BETA",
+        "CIEK"
+      ],
+      "grid": [
+        {
+          "w": "BETA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "CIEK",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 179,
+      "band": 5,
+      "letters": [
+        "A",
+        "A",
+        "K",
+        "M",
+        "O",
+        "S",
+        "T"
+      ],
+      "words": [
+        "AKTA",
+        "SAMO"
+      ],
+      "grid": [
+        {
+          "w": "AKTA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "SAMO",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 180,
+      "band": 5,
+      "letters": [
+        "A",
+        "A",
+        "K",
+        "M",
+        "O",
+        "T",
+        "Ł"
+      ],
+      "words": [
+        "ATAK",
+        "MAŁO"
+      ],
+      "grid": [
+        {
+          "w": "ATAK",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "MAŁO",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 181,
+      "band": 5,
+      "letters": [
+        "A",
+        "A",
+        "K",
+        "N",
+        "O",
+        "R",
+        "T"
+      ],
+      "words": [
+        "NORA",
+        "TAKA"
+      ],
+      "grid": [
+        {
+          "w": "NORA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "TAKA",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 182,
+      "band": 5,
+      "letters": [
+        "C",
+        "H",
+        "K",
+        "K",
+        "O",
+        "R",
+        "U"
+      ],
+      "words": [
+        "KROK",
+        "RUCH"
+      ],
+      "grid": [
+        {
+          "w": "KROK",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "RUCH",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 183,
+      "band": 5,
+      "letters": [
+        "A",
+        "C",
+        "K",
+        "K",
+        "L",
+        "P",
+        "R"
+      ],
+      "words": [
+        "KARK",
+        "PLAC"
+      ],
+      "grid": [
+        {
+          "w": "KARK",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "PLAC",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 184,
+      "band": 5,
+      "letters": [
+        "A",
+        "K",
+        "N",
+        "O",
+        "P",
+        "R",
+        "S"
+      ],
+      "words": [
+        "KRAN",
+        "OSPA"
+      ],
+      "grid": [
+        {
+          "w": "KRAN",
+          "x": 3,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "OSPA",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 185,
+      "band": 5,
+      "letters": [
+        "A",
+        "C",
+        "G",
+        "N",
+        "O",
+        "R",
+        "Y"
+      ],
+      "words": [
+        "CYNA",
+        "OGAR"
+      ],
+      "grid": [
+        {
+          "w": "CYNA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "OGAR",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 186,
+      "band": 5,
+      "letters": [
+        "A",
+        "K",
+        "O",
+        "R",
+        "S",
+        "T",
+        "Z"
+      ],
+      "words": [
+        "KOSZ",
+        "ROTA"
+      ],
+      "grid": [
+        {
+          "w": "KOSZ",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "ROTA",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 187,
+      "band": 5,
+      "letters": [
+        "A",
+        "C",
+        "D",
+        "G",
+        "M",
+        "R",
+        "U"
+      ],
+      "words": [
+        "CUMA",
+        "GRAD"
+      ],
+      "grid": [
+        {
+          "w": "CUMA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "GRAD",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 188,
+      "band": 5,
+      "letters": [
+        "A",
+        "B",
+        "D",
+        "E",
+        "K",
+        "R",
+        "U"
+      ],
+      "words": [
+        "BUK",
+        "DERKA"
+      ],
+      "grid": [
+        {
+          "w": "BUK",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        },
+        {
+          "w": "DERKA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 189,
+      "band": 5,
+      "letters": [
+        "A",
+        "E",
+        "H",
+        "L",
+        "P",
+        "R",
+        "T"
+      ],
+      "words": [
+        "APEL",
+        "HART"
+      ],
+      "grid": [
+        {
+          "w": "APEL",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "HART",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 190,
+      "band": 5,
+      "letters": [
+        "G",
+        "O",
+        "R",
+        "S",
+        "U",
+        "Z",
+        "Ł"
+      ],
+      "words": [
+        "GRUZ",
+        "SZŁO"
+      ],
+      "grid": [
+        {
+          "w": "GRUZ",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "SZŁO",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 191,
+      "band": 5,
+      "letters": [
+        "A",
+        "I",
+        "P",
+        "R",
+        "T",
+        "W",
+        "Ł"
+      ],
+      "words": [
+        "PIŁA",
+        "TRWA"
+      ],
+      "grid": [
+        {
+          "w": "PIŁA",
+          "x": 3,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "TRWA",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 192,
+      "band": 5,
+      "letters": [
+        "A",
+        "D",
+        "E",
+        "R",
+        "S",
+        "Z",
+        "Ł"
+      ],
+      "words": [
+        "DERA",
+        "SZAŁ"
+      ],
+      "grid": [
+        {
+          "w": "DERA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "SZAŁ",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 193,
+      "band": 5,
+      "letters": [
+        "A",
+        "L",
+        "O",
+        "P",
+        "R",
+        "T",
+        "Y"
+      ],
+      "words": [
+        "OPAL",
+        "RATY"
+      ],
+      "grid": [
+        {
+          "w": "OPAL",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "RATY",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 194,
+      "band": 5,
+      "letters": [
+        "A",
+        "B",
+        "K",
+        "O",
+        "S",
+        "U",
+        "Z"
+      ],
+      "words": [
+        "BUS",
+        "KOSZA"
+      ],
+      "grid": [
+        {
+          "w": "BUS",
+          "x": 0,
+          "y": 2,
+          "dir": "h"
+        },
+        {
+          "w": "KOSZA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": true
+    },
+    {
+      "slot": 195,
+      "band": 5,
+      "letters": [
+        "A",
+        "B",
+        "L",
+        "O",
+        "P",
+        "R",
+        "Y"
+      ],
+      "words": [
+        "OBY",
+        "POLAR"
+      ],
+      "grid": [
+        {
+          "w": "OBY",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        },
+        {
+          "w": "POLAR",
+          "x": 0,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 196,
+      "band": 5,
+      "letters": [
+        "A",
+        "K",
+        "O",
+        "R",
+        "S",
+        "Z",
+        "Ł"
+      ],
+      "words": [
+        "KARO",
+        "SZŁA"
+      ],
+      "grid": [
+        {
+          "w": "KARO",
+          "x": 3,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "SZŁA",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 197,
+      "band": 5,
+      "letters": [
+        "A",
+        "L",
+        "N",
+        "O",
+        "P",
+        "R",
+        "T"
+      ],
+      "words": [
+        "POLA",
+        "TRON"
+      ],
+      "grid": [
+        {
+          "w": "POLA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "TRON",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 198,
+      "band": 5,
+      "letters": [
+        "A",
+        "B",
+        "K",
+        "S",
+        "T",
+        "U",
+        "Z"
+      ],
+      "words": [
+        "BUT",
+        "KUSZA"
+      ],
+      "grid": [
+        {
+          "w": "BUT",
+          "x": 0,
+          "y": 1,
+          "dir": "h"
+        },
+        {
+          "w": "KUSZA",
+          "x": 1,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    },
+    {
+      "slot": 199,
+      "band": 5,
+      "letters": [
+        "A",
+        "B",
+        "K",
+        "O",
+        "Y",
+        "Z",
+        "Ł"
+      ],
+      "words": [
+        "BYK",
+        "KOZŁA"
+      ],
+      "grid": [
+        {
+          "w": "BYK",
+          "x": 0,
+          "y": 0,
+          "dir": "h"
+        },
+        {
+          "w": "KOZŁA",
+          "x": 2,
+          "y": 0,
+          "dir": "v"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": true
+    },
+    {
+      "slot": 200,
+      "band": 5,
+      "letters": [
+        "A",
+        "H",
+        "K",
+        "O",
+        "R",
+        "U",
+        "Z"
+      ],
+      "words": [
+        "HURA",
+        "KOZA"
+      ],
+      "grid": [
+        {
+          "w": "HURA",
+          "x": 3,
+          "y": 0,
+          "dir": "v"
+        },
+        {
+          "w": "KOZA",
+          "x": 0,
+          "y": 3,
+          "dir": "h"
+        }
+      ],
+      "editorial_status": "proposed",
+      "manual_review_priority": false
+    }
+  ]
+}
