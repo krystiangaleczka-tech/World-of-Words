@@ -45,3 +45,16 @@ def test_repeated_tiles_and_no_eligible_seeds():
 def test_invalid_source_rejected():
     with pytest.raises(ValueError):
         audit_wheel_letters(None)
+
+
+def test_large_source_audit_does_not_materialize_bonus_pools(monkeypatch):
+    words = index(KOT="level_ok", TOK="level_ok", ANNA="level_ok", DOM="bonus_ok")
+
+    def fail_if_enumerated(_index):
+        raise AssertionError("Wheel audit must not build automatic bonus pools")
+
+    monkeypatch.setattr(WordIndex, "automatic", fail_if_enumerated)
+    report = audit_wheel_letters(words)
+    assert next(row for row in report if row.letter == "A") == WheelLetterAudit("A", 1, 2)
+    assert next(row for row in report if row.letter == "O") == WheelLetterAudit("O", 1, 1)
+    assert next(row for row in report if row.letter == "N") == WheelLetterAudit("N", 1, 2)
