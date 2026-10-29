@@ -47,7 +47,7 @@
         "properties": {
           "file": {
             "type": "string",
-            "pattern": "^packs/c-(?:[0-9]{4}|[1-9][0-9]{4})-(?:[0-9]{4}|[1-9][0-9]{4})\\.json$(?![\\s\\S])"
+            "pattern": "^packs/c-[0-9]{4}-[0-9]{4}\\.json$(?![\\s\\S])"
           },
           "kind": {
             "const": "campaign"
