@@ -52,7 +52,9 @@ def review_tier_reasons(records: list | tuple, config: LanguageConfig) -> TierRe
         if (
             not valid_word(word, config)
             or word in seen
+            or not isinstance(tier, str)
             or tier not in TIERS
+            or not isinstance(reason, str)
             or reason not in REASONS
         ):
             raise ValueError("Invalid classified word or evidence reason")
