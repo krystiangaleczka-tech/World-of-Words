@@ -182,7 +182,7 @@ def test_selection_constraints():
         "levels"
     ][15]
     assert landmark["landmark"] is True and landmark["source"] == "handmade"
-    for slots, version in ((True, 1), (14, 1), (10000, 1), (30, False), (30, 0)):
+    for slots, version in ((True, 1), (14, 1), (30001, 1), (30, False), (30, 0)):
         with pytest.raises(ValueError):
             assemble(previous, slots, version, index, registry)
 
