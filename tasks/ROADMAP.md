@@ -601,7 +601,7 @@ with 30,000-slot capacity; game flags feed back into QA.
 | T-0405 | Landmarks in the pipeline: hand-made landmark YAML (up to 8 letters), landmark slots + breather in sequencing | feat | pipeline.sequence | T-0402, T-0302 | PIPE | CHEAP | med | none | med | FR-META-07, CONTENT.md#curve |
 | T-0406 | Daily pack + calendar schema and `Content.daily_for(date)` [HS] | contract | services.content | T-0402, T-0238 | H | SOL | high | none | high | FR-CONT-08, FR-DAILY-01, FR-DAILY-05 |
 | T-0407 | Daily pool generation (separate pool, no duplicates vs campaign) + calendar export | contract | pipeline.export | T-0406, T-0405 | PIPE | SOL | high | none | high | FR-CONT-08 |
-| T-0408 | Pipeline scale: 10000+ reviewed levels deterministically within CI budget (caching, profiling, memory and app size) | feat | pipeline.grid | T-0407, T-0388 | PIPE | CHEAP | high | none | high | NFR-14, FR-CONT-06 |
+| T-0408 | Pipeline scale: 10000+ reviewed levels deterministically within CI budget (caching, profiling, memory and app size) | feat | pipeline.grid | T-0407, T-0395 | PIPE | CHEAP | high | none | high | NFR-14, FR-CONT-06 |
 
 ### E28 Release pipeline
 Goal: releases from CI, not from a laptop. Exit: tagged commit → Play internal track + TestFlight.
