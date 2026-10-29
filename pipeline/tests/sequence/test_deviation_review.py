@@ -24,9 +24,7 @@ def plan():
     return SlotPlan(
         regions=(Region("r", config),),
         locations=(Location("l", "r", 1, 18),),
-        authored=tuple(
-            Reservation(slot, f"pl-c-{slot:06d}") for slot in range(1, 17)
-        ),
+        authored=tuple(Reservation(slot, f"pl-c-{slot:06d}") for slot in range(1, 17)),
         released=(),
     )
 
