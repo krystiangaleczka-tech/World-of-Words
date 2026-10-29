@@ -11,9 +11,7 @@ class WordReuse:
     slots: tuple[int, ...]
 
 
-def review_word_reuse(
-    levels: list | tuple, *, minimum_levels: int
-) -> tuple[WordReuse, ...]:
+def review_word_reuse(levels: list | tuple, *, minimum_levels: int) -> tuple[WordReuse, ...]:
     """Report repeat occurrences, not a release gate or an approval decision."""
     if (
         not isinstance(levels, (list, tuple))
