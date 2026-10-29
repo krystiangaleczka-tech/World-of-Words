@@ -19,8 +19,12 @@ def audit_wheel_letters(index: WordIndex) -> tuple[WheelLetterAudit, ...]:
         raise ValueError("Expected validated candidate index")
     presence: Counter[str] = Counter()
     totals: Counter[str] = Counter()
-    for candidate in index.automatic():
-        letters = candidate["letters"]
+    # The seed index already verifies tier eligibility. Counting its unique
+    # signatures avoids eagerly constructing full bonus pools for every wheel.
+    signatures = {
+        "".join(sorted(word)) for word, tier in index.tiers.items() if tier == "level_ok"
+    }
+    for letters in sorted(signatures):
         presence.update(set(letters))
         totals.update(letters)
     return tuple(
