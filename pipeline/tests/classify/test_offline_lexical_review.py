@@ -1,7 +1,7 @@
 """Offline lexical review: real rule path, no network or automated approval."""
 
 import hashlib
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from pathlib import Path
 
 import pytest
@@ -198,3 +198,22 @@ def test_proposed_familiarity_is_not_reviewed():
     result = parse_json(_run(artifact, config, reviews=reviews, words=("DOM",)).decode())
     assert result["reviewed_familiarity_count"] == 0
     assert result["unresolved"][0]["editorial_status"] == "proposed"
+
+
+def test_ambiguous_analyses_remain_explicit_uncertainty():
+    record = _row("DOM", 80)
+    variant = {**record["analyses"][0], "tag": "subst:pl"}
+    record["analyses"].append(variant)
+    config, artifact = _fixture(records=[record])
+    output = parse_json(_run(artifact, config, words=("DOM",)).decode("utf-8"))
+    assert "multiple_analyses" in output["unresolved"][0]["evidence_flags"]
+
+
+def test_unsorted_tier_source_and_non_polish_config_are_rejected():
+    config, artifact = _fixture()
+    swapped = artifact["payload"]["records"]
+    swapped[0], swapped[1] = swapped[1], swapped[0]
+    with pytest.raises(ValueError):
+        _run(artifact, config)
+    with pytest.raises(ValueError, match="Polish"):
+        _run(_fixture()[1], replace(config, lang="en"))
