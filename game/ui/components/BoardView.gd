@@ -215,6 +215,13 @@ func fits_minimum() -> bool:
 	return _fits
 
 
+## @api Grid columns and rows of the loaded board; zero before a board is set.
+func grid_dimensions() -> Vector2i:
+	if _board == null:
+		return Vector2i.ZERO
+	return _board.get_level().grid_size()
+
+
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED:
 		_layout_cells()
@@ -241,8 +248,14 @@ func _layout_cells() -> void:
 
 
 ## @api Shared final layout. Empty for invalid inputs; tiny valid rectangles remain bounded.
+## grid_size (cols, rows) lets the grid keep only the height its capped cells need, below the
+## GRID_MIN_RATIO share; zero keeps the share as a floor.
 static func play_area_rects(
-	available: Vector2, layout: StringName, preview_height: float, actions_height: float = 0
+	available: Vector2,
+	layout: StringName,
+	preview_height: float,
+	actions_height: float = 0,
+	grid_size: Vector2i = Vector2i.ZERO
 ) -> Dictionary[StringName, Rect2]:
 	var result: Dictionary[StringName, Rect2] = {}
 	if (
@@ -274,17 +287,14 @@ static func play_area_rects(
 	var diameter: float = minf(
 		width, clampf(width * ratio, Tokens.Layout.WHEEL_MIN, Tokens.Layout.WHEEL_MAX)
 	)
+	var grid_floor: float = available.y * Tokens.Layout.GRID_MIN_RATIO
+	if grid_size.x > 0 and grid_size.y > 0:
+		grid_floor = minf(grid_floor, _natural_grid_height(grid_size, width))
 	diameter = maxf(
 		0,
 		minf(
 			diameter,
-			(
-				available.y * (1 - Tokens.Layout.GRID_MIN_RATIO)
-				- preview_height
-				- actions_height
-				- gap * 3
-				- padding * 2
-			)
+			available.y - grid_floor - preview_height - actions_height - gap * 3 - padding * 2
 		)
 	)
 	var board_height: float = maxf(
@@ -300,6 +310,12 @@ static func play_area_rects(
 		Vector2.ONE * diameter
 	)
 	return result
+
+
+static func _natural_grid_height(grid: Vector2i, width: float) -> float:
+	var room: float = (width - (grid.x - 1) * Tokens.Space.XS) / grid.x
+	var side: float = minf(Tokens.Layout.CELL_MAX, room)
+	return maxf(0, side * grid.y + (grid.y - 1) * Tokens.Space.XS)
 
 
 func _enter_tree() -> void:

@@ -7,6 +7,7 @@ import argparse
 import json
 import os
 import re
+import shutil
 import subprocess
 import tempfile
 import zipfile
@@ -56,6 +57,33 @@ def run(command: list[str], env: dict[str, str]) -> str:
     return output
 
 
+def version_suffix(root: Path, env: dict[str, str]) -> str:
+    commit = run(["git", "-C", str(root), "rev-parse", "--short", "HEAD"], env).strip()
+    changes = run(
+        ["git", "-C", str(root), "status", "--porcelain", "--untracked-files=no", "--", "game"],
+        env,
+    ).strip()
+    return f"{commit}-dirty" if changes else commit
+
+
+def stamp_debug_version(presets: str, suffix: str) -> str:
+    header = re.search(r'^\[preset\.(\d+)\]\nname="Android Debug"$', presets, flags=re.MULTILINE)
+    if header is None:
+        raise ValueError("Android Debug export preset not found")
+    start = presets.index(f"[preset.{header.group(1)}.options]")
+    end = presets.find("\n[", start)
+    end = len(presets) if end == -1 else end + 1
+    section, count = re.subn(
+        r'^version/name="([^"]*)"$',
+        lambda match: f'version/name="{match.group(1)} ({suffix})"',
+        presets[start:end],
+        flags=re.MULTILINE,
+    )
+    if count != 1:
+        raise ValueError("Android Debug preset must define exactly one version/name")
+    return presets[:start] + section + presets[end:]
+
+
 def build(
     root: Path, output: Path, godot: str, sdk: Path, java: Path, templates: Path | None
 ) -> None:
@@ -68,6 +96,12 @@ def build(
         raise ValueError(f"Pinned Godot {VERSION} required, got {version}")
     with tempfile.TemporaryDirectory(prefix="wow-android-debug-") as directory:
         temporary = Path(directory)
+        # Export from a copy so the build-specific version name never touches tracked files.
+        project = temporary / "game"
+        shutil.copytree(root / "game", project)
+        suffix = version_suffix(root, env)
+        presets = project / "export_presets.cfg"
+        presets.write_text(stamp_debug_version(presets.read_text(), suffix))
         key = temporary / "public-debug.keystore"
         run(
             [
@@ -118,14 +152,14 @@ def build(
             destination.parent.mkdir(parents=True)
             destination.symlink_to(templates.resolve(), target_is_directory=True)
             env["XDG_DATA_HOME"] = str(temporary / "data")
-        run([godot, "--headless", "--path", str(root / "game"), "--import", "--quit"], env)
+        run([godot, "--headless", "--path", str(project), "--import", "--quit"], env)
         print(
             run(
                 [
                     godot,
                     "--headless",
                     "--path",
-                    str(root / "game"),
+                    str(project),
                     "--export-debug",
                     "Android Debug",
                     str(output),
@@ -139,6 +173,8 @@ def build(
             [str(tools / "aapt"), "dump", "xmltree", str(output), "AndroidManifest.xml"], env
         )
         validate_manifest(badging, tree)
+        if f"({suffix})'" not in badging:
+            raise ValueError(f"APK versionName must carry build {suffix}")
         validate_assets(output)
         run([str(tools / "apksigner"), "verify", "--verbose", str(output)], env)
         resources = output.parent / "android-debug-content.zip"
@@ -148,7 +184,7 @@ def build(
                     godot,
                     "--headless",
                     "--path",
-                    str(root / "game"),
+                    str(project),
                     "--export-pack",
                     "Android Debug",
                     str(resources),
@@ -173,8 +209,8 @@ def build(
             )
         )
         (output.parent / "android-debug-verification.txt").write_text(
-            f"Godot: {version}\nDebug package: {PACKAGE}\nSDK: 24 minimum / 36 target\n"
-            "Permissions: INTERNET,VIBRATE\nOrientation: portrait\n"
+            f"Godot: {version}\nDebug package: {PACKAGE}\nBuild: {suffix}\n"
+            "SDK: 24 minimum / 36 target\nPermissions: INTERNET,VIBRATE\nOrientation: portrait\n"
             "Signature: verified public disposable debug key\n"
             "Packaged boot/audio/debug route: verified with headless cue sink\n"
             "No production upload key or GitHub signing secrets were used.\n"
