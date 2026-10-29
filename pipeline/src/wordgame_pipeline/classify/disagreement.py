@@ -33,8 +33,6 @@ def compare_classification_passes(
             raise ValueError("Invalid normalized word or tier class")
         if a != b:
             result.append(
-                ClassificationDisagreement(
-                    word, a, b, (a == "banned") != (b == "banned")
-                )
+                ClassificationDisagreement(word, a, b, (a == "banned") != (b == "banned"))
             )
     return tuple(result)
