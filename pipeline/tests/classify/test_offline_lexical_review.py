@@ -119,7 +119,7 @@ def test_candidate_identity_fails_closed(words):
 
 def test_source_and_rules_tamper_is_rejected():
     config, artifact = _fixture()
-    with pytest.raises(ValueError, match="provenance"):
+    with pytest.raises(ValueError, match="Unpinned"):
         build_review_queue(
             canonical_bytes(artifact),
             EMPTY_OVERRIDES,
