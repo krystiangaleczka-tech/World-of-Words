@@ -9,7 +9,7 @@ executor: sol
 think: med
 ui: none
 status: review
-depends_on: [T-0297]
+depends_on: [T-0127]
 touch:
   - pipeline/src/wordgame_pipeline/tiers/distribution.py
   - pipeline/tests/tiers/test_distribution.py
