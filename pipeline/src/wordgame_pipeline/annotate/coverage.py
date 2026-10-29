@@ -54,9 +54,7 @@ def audit_arf_coverage(
         if not isinstance(value, Frequency):
             raise ValueError("Expected exact Frequency records or None")
         if any(
-            type(number) not in (int, float)
-            or not math.isfinite(number)
-            or number < 0
+            type(number) not in (int, float) or not math.isfinite(number) or number < 0
             for number in (value.arf, value.ipm)
         ):
             raise ValueError("Frequency metrics must be finite nonnegative")
