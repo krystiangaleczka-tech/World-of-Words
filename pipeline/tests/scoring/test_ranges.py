@@ -49,6 +49,8 @@ def test_ranges_are_exact_ordered_and_nonmutating():
         [],
         {"": entry(2)},
         {1: entry(2)},
+        {"a": entry(2), 1: entry(3)},
+        {1: entry(3), "a": entry(2)},
         {" a": entry(2)},
         {"a": {}},
         {"a": entry(2) | {"letter_count": True}},
