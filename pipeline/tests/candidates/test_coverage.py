@@ -63,3 +63,16 @@ def test_ready_supply_and_stable_result():
     a = audit_candidate_coverage(index, minimum_words=2)
     b = audit_candidate_coverage(index, minimum_words=2)
     assert a == b and a.eligible_wheels == 1 and a.shortages == ()
+
+
+def test_multiple_sizes_and_shortages_are_sorted_independent_of_input_order():
+    rows = words(SOWA="level_ok", KOT="level_ok", DOM="level_ok", LATO="level_ok")
+    report = audit_candidate_coverage(WordIndex(rows[::-1], CONFIG), minimum_words=3)
+    assert report == audit_candidate_coverage(WordIndex(rows, CONFIG), minimum_words=3)
+    assert report.wheels_by_length == ((3, 2), (4, 2))
+    assert tuple((row.letter_count, row.candidate_id) for row in report.shortages) == (
+        (3, "pl-auto-DMO"),
+        (3, "pl-auto-KOT"),
+        (4, "pl-auto-ALOT"),
+        (4, "pl-auto-AOSW"),
+    )
