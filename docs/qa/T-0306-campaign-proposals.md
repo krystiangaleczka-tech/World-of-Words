@@ -17,10 +17,17 @@ Date: 2026-10-29. **Status: proposed / blocked for production.**
   difficulty measurement; no fake score is written to gameplay packs.
 - Unique letter multisets across 200 planned slots and 100-slot spacing
   between selected crossword words are asserted by new tests.
-- Only **two** proposed levels (194 and 199) use a selected word outside
-  the seed/partner familiarity shortlist, and have `manual_review_priority: true`.
-  **This is not a claim that the other 133 are human-approved**; every
-  proposed word still requires lexical/UX review.
+- **All 135 proposed levels require owner lexical/UX review**:
+  `manual_review_priority: true` means **pending**, not approved.
+  The compact tier extract is a dictionary/heuristic eligibility input and
+  T-0129's `reviewed_by=codex` is not human sign-off.
+- Comparing the 331 crossword-word placements against the T-0129 catalog
+  gives 283 distinct selected words, of which **161 do not have an earlier
+  `level_ok` decision in that catalog**. Even the other 122 need
+  confirmation for this campaign. There is no owner-approved 200-level batch.
+- The former two-item flag (slots 194 and 199) reflected only an internal
+  seed/partner shortlist, not actual human review. That unsafe inference
+  was removed in the next revision.
 
 ## Difficulty and coverage summary
 
@@ -158,138 +165,138 @@ source pack. Slots 66–200 are **proposed**, not playtested or released.
 | 63 | 2 | RAKIETA, TARKA | shipped P1 |
 | 64 | 2 | KANAPA, KANAPKA, PAN | shipped P1 |
 | 65 | 2 | PARASOL, PAS, ROSA | shipped P1 |
-| 66 | 2 | MOC, SAMO | proposal |
-| 67 | 2 | CUMA, RAM | proposal |
-| 68 | 2 | MAT, ROTA | proposal |
-| 69 | 2 | DNO, TRON | proposal |
-| 70 | 2 | OSPA, SAM | proposal |
-| 71 | 2 | MAŁO, TAM | proposal |
-| 72 | 2 | RUCH, RUS | proposal |
-| 73 | 2 | NOC, NORA | proposal |
-| 74 | 2 | CYNA, ONA | proposal |
-| 75 | 2 | CIEK, ICH | proposal |
-| 76 | 2 | TRWA, WAM | proposal |
-| 77 | 2 | RATY, TYM | proposal |
-| 78 | 2 | KOSZ, SOL | proposal |
-| 79 | 2 | JAK, KARK | proposal |
-| 80 | 2 | JAR, KRAN | proposal |
-| 81 | 2 | KOD, KROK | proposal |
-| 82 | 2 | STO, SZŁO | proposal |
-| 83 | 2 | PLAC, ŻAL | proposal |
-| 84 | 2 | GRA, HART | proposal |
-| 85 | 2 | KARO, OGAR | proposal |
-| 86 | 2 | GAZ, KOZA | proposal |
-| 87 | 2 | DERA, GRAD | proposal |
-| 88 | 2 | DAR, DERKA | proposal |
-| 89 | 2 | APEL, PAD | proposal |
-| 90 | 2 | GRUZ, RAZ | proposal |
-| 91 | 3 | PIŁA, RAN | proposal |
-| 92 | 3 | AKT, SZAŁ | proposal |
-| 93 | 3 | OPAL, RAS | proposal |
-| 94 | 3 | ATOL, OPAR | proposal |
-| 95 | 3 | LWA, POLAR | proposal |
-| 96 | 3 | BAĆ, SZŁA | proposal |
-| 97 | 3 | POLA, WAS | proposal |
-| 98 | 3 | KAT, KUSZA | proposal |
-| 99 | 3 | LAĆ, PORA | proposal |
-| 100 | 3 | DAM, HURA | proposal |
-| 101 | 3 | DOMY, OKO | proposal |
-| 102 | 3 | MODY, ROK | proposal |
-| 103 | 3 | BĄK, KURZ | proposal |
-| 104 | 3 | ANI, NARTY | proposal |
-| 105 | 3 | RAT, SOLA | proposal |
-| 106 | 3 | ROLA, URAZ | proposal |
-| 107 | 3 | CYK, KNOT | proposal |
-| 108 | 3 | BRAT, MAM | proposal |
-| 109 | 3 | ROPA, ZŁA | proposal |
-| 110 | 3 | KORT, PIK | proposal |
-| 111 | 3 | GÓR, IKRA | proposal |
-| 112 | 3 | ARKA, KREDA | proposal |
-| 113 | 3 | KŁOS, PIŁ | proposal |
-| 114 | 3 | PARA, RÓG | proposal |
-| 115 | 3 | BAS, SMOŁA | proposal |
-| 116 | 3 | RANO, SEN | proposal |
-| 117 | 3 | ERA, NOTA | proposal |
-| 118 | 3 | KOS, TKWI | proposal |
-| 119 | 3 | KIT, SZOK | proposal |
-| 120 | 3 | AHA, OWAD | proposal |
-| 121 | 3 | MILA, OKA | proposal |
-| 122 | 3 | KLAP, LIN | proposal |
-| 123 | 3 | KITA, PAL | proposal |
-| 124 | 3 | ALT, LUKA, TAKI | proposal |
-| 125 | 3 | LAT, WITKA | proposal |
-| 126 | 3 | ARIA, DAJ, JAD | proposal |
-| 127 | 3 | DAL, DNA, LIANA | proposal |
-| 128 | 3 | DAN, MANIA, NAD | proposal |
-| 129 | 3 | DAT, RAD, TIARA | proposal |
-| 130 | 3 | MAK, ŁAPKI | proposal |
-| 131 | 3 | BOK, SZKŁO | proposal |
-| 132 | 3 | KAS, PARK, ŁASK | proposal |
-| 133 | 3 | DLA, LASKA, SAD | proposal |
-| 134 | 3 | APKA, DOK, POD | proposal |
-| 135 | 3 | KAPA, UDA | proposal |
-| 136 | 3 | DWA, PAKA, WAD | proposal |
-| 137 | 3 | LALA, LÓD | proposal |
-| 138 | 3 | ONO, PANA | proposal |
-| 139 | 3 | ARA, ORNAT | proposal |
-| 140 | 3 | TONA, WATA | proposal |
-| 141 | 3 | NAS, PRASA, PSA | proposal |
-| 142 | 3 | ALE, KANT | proposal |
-| 143 | 3 | RANT, RASA | proposal |
-| 144 | 3 | RANY, RATA | proposal |
-| 145 | 3 | NOTKA, TEKA | proposal |
-| 146 | 3 | AKTOR, KRET, RAK | proposal |
-| 147 | 3 | TAK, TOTEK | proposal |
-| 148 | 3 | MAS, SOK, SŁOMA | proposal |
-| 149 | 3 | KOPA, PALA | proposal |
-| 150 | 3 | KARA, LAS, SKALA | proposal |
-| 151 | 4 | ACH, OCH, TABOR | proposal |
-| 152 | 4 | ABY, BAZ, CZAPA | proposal |
-| 153 | 4 | KARTA, PAW | proposal |
-| 154 | 4 | CAL, NIE, PALCE | proposal |
-| 155 | 4 | BAL, BOA, KONAR | proposal |
-| 156 | 4 | BAK, CEL, PALEC | proposal |
-| 157 | 4 | KARATE, KTO | proposal |
-| 158 | 4 | FAN, KAC, PACKA | proposal |
-| 159 | 4 | KARETA, PAR | proposal |
-| 160 | 4 | MOL, NAM, NORKA | proposal |
-| 161 | 4 | NERKI, ORKA | proposal |
-| 162 | 4 | KIERAT, TOK | proposal |
-| 163 | 4 | AUT, KUR, TYRAN | proposal |
-| 164 | 4 | KANTOR, OKAP, PAN | proposal |
-| 165 | 4 | KONTRA, OKAZ, ZNA | proposal |
-| 166 | 4 | ORKAN, ZŁO, ŁAN | proposal |
-| 167 | 4 | GRUSZA, ŻAR | proposal |
-| 168 | 4 | MAP, PLAMA, POR | proposal |
-| 169 | 4 | BAR, DĄB, RABAT | proposal |
-| 170 | 4 | HAU, KAR, MUCHA | proposal |
-| 171 | 4 | BEZ, BEZA, ODZEW | proposal |
-| 172 | 4 | BAN, BAT, KATAR | proposal |
-| 173 | 4 | BOT, KRATA, OBA | proposal |
-| 174 | 4 | ARKUSZ, HAK, RUS | proposal |
-| 175 | 4 | CEP, KRA, PLACEK | proposal |
-| 176 | 5 | CELA, KIER | proposal |
-| 177 | 5 | BARY, KASA, RYB | proposal |
-| 178 | 5 | BETA, CIEK | proposal |
-| 179 | 5 | AKTA, MAT, OSA, SAMO | proposal |
-| 180 | 5 | ATAK, MAŁO, TAM | proposal |
-| 181 | 5 | NORA, ONA, TAKA | proposal |
-| 182 | 5 | KOC, KROK, KUC, RUCH | proposal |
-| 183 | 5 | KARK, PLAC | proposal |
-| 184 | 5 | KRAN, OSPA, PAS | proposal |
-| 185 | 5 | CYNA, GRA, NOC, OGAR | proposal |
-| 186 | 5 | KOSZ, ROTA | proposal |
-| 187 | 5 | CUD, CUMA, GAD, GRAD | proposal |
-| 188 | 5 | BUK, DAR, DBA, DERKA | proposal |
-| 189 | 5 | APEL, HAL, HART | proposal |
-| 190 | 5 | GRUZ, SZŁO | proposal |
-| 191 | 5 | PIŁA, TRWA, TŁA, ŁAP | proposal |
-| 192 | 5 | DAŁ, DERA, SZAŁ, ŁAD | proposal |
-| 193 | 5 | OPAL, RATY | proposal |
-| 194 | 5 | BUS, KOSZA, OBU | proposal · priority review |
-| 195 | 5 | OBY, OPAR, POLAR | proposal |
-| 196 | 5 | KARO, RAS, SZŁA, ŁZA | proposal |
-| 197 | 5 | ATOL, POLA, TRON | proposal |
-| 198 | 5 | AKT, BUT, KAT, KUSZA | proposal |
-| 199 | 5 | BAŁ, BYK, BYŁ, KOZŁA | proposal · priority review |
-| 200 | 5 | HURA, KOZA, RAZ | proposal |
+| 66 | 2 | MOC, SAMO | proposal · owner review required |
+| 67 | 2 | CUMA, RAM | proposal · owner review required |
+| 68 | 2 | MAT, ROTA | proposal · owner review required |
+| 69 | 2 | DNO, TRON | proposal · owner review required |
+| 70 | 2 | OSPA, SAM | proposal · owner review required |
+| 71 | 2 | MAŁO, TAM | proposal · owner review required |
+| 72 | 2 | RUCH, RUS | proposal · owner review required |
+| 73 | 2 | NOC, NORA | proposal · owner review required |
+| 74 | 2 | CYNA, ONA | proposal · owner review required |
+| 75 | 2 | CIEK, ICH | proposal · owner review required |
+| 76 | 2 | TRWA, WAM | proposal · owner review required |
+| 77 | 2 | RATY, TYM | proposal · owner review required |
+| 78 | 2 | KOSZ, SOL | proposal · owner review required |
+| 79 | 2 | JAK, KARK | proposal · owner review required |
+| 80 | 2 | JAR, KRAN | proposal · owner review required |
+| 81 | 2 | KOD, KROK | proposal · owner review required |
+| 82 | 2 | STO, SZŁO | proposal · owner review required |
+| 83 | 2 | PLAC, ŻAL | proposal · owner review required |
+| 84 | 2 | GRA, HART | proposal · owner review required |
+| 85 | 2 | KARO, OGAR | proposal · owner review required |
+| 86 | 2 | GAZ, KOZA | proposal · owner review required |
+| 87 | 2 | DERA, GRAD | proposal · owner review required |
+| 88 | 2 | DAR, DERKA | proposal · owner review required |
+| 89 | 2 | APEL, PAD | proposal · owner review required |
+| 90 | 2 | GRUZ, RAZ | proposal · owner review required |
+| 91 | 3 | PIŁA, RAN | proposal · owner review required |
+| 92 | 3 | AKT, SZAŁ | proposal · owner review required |
+| 93 | 3 | OPAL, RAS | proposal · owner review required |
+| 94 | 3 | ATOL, OPAR | proposal · owner review required |
+| 95 | 3 | LWA, POLAR | proposal · owner review required |
+| 96 | 3 | BAĆ, SZŁA | proposal · owner review required |
+| 97 | 3 | POLA, WAS | proposal · owner review required |
+| 98 | 3 | KAT, KUSZA | proposal · owner review required |
+| 99 | 3 | LAĆ, PORA | proposal · owner review required |
+| 100 | 3 | DAM, HURA | proposal · owner review required |
+| 101 | 3 | DOMY, OKO | proposal · owner review required |
+| 102 | 3 | MODY, ROK | proposal · owner review required |
+| 103 | 3 | BĄK, KURZ | proposal · owner review required |
+| 104 | 3 | ANI, NARTY | proposal · owner review required |
+| 105 | 3 | RAT, SOLA | proposal · owner review required |
+| 106 | 3 | ROLA, URAZ | proposal · owner review required |
+| 107 | 3 | CYK, KNOT | proposal · owner review required |
+| 108 | 3 | BRAT, MAM | proposal · owner review required |
+| 109 | 3 | ROPA, ZŁA | proposal · owner review required |
+| 110 | 3 | KORT, PIK | proposal · owner review required |
+| 111 | 3 | GÓR, IKRA | proposal · owner review required |
+| 112 | 3 | ARKA, KREDA | proposal · owner review required |
+| 113 | 3 | KŁOS, PIŁ | proposal · owner review required |
+| 114 | 3 | PARA, RÓG | proposal · owner review required |
+| 115 | 3 | BAS, SMOŁA | proposal · owner review required |
+| 116 | 3 | RANO, SEN | proposal · owner review required |
+| 117 | 3 | ERA, NOTA | proposal · owner review required |
+| 118 | 3 | KOS, TKWI | proposal · owner review required |
+| 119 | 3 | KIT, SZOK | proposal · owner review required |
+| 120 | 3 | AHA, OWAD | proposal · owner review required |
+| 121 | 3 | MILA, OKA | proposal · owner review required |
+| 122 | 3 | KLAP, LIN | proposal · owner review required |
+| 123 | 3 | KITA, PAL | proposal · owner review required |
+| 124 | 3 | ALT, LUKA, TAKI | proposal · owner review required |
+| 125 | 3 | LAT, WITKA | proposal · owner review required |
+| 126 | 3 | ARIA, DAJ, JAD | proposal · owner review required |
+| 127 | 3 | DAL, DNA, LIANA | proposal · owner review required |
+| 128 | 3 | DAN, MANIA, NAD | proposal · owner review required |
+| 129 | 3 | DAT, RAD, TIARA | proposal · owner review required |
+| 130 | 3 | MAK, ŁAPKI | proposal · owner review required |
+| 131 | 3 | BOK, SZKŁO | proposal · owner review required |
+| 132 | 3 | KAS, PARK, ŁASK | proposal · owner review required |
+| 133 | 3 | DLA, LASKA, SAD | proposal · owner review required |
+| 134 | 3 | APKA, DOK, POD | proposal · owner review required |
+| 135 | 3 | KAPA, UDA | proposal · owner review required |
+| 136 | 3 | DWA, PAKA, WAD | proposal · owner review required |
+| 137 | 3 | LALA, LÓD | proposal · owner review required |
+| 138 | 3 | ONO, PANA | proposal · owner review required |
+| 139 | 3 | ARA, ORNAT | proposal · owner review required |
+| 140 | 3 | TONA, WATA | proposal · owner review required |
+| 141 | 3 | NAS, PRASA, PSA | proposal · owner review required |
+| 142 | 3 | ALE, KANT | proposal · owner review required |
+| 143 | 3 | RANT, RASA | proposal · owner review required |
+| 144 | 3 | RANY, RATA | proposal · owner review required |
+| 145 | 3 | NOTKA, TEKA | proposal · owner review required |
+| 146 | 3 | AKTOR, KRET, RAK | proposal · owner review required |
+| 147 | 3 | TAK, TOTEK | proposal · owner review required |
+| 148 | 3 | MAS, SOK, SŁOMA | proposal · owner review required |
+| 149 | 3 | KOPA, PALA | proposal · owner review required |
+| 150 | 3 | KARA, LAS, SKALA | proposal · owner review required |
+| 151 | 4 | ACH, OCH, TABOR | proposal · owner review required |
+| 152 | 4 | ABY, BAZ, CZAPA | proposal · owner review required |
+| 153 | 4 | KARTA, PAW | proposal · owner review required |
+| 154 | 4 | CAL, NIE, PALCE | proposal · owner review required |
+| 155 | 4 | BAL, BOA, KONAR | proposal · owner review required |
+| 156 | 4 | BAK, CEL, PALEC | proposal · owner review required |
+| 157 | 4 | KARATE, KTO | proposal · owner review required |
+| 158 | 4 | FAN, KAC, PACKA | proposal · owner review required |
+| 159 | 4 | KARETA, PAR | proposal · owner review required |
+| 160 | 4 | MOL, NAM, NORKA | proposal · owner review required |
+| 161 | 4 | NERKI, ORKA | proposal · owner review required |
+| 162 | 4 | KIERAT, TOK | proposal · owner review required |
+| 163 | 4 | AUT, KUR, TYRAN | proposal · owner review required |
+| 164 | 4 | KANTOR, OKAP, PAN | proposal · owner review required |
+| 165 | 4 | KONTRA, OKAZ, ZNA | proposal · owner review required |
+| 166 | 4 | ORKAN, ZŁO, ŁAN | proposal · owner review required |
+| 167 | 4 | GRUSZA, ŻAR | proposal · owner review required |
+| 168 | 4 | MAP, PLAMA, POR | proposal · owner review required |
+| 169 | 4 | BAR, DĄB, RABAT | proposal · owner review required |
+| 170 | 4 | HAU, KAR, MUCHA | proposal · owner review required |
+| 171 | 4 | BEZ, BEZA, ODZEW | proposal · owner review required |
+| 172 | 4 | BAN, BAT, KATAR | proposal · owner review required |
+| 173 | 4 | BOT, KRATA, OBA | proposal · owner review required |
+| 174 | 4 | ARKUSZ, HAK, RUS | proposal · owner review required |
+| 175 | 4 | CEP, KRA, PLACEK | proposal · owner review required |
+| 176 | 5 | CELA, KIER | proposal · owner review required |
+| 177 | 5 | BARY, KASA, RYB | proposal · owner review required |
+| 178 | 5 | BETA, CIEK | proposal · owner review required |
+| 179 | 5 | AKTA, MAT, OSA, SAMO | proposal · owner review required |
+| 180 | 5 | ATAK, MAŁO, TAM | proposal · owner review required |
+| 181 | 5 | NORA, ONA, TAKA | proposal · owner review required |
+| 182 | 5 | KOC, KROK, KUC, RUCH | proposal · owner review required |
+| 183 | 5 | KARK, PLAC | proposal · owner review required |
+| 184 | 5 | KRAN, OSPA, PAS | proposal · owner review required |
+| 185 | 5 | CYNA, GRA, NOC, OGAR | proposal · owner review required |
+| 186 | 5 | KOSZ, ROTA | proposal · owner review required |
+| 187 | 5 | CUD, CUMA, GAD, GRAD | proposal · owner review required |
+| 188 | 5 | BUK, DAR, DBA, DERKA | proposal · owner review required |
+| 189 | 5 | APEL, HAL, HART | proposal · owner review required |
+| 190 | 5 | GRUZ, SZŁO | proposal · owner review required |
+| 191 | 5 | PIŁA, TRWA, TŁA, ŁAP | proposal · owner review required |
+| 192 | 5 | DAŁ, DERA, SZAŁ, ŁAD | proposal · owner review required |
+| 193 | 5 | OPAL, RATY | proposal · owner review required |
+| 194 | 5 | BUS, KOSZA, OBU | proposal · owner review required |
+| 195 | 5 | OBY, OPAR, POLAR | proposal · owner review required |
+| 196 | 5 | KARO, RAS, SZŁA, ŁZA | proposal · owner review required |
+| 197 | 5 | ATOL, POLA, TRON | proposal · owner review required |
+| 198 | 5 | AKT, BUT, KAT, KUSZA | proposal · owner review required |
+| 199 | 5 | BAŁ, BYK, BYŁ, KOZŁA | proposal · owner review required |
+| 200 | 5 | HURA, KOZA, RAZ | proposal · owner review required |
