@@ -52,8 +52,18 @@ def test_order_independent_deterministic_fresh_and_nonmutating():
 
 @pytest.mark.parametrize(
     "edges",
-    [(), (0,), (0, 0.5), (0.1, 1), (0, 0.5, 0.5, 1), (0, 2), (0, True, 1),
-     (0, float("nan"), 1), (0, float("inf"), 1), [0, 1]],
+    [
+        (),
+        (0,),
+        (0, 0.5),
+        (0.1, 1),
+        (0, 0.5, 0.5, 1),
+        (0, 2),
+        (0, True, 1),
+        (0, float("nan"), 1),
+        (0, float("inf"), 1),
+        [0, 1],
+    ],
 )
 def test_invalid_histogram_edges_fail(edges):
     with pytest.raises(ValueError):
