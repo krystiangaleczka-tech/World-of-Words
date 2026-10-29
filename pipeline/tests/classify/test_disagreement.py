@@ -21,8 +21,9 @@ def test_exact_ban_boundary_and_sorted_disagreements():
         ClassificationDisagreement("DOM", "level_ok", "bonus_ok", False),
         ClassificationDisagreement("KOT", "banned", "level_ok", True),
     )
-    assert result == compare_classification_passes(dict(reversed(list(first.items()))),
-                                                     dict(reversed(list(second.items()))), CONFIG)
+    assert result == compare_classification_passes(
+        dict(reversed(list(first.items()))), dict(reversed(list(second.items()))), CONFIG
+    )
     with pytest.raises(FrozenInstanceError):
         result[0].word = "TOK"
 
