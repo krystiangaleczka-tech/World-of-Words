@@ -73,6 +73,8 @@ def _validate(proposal: dict, base: list, index: WordIndex, config: object) -> N
         }
         assert level["editorial_status"] == "proposed"
         assert type(level["manual_review_priority"]) is bool
+        # Corpus membership and old codex catalog are NOT owner lexical approval.
+        assert level["manual_review_priority"] is True
         assert type(level["band"]) is int
         assert level["band"] == (2 if slot <= 90 else 3 if slot <= 150 else 4 if slot <= 175 else 5)
         letters = level["letters"]
