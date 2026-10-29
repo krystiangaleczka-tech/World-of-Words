@@ -38,8 +38,9 @@ def test_reordering_limits_and_nonmutation():
     evidence = {"DOM": 0.5, "TOK": 0, "KOT": None}
     before = copy.deepcopy((levels, evidence))
     first = flag_word_evidence(levels, evidence, low_arf=1, limit=10)
-    second = flag_word_evidence(levels[::-1], dict(reversed(list(evidence.items()))),
-                                low_arf=1, limit=10)
+    second = flag_word_evidence(
+        levels[::-1], dict(reversed(list(evidence.items()))), low_arf=1, limit=10
+    )
     assert first == second
     assert flag_word_evidence(levels, evidence, low_arf=1, limit=1) == first[:1]
     assert (levels, evidence) == before
