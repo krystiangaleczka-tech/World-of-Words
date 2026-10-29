@@ -26,7 +26,7 @@ def review_feature_ranges(candidates: Mapping, config: ScoringConfig) -> tuple[F
     ):
         raise ValueError("Expected nonempty raw candidate features and scoring config")
     raw: dict[str, list[float]] = {name: [] for name in FEATURE_NAMES}
-    for candidate_id in sorted(candidates):
+    for candidate_id in candidates:
         if (
             not isinstance(candidate_id, str)
             or not candidate_id
@@ -34,6 +34,7 @@ def review_feature_ranges(candidates: Mapping, config: ScoringConfig) -> tuple[F
             or any(category(char) in ("Cc", "Cf") for char in candidate_id)
         ):
             raise ValueError("Invalid candidate identity")
+    for candidate_id in sorted(candidates):
         result = score_features(candidates[candidate_id], config)
         for feature in result.features:
             raw[feature.name].append(feature.raw)
