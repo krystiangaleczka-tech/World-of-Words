@@ -534,8 +534,8 @@ hand-made, first ~100 played by Chris, region 1 mapped.
 | T-0305 | Chris hand-makes onboarding levels 1–15 (YAML) per GAME_DESIGN.md#onboarding | content | content.pl | T-0304, T-0203 | CPL | HUMAN | — | high | med | FR-ONB-02 |
 | T-0306 | Content build P2: 200 PL levels (slots 1–200; 1–15 hand-made), region 1 with 3–4 locations covering every slot | content | content.pl | T-0303, T-0305 | CPL | CHEAP | med | none | high | PRODUCT.md#content-requirements, FR-PROG-03 |
 | T-0307 | Chris plays 100 % of the first ~100 levels in debug; flags → overrides; rebuild | content | content.pl | T-0306, T-0294 | CPL | HUMAN | — | none | med | PRODUCT.md#content-requirements |
-| T-0388 | Lift 9,999-slot exporter/manifest boundary to 30,000 without changing existing packs | infra | pipeline.export | T-0127, T-0131 | PIPE | SOL | high | none | high | FR-CONT-01, NFR-14 |
-| T-0389 | Enforce narrow docs-only scope for plan/ branches while preserving strict t/ branch allowlists | infra | tools | T-0018 | H | SOL | high | none | med | ROADMAP.md#rolling-wave-rule |
+| T-0394 | Enforce narrow docs-only scope for plan/ branches while preserving strict t/ branch allowlists | infra | tools | T-0018 | H | SOL | high | none | med | ROADMAP.md#rolling-wave-rule |
+| T-0395 | Lift 9,999-slot exporter/manifest boundary to 30,000 without changing existing packs | infra | pipeline.export | T-0127, T-0131 | PIPE | SOL | high | none | high | FR-CONT-01, NFR-14 |
 
 ### E23 Art and audio assets
 Goal: region 1 art, icon, final sounds. Exit: assets merged with licence records.
