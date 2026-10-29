@@ -54,6 +54,7 @@ def test_every_word_spacing_and_seed_boundaries():
         seed_word="KOT",
     )
     assert "word_spacing" in audit_duplicates([one, two], POLICY, CONFIG)[0].reasons
+    assert "seed_spacing" in audit_duplicates([one, two], POLICY, CONFIG)[0].reasons
     two["slot"] = 101
     assert audit_duplicates([one, two], POLICY, CONFIG) == ()
 
@@ -92,3 +93,9 @@ def test_non_campaign_bad_wheel_and_no_guessing_rng_seed():
         )
     with pytest.raises(ValueError):
         validate_campaign_diversity([level(1, "KOT", ["KOT"])], {1: 123}, POLICY, CONFIG)
+
+
+def test_seed_spacing_is_independent_of_crossword_spacing():
+    levels = [level(1, "KOT", ["KOT"]), level(2, "KOTA", ["KOT", "KAT"])]
+    with pytest.raises(ValueError, match="seed_spacing"):
+        validate_campaign_diversity(levels, {1: "KOT", 2: "KOT"}, POLICY, CONFIG)
