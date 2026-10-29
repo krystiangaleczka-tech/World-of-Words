@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: high
 ui: none
-status: ready
+status: review
 depends_on: [T-0123, T-0127]
 touch:
   - pipeline/src/wordgame_pipeline/classify/**
@@ -58,3 +58,12 @@ All specified tests and full checks pass, fresh independent review, exact-head C
 
 ## Rollback
 Remove this optional offline package and task; no player saves, released slots or shipped content can be affected.
+
+## Implementation review note (2026-10-29)
+
+Offline review queue and a direct pytest regression suite are committed on the task branch.
+No AI or network calls, content export, stage activation, or override changes. Full CI and
+independent review remain required. This implementation is intentionally not marked done;
+no local runtime or production source run is claimed. The initial implementation is larger
+than the roadmap's approximate 300-line task budget, so scope reduction should be considered
+before approval rather than weakening mandatory tests.
