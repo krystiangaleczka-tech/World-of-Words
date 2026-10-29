@@ -20,12 +20,7 @@ def rank_candidate_wheels(
     """Rank, never choose or change, explicitly eligible wheel pools."""
     if not isinstance(index, WordIndex):
         raise ValueError("Expected validated candidate index")
-    if (
-        type(minimum_words) is not int
-        or minimum_words < 1
-        or type(limit) is not int
-        or limit < 1
-    ):
+    if type(minimum_words) is not int or minimum_words < 1 or type(limit) is not int or limit < 1:
         raise ValueError("Expected positive integer minimum and review limit")
     rows = [
         WheelOpportunity(
