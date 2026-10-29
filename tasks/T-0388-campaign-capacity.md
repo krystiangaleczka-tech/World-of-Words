@@ -14,7 +14,7 @@ touch:
   - pipeline/src/wordgame_pipeline/content_limits.py
   - pipeline/src/wordgame_pipeline/export/__init__.py
   - pipeline/src/wordgame_pipeline/content.py
-  - pipeline/schema/manifest.schema.json
+  - pipeline/src/wordgame_pipeline/validate/schema.py
   - pipeline/tests/export/test_export.py
   - pipeline/tests/export/test_campaign_capacity.py
   - tasks/T-0388-campaign-capacity.md
@@ -42,10 +42,12 @@ names remain unchanged. T-0127 and T-0131 are done on main.
 1. Introduce one shared `MAX_CAMPAIGN_SLOTS = 30_000` in pipeline for export
    and validation limits. Only positive integer slots in 15..30,000 export.
    Validate pack ranges against the same maximum; do not change released slots.
-2. Support zero-padded four-digit filenames up to 9,999 and automatically
-   widened five-digit filenames from slot 10,000 onward. Keep all prior filenames
-   and bytes stable and reject malformed/unsafe manifest paths.
-3. Add schema and content/pack boundary regression tests including 9,999,
+2. Support zero-padded four-digit filenames up to 9,999 and widened five-digit
+   filenames from slot 10,000 onward. Keep the pinned legacy
+   `manifest.schema.json` bytes unmodified: P1's committed input receipt hashes the
+   raw schema. Provide a strict P2-only in-memory validator overlay for manifests
+   above 9,999 slots and reject malformed/unsafe filenames.
+3. Add in-memory schema extension and content/pack boundary tests including 9,999,
    10,000, 10,001, 30,000, and 30,001; no oversized 10,000-level fixture should
    be required for simple name checks.
 4. Adjust the old `assemble(... slots=10_000)` rejection expectation to
@@ -65,7 +67,7 @@ names remain unchanged. T-0127 and T-0131 are done on main.
 
 `pipeline/tests/export/test_campaign_capacity.py`: manifest schema supports
 4/5-digit transitions, rejects malformed paths and 30001 via direct limit helper;
-legacy manifest schema still validates, and pack validator enforces upper range.
+legacy manifest schema bytes remain unchanged (preserving P1 provenance), and pack validator enforces upper range.
 Existing `pipeline/tests/export/test_export.py` still exercises exporter
 invalid type/version bounds and real low-slot determinism.
 
