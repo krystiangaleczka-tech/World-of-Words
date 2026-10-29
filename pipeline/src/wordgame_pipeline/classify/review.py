@@ -36,8 +36,10 @@ def _catalog(raw: bytes, tiers: dict[str, str]) -> dict[str, dict[str, object]]:
                 raise ValueError("Invalid familiarity band")
             if status not in ("proposed", "reviewed") or (status == "reviewed" and not band):
                 raise ValueError("Invalid editorial review status")
-            if not reviewer or not rationale or any(
-                value.strip() != value for value in (reviewer, rationale)
+            if (
+                not reviewer
+                or not rationale
+                or any(value.strip() != value for value in (reviewer, rationale))
             ):
                 raise ValueError("Editorial review requires trimmed attribution")
             result[word] = {
@@ -94,8 +96,7 @@ def _validated_tiers(
         or payload.get("overrides_sha256") != _digest(override_raw)
         or payload.get("tier_rules")
         != parse_json(canonical_bytes(asdict(config.tier_rules)).decode("utf-8"))
-        or payload.get("tier_rules_sha256")
-        != _digest(canonical_bytes(asdict(config.tier_rules)))
+        or payload.get("tier_rules_sha256") != _digest(canonical_bytes(asdict(config.tier_rules)))
     ):
         raise ValueError("Unpinned tier evidence, rules or overrides")
     records = payload.get("records")
@@ -115,15 +116,15 @@ def _validated_tiers(
             raise ValueError("Invalid tier record fields")
         if record["tier"] not in TIERS or not isinstance(record["tier_reason"], str):
             raise ValueError("Invalid tier identity")
-        raw_records.append({
-            key: record[key]
-            for key in ("word", "frequency", "analyses", "has_lemma_evidence")
-        })
+        raw_records.append(
+            {key: record[key] for key in ("word", "frequency", "analyses", "has_lemma_evidence")}
+        )
     decisions = parse_overrides(override_raw.decode("utf-8"), config)
     checked = assign_tiers(raw_records, config, decisions)
-    if any(payload.get(key) != checked[key] for key in (
-        "records", "tier_counts", "unmatched_overrides"
-    )):
+    if any(
+        payload.get(key) != checked[key]
+        for key in ("records", "tier_counts", "unmatched_overrides")
+    ):
         raise ValueError("Tier records disagree with pinned rules and decisions")
     return payload
 
@@ -162,9 +163,8 @@ def build_review_queue(
     )
     rows = payload["records"]
     lookup = {row["word"]: row for row in rows}
-    if (
-        list(candidate_words) != sorted(set(candidate_words))
-        or any(not valid_word(word, config) or word not in lookup for word in candidate_words)
+    if list(candidate_words) != sorted(set(candidate_words)) or any(
+        not valid_word(word, config) or word not in lookup for word in candidate_words
     ):
         raise ValueError("Candidates must be sorted, unique and source-backed")
     reviews = _catalog(
@@ -185,9 +185,7 @@ def build_review_queue(
             "word": word,
             "source_tier": tier,
             "tier_reason": record["tier_reason"],
-            "source_arf": (
-                None if record["frequency"] is None else record["frequency"]["arf"]
-            ),
+            "source_arf": (None if record["frequency"] is None else record["frequency"]["arf"]),
             "has_lemma_evidence": record["has_lemma_evidence"],
             "evidence_flags": _flags(record),
             "editorial_status": judgment["status"] if judgment else "unreviewed",
