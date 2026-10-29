@@ -10,6 +10,7 @@ from .annotate.sources import load_pin as annotation_pin
 from .candidates.core import WordIndex
 from .candidates.handmade import load_handmade
 from .config import LanguageConfig, TierRules, canonical_bytes, parse_json
+from .content_limits import MAX_CAMPAIGN_SLOTS, pack_filename
 from .ingest.source import load_pin as source_pin
 from .stages import P1_STAGES, _write_atomic, read_artifact
 from .validate import SchemaRegistry, validate_level
@@ -60,8 +61,8 @@ def bundle(directory: Path, registry: SchemaRegistry) -> tuple[list[dict], bytes
         if (
             first != next_slot
             or last < first
-            or last > 9999
-            or entry["file"] != f"packs/c-{first:04d}-{last:04d}.json"
+            or last > MAX_CAMPAIGN_SLOTS
+            or entry["file"] != pack_filename(first, last)
         ):
             raise ValueError("Invalid campaign pack ranges")
         data = (directory / entry["file"]).read_bytes()
