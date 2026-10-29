@@ -55,6 +55,9 @@ def test_empty_is_a_valid_no_evidence_report():
         [record("KOT", "other", "common_base")],
         [record("KOT", "level_ok", "unapproved")],
         [record("KOT", "level_ok", None)],
+        [record("KOT", "level_ok", [])],
+        [record("KOT", "level_ok", {})],
+        [record("KOT", [], "common_base")],
     ],
 )
 def test_malformed_classifications_rejected(records):
