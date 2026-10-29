@@ -5,7 +5,7 @@ import copy
 import pytest
 from wordgame_pipeline.candidates.coverage import CoverageReport
 from wordgame_pipeline.config import canonical_bytes
-from wordgame_pipeline.dedupe.summary import ConflictSummary, REASONS
+from wordgame_pipeline.dedupe.summary import REASONS, ConflictSummary
 from wordgame_pipeline.grid.quality import GridQuality
 from wordgame_pipeline.qa.dossier import compile_qa_dossier
 from wordgame_pipeline.scoring.drift import ScoreShift
