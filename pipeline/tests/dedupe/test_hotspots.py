@@ -13,8 +13,12 @@ POLICY = DuplicatePolicy(0.5, 100)
 
 def record(identity, slot, letters, word):
     return dict(
-        id=identity, pool="campaign", slot=slot,
-        letters=list(letters), words=[word], seed_word=word,
+        id=identity,
+        pool="campaign",
+        slot=slot,
+        letters=list(letters),
+        words=[word],
+        seed_word=word,
     )
 
 
@@ -26,9 +30,7 @@ def test_peer_count_not_reason_count_and_deterministic_ties():
         record("z", 4, "DOM", "DOM"),
     ]
     first = rank_duplicate_hotspots(rows, POLICY, CONFIG)
-    assert tuple((r.identity, r.conflicting_peers) for r in first) == (
-        ("a", 2), ("b", 2), ("c", 2)
-    )
+    assert tuple((r.identity, r.conflicting_peers) for r in first) == (("a", 2), ("b", 2), ("c", 2))
     assert first[0].peers == ("b", "c")
     assert "word_spacing" in first[0].reasons
     assert first == rank_duplicate_hotspots(rows[::-1], POLICY, CONFIG)
