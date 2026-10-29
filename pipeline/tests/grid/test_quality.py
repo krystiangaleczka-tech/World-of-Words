@@ -52,3 +52,9 @@ def test_mutable_container_inputs_rejected():
         review_grid_quality([("KOT", 0, 0, "v")], ("KOT",), minimum_crossings=0)
     with pytest.raises(ValueError):
         review_grid_quality((("KOT", 0, 0, "v"),), ["KOT"], minimum_crossings=0)
+
+
+def test_connected_consistent_letters_reject_accidental_horizontal_runs():
+    layout = (("KOT", 0, 0, "v"), ("TOK", 1, 0, "v"))
+    with pytest.raises(ValueError, match="Accidental adjacency or unintended word run"):
+        review_grid_quality(layout, ("KOT", "TOK"), minimum_crossings=0)
