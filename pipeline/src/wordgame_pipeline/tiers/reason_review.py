@@ -34,9 +34,7 @@ class TierReasonReview:
     override_words: tuple[str, ...]
 
 
-def review_tier_reasons(
-    records: list | tuple, config: LanguageConfig
-) -> TierReasonReview:
+def review_tier_reasons(records: list | tuple, config: LanguageConfig) -> TierReasonReview:
     """Summarize evidence without accepting or editing override decisions."""
     if not isinstance(records, (list, tuple)) or not isinstance(config, LanguageConfig):
         raise ValueError("Expected explicit classified records and language config")
