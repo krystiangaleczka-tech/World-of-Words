@@ -49,3 +49,15 @@ def test_onboarding_only_has_no_inferred_targets():
 def test_invalid_plan_rejected():
     with pytest.raises(ValueError):
         review_region_targets(None)
+
+
+def test_review_does_not_rebuild_reservation_maps_for_each_slot(monkeypatch):
+    validated_plan = plan()
+
+    def forbidden_lookup(_self, _slot):
+        raise AssertionError("Regional QA must use its validated curve directly")
+
+    monkeypatch.setattr(SlotPlan, "requirement", forbidden_lookup)
+    assert review_region_targets(validated_plan) == (
+        RegionTargetReview("r", 18, 15, 3, 0.25, 0.75, 0.5),
+    )
