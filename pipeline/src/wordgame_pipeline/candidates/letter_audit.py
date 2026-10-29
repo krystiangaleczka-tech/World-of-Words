@@ -24,6 +24,5 @@ def audit_wheel_letters(index: WordIndex) -> tuple[WheelLetterAudit, ...]:
         presence.update(set(letters))
         totals.update(letters)
     return tuple(
-        WheelLetterAudit(letter, presence[letter], totals[letter])
-        for letter in sorted(totals)
+        WheelLetterAudit(letter, presence[letter], totals[letter]) for letter in sorted(totals)
     )
