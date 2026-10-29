@@ -17,6 +17,8 @@ def review_grid_batch(candidates: Mapping, *, minimum_crossings: int) -> tuple[G
     """Inspect supplied layouts without changing any crossword placements."""
     if not isinstance(candidates, Mapping):
         raise ValueError("Expected candidate layout mapping")
+    if type(minimum_crossings) is not int or minimum_crossings < 0:
+        raise ValueError("Invalid crossing minimum")
     rows = []
     for candidate_id, record in candidates.items():
         if (
@@ -31,9 +33,6 @@ def review_grid_batch(candidates: Mapping, *, minimum_crossings: int) -> tuple[G
         layout, selected = record
         quality = review_grid_quality(layout, selected, minimum_crossings=minimum_crossings)
         rows.append(GridReviewRow(candidate_id, quality))
-    if not rows:
-        if type(minimum_crossings) is not int or minimum_crossings < 0:
-            raise ValueError("Invalid crossing minimum")
     return tuple(
         sorted(
             rows,
