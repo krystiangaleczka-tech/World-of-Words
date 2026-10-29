@@ -13,8 +13,8 @@ import tasks as task_tool
 
 BRANCH_RE = re.compile(r"^t/(?P<number>\d{4})-[A-Za-z0-9][A-Za-z0-9._-]*$")
 PLAN_RE = re.compile(r"^plan/[A-Za-z0-9][A-Za-z0-9._-]*$")
-PLAN_TASK_RE = re.compile(r"^tasks/T-\\d{4}-[A-Za-z0-9][A-Za-z0-9._-]*\\.md$")
-PLAN_EPIC_RE = re.compile(r"^tasks/epics/E\\d{2}-[A-Za-z0-9][A-Za-z0-9._-]*\\.md$")
+PLAN_TASK_RE = re.compile(r"^tasks/T-\d{4}-[A-Za-z0-9][A-Za-z0-9._-]*\.md$")
+PLAN_EPIC_RE = re.compile(r"^tasks/epics/E\d{2}-[A-Za-z0-9][A-Za-z0-9._-]*\.md$")
 PLAN_DOCS = frozenset(
     {
         "docs/PRODUCT.md",
