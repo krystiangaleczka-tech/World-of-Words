@@ -105,3 +105,13 @@ def test_plan_ownership_and_region_targets_are_not_guessed():
         validate_difficulty_window(levels, stricter, max_deviation=0.05)
     with pytest.raises(ValueError):
         validate_difficulty_window(levels, None, max_deviation=1)
+
+
+@pytest.mark.parametrize("score,window", [(0.8, 0.6), (0.15, 0.05)])
+def test_decimal_boundary_does_not_fail_from_binary_rounding(score, window):
+    levels = campaign()
+    levels[-1]["difficulty"] = score
+    validate_difficulty_window(levels, plan(), max_deviation=window)
+    levels[-1]["difficulty"] = score + (0.000001 if score > 0.2 else -0.000001)
+    with pytest.raises(ValueError, match="outside reviewed window"):
+        validate_difficulty_window(levels, plan(), max_deviation=window)

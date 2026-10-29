@@ -1,6 +1,7 @@
 """Read-only P2 campaign difficulty-window gate against protected slot targets."""
 
 import math
+from decimal import Decimal
 
 from ..sequence.slots import SlotPlan
 
@@ -50,5 +51,7 @@ def validate_difficulty_window(
         ):
             raise ValueError(f"Authored slot/source mismatch at slot {slot}")
         target = requirement.curve.target
-        if target is not None and abs(score - target) > tolerance:
+        if target is not None and abs(Decimal(str(score)) - Decimal(str(target))) > Decimal(
+            str(tolerance)
+        ):
             raise ValueError(f"Difficulty outside reviewed window at slot {slot}")
