@@ -29,11 +29,7 @@ def config(active):
 def features(letter_count, word_count):
     return {
         name: (
-            letter_count
-            if name == "letter_count"
-            else word_count
-            if name == "word_count"
-            else 0
+            letter_count if name == "letter_count" else word_count if name == "word_count" else 0
         )
         for name in FEATURE_NAMES
     }
@@ -62,8 +58,7 @@ def test_order_independent_nonmutation_and_no_drift():
     before = copy.deepcopy(entries)
     old, new = config("letter_count"), config("word_count")
     first = review_score_drift(entries, old, new, minimum_delta=0)
-    second = review_score_drift(dict(reversed(list(entries.items()))), old, new,
-                                minimum_delta=0)
+    second = review_score_drift(dict(reversed(list(entries.items()))), old, new, minimum_delta=0)
     assert first == second and entries == before
     assert review_score_drift(entries, old, old, minimum_delta=0) == ()
 
@@ -71,8 +66,7 @@ def test_order_independent_nonmutation_and_no_drift():
 @pytest.mark.parametrize("cutoff", [True, -1, 1.1, "0.1", None, float("nan"), 10**400])
 def test_invalid_threshold_rejected(cutoff):
     with pytest.raises(ValueError):
-        review_score_drift({}, config("letter_count"), config("word_count"),
-                           minimum_delta=cutoff)
+        review_score_drift({}, config("letter_count"), config("word_count"), minimum_delta=cutoff)
 
 
 def test_invalid_records_or_configuration_rejected_even_when_not_flagged():
