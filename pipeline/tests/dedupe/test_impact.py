@@ -14,8 +14,12 @@ POLICY = DuplicatePolicy(1, 100)
 
 def record(identity, slot, letters, word):
     return {
-        "id": identity, "pool": "campaign", "slot": slot,
-        "letters": list(letters), "words": [word], "seed_word": word,
+        "id": identity,
+        "pool": "campaign",
+        "slot": slot,
+        "letters": list(letters),
+        "words": [word],
+        "seed_word": word,
     }
 
 
