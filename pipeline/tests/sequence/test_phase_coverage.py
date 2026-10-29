@@ -23,13 +23,9 @@ def test_partition_and_protected_counts():
     assert len(result) == 2
     a, b = result
     assert (a.region, a.location, a.first, a.last) == ("r", "a", 15, 16)
-    assert a.kinds == (
-        ("onboarding", 1), ("regular", 0), ("landmark", 1), ("breather", 0)
-    )
+    assert a.kinds == (("onboarding", 1), ("regular", 0), ("landmark", 1), ("breather", 0))
     assert a.authored == 2 and a.released == 0
-    assert b.kinds == (
-        ("onboarding", 0), ("regular", 1), ("landmark", 0), ("breather", 1)
-    )
+    assert b.kinds == (("onboarding", 0), ("regular", 1), ("landmark", 0), ("breather", 1))
     assert b.authored == b.released == 0
     with pytest.raises(FrozenInstanceError):
         a.authored = 5
@@ -42,9 +38,7 @@ def test_full_prefix_and_repeatability():
     assert report == summarize_phase_coverage(plan(), first=1, last=3)
 
 
-@pytest.mark.parametrize(
-    "first,last", [(0, 1), (2, 1), (1, 19), (True, 2), (1, 1.0), ("1", 2)]
-)
+@pytest.mark.parametrize("first,last", [(0, 1), (2, 1), (1, 19), (True, 2), (1, 1.0), ("1", 2)])
 def test_invalid_window_rejected(first, last):
     with pytest.raises(ValueError):
         summarize_phase_coverage(plan(), first=first, last=last)
