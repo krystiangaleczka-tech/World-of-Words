@@ -11,8 +11,15 @@ from wordgame_pipeline.validate.difficulty import validate_difficulty_window
 
 def plan():
     config = CurveConfig(
-        first=1, last=16, base=0.2, trend=0, period=5, amplitude=0,
-        landmark_spike=0.1, breather_drop=0.1, landmarks=(),
+        first=1,
+        last=16,
+        base=0.2,
+        trend=0,
+        period=5,
+        amplitude=0,
+        landmark_spike=0.1,
+        breather_drop=0.1,
+        landmarks=(),
     )
     return SlotPlan(
         regions=(Region("region-1", config),),
