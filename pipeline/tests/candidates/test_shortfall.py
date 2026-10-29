@@ -1,7 +1,8 @@
 """Candidate shortage ordering is stable and never manufactures words."""
 
-import pytest
 from pathlib import Path
+
+import pytest
 from wordgame_pipeline.candidates.core import WordIndex
 from wordgame_pipeline.candidates.shortfall import CandidateShortfall, rank_candidate_shortfalls
 from wordgame_pipeline.config import load_config
