@@ -511,20 +511,26 @@ T-0323 shows no blocker; every setting applies immediately.
 | T-0328 | Analytics listener P2b: consent_result, att_result, ad_offer_shown / ad_shown / ad_reward_earned / ad_failed, shop_opened, iap_*, settings_changed, remote_config_applied, experiment_assigned, hint_stuck_offer_shown, onboarding_step, feature_unlocked | feat | services.analytics | T-0251, T-0255, T-0265, T-0271, T-0274, T-0279, T-0286, T-0292 | DATA | CHEAP | med | none | med | FR-ANL-01, FR-ONB-05, PRODUCT.md#core-events-seed-of-the-registry, PRODUCT.md#funnels |
 
 ### E22 PL content production
-Goal: 200 production PL levels with tiers, AI classification and Chris's review. Exit: levels 1–15
+2026-10-29 owner-directed replan: zero-cost offline lexical review replaces the T-0296 paid-model
+production path; T-0031's historical experiment is not a prerequisite. T-0143 FUN evidence and
+T-0304/0305/0307 human review are not waived. The P2 rolling-wave rule permits dependency
+updates; only these E22 rows are altered.
+
+Goal: 200 production PL levels with pinned dictionary-backed tiers, deterministic offline
+lexical review, and Chris's approval; no AI API or token spending. Exit: levels 1–15
 hand-made, first ~100 played by Chris, region 1 mapped.
 
 | ID | Title | Type | Area | Depends | Lane | Exec | Think | UI | Risk | Refs |
 |---|---|---|---|---|---|---|---|---|---|---|
-| T-0296 | Classify: batch AI classification (before this first production content run Chris switches the repo to private, with GitHub Pro if branch protection must stay), committed cache keyed (word, prompt version, model), two passes, disagreement CSV; Chris adds the API key as a CI / agent secret and sets a spend cap from the T-0031 cost-per-1k figure | feat | pipeline.classify | T-0127, T-0031, T-0143 | PIPE | CHEAP+HUMAN | med | none | med | dp09 §3, FR-CONT-05 |
-| T-0297 | Tiers v1: rules + classification suggestion + overrides; tier-distribution diff alarm | feat | pipeline.tiers | T-0296 | PIPE | CHEAP | high | none | high | FR-CONT-05, decision 0004 |
+| T-0296 | Offline Polish lexical-review queue from pinned source tiers, morphology, frequency, and explicit human-reviewed familiarity records; deterministic evidence and unresolved-word CSV/JSON. No LLM, API key, inference, token spend, or automatic promotion/ban. T-0031 remains a historical experiment and T-0143 a separate release gate. | feat | pipeline.classify | T-0123, T-0127 | PIPE | SOL | high | none | med | FR-CONT-05, CONTENT.md#classification-p2 |
+| T-0297 | Tiers v1: pinned-source rules + explicit reviewed human decisions/overrides; tier-distribution diff alarm, never automatic promotion or ban | feat | pipeline.tiers | T-0296 | PIPE | CHEAP | high | none | high | FR-CONT-05, decision 0004 |
 | T-0298 | Scoring: difficulty features × weights (`scoring.yaml`) | feat | pipeline.scoring | T-0297 | PIPE | CHEAP | med | none | med | dp03 §6.1, dp09 §2 |
 | T-0299 | Dedupe + diversity: multiset, Jaccard, seed-word spacing K | feat | pipeline.dedupe | T-0298 | PIPE | CHEAP | med | none | med | dp09 §2, PRODUCT.md#content-requirements |
 | T-0300 | Sequence: `curve.yaml` (trend, saw-tooth, breather), slot assignment, onboarding constraints, location mapping | feat | pipeline.sequence | T-0299, T-0238 | PIPE | CHEAP | high | none | med | CONTENT.md#curve, dp03 §6.1 |
 | T-0301 | Validate v1: all hard rules incl. campaign duplicates, `CELL_MIN` on COMPACT, difficulty window; released-slot lock file, bonus-only changes allowed; `CELL_MIN`, `GRID_MIN_RATIO` and the COMPACT geometry are read from tokens v1, not copied | contract | pipeline.validate | T-0300, T-0206 | PIPE | SOL | xhigh | none | high | FR-CONT-03, FR-CONT-04, dp09 §4, DESIGN.md#level-screen-geometry, CONTENT.md#slot-policy |
 | T-0302 | Export v1: manifest v1.1 (regions, locations), lock-file update command | contract | pipeline.export | T-0301, T-0238 | PIPE | SOL | high | none | high | FR-PROG-03, FR-CONT-03 |
-| T-0303 | QA report: stats, histograms, weirdest level words, AI "odd for this slot" flags | feat | pipeline.qa | T-0302 | PIPE | CHEAP | med | none | low | dp09 §2 |
-| T-0304 | Chris reviews the disagreement queue and flagged candidates → `overrides/pl.csv` (batch 1) | content | content.pl | T-0297 | CPL | HUMAN | — | none | med | dp09 §3, dp11 §1 |
+| T-0303 | QA report: stats, histograms, weirdest level words, explicit offline lexical-review flags | feat | pipeline.qa | T-0302 | PIPE | CHEAP | med | none | low | dp09 §2 |
+| T-0304 | Chris reviews unresolved lexical flags and level-word candidates → explicit decisions in `overrides/pl.csv` (batch 1) | content | content.pl | T-0297 | CPL | HUMAN | — | none | med | dp09 §3, dp11 §1 |
 | T-0305 | Chris hand-makes onboarding levels 1–15 (YAML) per GAME_DESIGN.md#onboarding | content | content.pl | T-0304, T-0203 | CPL | HUMAN | — | high | med | FR-ONB-02 |
 | T-0306 | Content build P2: 200 PL levels (slots 1–200; 1–15 hand-made), region 1 with 3–4 locations covering every slot | content | content.pl | T-0303, T-0305 | CPL | CHEAP | med | none | high | PRODUCT.md#content-requirements, FR-PROG-03 |
 | T-0307 | Chris plays 100 % of the first ~100 levels in debug; flags → overrides; rebuild | content | content.pl | T-0306, T-0294 | CPL | HUMAN | — | none | med | PRODUCT.md#content-requirements |
@@ -888,7 +894,7 @@ Chris but listed in the Opus table above.
 | P2 | T-0282 | CHEAP+HUMAN | Game-feel tuning on device: Chris plays, CHEAP edits Motion/Ease values in `tokens.gd` |
 | P2 | T-0283 | CHEAP+HUMAN | Performance pass: 60 fps Level on low-end Android, no idle redraw, level load ≤ 100 ms timer in debug, cold start measured |
 | P2 | T-0289 | SOL+HUMAN | UI strings PL + EN for all P2 screens (no plural-dependent sentences; Chris approves PL); location names and facts |
-| P2 | T-0296 | CHEAP+HUMAN | Classify: batch AI classification (before this first production content run Chris switches the repo to private, with GitHub Pro if branch protection must stay), committed cache keyed (word, prompt version, model), two passes, disagreement CSV; Chris adds the API key as a CI / agent secret and sets a spend cap from the T-0031 cost-per-1k figure |
+| P2 | T-0296 | SOL | Offline Polish lexical-review queue from pinned tiers/frequency/morphology and explicit human decisions; 0 PLN AI/API cost, with Chris review remaining T-0304 |
 | P2 | T-0304 | HUMAN | Chris reviews the disagreement queue and flagged candidates → `overrides/pl.csv` (batch 1) |
 | P2 | T-0305 | HUMAN | Chris hand-makes onboarding levels 1–15 (YAML) per GAME_DESIGN.md#onboarding |
 | P2 | T-0307 | HUMAN | Chris plays 100 % of the first ~100 levels in debug; flags → overrides; rebuild |
