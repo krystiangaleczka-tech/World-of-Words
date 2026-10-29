@@ -27,8 +27,15 @@ def test_mandatory_review_and_explicit_flag():
 @pytest.mark.parametrize(
     "flags,stride",
     [
-        ((), 0), ((), True), ((), 1.5), ((), "1"),
-        ((0,), 1), ((19,), 1), ((1, 1), 1), ((True,), 1), ([1], 1),
+        ((), 0),
+        ((), True),
+        ((), 1.5),
+        ((), "1"),
+        ((0,), 1),
+        ((19,), 1),
+        ((1, 1), 1),
+        ((True,), 1),
+        ([1], 1),
     ],
 )
 def test_invalid_review_requirements_rejected(flags, stride):
