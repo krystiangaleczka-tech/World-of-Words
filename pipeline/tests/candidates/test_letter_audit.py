@@ -19,9 +19,7 @@ def index(**tiers):
 
 
 def test_unique_wheels_not_one_per_seed_and_sorted_letters():
-    report = audit_wheel_letters(
-        index(DOM="level_ok", KOT="level_ok", TOK="level_ok")
-    )
+    report = audit_wheel_letters(index(DOM="level_ok", KOT="level_ok", TOK="level_ok"))
     assert report == (
         WheelLetterAudit("D", 1, 1),
         WheelLetterAudit("K", 1, 1),
