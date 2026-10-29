@@ -32,8 +32,10 @@ def summarize_campaign(levels: list | tuple, *, bucket_edges: tuple) -> dict:
     ):
         raise ValueError("Explicit numeric histogram edges are required")
     edges = tuple(_unit(edge) for edge in bucket_edges)
-    if edges[0] != 0 or edges[-1] != 1 or any(
-        left >= right for left, right in zip(edges, edges[1:], strict=False)
+    if (
+        edges[0] != 0
+        or edges[-1] != 1
+        or any(left >= right for left, right in zip(edges, edges[1:], strict=False))
     ):
         raise ValueError("Histogram edges must strictly partition [0,1]")
 
@@ -62,9 +64,7 @@ def summarize_campaign(levels: list | tuple, *, bucket_edges: tuple) -> dict:
             or not isinstance(words, list)
             or not words
             or any(
-                not isinstance(item, Mapping)
-                or not isinstance(item.get("w"), str)
-                or not item["w"]
+                not isinstance(item, Mapping) or not isinstance(item.get("w"), str) or not item["w"]
                 for item in words
             )
             or len({item["w"] for item in words}) != len(words)
@@ -92,8 +92,7 @@ def summarize_campaign(levels: list | tuple, *, bucket_edges: tuple) -> dict:
     for index, (lower, upper) in enumerate(zip(edges, edges[1:], strict=False)):
         last = index == len(edges) - 2
         count = sum(
-            lower <= row[5] <= upper if last else lower <= row[5] < upper
-            for row in ordered
+            lower <= row[5] <= upper if last else lower <= row[5] < upper for row in ordered
         )
         histogram.append({"lower": lower, "upper": upper, "count": count})
     return {
