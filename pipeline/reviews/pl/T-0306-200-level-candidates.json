@@ -44,7 +44,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 67,
@@ -75,7 +75,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 68,
@@ -106,7 +106,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 69,
@@ -137,7 +137,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 70,
@@ -168,7 +168,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 71,
@@ -199,7 +199,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 72,
@@ -230,7 +230,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 73,
@@ -261,7 +261,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 74,
@@ -292,7 +292,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 75,
@@ -323,7 +323,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 76,
@@ -354,7 +354,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 77,
@@ -385,7 +385,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 78,
@@ -416,7 +416,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 79,
@@ -447,7 +447,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 80,
@@ -478,7 +478,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 81,
@@ -509,7 +509,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 82,
@@ -540,7 +540,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 83,
@@ -571,7 +571,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 84,
@@ -602,7 +602,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 85,
@@ -633,7 +633,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 86,
@@ -664,7 +664,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 87,
@@ -695,7 +695,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 88,
@@ -726,7 +726,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 89,
@@ -757,7 +757,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 90,
@@ -788,7 +788,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 91,
@@ -820,7 +820,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 92,
@@ -852,7 +852,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 93,
@@ -884,7 +884,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 94,
@@ -916,7 +916,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 95,
@@ -948,7 +948,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 96,
@@ -980,7 +980,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 97,
@@ -1012,7 +1012,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 98,
@@ -1044,7 +1044,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 99,
@@ -1076,7 +1076,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 100,
@@ -1108,7 +1108,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 101,
@@ -1140,7 +1140,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 102,
@@ -1172,7 +1172,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 103,
@@ -1204,7 +1204,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 104,
@@ -1236,7 +1236,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 105,
@@ -1268,7 +1268,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 106,
@@ -1300,7 +1300,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 107,
@@ -1332,7 +1332,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 108,
@@ -1364,7 +1364,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 109,
@@ -1396,7 +1396,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 110,
@@ -1428,7 +1428,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 111,
@@ -1460,7 +1460,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 112,
@@ -1492,7 +1492,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 113,
@@ -1524,7 +1524,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 114,
@@ -1556,7 +1556,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 115,
@@ -1588,7 +1588,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 116,
@@ -1620,7 +1620,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 117,
@@ -1652,7 +1652,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 118,
@@ -1684,7 +1684,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 119,
@@ -1716,7 +1716,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 120,
@@ -1748,7 +1748,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 121,
@@ -1780,7 +1780,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 122,
@@ -1812,7 +1812,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 123,
@@ -1844,7 +1844,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 124,
@@ -1883,7 +1883,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 125,
@@ -1915,7 +1915,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 126,
@@ -1954,7 +1954,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 127,
@@ -1993,7 +1993,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 128,
@@ -2032,7 +2032,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 129,
@@ -2071,7 +2071,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 130,
@@ -2103,7 +2103,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 131,
@@ -2135,7 +2135,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 132,
@@ -2174,7 +2174,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 133,
@@ -2213,7 +2213,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 134,
@@ -2252,7 +2252,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 135,
@@ -2284,7 +2284,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 136,
@@ -2323,7 +2323,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 137,
@@ -2355,7 +2355,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 138,
@@ -2387,7 +2387,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 139,
@@ -2419,7 +2419,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 140,
@@ -2451,7 +2451,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 141,
@@ -2490,7 +2490,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 142,
@@ -2522,7 +2522,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 143,
@@ -2554,7 +2554,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 144,
@@ -2586,7 +2586,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 145,
@@ -2618,7 +2618,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 146,
@@ -2657,7 +2657,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 147,
@@ -2689,7 +2689,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 148,
@@ -2728,7 +2728,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 149,
@@ -2760,7 +2760,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 150,
@@ -2799,7 +2799,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 151,
@@ -2839,7 +2839,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 152,
@@ -2879,7 +2879,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 153,
@@ -2912,7 +2912,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 154,
@@ -2952,7 +2952,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 155,
@@ -2992,7 +2992,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 156,
@@ -3032,7 +3032,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 157,
@@ -3065,7 +3065,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 158,
@@ -3105,7 +3105,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 159,
@@ -3138,7 +3138,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 160,
@@ -3178,7 +3178,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 161,
@@ -3211,7 +3211,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 162,
@@ -3244,7 +3244,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 163,
@@ -3284,7 +3284,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 164,
@@ -3324,7 +3324,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 165,
@@ -3364,7 +3364,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 166,
@@ -3404,7 +3404,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 167,
@@ -3437,7 +3437,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 168,
@@ -3477,7 +3477,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 169,
@@ -3517,7 +3517,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 170,
@@ -3557,7 +3557,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 171,
@@ -3597,7 +3597,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 172,
@@ -3637,7 +3637,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 173,
@@ -3677,7 +3677,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 174,
@@ -3717,7 +3717,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 175,
@@ -3757,7 +3757,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 176,
@@ -3790,7 +3790,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 177,
@@ -3830,7 +3830,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 178,
@@ -3863,7 +3863,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 179,
@@ -3910,7 +3910,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 180,
@@ -3950,7 +3950,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 181,
@@ -3990,7 +3990,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 182,
@@ -4037,7 +4037,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 183,
@@ -4070,7 +4070,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 184,
@@ -4110,7 +4110,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 185,
@@ -4157,7 +4157,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 186,
@@ -4190,7 +4190,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 187,
@@ -4237,7 +4237,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 188,
@@ -4284,7 +4284,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 189,
@@ -4324,7 +4324,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 190,
@@ -4357,7 +4357,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 191,
@@ -4404,7 +4404,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 192,
@@ -4451,7 +4451,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 193,
@@ -4484,7 +4484,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 194,
@@ -4564,7 +4564,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 196,
@@ -4611,7 +4611,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 197,
@@ -4651,7 +4651,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 198,
@@ -4698,7 +4698,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     },
     {
       "slot": 199,
@@ -4785,7 +4785,7 @@
         }
       ],
       "editorial_status": "proposed",
-      "manual_review_priority": false
+      "manual_review_priority": true
     }
   ]
 }
