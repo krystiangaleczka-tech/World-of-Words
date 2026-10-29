@@ -17,9 +17,7 @@ class FeatureRange:
     mean: float
 
 
-def review_feature_ranges(
-    candidates: Mapping, config: ScoringConfig
-) -> tuple[FeatureRange, ...]:
+def review_feature_ranges(candidates: Mapping, config: ScoringConfig) -> tuple[FeatureRange, ...]:
     """Validate all candidate evidence and report its uncalibrated ranges."""
     if (
         not isinstance(candidates, Mapping)
