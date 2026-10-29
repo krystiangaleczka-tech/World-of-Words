@@ -28,7 +28,11 @@ def rank_conflict_impact(
     return tuple(
         sorted(
             (
-                ConflictImpact(identity, count, tuple(reason for reason in REASONS if reason in reasons[identity]))
+                ConflictImpact(
+                    identity,
+                    count,
+                    tuple(reason for reason in REASONS if reason in reasons[identity]),
+                )
                 for identity, count in counts.items()
             ),
             key=lambda row: (-row.conflicting_pairs, row.candidate_id),
