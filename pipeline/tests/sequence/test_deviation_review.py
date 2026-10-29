@@ -97,8 +97,8 @@ def test_missing_extra_bool_and_malformed_mapping_fail():
     cases = [
         {k: v for k, v in campaign.items() if k != 18},
         campaign | {19: 0.5},
-        {**campaign, True: 0.5},
-        {**campaign, 18.0: 0.5},
+        {True if slot == 1 else slot: value for slot, value in campaign.items()},
+        {18.0 if slot == 18 else slot: value for slot, value in campaign.items()},
         None,
         [0.5] * 18,
     ]
