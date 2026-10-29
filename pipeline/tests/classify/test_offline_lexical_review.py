@@ -38,12 +38,16 @@ def _row(word, form_arf=None, *, names=(), analyses=True):
 
 def _fixture(overrides=EMPTY_OVERRIDES, records=None):
     config = load_config(ROOT, "pl")
-    raw = records if records is not None else [
-        _row("DOM", 80),
-        _row("JAN", 100, names=("imię",)),
-        _row("KOT", 100),
-        _row("LAS"),
-    ]
+    raw = (
+        records
+        if records is not None
+        else [
+            _row("DOM", 80),
+            _row("JAN", 100, names=("imię",)),
+            _row("KOT", 100),
+            _row("LAS"),
+        ]
+    )
     rules = parse_json(canonical_bytes(asdict(config.tier_rules)).decode("utf-8"))
     decisions = parse_overrides(overrides.decode("utf-8"), config)
     assigned = assign_tiers(raw, config, decisions)
@@ -93,12 +97,11 @@ def test_unreviewed_and_escalation_are_separate_and_no_approval_is_inferred():
         entry["escalation"] == "manual_only_no_automatic_promotion"
         for entry in result["escalations"]
     )
-    assert result["basis"]["tier_artifact_sha256"] == hashlib.sha256(
-        canonical_bytes(artifact)
-    ).hexdigest()
-    assert result["basis"]["familiarity_catalog_sha256"] == hashlib.sha256(
-        reviews
-    ).hexdigest()
+    assert (
+        result["basis"]["tier_artifact_sha256"]
+        == hashlib.sha256(canonical_bytes(artifact)).hexdigest()
+    )
+    assert result["basis"]["familiarity_catalog_sha256"] == hashlib.sha256(reviews).hexdigest()
 
 
 @pytest.mark.parametrize(
@@ -149,13 +152,9 @@ def test_missing_evidence_does_not_become_safe_or_a_level_word():
 
 
 def test_explicit_ban_is_immutable_in_the_review_queue():
-    overrides = (
-        EMPTY_OVERRIDES + b"DOM,banned,editorial exclusion,2026-10-20,chris\n"
-    )
+    overrides = EMPTY_OVERRIDES + b"DOM,banned,editorial exclusion,2026-10-20,chris\n"
     config, artifact = _fixture(overrides=overrides)
-    result = parse_json(
-        _run(artifact, config, overrides=overrides, words=("DOM",)).decode("utf-8")
-    )
+    result = parse_json(_run(artifact, config, overrides=overrides, words=("DOM",)).decode("utf-8"))
     assert result["unresolved"] == []
     assert result["escalations"][0]["source_tier"] == "banned"
 
@@ -183,8 +182,13 @@ def test_override_mutation_and_noncanonical_artifact_fail():
     data = canonical_bytes(artifact) + b" "
     with pytest.raises(ValueError, match="identity"):
         build_review_queue(
-            data, EMPTY_OVERRIDES, EMPTY_REVIEWS,
-            ("DOM",), config, SOURCE, ANNOTATIONS,
+            data,
+            EMPTY_OVERRIDES,
+            EMPTY_REVIEWS,
+            ("DOM",),
+            config,
+            SOURCE,
+            ANNOTATIONS,
         )
 
 
