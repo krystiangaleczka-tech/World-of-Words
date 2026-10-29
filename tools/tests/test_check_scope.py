@@ -197,3 +197,64 @@ def test_rename_keeps_old_path_in_scope_check(tmp_path: Path) -> None:
 
     assert result.returncode == 1
     assert "docs/secret.txt" in result.stderr
+
+
+def test_planner_accepts_only_docs_roadmap_epics_and_task_markdown(tmp_path: Path) -> None:
+    _init_repo(tmp_path, branch="plan/e22-wave1")
+    _write_task(tmp_path, ("tools/**",))
+    doc = tmp_path / "docs" / "PRODUCT.md"
+    doc.write_text("# Reviewed product goals\\n", encoding="utf-8")
+    roadmap = tmp_path / "tasks" / "ROADMAP.md"
+    roadmap.write_text("# Replanned pipeline\\n", encoding="utf-8")
+    epic = tmp_path / "tasks" / "epics" / "E22-content.md"
+    epic.parent.mkdir(parents=True)
+    epic.write_text("# Content wave\\n", encoding="utf-8")
+    _commit(tmp_path)
+
+    result = _run(tmp_path)
+    assert result.returncode == 0, result.stderr
+    assert "OK: planner scope" in result.stdout
+
+
+def test_planner_rejects_executable_and_unknown_document(tmp_path: Path) -> None:
+    _init_repo(tmp_path, branch="plan/e22-no-code")
+    _write_task(tmp_path, ("tools/**",))
+    executable = tmp_path / "tools" / "bad.py"
+    executable.parent.mkdir(parents=True, exist_ok=True)
+    executable.write_text("print('changed')\\n", encoding="utf-8")
+    other = tmp_path / "docs" / "private.txt"
+    other.write_text("not in planner allowlist\\n", encoding="utf-8")
+    _commit(tmp_path)
+
+    result = _run(tmp_path)
+    assert result.returncode == 1
+    assert "ERROR: tools/bad.py is outside planner touch allowlist" in result.stderr
+    assert "ERROR: docs/private.txt is outside planner touch allowlist" in result.stderr
+
+
+def test_planner_rejects_rename_from_disallowed_old_path(tmp_path: Path) -> None:
+    _init_repo(
+        tmp_path,
+        branch="plan/e22-rename",
+        base_files={"tools/private.py": "# private\\n"},
+    )
+    dest = tmp_path / "docs" / "PRODUCT.md"
+    assert _git(tmp_path, "mv", "tools/private.py", str(dest.relative_to(tmp_path))).returncode == 0
+    _commit(tmp_path)
+
+    result = _run(tmp_path)
+    assert result.returncode == 1
+    assert "tools/private.py is outside planner touch allowlist" in result.stderr
+
+
+def test_planner_rejects_nested_branch_or_no_changes(tmp_path: Path) -> None:
+    _init_repo(tmp_path, branch="plan/e22")
+    assert _run(tmp_path).returncode == 1
+    _write_task(tmp_path, ("tools/**",))
+    _commit(tmp_path)
+    assert _run(tmp_path).returncode == 0
+
+    assert _git(tmp_path, "switch", "-c", "plan/e22/nested").returncode == 0
+    result = _run(tmp_path)
+    assert result.returncode == 1
+    assert "must match t/NNNN-*" in result.stderr
