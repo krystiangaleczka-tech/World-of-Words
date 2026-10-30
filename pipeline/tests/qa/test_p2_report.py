@@ -61,7 +61,9 @@ def test_histogram_hardest_and_lexical_flags_are_deterministic():
     ]
     assert result["human_approval_recorded"] is False
     assert levels == before
-    assert raw == campaign_qa_report(levels[::-1], review(), bucket_edges=(0, 0.5, 1), review_limit=2)
+    assert raw == campaign_qa_report(
+        levels[::-1], review(), bucket_edges=(0, 0.5, 1), review_limit=2
+    )
 
 
 def test_empty_review_flags_are_allowed_without_inventing_approval():
