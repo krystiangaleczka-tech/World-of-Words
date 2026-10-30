@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0355]
 touch:
   - pipeline/src/wordgame_pipeline/dedupe/**
@@ -75,3 +75,8 @@ later input atomic failure. Full checks/fresh review/all exact-head CI.
 
 ## Rollback
 Squash revert removes unused analysis only; no generated or persisted changes.
+
+
+## Merged-task status reconciliation (2026-10-30)
+
+Implementation was merged on main in [PR #239](https://github.com/krystiangaleczka-tech/World-of-Words/pull/239) with 16/16 exact-head CI success. Planner metadata corrected from stale `review` to `done`; executable code and released content were not changed.
