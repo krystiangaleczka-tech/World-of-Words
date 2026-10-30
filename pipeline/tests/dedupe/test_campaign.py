@@ -34,7 +34,10 @@ def test_clean_campaign_is_order_independent_and_keeps_bonus_out():
 
 
 def test_reused_wheel_is_blocked_even_when_answer_spacing_is_100():
-    levels = [level(i, "KOT" if i in (1, 101) else "DOM", ["KOT"] if i in (1, 101) else ["DOM"]) for i in range(1, 102)]
+    levels = [
+        level(i, "KOT" if i in (1, 101) else "DOM", ["KOT"] if i in (1, 101) else ["DOM"])
+        for i in range(1, 102)
+    ]
     # Reusing DOM at every slot also violates the explicit wheel-multiset rule.
     seeds = {i: ("KOT" if i in (1, 101) else "DOM") for i in range(1, 102)}
     audit = audit_campaign_diversity(levels, seeds, LANG, POLICY)
