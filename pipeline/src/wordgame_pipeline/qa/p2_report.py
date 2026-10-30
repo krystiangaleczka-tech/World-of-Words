@@ -47,9 +47,8 @@ def campaign_qa_report(
                 not isinstance(row, dict)
                 or not isinstance(row.get("word"), str)
                 or row["word"] <= previous
-                or row.get("source_tier") not in (
-                    ("bonus_ok", "banned") if tier is None else (tier,)
-                )
+                or row.get("source_tier")
+                not in (("bonus_ok", "banned") if tier is None else (tier,))
                 or not isinstance(row.get("evidence_flags"), list)
                 or any(not isinstance(flag, str) or not flag for flag in row["evidence_flags"])
             ):
@@ -75,9 +74,7 @@ def campaign_qa_report(
                 "action": "human_lexical_review_required",
             }
         )
-    hardest = sorted(levels, key=lambda row: (-row["difficulty"], row["slot"]))[
-        :review_limit
-    ]
+    hardest = sorted(levels, key=lambda row: (-row["difficulty"], row["slot"]))[:review_limit]
     report = {
         "schema_version": 1,
         "lang": "pl",
