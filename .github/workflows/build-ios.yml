@@ -1,0 +1,77 @@
+name: build-ios
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  owner-config:
+    name: iOS owner configuration
+    runs-on: ubuntu-24.04
+    env:
+      TEAM: ${{ vars.IOS_APPLE_TEAM_ID }}
+      BUNDLE: ${{ vars.IOS_BUNDLE_IDENTIFIER }}
+    steps:
+      - name: Report missing owner configuration
+        shell: bash
+        run: |
+          if [[ -z "$TEAM" || -z "$BUNDLE" ]]; then
+            echo "::warning::iOS NOT RUN: configure IOS_APPLE_TEAM_ID and IOS_BUNDLE_IDENTIFIER in GitHub variables."
+            echo "iOS build NOT RUN; owner variables are missing." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "iOS unsigned Xcode export configured; physical device QA remains pending." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  ios-unsigned:
+    name: iOS unsigned Xcode build (Godot 4.7.2)
+    needs: owner-config
+    if: ${{ vars.IOS_APPLE_TEAM_ID != '' && vars.IOS_BUNDLE_IDENTIFIER != '' }}
+    runs-on: macos-15
+    timeout-minutes: 55
+    env:
+      IOS_APPLE_TEAM_ID: ${{ vars.IOS_APPLE_TEAM_ID }}
+      IOS_BUNDLE_IDENTIFIER: ${{ vars.IOS_BUNDLE_IDENTIFIER }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download pinned 4.7.2 executable and export templates
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 "https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_macos.universal.zip" -o "$RUNNER_TEMP/godot.zip"
+          ditto -x -k "$RUNNER_TEMP/godot.zip" "$RUNNER_TEMP/godot"
+          engine="$(find "$RUNNER_TEMP/godot" -type f -path '*/Godot.app/Contents/MacOS/Godot' -print -quit)"
+          if [[ -z "$engine" ]]; then echo "::error::Godot executable absent"; exit 1; fi
+          echo "GODOT=$engine" >> "$GITHUB_ENV"
+          "$engine" --headless --version | grep -F "4.7.2.stable"
+          curl -fL --retry 3 "https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_export_templates.tpz" -o "$RUNNER_TEMP/templates.tpz"
+          unzip -q "$RUNNER_TEMP/templates.tpz" -d "$RUNNER_TEMP/export"
+          mkdir -p "$HOME/Library/Application Support/Godot/export_templates/4.7.2.stable"
+          rsync -a "$RUNNER_TEMP/export/templates/" "$HOME/Library/Application Support/Godot/export_templates/4.7.2.stable/"
+      - name: Populate unsigned export options in temporary checkout
+        run: python3 tools/ios_build.py
+      - name: Import and export the Godot Xcode project
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p builds/ios
+          "$GODOT" --headless --path game --editor --quit 2>&1 | tee builds/ios/godot-import.log
+          "$GODOT" --headless --path game --export-debug "iOS Debug" ../builds/ios/WorldOfWords.xcodeproj 2>&1 | tee builds/ios/godot-export.log
+          test -d builds/ios/WorldOfWords.xcodeproj
+          xcodebuild -list -project builds/ios/WorldOfWords.xcodeproj | tee builds/ios/xcode-project.txt
+      - name: Unsigned native compile (not an installable or signed IPA)
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild -project builds/ios/WorldOfWords.xcodeproj -configuration Debug -sdk iphoneos CODE_SIGNING_ALLOWED=NO build 2>&1 | tee builds/ios/xcode-build.log
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: world-of-words-ios-unsigned
+          path: builds/ios/
+          if-no-files-found: warn
+          retention-days: 7
