@@ -6,7 +6,6 @@ import pytest
 
 from tools.ios_build import prepare_preset
 
-
 SOURCE = """[preset.0]
 name="Android Debug"
 platform="Android"
@@ -58,7 +57,9 @@ def test_missing_or_preconfigured_ios_rejected(tmp_path: Path) -> None:
     path = tmp_path / "export_presets.cfg"
     cases = (
         SOURCE.split("[preset.2]\n")[0],
-        SOURCE.replace('application/app_store_team_id=""', 'application/app_store_team_id="ABCDE12345"'),
+        SOURCE.replace(
+            'application/app_store_team_id=""', 'application/app_store_team_id="ABCDE12345"'
+        ),
     )
     for source in cases:
         path.write_text(source)
