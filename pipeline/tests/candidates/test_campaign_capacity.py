@@ -26,9 +26,7 @@ def index(**tiers):
 
 def test_real_pinned_p1_supply_sets_hard_upper_bound(monkeypatch):
     receipt = json.loads((ROOT / "content-inputs/pl.json").read_text(encoding="utf-8"))
-    pack = json.loads(
-        (REPO / "game/content/pl/packs/c-0001-0065.json").read_text(encoding="utf-8")
-    )
+    pack = json.loads((REPO / "game/content/pl/packs/c-0001-0065.json").read_text(encoding="utf-8"))
     idx = WordIndex(receipt["records"], CONFIG)
     wheels = [entry["letters"] for entry in pack["levels"]]
     original = [letters.copy() for letters in wheels]
@@ -49,9 +47,7 @@ def test_real_pinned_p1_supply_sets_hard_upper_bound(monkeypatch):
 
 def test_anagram_seed_counted_once_and_bonus_not_source():
     idx = index(DOM="level_ok", KOT="level_ok", TOK="level_ok", LAS="bonus_ok")
-    assert audit_campaign_capacity(idx, [], target_slots=2) == CampaignCapacity(
-        2, 0, 2, 2, 2, 0
-    )
+    assert audit_campaign_capacity(idx, [], target_slots=2) == CampaignCapacity(2, 0, 2, 2, 2, 0)
     assert audit_campaign_capacity(idx, [list("KOT")], target_slots=4) == CampaignCapacity(
         4, 1, 2, 1, 2, 2
     )
