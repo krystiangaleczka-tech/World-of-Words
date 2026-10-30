@@ -536,6 +536,7 @@ hand-made, first ~100 played by Chris, region 1 mapped.
 | T-0307 | Chris plays 100 % of the first ~100 levels in debug; flags → overrides; rebuild | content | content.pl | T-0306, T-0294 | CPL | HUMAN | — | none | med | PRODUCT.md#content-requirements |
 | T-0394 | Enforce narrow docs-only scope for plan/ branches while preserving strict t/ branch allowlists | infra | tools | T-0018 | H | SOL | high | none | med | ROADMAP.md#rolling-wave-rule |
 | T-0395 | Lift 9,999-slot exporter/manifest boundary to 30,000 without changing existing packs | infra | pipeline.export | T-0127, T-0131 | PIPE | SOL | high | none | high | FR-CONT-01, NFR-14 |
+| T-0396 | Source-backed unique-wheel capacity audit for 10k/30k campaign targets; preserve compact P1 evidence and no AI expense | feat | pipeline.candidates | T-0127, T-0131 | PIPE | SOL | high | none | med | CONTENT.md#dedupe, FR-CONT-05 |
 
 ### E23 Art and audio assets
 Goal: region 1 art, icon, final sounds. Exit: assets merged with licence records.
@@ -601,7 +602,7 @@ with 30,000-slot capacity; game flags feed back into QA.
 | T-0405 | Landmarks in the pipeline: hand-made landmark YAML (up to 8 letters), landmark slots + breather in sequencing | feat | pipeline.sequence | T-0402, T-0302 | PIPE | CHEAP | med | none | med | FR-META-07, CONTENT.md#curve |
 | T-0406 | Daily pack + calendar schema and `Content.daily_for(date)` [HS] | contract | services.content | T-0402, T-0238 | H | SOL | high | none | high | FR-CONT-08, FR-DAILY-01, FR-DAILY-05 |
 | T-0407 | Daily pool generation (separate pool, no duplicates vs campaign) + calendar export | contract | pipeline.export | T-0406, T-0405 | PIPE | SOL | high | none | high | FR-CONT-08 |
-| T-0408 | Pipeline scale: 10000+ reviewed levels deterministically within CI budget (caching, profiling, memory and app size) | feat | pipeline.grid | T-0407, T-0395 | PIPE | CHEAP | high | none | high | NFR-14, FR-CONT-06 |
+| T-0408 | Pipeline scale: 10000+ reviewed levels deterministically within CI budget (caching, profiling, memory and app size) | feat | pipeline.grid | T-0407, T-0395, T-0396 | PIPE | CHEAP | high | none | high | NFR-14, FR-CONT-06 |
 
 ### E28 Release pipeline
 Goal: releases from CI, not from a laptop. Exit: tagged commit → Play internal track + TestFlight.
