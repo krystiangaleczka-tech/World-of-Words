@@ -1,6 +1,7 @@
 """The launch content budget must be measured against source-backed signatures."""
 
 import json
+from collections import Counter
 from dataclasses import FrozenInstanceError
 from pathlib import Path
 
@@ -92,3 +93,25 @@ def test_target_cannot_be_smaller_than_shipped_and_invalid_index_fails():
         audit_campaign_capacity(index(), [list("KOT"), list("DOM")], target_slots=1)
     with pytest.raises(ValueError, match="index"):
         audit_campaign_capacity(None, [], target_slots=10_000)
+
+
+def test_pinned_source_two_and_three_word_readiness_snapshot():
+    receipt = json.loads((ROOT / "content-inputs/pl.json").read_text(encoding="utf-8"))
+    pack = json.loads((REPO / "game/content/pl/packs/c-0001-0065.json").read_text(encoding="utf-8"))
+    approved = [row["word"] for row in receipt["records"] if row["tier"] == "level_ok"]
+    signatures = {"".join(sorted(word)) for word in approved}
+    shipped = {"".join(sorted(level["letters"])) for level in pack["levels"]}
+    words = [(word, Counter(word)) for word in approved]
+
+    def eligible(sig):
+        tiles = Counter(sig)
+        return sum(1 for word, counts in words if len(word) <= len(sig) and counts <= tiles)
+
+    two = {sig for sig in signatures if eligible(sig) >= 2}
+    three = {sig for sig in signatures if eligible(sig) >= 3}
+    assert len(two) == 263
+    assert len(three) == 195
+    assert len(shipped & two) == 63
+    assert len(shipped & three) == 55
+    assert len(shipped | two) == 265
+    assert len(shipped | three) == 205
