@@ -1,4 +1,5 @@
 """Ephemerally configure Godot's iOS preset for unsigned CI builds."""
+
 from __future__ import annotations
 
 import os
@@ -27,12 +28,15 @@ def prepare_preset(path: Path, team: str, bundle: str) -> None:
         if ios.count(placeholder) != 1:
             raise ValueError(f"Missing unconfigured iOS {key}")
     ios = ios.replace('application/app_store_team_id=""', f'application/app_store_team_id="{team}"')
-    ios = ios.replace('application/bundle_identifier=""', f'application/bundle_identifier="{bundle}"')
+    ios = ios.replace(
+        'application/bundle_identifier=""', f'application/bundle_identifier="{bundle}"'
+    )
     path.write_text(prefix + "[preset.2]\n" + ios, encoding="utf-8")
 
 
 def main() -> int:
     import argparse
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--presets", type=Path, default=Path("game/export_presets.cfg"))
     args = parser.parse_args()
