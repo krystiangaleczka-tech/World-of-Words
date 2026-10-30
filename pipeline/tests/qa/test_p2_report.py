@@ -82,11 +82,14 @@ def test_empty_review_flags_are_allowed_without_inventing_approval():
     assert result["human_approval_recorded"] is False
 
 
-@pytest.mark.parametrize("mutate", [
-    lambda data: data.update(semantic_approval_inferred=True),
-    lambda data: data["unresolved"].append(data["unresolved"][0]),
-    lambda data: data["unresolved"][0].update(source_tier="banned"),
-])
+@pytest.mark.parametrize(
+    "mutate",
+    [
+        lambda data: data.update(semantic_approval_inferred=True),
+        lambda data: data["unresolved"].append(data["unresolved"][0]),
+        lambda data: data["unresolved"][0].update(source_tier="banned"),
+    ],
+)
 def test_invalid_or_false_review_evidence_rejected(mutate):
     data = parse_json(review().decode())
     mutate(data)
@@ -102,12 +105,16 @@ def test_invalid_or_false_review_evidence_rejected(mutate):
 def test_noncanonical_bytes_and_invalid_limits_rejected():
     with pytest.raises(ValueError):
         campaign_qa_report(
-            [level(1, "KOT", 0.1)], review() + b" ",
-            bucket_edges=(0, 1), review_limit=1,
+            [level(1, "KOT", 0.1)],
+            review() + b" ",
+            bucket_edges=(0, 1),
+            review_limit=1,
         )
     for bad in (0, True, 1.2, -1):
         with pytest.raises(ValueError):
             campaign_qa_report(
-                [level(1, "KOT", 0.1)], review(),
-                bucket_edges=(0, 1), review_limit=bad,
+                [level(1, "KOT", 0.1)],
+                review(),
+                bucket_edges=(0, 1),
+                review_limit=bad,
             )
