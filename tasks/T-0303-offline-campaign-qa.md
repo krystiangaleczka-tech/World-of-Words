@@ -6,7 +6,7 @@ type: feat
 area: pipeline.qa
 risk: low
 executor: sol
-think: medium
+think: med
 ui: none
 status: blocked
 depends_on: [T-0302]
