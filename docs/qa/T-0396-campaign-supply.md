@@ -48,6 +48,21 @@ subset**, not a replacement for the distinct tier-backed source count.
   classification. The licensed SJP source, locally pinned morphology/frequency
   evidence, and signed-off `overrides/pl.csv` are the validity source chain.
 
+## Full licensed source versus the compact P1 receipt
+
+The repository pins `pipeline/sources/sjp-pl.json` to
+`sjp-20260901.zip` (8,515,982 archive bytes, SHA-256
+`43796ccf34a8ba9b6e965588b842721056b5a89cad4c8c38e057f838d4eaa6a5`),
+declaring **3,245,600 dictionary entries**. This is a source *entry
+count*, **not** a count of common, approved, eligible wheels. The full
+archive was not obtained in this session, so no claim is made about the
+number of additional `level_ok` candidates it can produce.
+
+The next import must verify the exact pinned SHA-256 locally, reuse the
+licensed source and separately pinned morphology/frequency evidence,
+and send proposed classifications to human review. No fee-bearing
+classifier or fabricated word approvals are necessary.
+
 ## Next necessary work
 
 1. Expand the licensed, provenance-pinned lexical *input* well beyond the
