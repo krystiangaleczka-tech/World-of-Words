@@ -20,11 +20,7 @@ def audit_campaign_diversity(
     policy: DuplicatePolicy,
 ) -> CampaignDiversity:
     """Inspect every crossword word, not bonuses; no mutation or automatic removal."""
-    if (
-        not isinstance(levels, (list, tuple))
-        or not levels
-        or not isinstance(seed_words, Mapping)
-    ):
+    if not isinstance(levels, (list, tuple)) or not levels or not isinstance(seed_words, Mapping):
         raise ValueError("Expected nonempty campaign and explicit seed-word mapping")
     records = []
     used_slots = set()
@@ -43,19 +39,23 @@ def audit_campaign_diversity(
         placements = level.get("words")
         if not isinstance(placements, list) or not placements:
             raise ValueError("Expected selected crossword placements")
-        if any(not isinstance(row, Mapping) or not isinstance(row.get("w"), str) for row in placements):
+        if any(
+            not isinstance(row, Mapping) or not isinstance(row.get("w"), str) for row in placements
+        ):
             raise ValueError("Malformed selected crossword word")
         words = [row["w"] for row in placements]
         if len(set(words)) != len(words):
             raise ValueError("Duplicate selected crossword word")
-        records.append({
-            "id": level["id"],
-            "pool": "campaign",
-            "slot": slot,
-            "letters": level.get("letters"),
-            "words": words,
-            "seed_word": seed_words.get(slot),
-        })
+        records.append(
+            {
+                "id": level["id"],
+                "pool": "campaign",
+                "slot": slot,
+                "letters": level.get("letters"),
+                "words": words,
+                "seed_word": seed_words.get(slot),
+            }
+        )
     if set(seed_words) != used_slots or sorted(used_slots) != list(range(1, len(levels) + 1)):
         raise ValueError("Every contiguous campaign slot requires exactly one explicit seed")
     return CampaignDiversity(
