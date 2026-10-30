@@ -23,6 +23,15 @@ was generated, or the score/bonus/geometry will pass validation.
 | New unique source signatures needed for a 10,000-slot public release | **9,514** |
 | New unique source signatures needed for the 30,000-slot long-term target | **29,514** |
 
+A stricter **pre-geometry** indicator makes the shortage even clearer.
+Among all 486 source wheel signatures, only **263** can form at least two
+`level_ok` words and only **195** can form at least three. The 65 already
+shipped wheels occupy 63 and 55 of those respective groups. Preserving all
+existing wheels, the ceiling for a campaign that requires at least two source
+level words in each **new** level is **265**, or at least **9,735**
+additional eligible signatures for 10,000 levels. This does not itself prove
+that any wheel supports a connected crossword.
+
 The actual number of *publishable* crossword levels may be materially lower:
 a word wheel must also yield a connected, valid crossword, sensible difficulty
 and vocabulary, complete bonus sets, 100-slot selected-word spacing and quality
