@@ -22,7 +22,9 @@ TOKENS = ROOT.parent / "game/ui/tokens.gd"
 def data():
     path = ROOT.parent / "game/content/pl/packs/c-0001-0065.json"
     levels = json.loads(path.read_bytes())["levels"]
-    index = WordIndex(json.loads((ROOT / "content-evidence/pl.json").read_bytes())["records"], LANGUAGE)
+    index = WordIndex(
+        json.loads((ROOT / "content-evidence/pl.json").read_bytes())["records"], LANGUAGE
+    )
     plan = SlotPlan(
         (Region("r1", CurveConfig(1, 65, 0, 0, 5, 0, 0.2, 0.1, ())),),
         (Location("loc1", "r1", 1, 33), Location("loc2", "r1", 34, 65)),
