@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0363]
 touch:
   - pipeline/src/wordgame_pipeline/validate/locks.py
@@ -57,3 +57,8 @@ outputs and unchanged inputs, deterministic hashes. Full check/fresh review/all 
 
 ## Rollback
 Revert removes unused pure helper; no actual release baseline has been created.
+
+
+## Status reconciliation (2026-10-30)
+
+Implementation merged through PR [#247](https://github.com/krystiangaleczka-tech/World-of-Words/pull/247) before this plan; its exact-head CI passed 16/16 checks. This metadata correction does not change code, content packs or review policy.
