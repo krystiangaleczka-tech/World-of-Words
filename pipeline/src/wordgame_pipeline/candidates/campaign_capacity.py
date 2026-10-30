@@ -50,11 +50,7 @@ def audit_campaign_capacity(
     if target_slots < len(shipped):
         raise ValueError("Campaign target smaller than existing released slots")
 
-    available = {
-        "".join(sorted(word))
-        for word, tier in index.tiers.items()
-        if tier == "level_ok"
-    }
+    available = {"".join(sorted(word)) for word, tier in index.tiers.items() if tier == "level_ok"}
     unused = len(available - shipped)
     theoretical = len(shipped) + unused
     return CampaignCapacity(
