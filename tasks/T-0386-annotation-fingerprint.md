@@ -8,7 +8,7 @@ risk: low
 executor: sol
 think: med
 ui: none
-status: review
+status: done
 depends_on: [T-0127]
 touch:
   - pipeline/src/wordgame_pipeline/annotate/fingerprint.py
