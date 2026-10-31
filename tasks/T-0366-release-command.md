@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0365]
 touch:
   - pipeline/src/wordgame_pipeline/release_apply.py
@@ -69,3 +69,8 @@ new baseline; no artifact/content/evidence writes. Full check/review/exact-head 
 ## Rollback
 Revert removes command/writer; any real baseline would require separate explicit
 review and remains committed independently. This task creates none in the repo.
+
+
+## Status reconciliation (2026-10-30)
+
+Implementation merged through PR [#249](https://github.com/krystiangaleczka-tech/World-of-Words/pull/249) before this plan; its exact-head CI passed 16/16 checks. This metadata correction does not change code, content packs or review policy.

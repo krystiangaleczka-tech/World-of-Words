@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0361]
 touch:
   - pipeline/src/wordgame_pipeline/content.py
@@ -58,3 +58,8 @@ and independent tier/bonus/provenance failures still reject. Full check/review/C
 
 ## Rollback
 Revert restores P1 validation without this lock gate; no content/locks were changed.
+
+
+## Status reconciliation (2026-10-30)
+
+Implementation merged through PR [#245](https://github.com/krystiangaleczka-tech/World-of-Words/pull/245) before this plan; its exact-head CI passed 16/16 checks. This metadata correction does not change code, content packs or review policy.

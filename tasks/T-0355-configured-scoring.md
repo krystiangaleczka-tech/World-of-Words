@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0354]
 touch:
   - pipeline/src/wordgame_pipeline/scoring/__init__.py
@@ -64,3 +64,8 @@ fresh review and exact-head CI. No UI or production-content approval claimed.
 
 ## Rollback
 Squash revert removes unactivated scorer; no content or persistent data changes.
+
+
+## Merged-task status reconciliation (2026-10-30)
+
+Implementation was merged on main in [PR #238](https://github.com/krystiangaleczka-tech/World-of-Words/pull/238) with 16/16 exact-head CI success. Planner metadata corrected from stale `review` to `done`; executable code and released content were not changed.

@@ -49,7 +49,7 @@ an explicit exit gate.
 5. Retention benchmarks at soft launch in the range of category references (D1 ~30%, D7 ~13%,
    D30 ~8%; research benchmarks, to be validated). If D1 is far below, fix the first 10 minutes before
    adding content.
-6. A content machine that produces 1000+ curated Polish levels, then English, then German, reproducibly.
+6. A zero-paid-AI content machine that ships **at least 10,000 reviewed Polish campaign levels at the first public release**, then scales to **30,000 after launch** without compromising lexical quality, spacing or reproducibility. English and German follow separate language-content gates.
 7. Zero player progress or purchase loss caused by the game.
 
 ### Non-goals for v1 (explicitly out)
@@ -127,7 +127,7 @@ S4 generator; S5 resolved by decision 0006), repo, CI and contracts; no player-f
 | IAP | no | Remove Forced Ads, 1 coin pack, restore | more coin packs, starter pack | piggy bank / pass |
 | Crash reporting | no | yes | — | — |
 | UI localization | PL only | PL + EN | DE | more |
-| Content language | PL (30–50 levels) | PL (150–200 production levels) | PL 1000+, then EN, then DE | more languages |
+| Content language | PL (30–50 levels) | PL (150–200 production levels) | **PL 10,000 minimum before any public rollout**; EN, then DE under separate gates | PL 30,000 long-term target, plus more languages |
 | In-app review prompt | no | no | yes | — |
 | Local notifications | no | no | no | yes (opt-in) |
 | Events | no | no | no | one template |
@@ -140,7 +140,7 @@ Explicitly OUT per phase:
 - P2: daily, monthly calendar, streak, landmarks, postcard collection screen, more than one region,
   EN/DE content (EN UI only), A/B experiments in production, starter pack, mediation, review prompt.
 - P3: events, local notifications, cloud save, achievements, piggy bank / pass, world-building scenes.
-  Soft launch happens in P3 after daily + streak + ~500 PL levels.
+  The ~500-level milestone is internal/closed-test content QA only; first **public** soft launch must ship at least 10,000 reviewed PL levels, plus daily + streak. The post-launch target is 30,000 PL levels.
 - Later items start only when soft-launch data justifies them (see Hypotheses).
 
 ## Core experience
@@ -589,8 +589,8 @@ Content startup recovery reports `content_load_failed {error_code:int}` once nor
 | Phase | Campaign content | Other content |
 |---|---|---|
 | P1 | 30–50 PL levels from pipeline v0 (spike S4) + ~10 hand-made | — |
-| P2 | 150–200 production PL levels (tiers, AI classification, Chris's review); levels 1–15 hand-made; 1 region with 3–4 locations and their postcards | — |
-| P3 | ~500 PL levels before soft launch, 1000+ after; landmarks hand-made; more regions | Daily pool; monthly postcards; EN content after PL works, then DE |
+| P2 | 150–200 production PL levels (licensed-source tiers, deterministic offline lexical review without AI API costs, Chris's review); levels 1–15 hand-made; 1 region with 3–4 locations and their postcards | — |
+| P3 | ~500 PL levels at an internal QA checkpoint, **10,000 reviewed PL levels at first public launch**, 30,000 later; landmarks hand-made; more regions | Daily pool; monthly postcards; EN content after PL works, then DE |
 
 Language rules: Polish rules are fixed by decision `0004-language-rules-pl` (diacritics as separate
 tiles, 32-letter alphabet, base forms + very frequent inflections as level words, all valid forms as

@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0358]
 touch:
   - pipeline/src/wordgame_pipeline/sequence/allocate.py
@@ -70,3 +70,8 @@ score/tuple/ID/language/call shapes. Full check/fresh review/all exact-head CI.
 
 ## Rollback
 Revert removes unused preview allocation; shipped content/handlers unchanged.
+
+
+## Merged-task status reconciliation (2026-10-30)
+
+Implementation was merged on main in [PR #242](https://github.com/krystiangaleczka-tech/World-of-Words/pull/242) with 16/16 exact-head CI success. Planner metadata corrected from stale `review` to `done`; executable code and released content were not changed.

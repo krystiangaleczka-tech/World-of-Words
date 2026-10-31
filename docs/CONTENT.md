@@ -12,8 +12,9 @@
 
 1. **Word validity comes only from the licensed source plus Chris's overrides** (FR-CONT-05). An LLM
    never decides whether something is a word.
-2. **An LLM only classifies** (sensitivity, familiarity, topic). Its output is a cached suggestion, never a
-   verdict.
+2. **No model is required for production classification**. P2 uses pinned lexical/frequency evidence
+   and explicit human review. A model, if ever separately authorized, may suggest sensitivity,
+   familiarity or topic but never decide validity or certify safety.
 3. **Deterministic** (FR-CONT-06, NFR-14): the same inputs and pipeline version produce byte-identical
    packs.
 4. **Stages with artifacts.** Each stage reads the previous stage's artifact and writes its own; a build
@@ -33,7 +34,7 @@ pipeline/
   config/curve.yaml                difficulty curve; config/scoring.yaml  feature weights
   overrides/<lang>.csv             Chris's word decisions (highest priority)
   handmade/<lang>/*.yaml           hand-made levels (onboarding, landmarks)
-  cache/<lang>/                    AI classification cache (committed)
+  reviews/<lang>/                  explicit human lexical review evidence (committed when approved)
   locks/<lang>.lock.json           released-slot lock file (committed)
   sources/                         download scripts + checksums (raw data is not committed)
   build/<lang>/<NN-stage>/         intermediate artifacts (git-ignored)
@@ -50,7 +51,7 @@ game/content/<lang>/               final output: manifest.json, packs/*.json (co
 | 1 | ingest (`pipeline.ingest`) | Download sources, verify checksum | checksum, entry count | licence, once per source |
 | 2 | normalize (`pipeline.ingest`) | NFC, uppercase, language alphabet, length 3..N, drop proper nouns and abbreviations | per-language rule tests | — |
 | 3 | annotate (`pipeline.annotate`) | Lemma, part of speech, inflection flag, frequency | coverage (share with frequency) | — |
-| 4 | classify (`pipeline.classify`) *(P2)* | AI suggestions: sensitivity, familiarity, topic; two runs | agreement rate; disagreements → queue | disagreements and flagged level-word candidates only |
+| 4 | classify (`pipeline.classify`) *(P2)* | Deterministic, source-backed lexical uncertainty/review queue; no LLM/API | provenance, stable flags, no inferred approval | unresolved level-word candidates and flagged records |
 | 5 | tiers (`pipeline.tiers`) | `level_ok` / `bonus_ok` / `banned` from rules + overrides (+ suggestions from P2) | tier distribution diff vs previous build | `overrides/<lang>.csv` |
 | 6 | candidates (`pipeline.candidates`) | Seed word → letter multiset → every formable word (anagram index); hand-made YAML input | ≥ minimum `level_ok` words | — |
 | 7 | grid (`pipeline.grid`) | Crossword layout: greedy with backtracking, many seeds, best layout | grid invariants (below) | — |
@@ -58,7 +59,7 @@ game/content/<lang>/               final output: manifest.json, packs/*.json (co
 | 9 | validate (`pipeline.validate`) | [Hard validation](#hard-validation); a failure rejects the level | — | — |
 | 10 | dedupe (`pipeline.dedupe`) *(P2)* | Same multiset; word-set Jaccard; seed-word spacing K | thresholds in config | — |
 | 11 | sequence (`pipeline.sequence`) *(P2)* | Fit levels to the [curve](#curve); landmarks, breathers, onboarding, locations | deviation from curve | curve chart review |
-| 12 | qa (`pipeline.qa`) *(P2)* | Report: stats, histograms, weirdest level words, AI "odd for this slot" flags | — | [QA sampling](#qa-sampling) |
+| 12 | qa (`pipeline.qa`) *(P2)* | Report: stats, histograms, weirdest level words, offline review flags | — | [QA sampling](#qa-sampling) |
 | 13 | export (`pipeline.export`) | Packs + manifest into `game/content/<lang>/`; lock check | schema, lock file, byte-identical rebuild | `content` PR review |
 
 In P1 the pipeline runs stages 1–3, 5–7, 9 and 13. Levels are ordered by letter count, with no scoring,
@@ -110,12 +111,22 @@ GÓWNO,banned,vulgar,2026-10-20,chris
   wins.
 
 ### Classification *(P2)*
-- Batch calls of a cheap model, cached in `pipeline/cache/<lang>/` keyed by
-  `(word, prompt_version, model)`. The cache is committed, so a rebuild costs nothing and is
-  reproducible.
-- Two runs (two models or two prompts); disagreements go to `pipeline/build/<lang>/review_queue.csv`
-  for Chris. His answers land in `overrides/<lang>.csv`.
-- The repo turns private before the first production classification run (T-0296).
+The production path is **offline, zero AI/API cost** (owner decision 2026-10-29, T-0296).
+Use pinned dictionary, morphology and frequency records with existing rules and
+`overrides/<lang>.csv` as the sole word-eligibility authority. Generate a
+deterministic queue of unresolved candidates with exact evidence and reason codes;
+do not invent familiarity, safety, topic or semantic approval. The reviewed-human
+catalog (`wordgame_pipeline/familiarity.py`) records explicit judgments only.
+A high frequency or unflagged entry is not a proof of suitability.
+
+The T-0296 queue is an **editorial input**, not a `level_ok` promotion or
+`banned` verdict. T-0297 respects existing tier/override precedence, T-0304
+records Chris's manual decisions, and T-0305/T-0306/T-0307 remain required for
+hand-made onboarding, actual 200-slot export and playtest. P1 stage selection,
+shipped 65 levels and released-slot locking are unchanged. No token spend,
+AI model, API key, external call, repository privacy upgrade or automated
+"agreement" claim is part of this plan. Historical T-0031 experimentation does
+not block production lexical review; FUN/device/release gates still apply.
 
 ## Hand-made levels
 

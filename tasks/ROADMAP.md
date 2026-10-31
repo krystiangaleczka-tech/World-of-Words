@@ -45,7 +45,7 @@ the service areas that own a hotspot (`services.save`, `services.content`).
   (mark it `(dropped: reason)` here, never delete the ID).
 - **IDs stay stable.** New tasks take the next free ID at the end of the range reserved for their
   phase and are inserted in roadmap order above the rows that depend on them, so roadmap order and ID
-  order diverge only for added tasks. v2 already added T-0144, T-0326 … T-0329 and T-0475 … T-0483 this
+  order diverge only for added tasks. v2 already added T-0144, T-0326 … T-0329 and T-0475 … T-0489 this
   way, and moved a few rows (T-0226, T-0315 into E12; T-0258 into E25; T-0320 above T-0318; T-0421
   above T-0416; T-0474 below T-0476).
 
@@ -54,7 +54,7 @@ the service areas that own a hotspot (`services.save`, `services.content`).
 | Phase 0 Foundation | T-0001 … T-0099 | T-0001 … T-0051 |
 | Phase 1 Core Prototype | T-0100 … T-0199 | T-0100 … T-0144 |
 | Phase 2 Vertical Slice | T-0200 … T-0399 | T-0200 … T-0329 |
-| Phase 3 Production | T-0400 … T-0599 | T-0400 … T-0483 |
+| Phase 3 Production | T-0400 … T-0599 | T-0400 … T-0489 |
 | Later (data-gated) | T-0600 … | none yet (epic-level list only) |
 
 Epics: E00–E04 Phase 0, E05–E10 Phase 1, E11–E25 Phase 2, E26–E37 Phase 3, E40+ Later. Each epic gets
@@ -85,7 +85,7 @@ contracts live there, not in this file.
 | 0 Foundation | Everything that must exist before agents deliver tasks in series | S1 passed (or engine changed); `make check` green in CI; a cheap model merged ≥3 tasks without Chris fixing code; docs v1 merged; language decisions recorded | DOC, ADM, H, SPK-P, SPK-W, SPK-C, SPK-G, D1–D4 | 1 repo-changing task (lane H), paced by Chris's Sol sessions; docs + spikes by other actors beside it; dry run: 4 | T-0011, T-0012, T-0023, T-0027/28 device runs, T-0029, T-0030, T-0033 engine gate, T-0050, T-0051 (T-0027/28 are OPUS+HUMAN sessions on Chris's machine) |
 | 1 Core Prototype | "Is it fun?": raw visuals, perfect swipe, 30–50 PL levels, Android build | Fun gate: 5 outsiders play ≥20 min without instructions; swipe without perceivable lag on the reference low-end Android; Chris decides go / fix core / stop | H, BRD, WHL, FLOW, PRG, PIPE, CPL, SUP, GATE | 3 agent tasks + Chris | T-0129, T-0130, T-0136, T-0139, T-0140, T-0141, T-0143 |
 | 2 Vertical Slice | First 30 minutes at release quality on Android + iOS | Device checklist (`TESTING.md`) passes on 3 reference devices; IAP and ads work in sandbox; Opus slice audit without critical findings; Chris: "a game I would download myself"; closed testing / TestFlight started | H, DOC, UI, ART, LVL, ECO, META, DATA, TOOL, PLAT, SCR, PIPE, CPL, STORE | 4 agent tasks + Chris | Key gates: T-0203 decisions, T-0204/T-0205 taste, T-0226 iOS build loop, T-0221 gallery, T-0237 economy, T-0267 ads device test, T-0268 IAP products, T-0275 IAP device test, T-0282 feel, T-0305/T-0307 content, T-0318 closed test, T-0322–T-0325 (full list in [Chris checkpoints](#chris-checkpoints)) |
-| 3 Production | Content machine, daily + streak, soft launch, data loop, then EN, then DE | Derived (11 §4 lists scope, not criteria): release pipeline ships from CI; daily + streak + ~500 PL levels live in soft launch; ad-frequency experiment read out; dictionary and difficulty loops running; EN content shipped; DE content shipped | H, DOC, UI, DAILY, META, LVL, PLAT, DATA, SCR, TOOL, PIPE, ART, CPL, CEN, CDE, STORE | 5–6 agent tasks (review-bound) | T-0402, T-0427, T-0434, T-0438, T-0440, T-0443, T-0447, T-0450, T-0451, T-0452, T-0455, T-0457, EN/DE reviewer tasks, T-0477 exit |
+| 3 Production | Content machine, daily + streak, soft launch, data loop, then EN, then DE | Derived (11 §4 lists scope, not criteria): release pipeline ships from CI; daily + streak + at least 10,000 reviewed PL levels before any public rollout (500 is private QA); ad-frequency experiment read out; dictionary and difficulty loops running; EN content shipped; DE content shipped | H, DOC, UI, DAILY, META, LVL, PLAT, DATA, SCR, TOOL, PIPE, ART, CPL, CEN, CDE, STORE | 5–6 agent tasks (review-bound) | T-0402, T-0427, T-0434, T-0438, T-0440, T-0443, T-0447, T-0450, T-0451, T-0452, T-0455, T-0457, EN/DE reviewer tasks, T-0477 exit |
 
 Phase 2 note: closed testing (T-0318) does **not** wait for the slice to be finished. It needs a store
 name, a store listing with icon (T-0320, T-0310), a privacy policy, the data-safety and rating forms and
@@ -130,9 +130,9 @@ T-0207 ─► T-0222..T-0225 level game feel ─► T-0276 ───────
 T-0328 analytics P2b ─► T-0258 funnels ─────────────────────────────────────────────────────────────────────────────────┘
 T-0312 name + T-0310 icon ─► T-0320 listing; T-0313/T-0314 privacy + forms; T-0315 AAB ─► T-0318 CLOSED TEST (≥14 days) ───────────┐
 T-0325 ─► T-0400..T-0402 P3 decisions ─► T-0413 Save v4 / T-0414 core/daily ─► T-0415 ─► T-0416 ─► T-0424 streak ─► T-0427 device ─┤
-T-0405 landmarks ─► T-0407 daily pool ─► T-0408 scale ─► T-0437..T-0440 content to 500 ────────────────────────────────────────────┼─► T-0449 audit ─► T-0450 ─► T-0451 GO/NO-GO
+T-0405 landmarks ─► T-0407 daily pool ─► T-0408 10k scale ─► T-0437..T-0440 internal QA to 500 ─► T-0484..T-0489 public 10k ────────────────────────────────────────────┼─► T-0449 audit ─► T-0450 ─► T-0451 GO/NO-GO
 T-0409/T-0410 release pipeline ────────────────────────────────────────────────────────────────────────────────────────────────────┘
-T-0451 ─► T-0452 data review ─► calibration, dictionary loop, PL to 1000 (E34) ─► EN (E35) ─► DE (E36) ─► T-0477 P3 EXIT
+T-0451 ─► T-0452 data review ─► calibration, dictionary loop, PL toward 30k (E34) ─► EN (E35) ─► DE (E36) ─► T-0477 P3 EXIT
 ```
 
 - By dependency count the longest Phase 2 chain is visual direction → tokens → theme → the serial
@@ -141,7 +141,7 @@ T-0451 ─► T-0452 data review ─► calibration, dictionary loop, PL to 1000
 - Platform integration (PLAT lane: consent → ads → IAP, each with device tests) is shorter but the least
   predictable; it joins Level integration at T-0278 through T-0274. The iOS build loop (T-0226) comes
   early in P2 because every iOS adapter and device test depends on it.
-- Content to 500 levels needs Chris's QA sampling (T-0438, T-0440); that is the Phase 3 human bottleneck.
+- Content to 500 needs internal QA sampling (T-0438, T-0440); the public-release human bottleneck is 10k lexical/UX review (T-0488).
 
 ## Phase 0 — Foundation
 
@@ -511,23 +511,32 @@ T-0323 shows no blocker; every setting applies immediately.
 | T-0328 | Analytics listener P2b: consent_result, att_result, ad_offer_shown / ad_shown / ad_reward_earned / ad_failed, shop_opened, iap_*, settings_changed, remote_config_applied, experiment_assigned, hint_stuck_offer_shown, onboarding_step, feature_unlocked | feat | services.analytics | T-0251, T-0255, T-0265, T-0271, T-0274, T-0279, T-0286, T-0292 | DATA | CHEAP | med | none | med | FR-ANL-01, FR-ONB-05, PRODUCT.md#core-events-seed-of-the-registry, PRODUCT.md#funnels |
 
 ### E22 PL content production
-Goal: 200 production PL levels with tiers, AI classification and Chris's review. Exit: levels 1–15
+2026-10-29 owner-directed replan: zero-cost offline lexical review replaces the T-0296 paid-model
+production path; T-0031's historical experiment is not a prerequisite. T-0143 FUN evidence and
+T-0304/0305/0307 human review are not waived. The P2 rolling-wave rule permits dependency
+updates; only these E22 rows are altered.
+
+Goal: 200 production PL levels with pinned dictionary-backed tiers, deterministic offline
+lexical review, and Chris's approval; no AI API or token spending. Exit: levels 1–15
 hand-made, first ~100 played by Chris, region 1 mapped.
 
 | ID | Title | Type | Area | Depends | Lane | Exec | Think | UI | Risk | Refs |
 |---|---|---|---|---|---|---|---|---|---|---|
-| T-0296 | Classify: batch AI classification (before this first production content run Chris switches the repo to private, with GitHub Pro if branch protection must stay), committed cache keyed (word, prompt version, model), two passes, disagreement CSV; Chris adds the API key as a CI / agent secret and sets a spend cap from the T-0031 cost-per-1k figure | feat | pipeline.classify | T-0127, T-0031, T-0143 | PIPE | CHEAP+HUMAN | med | none | med | dp09 §3, FR-CONT-05 |
-| T-0297 | Tiers v1: rules + classification suggestion + overrides; tier-distribution diff alarm | feat | pipeline.tiers | T-0296 | PIPE | CHEAP | high | none | high | FR-CONT-05, decision 0004 |
+| T-0296 | Offline Polish lexical-review queue from pinned source tiers, morphology, frequency, and explicit human-reviewed familiarity records; deterministic evidence and unresolved-word CSV/JSON. No LLM, API key, inference, token spend, or automatic promotion/ban. T-0031 remains a historical experiment and T-0143 a separate release gate. | feat | pipeline.classify | T-0123, T-0127 | PIPE | SOL | high | none | med | FR-CONT-05, CONTENT.md#classification-p2 |
+| T-0297 | Tiers v1: pinned-source rules + explicit reviewed human decisions/overrides; tier-distribution diff alarm, never automatic promotion or ban | feat | pipeline.tiers | T-0296 | PIPE | CHEAP | high | none | high | FR-CONT-05, decision 0004 |
 | T-0298 | Scoring: difficulty features × weights (`scoring.yaml`) | feat | pipeline.scoring | T-0297 | PIPE | CHEAP | med | none | med | dp03 §6.1, dp09 §2 |
 | T-0299 | Dedupe + diversity: multiset, Jaccard, seed-word spacing K | feat | pipeline.dedupe | T-0298 | PIPE | CHEAP | med | none | med | dp09 §2, PRODUCT.md#content-requirements |
 | T-0300 | Sequence: `curve.yaml` (trend, saw-tooth, breather), slot assignment, onboarding constraints, location mapping | feat | pipeline.sequence | T-0299, T-0238 | PIPE | CHEAP | high | none | med | CONTENT.md#curve, dp03 §6.1 |
 | T-0301 | Validate v1: all hard rules incl. campaign duplicates, `CELL_MIN` on COMPACT, difficulty window; released-slot lock file, bonus-only changes allowed; `CELL_MIN`, `GRID_MIN_RATIO` and the COMPACT geometry are read from tokens v1, not copied | contract | pipeline.validate | T-0300, T-0206 | PIPE | SOL | xhigh | none | high | FR-CONT-03, FR-CONT-04, dp09 §4, DESIGN.md#level-screen-geometry, CONTENT.md#slot-policy |
 | T-0302 | Export v1: manifest v1.1 (regions, locations), lock-file update command | contract | pipeline.export | T-0301, T-0238 | PIPE | SOL | high | none | high | FR-PROG-03, FR-CONT-03 |
-| T-0303 | QA report: stats, histograms, weirdest level words, AI "odd for this slot" flags | feat | pipeline.qa | T-0302 | PIPE | CHEAP | med | none | low | dp09 §2 |
-| T-0304 | Chris reviews the disagreement queue and flagged candidates → `overrides/pl.csv` (batch 1) | content | content.pl | T-0297 | CPL | HUMAN | — | none | med | dp09 §3, dp11 §1 |
+| T-0303 | QA report: stats, histograms, weirdest level words, explicit offline lexical-review flags | feat | pipeline.qa | T-0302 | PIPE | CHEAP | med | none | low | dp09 §2 |
+| T-0304 | Chris reviews unresolved lexical flags and level-word candidates → explicit decisions in `overrides/pl.csv` (batch 1) | content | content.pl | T-0297 | CPL | HUMAN | — | none | med | dp09 §3, dp11 §1 |
 | T-0305 | Chris hand-makes onboarding levels 1–15 (YAML) per GAME_DESIGN.md#onboarding | content | content.pl | T-0304, T-0203 | CPL | HUMAN | — | high | med | FR-ONB-02 |
 | T-0306 | Content build P2: 200 PL levels (slots 1–200; 1–15 hand-made), region 1 with 3–4 locations covering every slot | content | content.pl | T-0303, T-0305 | CPL | CHEAP | med | none | high | PRODUCT.md#content-requirements, FR-PROG-03 |
 | T-0307 | Chris plays 100 % of the first ~100 levels in debug; flags → overrides; rebuild | content | content.pl | T-0306, T-0294 | CPL | HUMAN | — | none | med | PRODUCT.md#content-requirements |
+| T-0394 | Enforce narrow docs-only scope for plan/ branches while preserving strict t/ branch allowlists | infra | tools | T-0018 | H | SOL | high | none | med | ROADMAP.md#rolling-wave-rule |
+| T-0395 | Lift 9,999-slot exporter/manifest boundary to 30,000 without changing existing packs | infra | pipeline.export | T-0127, T-0131 | PIPE | SOL | high | none | high | FR-CONT-01, NFR-14 |
+| T-0396 | Source-backed unique-wheel capacity audit for 10k/30k campaign targets; preserve compact P1 evidence and no AI expense | feat | pipeline.candidates | T-0127, T-0131 | PIPE | SOL | high | none | med | CONTENT.md#dedupe, FR-CONT-05 |
 
 ### E23 Art and audio assets
 Goal: region 1 art, icon, final sounds. Exit: assets merged with licence records.
@@ -568,8 +577,9 @@ Goal: prove the slice. Exit: the Phase 2 exit criteria.
 
 ## Phase 3 — Production
 
-Planned rows; Sol re-plans per wave. Soft launch after daily + streak + ~500 PL levels; EN content after
-PL works; DE after EN (decision 0005).
+Planned rows; Sol re-plans per wave. The ~500 level milestone is private QA only.
+First public rollout requires daily + streak and >=10,000 reviewed PL levels.
+Post-launch target is 30,000 PL levels; EN after PL, DE after EN (decision 0005).
 
 ### E26 Phase 3 product decisions
 Goal: rules for daily, calendar, streak, landmarks, starter pack. Exit: Q3, Q4, Q5 decided.
@@ -581,8 +591,9 @@ Goal: rules for daily, calendar, streak, landmarks, starter pack. Exit: Q3, Q4, 
 | T-0402 | Chris decides Q3, Q4, Q5; Sol applies to GAME_DESIGN and updates the DESIGN.md P3 screen specs (Collection, multi-region Journey, landmark, end of content) to the decisions | docs | docs | T-0401 | DOC | SOL+HUMAN | med | low | med | PRODUCT.md#open-questions, DESIGN.md#screen-specs |
 
 ### E27 Pipeline production and review loop
-Goal: pipeline at full strength: review mode, landmarks, daily pool, scale. Exit: 1000+ levels build
-deterministically in CI time; flags from the game flow back into QA.
+Goal: pipeline at full strength: review mode, landmarks, daily pool, scale. Exit:
+10,000+ levels built deterministically inside CI, memory and app-size budgets,
+with 30,000-slot capacity; game flags feed back into QA.
 
 | ID | Title | Type | Area | Depends | Lane | Exec | Think | UI | Risk | Refs |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -591,7 +602,7 @@ deterministically in CI time; flags from the game flow back into QA.
 | T-0405 | Landmarks in the pipeline: hand-made landmark YAML (up to 8 letters), landmark slots + breather in sequencing | feat | pipeline.sequence | T-0402, T-0302 | PIPE | CHEAP | med | none | med | FR-META-07, CONTENT.md#curve |
 | T-0406 | Daily pack + calendar schema and `Content.daily_for(date)` [HS] | contract | services.content | T-0402, T-0238 | H | SOL | high | none | high | FR-CONT-08, FR-DAILY-01, FR-DAILY-05 |
 | T-0407 | Daily pool generation (separate pool, no duplicates vs campaign) + calendar export | contract | pipeline.export | T-0406, T-0405 | PIPE | SOL | high | none | high | FR-CONT-08 |
-| T-0408 | Pipeline scale: 1000+ levels built deterministically within the CI budget (caching, profiling) | feat | pipeline.grid | T-0407 | PIPE | CHEAP | med | none | med | NFR-14, FR-CONT-06 |
+| T-0408 | Pipeline scale: 10000+ reviewed levels deterministically within CI budget (caching, profiling, memory and app size) | feat | pipeline.grid | T-0407, T-0395, T-0396 | PIPE | CHEAP | high | none | high | NFR-14, FR-CONT-06 |
 
 ### E28 Release pipeline
 Goal: releases from CI, not from a laptop. Exit: tagged commit → Play internal track + TestFlight.
@@ -648,8 +659,8 @@ state live.
 | T-0435 | Postcard collection screen + NavTab (campaign and monthly postcards) | feat | features.collection | T-0416, T-0432 | META | CHEAP | med | high | low | FR-META-06, DESIGN.md#collection-p3 |
 | T-0436 | End-of-content state ("more levels coming", daily still available) | feat | features.home | T-0435, T-0420 | META | CHEAP | low | med | low | FR-PROG-07, DESIGN.md#home-end-of-content-p3 |
 
-### E32 PL content to 500
-Goal: ~500 curated PL levels before soft launch. Exit: slots 1–500 locked and sampled.
+### E32 Internal PL content QA to 500
+Goal: ~500 curated PL levels for closed/private testing, NOT public soft launch. Exit: slots 1–500 locked and sampled.
 
 | ID | Title | Type | Area | Depends | Lane | Exec | Think | UI | Risk | Refs |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -658,8 +669,22 @@ Goal: ~500 curated PL levels before soft launch. Exit: slots 1–500 locked and 
 | T-0439 | Content batch: slots 351–500 | content | content.pl | T-0438, T-0431 | CPL | CHEAP | med | none | high | PRODUCT.md#content-requirements |
 | T-0440 | Chris QA sampling for 351–500 | content | content.pl | T-0439 | CPL | HUMAN | — | none | med | PRODUCT.md#content-requirements |
 
-### E33 Soft launch
-Goal: a limited public release that produces trustworthy data. Exit: go decision executed.
+### E32b Prelaunch PL content to 10,000
+Goal: ship reviewed, reproducible 10,000-slot Polish campaign before any public rollout.
+The earlier 500-level milestone remains private QA. 30,000 is a post-launch target.
+No paid AI, no unsupported words and no silent relaxation of the 100-slot repeat rule.
+
+| ID | Title | Type | Area | Depends | Lane | Exec | Think | UI | Risk | Refs |
+|---|---|---|---|---|---|---|---|---|---|---|
+| T-0484 | Prelaunch reviewed PL slots 501–2500; deterministic packs and human lexical QA sample | content | content.pl | T-0440, T-0408 | CPL | CHEAP+HUMAN | high | none | high | FR-CONT-01, FR-CONT-05 |
+| T-0485 | Prelaunch reviewed PL slots 2501–5000; provenance, 100-slot spacing and QA sample | content | content.pl | T-0484 | CPL | CHEAP+HUMAN | high | none | high | FR-CONT-06 |
+| T-0486 | Prelaunch reviewed PL slots 5001–7500; provenance, 100-slot spacing and QA sample | content | content.pl | T-0485 | CPL | CHEAP+HUMAN | high | none | high | FR-CONT-06 |
+| T-0487 | Prelaunch reviewed PL slots 7501–10000; provenance, 100-slot spacing and QA sample | content | content.pl | T-0486 | CPL | CHEAP+HUMAN | high | none | high | FR-CONT-06 |
+| T-0488 | Owner lexical/UX QA 1–10000: all flagged cases and landmarks, complete first 100, stratified rest | content | content.pl | T-0487, T-0404 | CPL | HUMAN | high | none | high | FR-CONT-05 |
+| T-0489 | Mandatory public launch gate: exact 10000 manifest slots, hashes, deterministic replay, locks, Android/iOS and app size | test | docs | T-0488, T-0408, T-0411, T-0412 | DOC | SOL+HUMAN | high | none | high | FR-CONT-01, NFR-14 |
+
+### E33 Public soft launch: 10k PL gate
+Goal: a limited public release with at least 10,000 reviewed PL levels and trustworthy data. Exit: go decision executed.
 
 | ID | Title | Type | Area | Depends | Lane | Exec | Think | UI | Risk | Refs |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -671,13 +696,13 @@ Goal: a limited public release that produces trustworthy data. Exit: go decision
 | T-0446 | A/B experiment: ad frequency buckets (`ads.interstitial.min_levels_between`) in remote config + analysis plan | feat | data.config | T-0402 | DATA | SOL+HUMAN | high | none | high | FR-CFG-05, FR-ADS-09, PRODUCT.md#hypotheses-to-validate |
 | T-0447 | Soft-launch market decision (Q12, H3) | docs | docs | T-0402 | DOC | HUMAN | — | none | med | PRODUCT.md#hypotheses-to-validate, PRODUCT.md#open-questions |
 | T-0448 | Telemetry export: per-slot metrics (time, hints, abandon) and weekly top invalid strings → CSV for the pipeline | feat | tools | T-0411 | TOOL | SOL+HUMAN | med | none | med | FR-ANL-06, PRODUCT.md#funnels |
-| T-0449 | Opus soft-launch readiness audit: daily/streak UX, P3 economy, architecture, release pipeline | docs | docs | T-0427, T-0425, T-0440, T-0436, T-0442, T-0422, T-0433, T-0446, T-0411, T-0412, T-0475 | DOC | OPUS | high | med | med | dp11 §4, dp05 §2 |
+| T-0449 | Opus soft-launch readiness audit: daily/streak UX, P3 economy, architecture, release pipeline and 10k content evidence | docs | docs | T-0427, T-0425, T-0489, T-0436, T-0442, T-0422, T-0433, T-0446, T-0411, T-0412, T-0475 | DOC | OPUS | high | med | med | dp11 §4, dp05 §2 |
 | T-0450 | Final store listings, updated data-safety / privacy forms, production access (closed test complete), soft-launch countries | docs | store | T-0447, T-0449, T-0318 | STORE | HUMAN | — | med | high | PRODUCT.md#compliance-and-store-requirements |
-| T-0451 | GO / NO-GO soft launch: release checklist passes, crash-free target on the test cohort; on GO, staged rollout to the soft-launch countries | docs | docs | T-0450, T-0409, T-0410 | DOC | HUMAN | — | none | high | NFR-07, TESTING.md |
+| T-0451 | GO / NO-GO public soft launch: release checklist and 10,000 PL gate pass, crash-free test cohort; on GO, staged rollout to soft-launch countries | docs | docs | T-0450, T-0409, T-0410, T-0489 | DOC | HUMAN | — | none | high | NFR-07, TESTING.md |
 
 ### E34 Post-launch data loop
-Goal: decisions from data, content beyond 500. Exit: experiment read out, loops running weekly, 1000+
-PL levels.
+Goal: decisions from data after a 10,000-level public launch. Exit: experiment
+read out and weekly loops operating; 30,000 PL levels remain a postlaunch target.
 
 | ID | Title | Type | Area | Depends | Lane | Exec | Think | UI | Risk | Refs |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -687,8 +712,8 @@ PL levels.
 | T-0455 | Chris reviews the dictionary repair queue (weekly, recurring) | content | content.pl | T-0454 | CPL | HUMAN | — | none | med | dp11 §1, PRODUCT.md#hypotheses-to-validate |
 | T-0456 | Onboarding tuning from funnel F1 (config and copy; scene changes split into CHEAP tasks); if the change alters the teaching sequence or unlock moments (not only numbers or copy), Chris runs an Opus second opinion before the wave | feat | features.onboarding | T-0452 | SCR | SOL+HUMAN | med | high | med | FR-ONB-02, PRODUCT.md#funnels, dp05 §3.3 |
 | T-0457 | Experiment readout → default ad frequency; economy tuning from soft-launch data (sim + telemetry); Chris approves | feat | data.config | T-0452, T-0446 | DATA | SOL+HUMAN | high | none | high | FR-CFG-05, FR-ECON-06, PRODUCT.md#hypotheses-to-validate |
-| T-0458 | Content batch slots 501–750 with calibrated scoring + QA sampling | content | content.pl | T-0453, T-0440 | CPL | CHEAP+HUMAN | med | none | high | PRODUCT.md#goals-and-non-goals |
-| T-0483 | Content batch slots 751–1000 with calibrated scoring + QA sampling | content | content.pl | T-0458 | CPL | CHEAP+HUMAN | med | none | high | PRODUCT.md#goals-and-non-goals |
+| T-0458 | (dropped: slots 501–750 included before launch in T-0484) | content | content.pl | T-0484 | CPL | CHEAP+HUMAN | med | none | high | PRODUCT.md#goals-and-non-goals |
+| T-0483 | (dropped: slots 751–1000 included before launch in T-0484) | content | content.pl | T-0484 | CPL | CHEAP+HUMAN | med | none | high | PRODUCT.md#goals-and-non-goals |
 | T-0459 | Opus post-launch direction review: H2 postcards vs world-building, H3 market, which Later epic first | docs | docs | T-0457 | DOC | OPUS | high | low | low | dp05 §2, PRODUCT.md#hypotheses-to-validate |
 
 ### E35 EN content
@@ -729,7 +754,7 @@ Goal: confirm the Phase 3 exit criteria. Exit: Chris signs the row.
 
 | ID | Title | Type | Area | Depends | Lane | Exec | Think | UI | Risk | Refs |
 |---|---|---|---|---|---|---|---|---|---|---|
-| T-0477 | PHASE 3 EXIT: release from CI, daily + streak + ~500 PL levels live, ad-frequency experiment read out, dictionary and difficulty loops running, 1000+ PL levels, EN and DE content shipped (dropped rows count as done) | docs | docs | T-0453, T-0455, T-0456, T-0457, T-0459, T-0483, T-0445, T-0467, T-0474 | DOC | HUMAN | — | none | low | dp11 §4 |
+| T-0477 | PHASE 3 EXIT: release from CI, daily + streak + 10,000 reviewed PL levels since public launch, ad-frequency experiment read out, dictionary and difficulty loops running, postlaunch 30,000 PL target tracked, EN and DE content shipped (dropped rows count as done) | docs | docs | T-0453, T-0455, T-0456, T-0457, T-0459, T-0483, T-0445, T-0467, T-0474 | DOC | HUMAN | — | none | low | dp11 §4 |
 
 ## Later (data-gated)
 
@@ -888,7 +913,7 @@ Chris but listed in the Opus table above.
 | P2 | T-0282 | CHEAP+HUMAN | Game-feel tuning on device: Chris plays, CHEAP edits Motion/Ease values in `tokens.gd` |
 | P2 | T-0283 | CHEAP+HUMAN | Performance pass: 60 fps Level on low-end Android, no idle redraw, level load ≤ 100 ms timer in debug, cold start measured |
 | P2 | T-0289 | SOL+HUMAN | UI strings PL + EN for all P2 screens (no plural-dependent sentences; Chris approves PL); location names and facts |
-| P2 | T-0296 | CHEAP+HUMAN | Classify: batch AI classification (before this first production content run Chris switches the repo to private, with GitHub Pro if branch protection must stay), committed cache keyed (word, prompt version, model), two passes, disagreement CSV; Chris adds the API key as a CI / agent secret and sets a spend cap from the T-0031 cost-per-1k figure |
+| P2 | T-0296 | SOL | Offline Polish lexical-review queue from pinned tiers/frequency/morphology and explicit human decisions; 0 PLN AI/API cost, with Chris review remaining T-0304 |
 | P2 | T-0304 | HUMAN | Chris reviews the disagreement queue and flagged candidates → `overrides/pl.csv` (batch 1) |
 | P2 | T-0305 | HUMAN | Chris hand-makes onboarding levels 1–15 (YAML) per GAME_DESIGN.md#onboarding |
 | P2 | T-0307 | HUMAN | Chris plays 100 % of the first ~100 levels in debug; flags → overrides; rebuild |
@@ -949,7 +974,7 @@ Chris but listed in the Opus table above.
 | P3 | T-0481 | CHEAP+HUMAN | DE content batch slots 251–500 + QA sampling |
 | P3 | T-0482 | CHEAP+HUMAN | DE daily pool ≥90 days + native review |
 | P3 | T-0474 | SOL+HUMAN | DE store listing, privacy policy and consent texts |
-| P3 | T-0477 **(gate)** | HUMAN | PHASE 3 EXIT: release from CI, daily + streak + ~500 PL levels live, ad-frequency experiment read out, dictionary and difficulty loops running, 1000+ PL levels, EN and DE content shipped (dropped rows count as done) |
+| P3 | T-0477 **(gate)** | HUMAN | PHASE 3 EXIT: release from CI, daily + streak + 10,000 reviewed PL levels since public launch, ad-frequency experiment read out, dictionary and difficulty loops running, postlaunch 30,000 PL target tracked, EN and DE content shipped (dropped rows count as done) |
 
 Not listed as rows but always Chris's: merging every PR (glance for `low`, device check for `high`),
 skimming each planned wave (`plan/*` PR), and reviewing `content` PRs (word lists) before merge.
