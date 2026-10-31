@@ -1,0 +1,87 @@
+# T-0396 — Polish campaign wheel capacity preflight
+
+**Status:** evidence only, not a release authorization. Baseline: merged
+`main` commit `e1da1ee51cbb167e1f34f81c471d0e662c044d63`.
+Source: `pipeline/content-inputs/pl.json` (Git blob
+`b879469e6985c55f402314ac7afb3106bf850349`). Existing level pack:
+`game/content/pl/packs/c-0001-0065.json` (Git blob
+`46319d1406e391fbc159526cb57fe946c9af1961`).
+
+This inventory counts only *canonical sorted letter multisets* from
+`level_ok` source words and already-shipped wheel signatures. It does
+**not** establish that a source word was approved by a human, a crossword
+was generated, or the score/bonus/geometry will pass validation.
+
+| Current pinned evidence | Count |
+|---|---:|
+| Source `level_ok` words | 649 |
+| Source `bonus_ok` words | 890 |
+| Distinct source-backed wheel signatures | **486** |
+| Existing shipped levels/signatures (P1) | **65** |
+| Remaining distinct source wheel signatures | **421** |
+| Strict theoretical campaign ceiling with no identical multisets | **486** |
+| New unique source signatures needed for a 10,000-slot public release | **9,514** |
+| New unique source signatures needed for the 30,000-slot long-term target | **29,514** |
+
+A stricter **pre-geometry** indicator makes the shortage even clearer.
+Among all 486 source wheel signatures, only **263** can form at least two
+`level_ok` words and only **195** can form at least three. The 65 already
+shipped wheels occupy 63 and 55 of those respective groups. Preserving all
+existing wheels, the ceiling for a campaign that requires at least two source
+level words in each **new** level is **265**, or at least **9,735**
+additional eligible signatures for 10,000 levels. This does not itself prove
+that any wheel supports a connected crossword.
+
+The actual number of *publishable* crossword levels may be materially lower:
+a word wheel must also yield a connected, valid crossword, sensible difficulty
+and vocabulary, complete bonus sets, 100-slot selected-word spacing and quality
+review. The current P1 `candidates.automatic` inventory of 189 is a **curated
+subset**, not a replacement for the distinct tier-backed source count.
+
+## Owner-approved 2026-10-29 production intent
+
+- 200 levels: P2 review / testing milestone, not the public release.
+- 500 levels: private/closed QA milestone, not the public release.
+- **10,000 reviewed Polish levels**: prerequisite to first public rollout.
+- **30,000 Polish levels**: subsequent expansion target.
+- Exactly zero required paid LLM/API operations for word validity or
+  classification. The licensed SJP source, locally pinned morphology/frequency
+  evidence, and signed-off `overrides/pl.csv` are the validity source chain.
+
+## Full licensed source versus the compact P1 receipt
+
+The repository pins `pipeline/sources/sjp-pl.json` to
+`sjp-20260901.zip` (8,515,982 archive bytes, SHA-256
+`43796ccf34a8ba9b6e965588b842721056b5a89cad4c8c38e057f838d4eaa6a5`),
+declaring **3,245,600 dictionary entries**. This is a source *entry
+count*, **not** a count of common, approved, eligible wheels. The full
+archive was not obtained in this session, so no claim is made about the
+number of additional `level_ok` candidates it can produce.
+
+The next import must verify the exact pinned SHA-256 locally, reuse the
+licensed source and separately pinned morphology/frequency evidence,
+and send proposed classifications to human review. No fee-bearing
+classifier or fabricated word approvals are necessary.
+
+## Next necessary work
+
+1. Expand the licensed, provenance-pinned lexical *input* well beyond the
+   current compact P1 sample; inspect the full source and distinguish
+   `level_ok` from mere technically valid bonus forms. No invented source.
+2. Rebuild tier suggestions and a genuine human lexical review queue; do not
+   automatically approve a new word merely because it appears in a dictionary.
+3. Generate source-backed candidates and valid crossword geometries, then
+   deduplicate signatures and word selections across 10,000 slots.
+4. Benchmark deterministic generation/export, 100-slot spacing, app size,
+   mobile load time, locked released slots and owner quality sampling.
+5. Fail public release if the exact manifest and all QA conditions do not
+   demonstrate 10,000 reviewed campaign slots.
+
+## Reproduction
+
+Run the no-network tests:
+
+`uv run pytest pipeline/tests/candidates/test_campaign_capacity.py`
+
+The task's `audit_campaign_capacity(index, existing_wheels, target_slots=10000)`
+is a fast upper-bound checker, not an algorithm to create the missing levels.
