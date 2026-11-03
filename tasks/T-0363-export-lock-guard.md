@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0362]
 touch:
   - pipeline/src/wordgame_pipeline/export/__init__.py
@@ -70,3 +70,8 @@ Full check, fresh generated-pack review and all exact-head CI before merge.
 
 ## Rollback
 Revert removes export guard; existing locks and shipped content are unchanged.
+
+
+## Status reconciliation (2026-10-30)
+
+Implementation merged through PR [#246](https://github.com/krystiangaleczka-tech/World-of-Words/pull/246) before this plan; its exact-head CI passed 16/16 checks. This metadata correction does not change code, content packs or review policy.
