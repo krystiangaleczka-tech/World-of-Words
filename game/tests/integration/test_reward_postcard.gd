@@ -346,3 +346,22 @@ func test_full_postcard_light_frame_and_shadow_refresh_when_switching_presets() 
 		)
 		assert_eq(card.pieces_revealed, 2)
 		assert_eq(card.state, &"in_progress")
+
+
+func test_full_caption_stays_centred_beside_stamp_or_lock() -> void:
+	var card: LocationPostcard = _card(_viewport(), 4, 0)
+	var caption: Label = card.find_children("*", "Label", true, false)[0] as Label
+	for revealed: int in [0, 2, 4]:
+		assert_eq(card.configure(card.texture, 4, revealed), OK)
+		for frame: int in 3:
+			await get_tree().process_frame
+		assert_almost_eq(
+			caption.get_global_rect().get_center().x, card.get_global_rect().get_center().x, 0.5
+		)
+	assert_eq(card.configure(card.texture, 4, 4, &"thumb"), OK)
+	for frame: int in 3:
+		await get_tree().process_frame
+	assert_eq(caption.horizontal_alignment, HORIZONTAL_ALIGNMENT_LEFT)
+	assert_almost_eq(
+		caption.get_global_rect().end.x, card.get_global_rect().end.x - Tokens.Space.M, 0.5
+	)

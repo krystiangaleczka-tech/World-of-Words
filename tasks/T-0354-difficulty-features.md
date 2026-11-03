@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0127, T-0238]
 touch:
   - pipeline/src/wordgame_pipeline/scoring/__init__.py
@@ -68,3 +68,8 @@ read-only with unknown frequencies, finite results. Full check/review/exact-head
 
 ## Rollback
 Squash revert removes unused offline module; no shipped or persisted changes.
+
+
+## Merged-task status reconciliation (2026-10-30)
+
+Implementation was merged on main in [PR #237](https://github.com/krystiangaleczka-tech/World-of-Words/pull/237) with 16/16 exact-head CI success. Planner metadata corrected from stale `review` to `done`; executable code and released content were not changed.
