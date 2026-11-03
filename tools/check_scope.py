@@ -12,6 +12,20 @@ from pathlib import Path
 import tasks as task_tool
 
 BRANCH_RE = re.compile(r"^t/(?P<number>\d{4})-[A-Za-z0-9][A-Za-z0-9._-]*$")
+PLAN_RE = re.compile(r"^plan/[A-Za-z0-9][A-Za-z0-9._-]*$")
+PLAN_TASK_RE = re.compile(r"^tasks/T-\d{4}-[A-Za-z0-9][A-Za-z0-9._-]*\.md$")
+PLAN_EPIC_RE = re.compile(r"^tasks/epics/E\d{2}-[A-Za-z0-9][A-Za-z0-9._-]*\.md$")
+PLAN_DOCS = frozenset(
+    {
+        "docs/PRODUCT.md",
+        "docs/CONTENT.md",
+        "docs/DESIGN.md",
+        "docs/GAME_DESIGN.md",
+        "docs/ARCHITECTURE.md",
+        "docs/TESTING.md",
+        "tasks/ROADMAP.md",
+    }
+)
 
 
 class ScopeError(Exception):
@@ -150,6 +164,17 @@ def _outside_scope(changed: Sequence[str], touch: Sequence[str], task_file: str)
     ]
 
 
+def _outside_planner_scope(changed: Sequence[str]) -> list[str]:
+    """Planner branches may alter contract documentation and task metadata only."""
+    return [
+        path
+        for path in changed
+        if path not in PLAN_DOCS
+        and not PLAN_TASK_RE.fullmatch(path)
+        and not PLAN_EPIC_RE.fullmatch(path)
+    ]
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Check changed files against the current task scope."
@@ -161,22 +186,29 @@ def main(argv: Sequence[str] | None = None) -> int:
     root = args.root.resolve()
     try:
         branch = _branch_name(root)
-        task, task_path = _task_for_branch(root, branch)
         requested_base = args.base or os.environ.get("GITHUB_BASE_REF", "").strip() or "main"
         base = _base_ref(root, requested_base)
         changed = _changed_files(root, base)
-        task_file = task_path.relative_to(root).as_posix()
-        outside = _outside_scope(changed, task.touch, task_file)
+        if PLAN_RE.fullmatch(branch):
+            if not changed:
+                raise ScopeError("planning PR must contain changed files")
+            outside = _outside_planner_scope(changed)
+            label = "planner"
+        else:
+            task, task_path = _task_for_branch(root, branch)
+            task_file = task_path.relative_to(root).as_posix()
+            outside = _outside_scope(changed, task.touch, task_file)
+            label = task.id
     except (OSError, ScopeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
 
     if outside:
         for path in outside:
-            print(f"ERROR: {path} is outside {task.id} touch allowlist", file=sys.stderr)
+            print(f"ERROR: {path} is outside {label} touch allowlist", file=sys.stderr)
         return 1
 
-    print(f"OK: {task.id} scope contains {len(changed)} changed file(s)")
+    print(f"OK: {label} scope contains {len(changed)} changed file(s)")
     return 0
 
 
