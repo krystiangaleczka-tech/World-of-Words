@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0357]
 touch:
   - pipeline/src/wordgame_pipeline/sequence/slots.py
@@ -64,3 +64,8 @@ results, huge one-slot lookup with no full allocation. Full checks/review/all CI
 
 ## Rollback
 Revert removes unused plan contract; published slots/files remain unchanged.
+
+
+## Merged-task status reconciliation (2026-10-30)
+
+Implementation was merged on main in [PR #241](https://github.com/krystiangaleczka-tech/World-of-Words/pull/241) with 16/16 exact-head CI success. Planner metadata corrected from stale `review` to `done`; executable code and released content were not changed.

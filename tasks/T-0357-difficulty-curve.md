@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0356]
 touch:
   - pipeline/src/wordgame_pipeline/sequence/**
@@ -66,3 +66,8 @@ landmarks/slots/file/duplicate JSON and nonmutation. Full check/fresh review/all
 
 ## Rollback
 Squash revert removes unused target calculation; no generated/persisted changes.
+
+
+## Merged-task status reconciliation (2026-10-30)
+
+Implementation was merged on main in [PR #240](https://github.com/krystiangaleczka-tech/World-of-Words/pull/240) with 16/16 exact-head CI success. Planner metadata corrected from stale `review` to `done`; executable code and released content were not changed.
