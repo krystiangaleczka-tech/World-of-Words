@@ -8,7 +8,7 @@ risk: low
 executor: sol
 think: med
 ui: none
-status: review
+status: done
 depends_on: [T-0354, T-0355, T-0366]
 touch:
   - pipeline/src/wordgame_pipeline/scoring/drift.py
