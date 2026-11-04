@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0359]
 touch:
   - pipeline/src/wordgame_pipeline/sequence/preview.py
@@ -80,3 +80,8 @@ release locks, tier/bonus semantic certification, export/validator/handler chang
 
 ## Rollback
 Revert removes an unused planning command; published content and game are unchanged.
+
+
+## Merged-task status reconciliation (2026-10-30)
+
+Implementation was merged on main in [PR #243](https://github.com/krystiangaleczka-tech/World-of-Words/pull/243) with 16/16 exact-head CI success. Planner metadata corrected from stale `review` to `done`; executable code and released content were not changed.
