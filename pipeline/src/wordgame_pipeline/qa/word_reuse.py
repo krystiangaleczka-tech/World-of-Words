@@ -27,7 +27,7 @@ def review_word_reuse(levels: list | tuple, *, minimum_levels: int) -> tuple[Wor
         slot, placements = level.get("slot"), level.get("words")
         if (
             type(slot) is not int
-            or not 1 <= slot <= 9999
+            or slot < 1
             or slot in positions
             or level.get("id") != f"pl-c-{slot:06d}"
             or not isinstance(placements, list)
