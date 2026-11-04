@@ -15,8 +15,13 @@ Current P1 schemas, geometry and tier contracts are already merged. These module
 are not activated by P1 stage selection and do not regenerate shipped content.
 
 ## Gates
-T-0296 production classification still requires private repository/API key/spend
-cap and human authorization; no call is inferred. T-0297 suggestion integration,
+Owner direction 2026-10-29: use dictionaries and explicit human review, with 0 PLN AI
+API cost. The historical T-0031 experimental PR is not a production dependency.
+The T-0143 FUN gate remains unresolved for release and is not claimed complete.
+
+T-0296 is replanned as a zero-cost, source-backed offline lexical review queue: no AI
+model, API key, spend cap, network call or privacy upgrade. It never infers human
+approval. T-0297 consumes only explicit source rules and reviewed human dispositions;
 production weights/calibration, curve/sequence integration, handmade levels1–15,
 200-level production build and Chris's lexical/playtest review remain open.
 No new content word, travel name/fact or release approval is invented by this wave.
