@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0360]
 touch:
   - pipeline/src/wordgame_pipeline/validate/locks.py
@@ -63,3 +63,8 @@ symlink/FIFO paths and deterministic replacement races; no mutations/writes. Ful
 
 ## Rollback
 Revert unused contract; no release baseline or shipped files have changed.
+
+
+## Merged-task status reconciliation (2026-10-30)
+
+Implementation was merged on main in [PR #244](https://github.com/krystiangaleczka-tech/World-of-Words/pull/244) with 16/16 exact-head CI success. Planner metadata corrected from stale `review` to `done`; executable code and released content were not changed.

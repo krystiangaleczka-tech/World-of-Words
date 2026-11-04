@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0364]
 touch:
   - pipeline/src/wordgame_pipeline/filesystem.py
@@ -70,3 +70,8 @@ existing loader static/race suite. Full check/fresh pack review/exact-head CI.
 
 ## Rollback
 Revert proposal service and shared-read extraction; no baseline/content was written.
+
+
+## Status reconciliation (2026-10-30)
+
+Implementation merged through PR [#248](https://github.com/krystiangaleczka-tech/World-of-Words/pull/248) before this plan; its exact-head CI passed 16/16 checks. This metadata correction does not change code, content packs or review policy.

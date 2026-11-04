@@ -34,6 +34,7 @@ var _art: PieceArt
 var _caption: Label
 var _stamp: TextureRect
 var _lock: TextureRect
+var _balance: Control
 var _reveal: Tween
 var _refreshing: bool = false
 var _layout_guard: bool = false
@@ -179,9 +180,14 @@ func _ready() -> void:
 	row.add_child(_stamp)
 	_lock = CatalogSurface.icon(preload("res://assets/icons/lock.svg"))
 	row.add_child(_lock)
+	# Mirrors the stamp/lock slot so the full caption stays centred on the card.
+	_balance = Control.new()
+	_balance.custom_minimum_size.x = _stamp.custom_minimum_size.x
+	_balance.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_caption = CatalogSurface.label(&"Caption")
 	_caption.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(_caption)
+	row.add_child(_balance)
 	_connect_layout()
 	_refresh_copy()
 	_refresh_theme()
@@ -200,6 +206,7 @@ func _refresh_copy() -> void:
 		_caption.text = tr(COMPLETE_KEY) if complete else str(_revealed) + " / " + str(_total)
 		_stamp.visible = complete
 		_lock.visible = state == &"locked"
+		_balance.visible = _preset == &"full" and (_stamp.visible or _lock.visible)
 		_art.queue_redraw()
 
 
