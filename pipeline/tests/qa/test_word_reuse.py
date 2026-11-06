@@ -37,10 +37,7 @@ def test_exact_repeat_counts_order_and_threshold():
 
 def test_first_five_digit_slot_is_reviewable_without_a_legacy_9999_cap():
     # 10,000 reviewed slots are a hard public-launch gate; this is only a report.
-    rows = [
-        level(slot, ("KOT",) if slot in (1, 10_000) else ("DOM",))
-        for slot in range(1, 10_001)
-    ]
+    rows = [level(slot, ("KOT",) if slot in (1, 10_000) else ("DOM",)) for slot in range(1, 10_001)]
     report = review_word_reuse(rows, minimum_levels=2)
     assert report[0].word == "DOM"
     assert len(report[0].slots) == 9_998
