@@ -1,5 +1,6 @@
 """Full Draft 2020-12 validation with registered local resources only."""
 
+import copy
 import math
 from pathlib import Path
 
@@ -11,6 +12,12 @@ from referencing.exceptions import NoSuchResource, Unresolvable
 from ..config import parse_json
 
 DIALECT = "https://json-schema.org/draft/2020-12/schema"
+# The shipped P1 receipt pins the literal manifest.schema.json bytes. For 10k+
+# campaigns, widen *only* the in-memory validator and retain the original schema.
+LARGE_PACK_PATH = (
+    r"^packs/c-(?:[0-9]{4}|[1-9][0-9]{4})-"
+    r"(?:[0-9]{4}|[1-9][0-9]{4})\.json$(?![\s\S])"
+)
 
 
 def json_value(value: object, path: str = "$", active: frozenset[int] = frozenset()) -> None:
@@ -84,11 +91,22 @@ class SchemaRegistry:
             name: Draft202012Validator(document, registry=registry)
             for name, document in self.documents.items()
         }
+        large = copy.deepcopy(self.documents["manifest"])
+        large["properties"]["packs"]["items"]["properties"]["file"]["pattern"] = LARGE_PACK_PATH
+        self.large_manifest_validator = self.validators["manifest"].evolve(schema=large)
 
     def validate_schema(self, name: str, document: object) -> None:
         if name not in self.validators:
             raise ValueError(f"Unknown registered schema: {name}")
-        validate_with(self.validators[name], document)
+        if (
+            name == "manifest"
+            and isinstance(document, dict)
+            and type(document.get("slots")) is int
+            and document["slots"] > 9_999
+        ):
+            validate_with(self.large_manifest_validator, document)
+        else:
+            validate_with(self.validators[name], document)
 
     def validate_fragment(self, name: str, field: str, document: object) -> None:
         if name not in self.validators or field not in self.documents[name]["properties"]:

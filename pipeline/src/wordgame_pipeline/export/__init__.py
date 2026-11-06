@@ -6,6 +6,7 @@ from pathlib import Path
 from .. import __version__
 from ..candidates.core import WordIndex
 from ..config import LanguageConfig, canonical_bytes
+from ..content_limits import pack_filename, validate_campaign_slots
 from ..stages import P1_STAGES, StageHandler, read_artifact
 from ..validate import SchemaRegistry, validate_level
 from ..validate import handlers_for as validation_handlers
@@ -15,8 +16,7 @@ from ..validate.locks import load_release_lock, verify_release_lock
 def assemble(
     previous: dict, slots: int, version: int, index: WordIndex, registry: SchemaRegistry
 ) -> dict:
-    if type(slots) is not int or not 15 <= slots <= 9999:
-        raise ValueError("Export slots must be an integer from 15 to 9999")
+    validate_campaign_slots(slots, minimum=15)
     if type(version) is not int or version < 1:
         raise ValueError("Export content version must be a positive integer")
     authored = {entry["slot"]: entry for entry in previous["handmade"]}
@@ -87,7 +87,7 @@ def assemble(
     packs: list[dict] = []
     for offset in range(0, slots, 100):
         first, last = offset + 1, min(offset + 100, slots)
-        name = f"packs/c-{first:04d}-{last:04d}.json"
+        name = pack_filename(first, last)
         pack = {
             "schema_version": 1,
             "lang": "pl",
