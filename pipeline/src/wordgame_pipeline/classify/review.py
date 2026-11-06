@@ -123,11 +123,11 @@ def _validated_tiers(
             "tier_counts",
             "unmatched_overrides",
         }
-        or payload.get("source") != expected_source
-        or payload.get("annotation_sources") != expected_annotations
+        or canonical_bytes(payload.get("source")) != canonical_bytes(expected_source)
+        or canonical_bytes(payload.get("annotation_sources"))
+        != canonical_bytes(expected_annotations)
         or payload.get("overrides_sha256") != _digest(override_raw)
-        or payload.get("tier_rules")
-        != parse_json(canonical_bytes(asdict(config.tier_rules)).decode("utf-8"))
+        or canonical_bytes(payload.get("tier_rules")) != canonical_bytes(asdict(config.tier_rules))
         or payload.get("tier_rules_sha256") != _digest(canonical_bytes(asdict(config.tier_rules)))
     ):
         raise ValueError("Unpinned tier evidence, rules or overrides")

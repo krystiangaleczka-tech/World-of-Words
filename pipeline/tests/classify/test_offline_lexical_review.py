@@ -297,3 +297,17 @@ def test_malformed_candidate_types_fail_with_validation_error(words):
     config, artifact = _fixture()
     with pytest.raises(ValueError, match="Candidates"):
         _run(artifact, config, words=words)
+
+
+@pytest.mark.parametrize("kind", ["source", "annotation_sources"])
+def test_source_pin_numeric_types_must_match_exactly(kind):
+    config, artifact = _fixture()
+    # Do not mutate the independently loaded expected pins.
+    artifact = deepcopy(artifact)
+    if kind == "source":
+        artifact["payload"][kind]["archive_bytes"] = float(SOURCE["archive_bytes"])
+    else:
+        entry = artifact["payload"][kind]["frequency"]["files"]["orth"]
+        entry["bytes"] = float(entry["bytes"])
+    with pytest.raises(ValueError, match="Unpinned"):
+        _run(artifact, config)
