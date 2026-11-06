@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: none
-status: review
+status: done
 depends_on: [T-0127, T-0131]
 touch:
   - pipeline/src/wordgame_pipeline/content_limits.py

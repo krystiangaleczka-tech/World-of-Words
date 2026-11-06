@@ -8,7 +8,7 @@ risk: low
 executor: sol
 think: med
 ui: none
-status: review
+status: done
 depends_on: [T-0374]
 touch:
   - pipeline/src/wordgame_pipeline/grid/intersections.py
