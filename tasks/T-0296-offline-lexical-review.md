@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: high
 ui: none
-status: ready
+status: review
 depends_on: [T-0123, T-0127]
 touch:
   - pipeline/src/wordgame_pipeline/classify/**
