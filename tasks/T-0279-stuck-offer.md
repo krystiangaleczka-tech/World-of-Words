@@ -8,7 +8,7 @@ risk: low
 executor: sol
 think: med
 ui: med
-status: review
+status: done
 depends_on: [T-0278]
 touch:
   - game/features/level/level.gd

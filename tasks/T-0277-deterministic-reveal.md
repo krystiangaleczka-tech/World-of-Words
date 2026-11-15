@@ -8,7 +8,7 @@ risk: medium
 executor: cheap
 think: med
 ui: none
-status: review
+status: done
 depends_on: [T-0102, T-0203]
 touch:
   - game/core/board/hint_logic.gd

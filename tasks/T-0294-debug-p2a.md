@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: med
 ui: low
-status: review
+status: done
 depends_on: [T-0271, T-0233]
 touch:
   - game/features/debug/debug.gd

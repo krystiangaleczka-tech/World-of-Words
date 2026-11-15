@@ -8,7 +8,7 @@ risk: low
 executor: cheap
 think: low
 ui: none
-status: review
+status: done
 depends_on: [T-0255, T-0234]
 touch:
   - game/tests/integration/test_config_timeline_constraints.gd*

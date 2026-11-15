@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: med
 ui: low
-status: review
+status: done
 depends_on: [T-0294, T-0255, T-0251]
 touch:
   - game/services/clock.gd
