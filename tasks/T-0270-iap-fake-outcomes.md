@@ -8,7 +8,7 @@ risk: high
 executor: cheap
 think: med
 ui: none
-status: review
+status: done
 depends_on: [T-0261]
 touch:
   - game/platform/iap/iap_fake.gd

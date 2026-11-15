@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: med
 ui: none
-status: review
+status: done
 depends_on: [T-0262, T-0342]
 touch:
   - game/platform/consent/consent_adapter.gd
