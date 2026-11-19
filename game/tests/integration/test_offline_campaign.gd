@@ -75,6 +75,15 @@ func _attempt(level: LevelScreen, word: String) -> void:
 	level.wheel.word_attempted.emit(tiles)
 
 
+func test_level_with_no_matching_art_uses_the_solid_theme_fill() -> void:
+	assert_eq(_nav.start(_host, "res://tests/fixtures/content"), OK)
+	var level: LevelScreen = _nav.mounted_screen() as LevelScreen
+	assert_null(level.background)
+	var fill: ColorRect = level.get(&"_background") as ColorRect
+	assert_eq(fill.color, Tokens.Palette.BG)
+	assert_true(fill.visible)
+
+
 func test_real_navigation_grants_each_slot_once_and_connects_home() -> void:
 	assert_eq(_nav.start(_host), OK)
 	var reward: int = _config.get_int(&"economy.reward.level_complete")

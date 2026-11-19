@@ -14,6 +14,16 @@ signal layout_class_changed(value: StringName)
 		background = value
 		if is_instance_valid(_art):
 			_art.texture = value
+## @api Opacity of the decorative background over the theme's solid fill.
+@export_range(0.0, 1.0) var background_opacity: float = 1.0:
+	set(value):
+		background_opacity = clampf(value, 0.0, 1.0)
+		_refresh_background()
+## @api Use the solid theme fill in high contrast when artwork is purely decorative.
+@export var hide_background_in_high_contrast: bool = false:
+	set(value):
+		hide_background_in_high_contrast = value
+		_refresh_background()
 @export var top_bar: TopBar:
 	set(value):
 		if value == top_bar or value == bottom and value != null:
@@ -197,6 +207,10 @@ func _refresh_background() -> void:
 			get_theme_color(&"BG", &"Palette")
 			if has_theme_color(&"BG", &"Palette")
 			else Tokens.Palette.BG
+		)
+		_art.self_modulate.a = background_opacity
+		_art.visible = (
+			not hide_background_in_high_contrast or _background.color != Tokens.PaletteHC.BG
 		)
 
 

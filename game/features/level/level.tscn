@@ -2,3 +2,4 @@
 [ext_resource type="Script" path="res://features/level/level.gd" id="1"]
 [node name="Level" type="Control"]
 script = ExtResource("1")
+hide_background_in_high_contrast = true
