@@ -70,7 +70,9 @@ def _arrange_band(
             None,
         )
         if first is None:
-            raise ValueError(f"Difficulty band {band.number} has no eligible opening crossword")
+            raise ValueError(
+                f"Difficulty band {band.number} has no eligible opening at slot {band.first}"
+            )
         place(remaining.pop(first))
 
     counts = Counter(word for candidate in remaining for word in candidate.words)
