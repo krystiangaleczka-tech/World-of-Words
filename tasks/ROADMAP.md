@@ -486,7 +486,8 @@ loop matches DESIGN flows and Chris accepts the feel on device.
 | T-0279 | Stuck-player offer: idle seconds / invalid streak → HintButton pulse + inline label, once per level | feat | level.hud | T-0278 | LVL | CHEAP | low | med | low | FR-HINT-07 |
 | T-0280 | BonusMeter in Level: persistent count, chest opens on Level complete (never mid-level), reward | feat | level.hud | T-0279, T-0231 | LVL | CHEAP | med | med | med | FR-BONUS-02, FR-BONUS-03 |
 | T-0281 | Level complete P2: stars, coin count-up, postcard progress, chest RewardBurst, Continue calls `Monetization.before_next_level` then loads the next level (no ordering logic in the scene), x2 rewarded | feat | level.flow | T-0280, T-0242, T-0263, T-0220 | LVL | CHEAP | med | high | high | FR-ECON-05, FR-META-01, DESIGN.md#level-complete, DESIGN.md#flow-level-complete |
-| T-0282 | Game-feel tuning on device: Chris plays, CHEAP edits Motion/Ease values in `tokens.gd` | feat | ui.tokens | T-0281, T-0227, T-0228 | UI | CHEAP+HUMAN | med | high | low | DESIGN.md#level-motion, NFR-01 |
+| T-0397 | Connect the offline P2 campaign to real boot and navigation using the existing durable owners | feat | services.nav | T-0242, T-0243, T-0278, T-0281, T-0291, T-0292, T-0333 | META | SOL | high | high | high | FR-CORE-08, FR-ECON-05, FR-ONB-02..03, NFR-06 |
+| T-0282 | Game-feel tuning on device: Chris plays, CHEAP edits Motion/Ease values in `tokens.gd` | feat | ui.tokens | T-0397, T-0227, T-0228 | UI | CHEAP+HUMAN | med | high | low | DESIGN.md#level-motion, NFR-01 |
 | T-0283 | Performance pass: 60 fps Level on low-end Android, no idle redraw, level load ≤ 100 ms timer in debug, cold start measured | feat | level.flow | T-0282 | LVL | CHEAP+HUMAN | high | low | med | NFR-02..04, NFR-08 |
 
 ### E21 Onboarding, settings, localization, debug
@@ -509,6 +510,7 @@ T-0323 shows no blocker; every setting applies immediately.
 | T-0329 | Debug P2b: clock offset, active config + buckets, live analytics event log | feat | features.debug | T-0294, T-0255, T-0251 | SCR | CHEAP | low | low | low | FR-DEBUG-04 |
 | T-0295 | Offline and error states: content load failure StatePanel, backup-restored Toast, save-lost panel | feat | services.nav | T-0243, T-0217 | META | CHEAP | med | med | med | DESIGN.md#flow-offline-and-errors, FR-SAVE-03, NFR-06 |
 | T-0328 | Analytics listener P2b: consent_result, att_result, ad_offer_shown / ad_shown / ad_reward_earned / ad_failed, shop_opened, iap_*, settings_changed, remote_config_applied, experiment_assigned, hint_stuck_offer_shown, onboarding_step, feature_unlocked | feat | services.analytics | T-0251, T-0255, T-0265, T-0271, T-0274, T-0279, T-0286, T-0292 | DATA | CHEAP | med | none | med | FR-ANL-01, FR-ONB-05, PRODUCT.md#core-events-seed-of-the-registry, PRODUCT.md#funnels |
+| T-0398 | Route to Settings from normal play, apply committed preferences and expose offline licences | feat | services.nav | T-0397, T-0286, T-0287, T-0348 | META | SOL | high | high | med | FR-SET-01..04, FR-LOC-01, DESIGN.md#settings |
 
 ### E22 PL content production
 2026-10-29 owner-directed replan: zero-cost offline lexical review replaces the T-0296 paid-model
@@ -570,7 +572,7 @@ Goal: prove the slice. Exit: the Phase 2 exit criteria.
 | ID | Title | Type | Area | Depends | Lane | Exec | Think | UI | Risk | Refs |
 |---|---|---|---|---|---|---|---|---|---|---|
 | T-0258 | Funnels F1–F3 defined in the provider dashboard; event QA on device for the P2a and P2b listeners | test | data.analytics | T-0253, T-0328 | DATA | HUMAN | — | none | low | PRODUCT.md#funnels |
-| T-0322 | Device checklist on 3 reference devices (`TESTING.md`): offline / airplane mode, interruptions, clean-install first 10 minutes, battery and thermal, cold start | test | docs | T-0283, T-0275, T-0267, T-0307, T-0293, T-0295, T-0258, T-0221, T-0256, T-0257, T-0289, T-0310, T-0311, T-0329 | DOC | HUMAN | — | high | high | NFR-04, NFR-06, NFR-08, NFR-11, dp08 §2 |
+| T-0322 | Device checklist on 3 reference devices (`TESTING.md`): offline / airplane mode, interruptions, clean-install first 10 minutes, battery and thermal, cold start | test | docs | T-0283, T-0275, T-0267, T-0307, T-0293, T-0295, T-0258, T-0221, T-0256, T-0257, T-0289, T-0310, T-0311, T-0329, T-0398 | DOC | HUMAN | — | high | high | NFR-04, NFR-06, NFR-08, NFR-11, dp08 §2 |
 | T-0323 | Onboarding playtest: 5 new players through level 15; funnel observed | test | docs | T-0322 | DOC | HUMAN | — | high | med | FR-ONB-02, FR-ONB-04 |
 | T-0324 | Opus slice audit (UX, economy, architecture) on context pack + screenshots + sim report | docs | docs | T-0322, T-0237 | DOC | OPUS | high | high | med | dp11 §4, dp05 §2 |
 | T-0325 | PHASE 2 EXIT: sandbox IAP + ads pass, checklist pass on 3 devices, no critical audit findings, Chris: "I would download it" | docs | docs | T-0323, T-0324, T-0318, T-0319, T-0321, T-0317 | DOC | HUMAN | — | high | high | dp11 §4 |

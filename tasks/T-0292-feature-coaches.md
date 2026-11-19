@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: high
 ui: high
-status: review
+status: done
 depends_on: [T-0291]
 touch:
   - game/features/onboarding/feature_coaches.gd*

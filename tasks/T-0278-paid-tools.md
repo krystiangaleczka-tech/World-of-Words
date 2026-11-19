@@ -8,7 +8,7 @@ risk: high
 executor: sol
 think: high
 ui: high
-status: review
+status: done
 depends_on: [T-0276, T-0277, T-0263, T-0274, T-0336, T-0337]
 touch:
   - game/features/level/level.gd
