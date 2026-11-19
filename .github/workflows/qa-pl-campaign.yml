@@ -1,0 +1,112 @@
+name: Polish 10000-level QA campaign
+
+on:
+  push:
+    branches: [t/0490-pl-10000-candidate-build]
+    paths:
+      - .github/workflows/qa-pl-campaign.yml
+      - pipeline/src/wordgame_pipeline/qa_campaign.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: pl-10000-qa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and verify the Polish QA campaign
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    container:
+      image: ghcr.io/krystiangaleczka-tech/world-of-words-toolchain:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test deterministic wheel selection
+        run: uv run --frozen pytest pipeline/tests/test_qa_campaign.py
+      - name: Prepare the known proposal and full-source staging root
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin 4ba00fe77b4b2a5e9ea0396693cf2a49ea85a22b
+          git show FETCH_HEAD:pipeline/reviews/pl/T-0306-200-level-candidates.json \
+            > "$RUNNER_TEMP/wow-proposals.json"
+          uv run --frozen python -m wordgame_pipeline.qa_campaign \
+            prepare "$RUNNER_TEMP/wow-source"
+      - name: Verify and annotate the licensed November snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          uv run --frozen --all-packages --extra annotate wg build \
+            --root "$RUNNER_TEMP/wow-source" --lang pl --to tiers
+      - name: Generate and read back every campaign slot
+        shell: bash
+        run: |
+          set -euo pipefail
+          uv run --frozen python -m wordgame_pipeline.qa_campaign \
+            build "$RUNNER_TEMP/wow-source" "$RUNNER_TEMP/wow-proposals.json" \
+            "$RUNNER_TEMP/wow-preview"
+          cat "$RUNNER_TEMP/wow-preview/report.json" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: world-of-words-pl-10000-qa-content
+          path: ${{ runner.temp }}/wow-preview/
+          if-no-files-found: error
+          retention-days: 14
+      - uses: actions/checkout@v4
+        with:
+          ref: 9bcf6c50b78cbc732c7c6a1d1ed476189cd1748c
+          path: qa-app
+          persist-credentials: false
+      - name: Package the draft with the last offline Android game build
+        working-directory: qa-app
+        shell: bash
+        run: |
+          set -euo pipefail
+          mv game/content/pl "$RUNNER_TEMP/wow-original-content"
+          cp -a "$RUNNER_TEMP/wow-preview/content/pl" game/content/pl
+          uv run --frozen python tools/android_debug_build.py \
+            --templates /root/.local/share/godot/export_templates/4.7.2.stable \
+            --output "$RUNNER_TEMP/wow-apk/world-of-words-pl-10000-qa.apk"
+      - name: Check representative slots in the exported Godot package
+        working-directory: qa-app
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > "$RUNNER_TEMP/wow-preview-smoke.gd" <<'GD'
+          extends SceneTree
+
+          func _initialize() -> void:
+              _verify.call_deferred()
+
+          func _verify() -> void:
+              var content: Node = root.get_node("Content")
+              if content.load_manifest("pl") != OK or content.slot_count() != 10000:
+                  push_error("Expected 10,000 Polish campaign slots")
+                  quit(1)
+                  return
+              for slot: int in [1, 65, 66, 200, 201, 2500, 5000, 7500, 9999, 10000]:
+                  var level: RefCounted = content.level_for_slot(slot)
+                  if level == null or level.get_slot() != slot:
+                      push_error("Packaged level could not load at slot %s" % slot)
+                      quit(1)
+                      return
+              print("Verified packaged PL slots 1, 65, 66, 200, 201, 2500, 5000, 7500, 9999, 10000")
+              quit()
+          GD
+          godot --headless --main-pack "$RUNNER_TEMP/wow-apk/android-debug-content.zip" \
+            --script "$RUNNER_TEMP/wow-preview-smoke.gd"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: world-of-words-pl-10000-qa-android
+          path: |
+            ${{ runner.temp }}/wow-apk/world-of-words-pl-10000-qa.apk
+            ${{ runner.temp }}/wow-apk/android-debug-verification.txt
+          if-no-files-found: error
+          retention-days: 14
