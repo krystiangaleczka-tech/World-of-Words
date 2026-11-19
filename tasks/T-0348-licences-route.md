@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: high
 ui: high
-status: review
+status: done
 depends_on: [T-0347, T-0340]
 touch:
   - game/features/settings/licences_route.gd*
