@@ -2,10 +2,12 @@ name: Polish 10000-level QA campaign
 
 on:
   push:
-    branches: [t/0490-pl-10000-candidate-build]
+    branches: [t/0490-pl-10000-candidate-build, t/0491-pl-10000-difficulty]
     paths:
       - .github/workflows/qa-pl-campaign.yml
       - pipeline/src/wordgame_pipeline/qa_campaign.py
+      - pipeline/src/wordgame_pipeline/sequence/qa_progression.py
+      - pipeline/config/qa-campaign-scoring.json
   workflow_dispatch:
 
 permissions:
@@ -28,8 +30,10 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
-      - name: Test deterministic wheel selection
-        run: uv run --frozen pytest pipeline/tests/test_qa_campaign.py
+      - name: Test deterministic wheel selection and progression
+        run: >-
+          uv run --frozen pytest pipeline/tests/test_qa_campaign.py
+          pipeline/tests/sequence/test_qa_progression.py
       - name: Prepare the known proposal and full-source staging root
         shell: bash
         run: |
@@ -88,8 +92,12 @@ jobs:
 
           func _verify() -> void:
               var content: Node = root.get_node("Content")
-              if content.load_manifest("pl") != OK or content.slot_count() != 10000:
-                  push_error("Expected 10,000 Polish campaign slots")
+              if (
+                  content.load_manifest("pl") != OK
+                  or content.slot_count() != 10000
+                  or content.content_version() != 4
+              ):
+                  push_error("Expected the 10,000-slot Polish difficulty campaign")
                   quit(1)
                   return
               for slot: int in [1, 65, 66, 200, 201, 2500, 5000, 7500, 9999, 10000]:

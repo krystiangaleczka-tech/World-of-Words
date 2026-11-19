@@ -6,7 +6,7 @@ import hashlib
 import shutil
 import tempfile
 from collections import Counter, defaultdict, deque
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 from . import __version__
@@ -18,7 +18,10 @@ from .dedupe.core import CROSSWORD_SPACING
 from .grid import make_level
 from .grid.builder import SearchOptions, build_grid
 from .grid.geometry import Placement, validate_geometry
+from .scoring import load_scoring
+from .sequence.qa_progression import Progression, plan_progression
 from .stages import read_artifact, select_stages
+from .tiers.core import arf
 from .validate import SchemaRegistry, validate_level
 from .validate.locks import load_release_lock, verify_release_lock
 
@@ -88,7 +91,9 @@ def stage_sources(repo_pipeline: Path, target: Path) -> None:
     (sources / "sjp-pl.json").write_bytes(canonical_bytes(SOURCE))
 
 
-def prepare_indexes(staged: Path) -> tuple[WordIndex, WordIndex, dict, str]:
+def prepare_indexes(
+    staged: Path,
+) -> tuple[WordIndex, WordIndex, dict[str, str], dict[str, float | None], str]:
     config = load_config(staged, "pl")
     payload, raw = read_artifact(staged, config, select_stages("tiers", "tiers")[0])
     expected = provenance(staged, config)
@@ -100,7 +105,8 @@ def prepare_indexes(staged: Path) -> tuple[WordIndex, WordIndex, dict, str]:
     level_records = [r for r in records if r["tier"] == "level_ok"]
     lead = WordIndex(level_records, config)
     notes = {r["word"]: r["tier_reason"] for r in level_records}
-    return lead, WordIndex(records, config), notes, hashlib.sha256(raw).hexdigest()
+    frequencies = {r["word"]: arf(r["frequency"]) for r in level_records}
+    return lead, WordIndex(records, config), notes, frequencies, hashlib.sha256(raw).hexdigest()
 
 
 def inventory(lead: WordIndex, used: set[str]) -> dict[int, deque[Wheel]]:
@@ -216,7 +222,8 @@ def write_packs(
         **manifest,
         "slots": len(levels),
         "packs": packs,
-        "content_version": manifest["content_version"] + 1,
+        # The first QA version used +1 and kept candidate generation order.
+        "content_version": manifest["content_version"] + 2,
     }
     (root / "manifest.json").write_bytes(canonical_bytes(updated))
     verified, raw_manifest = bundle(root, registry)
@@ -231,12 +238,23 @@ def write_packs(
     return len(packs), hashlib.sha256(raw_manifest).hexdigest()
 
 
-def write_review(output: Path, levels: list[dict], notes: dict) -> None:
+def write_review(output: Path, levels: list[dict], notes: dict, progression: Progression) -> None:
     use: dict[str, list[int]] = defaultdict(list)
     with (output / "levels.csv").open("w", encoding="utf-8", newline="") as file:
         rows = csv.writer(file)
         rows.writerow(
-            ["slot", "wheel", "answers", "grid_width", "grid_height", "bonus_count", "review"]
+            [
+                "slot",
+                "wheel",
+                "answers",
+                "grid_width",
+                "grid_height",
+                "bonus_count",
+                "review",
+                "source_slot",
+                "difficulty_band",
+                "difficulty_estimate",
+            ]
         )
         for level in levels:
             slot = level["slot"]
@@ -244,6 +262,9 @@ def write_review(output: Path, levels: list[dict], notes: dict) -> None:
             if slot > SHIPPED_SLOTS:
                 for word in words:
                     use[word].append(slot)
+            assignment = (
+                progression.assignments[slot - SHIPPED_SLOTS - 1] if slot > SHIPPED_SLOTS else None
+            )
             rows.writerow(
                 [
                     slot,
@@ -252,7 +273,10 @@ def write_review(output: Path, levels: list[dict], notes: dict) -> None:
                     level["grid"]["w"],
                     level["grid"]["h"],
                     len(level["bonus"]),
-                    "pending" if slot > SHIPPED_SLOTS else "existing",
+                    "pending" if assignment else "existing",
+                    assignment.source_slot if assignment else slot,
+                    assignment.band if assignment else "",
+                    assignment.estimate if assignment else "",
                 ]
             )
     with (output / "word-review.csv").open("w", encoding="utf-8", newline="") as file:
@@ -272,7 +296,7 @@ def build(staged: Path, proposals: Path, output: Path) -> dict:
         raise ValueError("Expected the pinned 65-level baseline")
     validate_content(pipeline, load_config(pipeline, "pl"), baseline.parent)
     manifest = parse_json(raw.decode("utf-8"))
-    lead, index, notes, tiers_hash = prepare_indexes(staged)
+    lead, index, notes, frequencies, tiers_hash = prepare_indexes(staged)
     history = History()
     for level in levels:
         history.record(level)
@@ -301,13 +325,31 @@ def build(staged: Path, proposals: Path, output: Path) -> dict:
         levels.append(level)
         if slot % 500 == 0:
             print(f"Validated {slot:,} of {CAMPAIGN_SLOTS:,} slots", flush=True)
+    scoring = load_scoring(pipeline / "config/qa-campaign-scoring.json")
+    fixed = levels[:SHIPPED_SLOTS]
+    progression = plan_progression(
+        fixed, levels[SHIPPED_SLOTS:], frequencies, index.config, scoring
+    )
+    layouts = {level["slot"]: level for level in levels[SHIPPED_SLOTS:]}
+    levels = fixed + [
+        {
+            **layouts[assignment.source_slot],
+            "slot": slot,
+            "id": f"pl-c-{slot:06d}",
+            "difficulty": progression.bands[assignment.band - 1].minimum,
+        }
+        for slot, assignment in enumerate(progression.assignments, start=SHIPPED_SLOTS + 1)
+    ]
+    history = History()
+    for level in levels:
+        history.record(level)
     if output.exists() or output.is_symlink():
         raise ValueError("Choose a new directory for the QA artifact")
     output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=".wow-campaign-", dir=output.parent) as name:
         result = Path(name) / "preview"
         pack_count, manifest_hash = write_packs(result, baseline, manifest, levels, registry)
-        write_review(result, levels, notes)
+        write_review(result, levels, notes, progression)
         generated = levels[SHIPPED_SLOTS:]
         report = {
             "status": "pending_editorial_review",
@@ -323,6 +365,11 @@ def build(staged: Path, proposals: Path, output: Path) -> dict:
             "min_answer_gap": CROSSWORD_SPACING,
             "unique_wheels": len(history.wheels),
             "unique_answer_sets": len(history.answer_sets),
+            "difficulty_progression": {
+                "scoring_sha256": progression.scoring_sha256,
+                "bands": [asdict(band) for band in progression.bands],
+                "calibration": "qa_estimate",
+            },
             "candidate_supply_by_wheel_size": starting_supply,
             "appended_answer_counts": dict(
                 Counter(str(len(level["words"])) for level in generated)
@@ -334,6 +381,8 @@ def build(staged: Path, proposals: Path, output: Path) -> dict:
             "Open levels.csv for slot evidence and word-review.csv for editorial review. "
             "The first 65 levels retain their shipped bytes and bonus evidence. "
             "The appended levels use the November SJP archive, SGJP and KWJP rules. "
+            "Five difficulty bands follow the fixed prefix. The worksheet maps each "
+            "slot to its original puzzle and individual difficulty estimate. "
             "Difficulty calibration and editorial review are pending. "
             "Use this content for internal testing.\n\n"
             "SJP.PL Słownik do gier, 2026-11-01, CC BY 4.0. "
