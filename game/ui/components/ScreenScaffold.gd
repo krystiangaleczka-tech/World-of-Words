@@ -179,9 +179,14 @@ func _arrange_chrome() -> void:
 	for control: Control in [top_bar, bottom]:
 		if is_instance_valid(control) and control.get_parent() == null:
 			body.add_child(control)
-	if is_instance_valid(top_bar) and top_bar.get_parent() == body:
+	# A diagnostic readout move can emit child_order_changed while Godot blocks another move.
+	if is_instance_valid(top_bar) and top_bar.get_parent() == body and top_bar.get_index() != 0:
 		body.move_child(top_bar, 0)
-	if is_instance_valid(bottom) and bottom.get_parent() == body:
+	if (
+		is_instance_valid(bottom)
+		and bottom.get_parent() == body
+		and bottom.get_index() != body.get_child_count() - 1
+	):
 		body.move_child(bottom, body.get_child_count() - 1)
 	_arranging = false
 
