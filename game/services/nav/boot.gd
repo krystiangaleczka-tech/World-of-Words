@@ -28,6 +28,10 @@ func _ready() -> void:
 		push_warning("Sound cues unavailable: %s" % error_string(audio_error))
 	error = Nav.configure_p2()
 	if error == OK:
+		var campaign: Script = load("res://services/nav/offline_campaign.gd") as Script
+		Nav.configure_offline_campaign(
+			campaign.new(Save, Config, Content, Progress, Economy, Events)
+		)
 		_recovery = load("res://services/nav/startup_recovery.gd").new()
 		_recovery.configure(Nav, Save, Config, Content, Monetization, Analytics)
 		_recovery.started.connect(_finish_boot)

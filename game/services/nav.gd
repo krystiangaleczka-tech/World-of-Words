@@ -1,3 +1,4 @@
+# gdlint: disable=max-public-methods
 extends ServiceStub
 ## @api Screen state machine and boot sequence (ARCHITECTURE.md#boot-and-navigation).
 ## P1: boot goes straight to Level for the saved slot; Home exists empty, reachable from Debug.
@@ -54,6 +55,7 @@ var _debug_enabled: bool = true
 var _screen_factory: Callable = Callable()
 # Load after asset import: UI dependencies include generated CSV translations.
 var _p2: RefCounted
+var _offline_campaign: RefCounted
 var _debug_tools: RefCounted
 var _continue_service: Node
 var _continue_economy: Node
@@ -122,7 +124,10 @@ func start(host: Node, content_root: String = "res://content") -> Error:
 	if _p2 != null:
 		_p2.busy = true
 	_boot_failure_stage = &"save"
-	var error: Error = _save.load()
+	var campaign: RefCounted = _active_campaign()
+	var error: Error = campaign.bind_before_load() if campaign != null else OK
+	if error == OK:
+		error = _save.load()
 	if error == OK:
 		_boot_failure_stage = &"config"
 		error = _config.load()
@@ -131,6 +136,14 @@ func start(host: Node, content_root: String = "res://content") -> Error:
 		language = str(_save.get_setting(&"language"))
 		_boot_failure_stage = &"content"
 		error = _content.load_manifest(language, content_root)
+	if error == OK and campaign != null:
+		# StartupRecovery owns the first write after the player acknowledges a wholly lost save.
+		if _save.migration_state() == "ready" and not _save.last_load_report().corrupted:
+			_boot_failure_stage = &"save"
+			error = _save.flush()
+		if error == OK:
+			_boot_failure_stage = &"route"
+			error = campaign.activate()
 	if error == OK:
 		# Analytics is nonessential: a damaged telemetry queue must not block offline gameplay.
 		if Analytics.start_runtime(_save, _config, _content) == OK:
@@ -259,21 +272,28 @@ func _enter(screen: Screen, reveal_latest: bool = false) -> void:
 		elif not path.is_empty() and ResourceLoader.exists(path):
 			_mounted = (load(path) as PackedScene).instantiate()
 		if _mounted != null:
+			var campaign: RefCounted = _active_campaign()
 			if screen == Screen.LEVEL and _mounted.has_method("configure"):
 				_mounted.call("configure", _save, _content, _level_slot)
 				if _mounted.has_method("configure_navigation"):
 					_mounted.call("configure_navigation", self)
+				if campaign != null and not _screen_factory.is_valid():
+					_prepare_offline_level(campaign, _mounted, path)
 			elif screen == Screen.POSTCARD and _mounted.has_method("configure"):
 				_mounted.call(
 					"configure", _save, _content, _config, self, _level_slot, reveal_latest
 				)
 			elif screen in [Screen.HOME, Screen.JOURNEY] and _mounted.has_method("configure"):
 				_mounted.call("configure", _save, _content, _config, self)
+				if screen == Screen.HOME and campaign != null:
+					campaign.prepare_home(_mounted)
 			elif screen == Screen.DEBUG and _mounted.has_method("configure"):
 				_mounted.call("configure", _save, _content, self)
 				if _debug_tools != null and _mounted.has_method("configure_p2_tools"):
 					_mounted.call("configure_p2_tools", _debug_tools)
 			_host.add_child(_mounted)
+			if screen == Screen.LEVEL and campaign != null:
+				campaign.finish_level_mount(_mounted)
 	_screen = screen
 	screen_changed.emit(screen)
 
@@ -290,6 +310,41 @@ func configure_p2(background: Callable = Callable(), animate: bool = true) -> Er
 	if is_instance_valid(_save):
 		_save.backup_restored.connect(_on_backup_restored)
 	return OK
+
+
+## @api Boot provides the actual campaign owners before Save.load can bind its coordinator.
+func configure_offline_campaign(campaign: RefCounted) -> void:
+	if _offline_campaign == null:
+		_offline_campaign = campaign
+
+
+func _active_campaign() -> RefCounted:
+	if (
+		_p2 != null
+		and _offline_campaign != null
+		and _offline_campaign.matches(_save, _config, _content)
+	):
+		return _offline_campaign
+	return null
+
+
+func _prepare_offline_level(campaign: RefCounted, level: Node, path: String) -> void:
+	var error: Error = campaign.prepare_level(level, _level_slot, get_clock())
+	if error != OK:
+		# An unexpected setup failure cannot leave a partly configured screen consuming input.
+		push_error("Offline campaign level setup failed: %s" % error_string(error))
+		level.free()
+		var fallback: Node = (load(path) as PackedScene).instantiate()
+		fallback.call("configure", _save, _content, _level_slot)
+		fallback.call("configure_navigation", self)
+		_mounted = fallback
+		return
+	level.connect(&"navigation_requested", _on_level_navigation.bind(level))
+
+
+func _on_level_navigation(target: StringName, level: Node) -> void:
+	if target == &"home" and _mounted == level and _screen == Screen.LEVEL:
+		go_home()
 
 
 func home_unlocked() -> bool:
@@ -340,7 +395,7 @@ func _prepare_leave() -> Error:
 		return OK if _screen == Screen.BOOT else ERR_UNCONFIGURED
 	if _save.writes_blocked():
 		return ERR_BUSY
-	if _screen == Screen.LEVEL and is_instance_valid(_mounted):
+	if _screen in [Screen.LEVEL, Screen.HOME] and is_instance_valid(_mounted):
 		if _mounted.has_method("prepare_navigation"):
 			var error: Error = _mounted.call("prepare_navigation")
 			if error != OK:

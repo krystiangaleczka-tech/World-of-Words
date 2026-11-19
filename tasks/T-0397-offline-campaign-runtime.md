@@ -8,15 +8,16 @@ risk: high
 executor: sol
 think: high
 ui: high
-status: ready
+status: review
 depends_on: [T-0242, T-0243, T-0278, T-0281, T-0291, T-0292, T-0333]
 touch:
   - game/services/nav.gd
   - game/services/nav/boot.gd
   - game/services/nav/offline_campaign.gd*
+  - game/ui/components/ScreenScaffold.gd
   - game/tests/integration/test_boot_smoke.gd
   - game/tests/integration/test_offline_campaign.gd*
-revision: 1
+revision: 2
 ---
 
 ## Goal
@@ -40,6 +41,7 @@ Players reach the existing P2 campaign HUD and earn durable rewards through a no
 - Boot enables an offline campaign composition for its actual service owners. Bind the same Save/Progress/Economy pair once before the first load. After Config and Content load, certify progression and enable atomically persisted checkpoints and rewards. Keep content-recovery retries and pre-existing Save compatibility. A save that cannot be adapted plays through the existing compatible route. A failed persistence operation keeps its existing retry or recovery behavior.
 - Compose the currently playable campaign slot before it mounts. Keep diagnostic replays isolated from the live wallet, preserve terminal campaign behavior and run the existing tutorial only at slot 1. Route Home from the Level action, attach the existing coaches and pause their presentation while a sheet is active. Disable the Settings control until its route is connected.
 - Preserve offline play and use the existing unavailable-store presentation when a player opens the shop. Provider activation, SDK calls, consent prompts, reward ads and purchases are separate tasks. Reuse the current Continue and postcard flow for offline play.
+- Run the debug diagnostics on the composed screen. Avoid redundant chrome moves when the diagnostic readout joins the existing layout.
 
 ## Tests
 

@@ -18,6 +18,14 @@ func test_headless_boot_reaches_level_with_fakes() -> void:
 	assert_true(Config.has_key(&"unlocks.journey_slot"))
 	assert_true(Config.has_key(&"analytics.queue.max_events"))
 	assert_true(Analytics.runtime_ready())
+	var level: LevelScreen = Nav.mounted_screen() as LevelScreen
+	assert_not_null(level)
+	assert_true(Progress.p2_ready())
+	assert_eq(level.progress, Progress)
+	assert_not_null(level.p2_hud)
+	assert_not_null(level.tutorial_ui)
+	assert_not_null(level.bonus_ui)
+	assert_not_null(level.complete_ui)
 	assert_true(Events.shuffle_performed.get_connections().size() > 0)
 	assert_eq((Platform.analytics as AnalyticsFake).calls.entries.size(), 0)
 	for adapter: Object in [
