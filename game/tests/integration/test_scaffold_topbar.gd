@@ -105,6 +105,29 @@ func test_chrome_order_replacement_ownership_and_art_theme() -> void:
 	)
 
 
+func test_decorative_art_is_noninteractive_and_recovers_after_high_contrast() -> void:
+	var viewport: SubViewport = _viewport()
+	var host: Control = Control.new()
+	viewport.add_child(host)
+	var screen: ScreenScaffold = ScreenScaffold.new()
+	screen.background = GradientTexture2D.new()
+	screen.background_opacity = Tokens.LEVEL_ART_OPACITY
+	host.add_child(screen)
+	var art: TextureRect = screen.get_child(1) as TextureRect
+	assert_eq(art.mouse_filter, Control.MOUSE_FILTER_IGNORE)
+	assert_true(art.visible)
+	assert_almost_eq(art.self_modulate.a, Tokens.LEVEL_ART_OPACITY, 0.001)
+	host.theme = HC_THEME
+	await get_tree().process_frame
+	assert_false(art.visible)
+	host.theme = null
+	await get_tree().process_frame
+	assert_true(art.visible)
+	assert_almost_eq(art.self_modulate.a, Tokens.LEVEL_ART_OPACITY, 0.001)
+	screen.background = null
+	assert_null(art.texture)
+
+
 func test_topbar_validation_atomic_slots_and_defensive_properties() -> void:
 	var bar: TopBar = TopBar.new()
 	add_child_autofree(bar)

@@ -1,0 +1,9 @@
+{
+  "manifest_sha256": "b834ba25fee1b1277d3ed5eb63692d690fb2f67292bc1c5fd98354c08d8c0269",
+  "ranges": [
+    { "last": 2052, "image": "river.webp" },
+    { "last": 4039, "image": "orchard.webp" },
+    { "last": 6026, "image": "lake.webp" },
+    { "last": 10000, "image": "foothills.webp" }
+  ]
+}

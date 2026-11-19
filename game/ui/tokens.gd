@@ -2,6 +2,8 @@ class_name Tokens
 extends RefCounted
 ## @api Ceramic v1 constants; owner-approved T-0205 values, transcribed in T-0206.
 
+const LEVEL_ART_OPACITY: float = 0.56
+
 static var reduced_motion: bool = false
 
 

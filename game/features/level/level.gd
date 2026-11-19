@@ -68,6 +68,8 @@ func configure(
 	_save = save
 	_content = content
 	_slot = slot
+	background = CampaignBackground.for_level(content, slot)
+	background_opacity = Tokens.LEVEL_ART_OPACITY
 	_event_bus = event_bus if event_bus != null else Events
 
 
