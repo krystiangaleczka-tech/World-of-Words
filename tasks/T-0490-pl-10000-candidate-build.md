@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: high
 ui: none
-status: ready
+status: review
 depends_on: [T-0395, T-0396]
 touch:
   - pipeline/src/wordgame_pipeline/qa_campaign.py

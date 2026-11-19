@@ -3,7 +3,6 @@
 from collections import deque
 
 import pytest
-
 from wordgame_pipeline.qa_campaign import History, Wheel, next_layout
 
 
