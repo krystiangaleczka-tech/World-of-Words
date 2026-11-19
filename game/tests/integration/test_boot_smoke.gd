@@ -18,6 +18,7 @@ func test_headless_boot_reaches_level_with_fakes() -> void:
 	assert_true(Config.has_key(&"unlocks.journey_slot"))
 	assert_true(Config.has_key(&"analytics.queue.max_events"))
 	assert_true(Analytics.runtime_ready())
+	assert_true(Nav.settings_available())
 	var level: LevelScreen = Nav.mounted_screen() as LevelScreen
 	assert_not_null(level)
 	assert_true(Progress.p2_ready())

@@ -208,7 +208,11 @@ func refresh() -> void:
 				_coins.set_value(int(view.sections.economy.coins), false)
 				_present_location(state)
 	_play.disabled = _slot < 1 or _slot > _content_count() or _content.level_for_slot(_slot) == null
-	_settings.disabled = not ResourceLoader.exists("res://features/settings/settings.tscn")
+	_settings.disabled = (
+		not is_instance_valid(_nav)
+		or not _nav.has_method("settings_available")
+		or not _nav.call("settings_available")
+	)
 	_journey.implemented = ResourceLoader.exists("res://features/journey/journey.tscn")
 	_refresh_copy()
 	refresh_coaches.call_deferred()

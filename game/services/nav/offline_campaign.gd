@@ -80,10 +80,10 @@ func prepare_level(level: LevelScreen, slot: int, clock: Clock) -> Error:
 	return error
 
 
-func finish_level_mount(screen: Node) -> void:
+func finish_level_mount(screen: Node, can_open_settings: bool) -> void:
 	var level: LevelScreen = screen as LevelScreen
 	if level != null and level.p2_hud != null:
-		level.p2_hud.settings.disabled = true
+		level.p2_hud.settings.disabled = not can_open_settings
 
 
 func prepare_home(home: Node) -> void:
