@@ -32,10 +32,16 @@ func _ready() -> void:
 		Nav.configure_offline_campaign(
 			campaign.new(Save, Config, Content, Progress, Economy, Events)
 		)
+		var screens: Control = Control.new()
+		screens.name = "Screens"
+		screens.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		add_child(screens)
+		screens.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		Nav.configure_settings_host(screens)
 		_recovery = load("res://services/nav/startup_recovery.gd").new()
 		_recovery.configure(Nav, Save, Config, Content, Monetization, Analytics)
 		_recovery.started.connect(_finish_boot)
-		error = _recovery.start(self, content_root)
+		error = _recovery.start(screens, content_root)
 	if error != OK:
 		# A recoverable presentation owns the next explicit retry.
 		if _recovery == null:

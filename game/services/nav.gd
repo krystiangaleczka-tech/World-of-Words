@@ -56,6 +56,8 @@ var _screen_factory: Callable = Callable()
 # Load after asset import: UI dependencies include generated CSV translations.
 var _p2: RefCounted
 var _offline_campaign: RefCounted
+var _settings_host: Control
+var _settings_session: Node
 var _debug_tools: RefCounted
 var _continue_service: Node
 var _continue_economy: Node
@@ -112,6 +114,8 @@ func start(host: Node, content_root: String = "res://content") -> Error:
 		add_to_group(BACK_GROUP)
 	OS.low_processor_usage_mode = true
 	_discard_mounted()
+	if is_instance_valid(_settings_session):
+		_settings_session.free()
 	_screen = Screen.BOOT
 	_level_slot = 0
 	if is_instance_valid(_host) and _host.tree_exiting.is_connected(_on_host_exit):
@@ -144,6 +148,9 @@ func start(host: Node, content_root: String = "res://content") -> Error:
 		if error == OK:
 			_boot_failure_stage = &"route"
 			error = campaign.activate()
+	if error == OK and _host == _settings_host:
+		_boot_failure_stage = &"route"
+		error = _start_settings(content_root)
 	if error == OK:
 		# Analytics is nonessential: a damaged telemetry queue must not block offline gameplay.
 		if Analytics.start_runtime(_save, _config, _content) == OK:
@@ -269,6 +276,8 @@ func _enter(screen: Screen, reveal_latest: bool = false) -> void:
 	if is_instance_valid(_host):
 		if _screen_factory.is_valid():
 			_mounted = _screen_factory.call(screen) as Node
+		elif screen == Screen.SETTINGS and settings_available():
+			_mounted = _settings_session.build_screen()
 		elif not path.is_empty() and ResourceLoader.exists(path):
 			_mounted = (load(path) as PackedScene).instantiate()
 		if _mounted != null:
@@ -293,7 +302,13 @@ func _enter(screen: Screen, reveal_latest: bool = false) -> void:
 					_mounted.call("configure_p2_tools", _debug_tools)
 			_host.add_child(_mounted)
 			if screen == Screen.LEVEL and campaign != null:
-				campaign.finish_level_mount(_mounted)
+				campaign.finish_level_mount(_mounted, settings_available())
+			if (
+				screen == Screen.SETTINGS
+				and settings_available()
+				and not _screen_factory.is_valid()
+			):
+				_settings_session.bind_visit(_mounted, handle_back)
 	_screen = screen
 	screen_changed.emit(screen)
 
@@ -343,8 +358,68 @@ func _prepare_offline_level(campaign: RefCounted, level: Node, path: String) -> 
 
 
 func _on_level_navigation(target: StringName, level: Node) -> void:
-	if target == &"home" and _mounted == level and _screen == Screen.LEVEL:
+	if _mounted != level or _screen != Screen.LEVEL:
+		return
+	if target == &"home":
 		go_home()
+	elif target == &"settings" and settings_available():
+		go_to_screen(Screen.SETTINGS)
+
+
+## @api Boot opts in using the same control that inherits preferences into each routed screen.
+func configure_settings_host(host: Control) -> void:
+	_settings_host = host
+
+
+func settings_available() -> bool:
+	return (
+		is_instance_valid(_settings_host)
+		and _settings_host == _host
+		and _settings_host.is_inside_tree()
+		and is_instance_valid(_settings_session)
+	)
+
+
+func _start_settings(content_root: String) -> Error:
+	var script: Script = load("res://services/nav/settings_session.gd") as Script
+	var session: Node = script.new()
+	_host.add_child(session)
+	var error: Error = session.configure(
+		_save, _content, _settings_host, content_root, _reload_settings_content.bind(content_root)
+	)
+	if error != OK:
+		session.free()
+	else:
+		_settings_session = session
+	return error
+
+
+func _reload_settings_content(phase: StringName, language: String, content_root: String) -> Error:
+	if _screen != Screen.SETTINGS or not settings_available() or _p2.busy:
+		return ERR_BUSY
+	if phase == &"prepare":
+		var candidate: CONTENT_SCRIPT = CONTENT_SCRIPT.new()
+		var error: Error = candidate.load_manifest(language, content_root)
+		if error == OK:
+			var slot: int = clampi(_saved_slot(language), 1, candidate.slot_count())
+			if candidate.level_for_slot(slot) == null:
+				error = ERR_INVALID_DATA
+		candidate.free()
+		return _save.flush() if error == OK else error
+	var error: Error = _content.load_manifest(language, content_root)
+	if error == OK:
+		# Keep the source screen and replace previous-language slots with the committed target slot.
+		var source: Screen = Screen.LEVEL
+		if (
+			not _p2.history.is_empty()
+			and _p2.history.back().screen == Screen.HOME
+			and home_unlocked()
+		):
+			source = Screen.HOME
+		_p2.history.clear()
+		_level_slot = _resume_slot()
+		_p2.history.append({"screen": source, "slot": _level_slot})
+	return error
 
 
 func home_unlocked() -> bool:
@@ -373,6 +448,11 @@ func go_to_screen(screen: Screen) -> Error:
 
 
 func handle_back() -> Error:
+	if _screen == Screen.SETTINGS and settings_available() and _p2 != null and not _p2.busy:
+		if _settings_session.handle_licences_back():
+			return OK
+		if not _settings_session.can_leave():
+			return ERR_BUSY
 	return _p2.back() if _p2 != null else ERR_UNAVAILABLE
 
 
@@ -394,6 +474,8 @@ func _prepare_leave() -> Error:
 	if not is_instance_valid(_save) or not _save.is_loaded():
 		return OK if _screen == Screen.BOOT else ERR_UNCONFIGURED
 	if _save.writes_blocked():
+		return ERR_BUSY
+	if _screen == Screen.SETTINGS and settings_available() and not _settings_session.can_leave():
 		return ERR_BUSY
 	if _screen in [Screen.LEVEL, Screen.HOME] and is_instance_valid(_mounted):
 		if _mounted.has_method("prepare_navigation"):

@@ -8,7 +8,7 @@ risk: medium
 executor: sol
 think: high
 ui: high
-status: ready
+status: review
 depends_on: [T-0397, T-0286, T-0287, T-0348]
 touch:
   - game/services/nav.gd
@@ -16,6 +16,7 @@ touch:
   - game/services/nav/offline_campaign.gd*
   - game/services/nav/settings_session.gd*
   - game/features/home/home.gd
+  - game/tests/integration/test_boot_smoke.gd
   - game/tests/integration/test_settings_navigation.gd*
 revision: 1
 ---
@@ -45,6 +46,7 @@ Open Settings from Home and Level. Apply the saved preferences across screens an
 
 - Through normal navigation, enter Settings from Level and Home. Apply and persist a display change, open a licence and return through Settings to the source screen. Check restored Level progress, applied theme and Back behavior.
 - Verify Home and Level expose Settings only when the route is bound and that provider actions do not initiate requests in the offline configuration.
+- Verify the actual Boot installs the Settings session and that a switch to a second shipped fixture language returns to its own saved slot.
 
 ## Acceptance
 
