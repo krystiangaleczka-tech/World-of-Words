@@ -124,6 +124,41 @@ func test_missing_content_can_retry_without_rebinding_the_loaded_save() -> void:
 	assert_eq(int(_storage.document.progress.by_lang.pl.stars), 1)
 
 
+func test_continue_after_last_slot_returns_to_home_with_committed_rewards() -> void:
+	assert_eq(_content.load_manifest("pl"), OK)
+	assert_eq(_config.load(), OK)
+	var last: int = _content.slot_count()
+	var location: Dictionary = _content.location_for_slot(last)
+	var pieces: int = _config.get_int(&"meta.postcard.pieces")
+	var state: Dictionary = SaveSchema.LANGUAGE_STATE.duplicate(true)
+	state.current_slot = last
+	state.highest_completed_slot = last - 1
+	state.completed_slot = last - 1
+	state.stars = last - 1
+	state.location_stars[location.id] = last - int(location.first)
+	state.location_pieces[location.id] = pieces
+	_storage.document.progress.by_lang.pl = state
+	assert_eq(_nav.start(_host), OK)
+	assert_eq(_nav.go_to_level(last), OK)
+	var level: LevelScreen = _nav.mounted_screen() as LevelScreen
+	_solve(level)
+	assert_eq(_progress.current_slot(), last + 1)
+	assert_eq(_progress.stars(), last)
+	await get_tree().process_frame
+	assert_true(level.completion_layer.visible)
+	assert_false(level.continue_button.disabled)
+	var committed: Dictionary = _storage.document.duplicate(true)
+	level.continue_button.pressed.emit()
+	assert_eq(_nav.current_screen(), _nav.Screen.HOME)
+	assert_eq(_storage.document, committed)
+	assert_eq(_nav.go_to_level(last), OK)
+	var replay: LevelScreen = _nav.mounted_screen() as LevelScreen
+	assert_null(replay.p2_hud)
+	assert_true(replay.completion_layer.visible)
+	assert_true(replay.continue_button.disabled)
+	assert_eq(_storage.document, committed)
+
+
 func test_current_slot_connects_hint_and_bonus_to_the_saved_wallet() -> void:
 	var state: Dictionary = SaveSchema.LANGUAGE_STATE.duplicate(true)
 	state.current_slot = 7

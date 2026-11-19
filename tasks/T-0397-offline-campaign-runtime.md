@@ -14,10 +14,11 @@ touch:
   - game/services/nav.gd
   - game/services/nav/boot.gd
   - game/services/nav/offline_campaign.gd*
+  - game/features/level/level.gd
   - game/ui/components/ScreenScaffold.gd
   - game/tests/integration/test_boot_smoke.gd
   - game/tests/integration/test_offline_campaign.gd*
-revision: 2
+revision: 3
 ---
 
 ## Goal
@@ -41,12 +42,13 @@ Players reach the existing P2 campaign HUD and earn durable rewards through a no
 - Boot enables an offline campaign composition for its actual service owners. Bind the same Save/Progress/Economy pair once before the first load. After Config and Content load, certify progression and enable atomically persisted checkpoints and rewards. Keep content-recovery retries and pre-existing Save compatibility. A save that cannot be adapted plays through the existing compatible route. A failed persistence operation keeps its existing retry or recovery behavior.
 - Compose the currently playable campaign slot before it mounts. Keep diagnostic replays isolated from the live wallet, preserve terminal campaign behavior and run the existing tutorial only at slot 1. Route Home from the Level action, attach the existing coaches and pause their presentation while a sheet is active. Disable the Settings control until its route is connected.
 - Preserve offline play and use the existing unavailable-store presentation when a player opens the shop. Provider activation, SDK calls, consent prompts, reward ads and purchases are separate tasks. Reuse the current Continue and postcard flow for offline play.
+- At the final shipped slot, enable Continue through the campaign's navigation. Show a newly earned postcard when applicable. When there is no postcard to reveal, return to the existing completed campaign state on Home.
 - Run the debug diagnostics on the composed screen. Avoid redundant chrome moves when the diagnostic readout joins the existing layout.
 
 ## Tests
 
 - Extend the real Boot smoke case to assert the normal first level has the activated HUD, tutorial, bonus and completion composition. No test-supplied screen composition is accepted for this assertion.
-- Exercise the regular Nav path with isolated saves and shipped content. Complete levels, verify one wallet grant and one star per newly completed level, verify persistence before Continue, and exercise Home and a non-current debug replay. Cover retry after missing content and a legacy progress save.
+- Exercise the regular Nav path with isolated saves and shipped content. Complete levels, verify one wallet grant and one star per newly completed level, verify persistence before Continue, and exercise Home and a non-current debug replay. Cover retry after missing content, a legacy progress save and Continue from the last shipped slot with a fully revealed postcard.
 
 ## Acceptance
 

@@ -560,11 +560,16 @@ func _route_campaign_continue(completed_slot: int, previous_pieces: int) -> Erro
 		and postcard_piece_count(completed_slot) > previous_pieces
 	)
 	_p2.busy = false
-	return (
-		go_to_postcard(completed_slot, true)
-		if show_postcard
-		else go_to_level(int(context.progress.current_slot))
-	)
+	var next_slot: int = int(context.progress.current_slot)
+	if not show_postcard and next_slot > _content.slot_count() and can_continue_after_last_level():
+		return go_home()
+	return go_to_postcard(completed_slot, true) if show_postcard else go_to_level(next_slot)
+
+
+## @api The live offline campaign can reach Home after all shipped slots are complete.
+func can_continue_after_last_level() -> bool:
+	var level: LevelScreen = mounted_screen() as LevelScreen
+	return _active_campaign() != null and level != null and level.p2_hud != null and home_unlocked()
 
 
 func _postcard_context(slot: int) -> Dictionary:

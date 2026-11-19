@@ -305,9 +305,7 @@ func completion_is_continuing() -> bool:
 
 
 func set_completion_reward_busy(busy: bool) -> void:
-	continue_button.disabled = (
-		busy or _continued or (_slot >= _content.slot_count() and not _new_postcard_piece())
-	)
+	continue_button.disabled = busy or _continued or not _can_continue_campaign()
 
 
 func retry_continuation() -> void:
@@ -448,7 +446,7 @@ func _show_completion() -> void:
 	completion_layer.visible = true
 	var terminal: bool = _slot >= _content.slot_count()
 	completion_title.text = tr("level.complete.terminal" if terminal else "level.complete.title")
-	continue_button.disabled = (terminal and not _new_postcard_piece()) or _continued
+	continue_button.disabled = _continued or not _can_continue_campaign()
 	if not terminal:
 		_content.level_for_slot(_slot + 1)
 	_refresh_actions()
@@ -697,9 +695,7 @@ func _on_completed() -> void:
 		completion_title.text = tr(
 			"level.complete.terminal" if _slot >= _content.slot_count() else "level.complete.title"
 		)
-		continue_button.disabled = (
-			(_slot >= _content.slot_count() and not _new_postcard_piece()) or _continued
-		)
+		continue_button.disabled = _continued or not _can_continue_campaign()
 		if _slot < _content.slot_count():
 			_content.level_for_slot(_slot + 1)
 		set_process(true)
@@ -946,10 +942,18 @@ func _prepare_progress_navigation() -> Error:
 	)
 
 
-func _new_postcard_piece() -> bool:
+func _can_continue_campaign() -> bool:
+	if _slot < _content.slot_count():
+		return true
+	if not is_instance_valid(_navigation):
+		return false
+	if (
+		_navigation.has_method("can_continue_after_last_level")
+		and _navigation.call("can_continue_after_last_level")
+	):
+		return true
 	return (
-		is_instance_valid(_navigation)
-		and _navigation.has_method("postcard_piece_count")
+		_navigation.has_method("postcard_piece_count")
 		and _navigation.has_method("home_unlocked")
 		and _navigation.call("home_unlocked")
 		and _navigation.call("postcard_piece_count", _slot) > _postcard_pieces_before
