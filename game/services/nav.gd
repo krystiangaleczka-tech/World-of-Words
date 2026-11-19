@@ -568,8 +568,8 @@ func _route_campaign_continue(completed_slot: int, previous_pieces: int) -> Erro
 
 ## @api The live offline campaign can reach Home after all shipped slots are complete.
 func can_continue_after_last_level() -> bool:
-	var level: LevelScreen = mounted_screen() as LevelScreen
-	return _active_campaign() != null and level != null and level.p2_hud != null and home_unlocked()
+	var campaign: RefCounted = _active_campaign()
+	return campaign != null and campaign.is_live_level(mounted_screen()) and home_unlocked()
 
 
 func _postcard_context(slot: int) -> Dictionary:

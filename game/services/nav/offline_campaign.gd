@@ -91,6 +91,11 @@ func prepare_home(home: Node) -> void:
 		home.call("configure_coaches", _events, _modal_blocks.bind(home))
 
 
+func is_live_level(screen: Node) -> bool:
+	var level: LevelScreen = screen as LevelScreen
+	return level != null and level.p2_hud != null
+
+
 func _modal_blocks(screen: Node) -> bool:
 	if not is_instance_valid(screen) or not screen.is_inside_tree():
 		return true
