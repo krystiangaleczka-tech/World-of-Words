@@ -34,8 +34,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git fetch --no-tags --depth=1 origin 4ba00fe77b4b2a5e9ea0396693cf2a49ea85a22b
-          git show FETCH_HEAD:pipeline/reviews/pl/T-0306-200-level-candidates.json \
+          git -c "safe.directory=$GITHUB_WORKSPACE" fetch --no-tags --depth=1 origin \
+            4ba00fe77b4b2a5e9ea0396693cf2a49ea85a22b
+          git -c "safe.directory=$GITHUB_WORKSPACE" show FETCH_HEAD:pipeline/reviews/pl/T-0306-200-level-candidates.json \
             > "$RUNNER_TEMP/wow-proposals.json"
           uv run --frozen python -m wordgame_pipeline.qa_campaign \
             prepare "$RUNNER_TEMP/wow-source"

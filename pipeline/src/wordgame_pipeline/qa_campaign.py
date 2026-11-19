@@ -119,8 +119,9 @@ def next_layout(
 ) -> tuple[str, tuple[Placement, ...]]:
     phase = (slot - AUTHORED_SLOTS - 1) % len(WHEEL_PATTERN)
     size_preference = WHEEL_PATTERN[phase]
-    options = SearchOptions(restarts=1, nodes=12, branches=2, considered=8,
-                            selected=ANSWER_PATTERN[phase])
+    options = SearchOptions(
+        restarts=1, nodes=12, branches=2, considered=8, selected=ANSWER_PATTERN[phase]
+    )
     for size in sorted(queues, key=lambda n: (abs(n - size_preference), n)):
         queue = queues[size]
         for _ in range(len(queue)):
@@ -141,8 +142,9 @@ def full_bonus(index: WordIndex, letters: list[str], words: list[str]) -> list[s
     return sorted((set(pools["level_ok"]) | set(pools["bonus_ok"])) - set(words))
 
 
-def as_level(slot: int, letters: list[str], grid: dict, placements: list[dict],
-             bonus: list[str], seed: int) -> dict:
+def as_level(
+    slot: int, letters: list[str], grid: dict, placements: list[dict], bonus: list[str], seed: int
+) -> dict:
     return {
         "id": f"pl-c-{slot:06d}",
         "slot": slot,
@@ -173,8 +175,14 @@ def authored_levels(proposals: Path, index: WordIndex) -> list[dict]:
         payload = {**entry, "bonus": full_bonus(index, letters, words)}
         native = make_level(payload, index.config, handmade=True)
         levels.append(
-            as_level(entry["slot"], letters, native["grid"], native["placements"],
-                     native["bonus"], native["seed"])
+            as_level(
+                entry["slot"],
+                letters,
+                native["grid"],
+                native["placements"],
+                native["bonus"],
+                native["seed"],
+            )
         )
     return levels
 
@@ -196,11 +204,18 @@ def write_packs(
         )
         (root / name).write_bytes(raw)
         packs.append(
-            {"file": name, "kind": "campaign", "first": first, "last": last,
-             "sha256": hashlib.sha256(raw).hexdigest()}
+            {
+                "file": name,
+                "kind": "campaign",
+                "first": first,
+                "last": last,
+                "sha256": hashlib.sha256(raw).hexdigest(),
+            }
         )
     updated = {
-        **manifest, "slots": len(levels), "packs": packs,
+        **manifest,
+        "slots": len(levels),
+        "packs": packs,
         "content_version": manifest["content_version"] + 1,
     }
     (root / "manifest.json").write_bytes(canonical_bytes(updated))
@@ -220,18 +235,26 @@ def write_review(output: Path, levels: list[dict], notes: dict) -> None:
     use: dict[str, list[int]] = defaultdict(list)
     with (output / "levels.csv").open("w", encoding="utf-8", newline="") as file:
         rows = csv.writer(file)
-        rows.writerow(["slot", "wheel", "answers", "grid_width", "grid_height", "bonus_count", "review"])
+        rows.writerow(
+            ["slot", "wheel", "answers", "grid_width", "grid_height", "bonus_count", "review"]
+        )
         for level in levels:
             slot = level["slot"]
             words = [p["w"] for p in level["words"]]
             if slot > SHIPPED_SLOTS:
                 for word in words:
                     use[word].append(slot)
-            rows.writerow([
-                slot, "".join(level["letters"]), " ".join(words),
-                level["grid"]["w"], level["grid"]["h"], len(level["bonus"]),
-                "pending" if slot > SHIPPED_SLOTS else "existing",
-            ])
+            rows.writerow(
+                [
+                    slot,
+                    "".join(level["letters"]),
+                    " ".join(words),
+                    level["grid"]["w"],
+                    level["grid"]["h"],
+                    len(level["bonus"]),
+                    "pending" if slot > SHIPPED_SLOTS else "existing",
+                ]
+            )
     with (output / "word-review.csv").open("w", encoding="utf-8", newline="") as file:
         rows = csv.writer(file)
         rows.writerow(["word", "rule_reason", "slots", "review_status", "decision", "note"])
@@ -266,7 +289,11 @@ def build(staged: Path, proposals: Path, output: Path) -> dict:
         geometry = validate_geometry(layout, tuple(words))
         placements = [{"w": word, "x": x, "y": y, "dir": d} for word, x, y, d in layout]
         level = as_level(
-            slot, letters, geometry, placements, full_bonus(index, letters, words),
+            slot,
+            letters,
+            geometry,
+            placements,
+            full_bonus(index, letters, words),
             seed_for(signature),
         )
         validate_level(level, index, registry)
@@ -297,7 +324,9 @@ def build(staged: Path, proposals: Path, output: Path) -> dict:
             "unique_wheels": len(history.wheels),
             "unique_answer_sets": len(history.answer_sets),
             "candidate_supply_by_wheel_size": starting_supply,
-            "appended_answer_counts": dict(Counter(str(len(level["words"])) for level in generated)),
+            "appended_answer_counts": dict(
+                Counter(str(len(level["words"])) for level in generated)
+            ),
         }
         (result / "report.json").write_bytes(canonical_bytes(report))
         (result / "README.md").write_text(

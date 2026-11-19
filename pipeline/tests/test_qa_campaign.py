@@ -35,8 +35,9 @@ def test_history_rejects_repeats_without_consuming_slot() -> None:
     history = History()
     history.record({"slot": 1, "letters": list("AKT"), "words": [{"w": "KAT"}]})
     with pytest.raises(ValueError, match="spacing conflict"):
-        history.record({"slot": 2, "letters": list("AAKRT"),
-                        "words": [{"w": "KAT"}, {"w": "KARTA"}]})
+        history.record(
+            {"slot": 2, "letters": list("AAKRT"), "words": [{"w": "KAT"}, {"w": "KARTA"}]}
+        )
     assert history.wheels == {"AKT"}
     assert not history.available("KAT", 100)
     assert history.available("KAT", 101)
