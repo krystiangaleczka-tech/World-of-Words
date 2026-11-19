@@ -19,6 +19,11 @@ signal layout_class_changed(value: StringName)
 	set(value):
 		background_opacity = clampf(value, 0.0, 1.0)
 		_refresh_background()
+## @api Use the solid theme fill in high contrast when artwork is purely decorative.
+@export var hide_background_in_high_contrast: bool = false:
+	set(value):
+		hide_background_in_high_contrast = value
+		_refresh_background()
 @export var top_bar: TopBar:
 	set(value):
 		if value == top_bar or value == bottom and value != null:
@@ -204,7 +209,9 @@ func _refresh_background() -> void:
 			else Tokens.Palette.BG
 		)
 		_art.self_modulate.a = background_opacity
-		_art.visible = _background.color != Tokens.PaletteHC.BG
+		_art.visible = (
+			not hide_background_in_high_contrast or _background.color != Tokens.PaletteHC.BG
+		)
 
 
 func _notification(what: int) -> void:

@@ -12,22 +12,26 @@ const EXPECTED: Dictionary[int, String] = {
 	10000: "foothills.webp",
 }
 
+var _boot_transition_done: bool = false
+
 
 func _initialize() -> void:
 	_verify.call_deferred()
 
 
 func _verify() -> void:
+	var nav: Node = root.get_node("Nav")
+	nav.transition_finished.connect(func() -> void: _boot_transition_done = true, CONNECT_ONE_SHOT)
 	var boot: Node = (load("res://services/nav/boot.tscn") as PackedScene).instantiate()
 	root.add_child(boot)
-	var nav: Node = root.get_node("Nav")
 	var save: Node = root.get_node("Save")
 	var content: Node = root.get_node("Content")
 	if not _check(content.slot_count() == 10000 and nav.level_slot() == 1, "Ranked cold boot"):
 		return
 	if not _check(save.set_setting(&"reduced_motion", true) == OK, "Set reduced motion"):
 		return
-	await create_timer(0.45).timeout
+	if not _boot_transition_done:
+		await nav.transition_finished
 	var level: Node = nav.mounted_screen()
 	if not _check(_has_background(level, EXPECTED[1]), "River backdrop on the initial screen"):
 		return

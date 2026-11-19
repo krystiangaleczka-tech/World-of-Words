@@ -100,6 +100,7 @@ func test_chrome_order_replacement_ownership_and_art_theme() -> void:
 	screen.theme = HC_THEME
 	await get_tree().process_frame
 	assert_eq((screen.get_child(0) as ColorRect).color, Tokens.PaletteHC.BG)
+	assert_true((screen.get_child(1) as TextureRect).visible)
 	assert_eq(
 		(screen.get_child(1) as TextureRect).stretch_mode, TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	)
@@ -112,6 +113,7 @@ func test_decorative_art_is_noninteractive_and_recovers_after_high_contrast() ->
 	var screen: ScreenScaffold = ScreenScaffold.new()
 	screen.background = GradientTexture2D.new()
 	screen.background_opacity = Tokens.LEVEL_ART_OPACITY
+	screen.hide_background_in_high_contrast = true
 	host.add_child(screen)
 	var art: TextureRect = screen.get_child(1) as TextureRect
 	assert_eq(art.mouse_filter, Control.MOUSE_FILTER_IGNORE)
