@@ -21,7 +21,13 @@ func _smoke() -> void:
 	var nav: Node = root.get_node("Nav")
 	nav.transition_finished.connect(_on_transition_finished)
 	root.add_child(boot)
-	if not _require(nav.current_screen() == nav.Screen.LEVEL, "Packaged boot must reach Level"):
+	var expected: int = nav.Screen.LEVEL
+	var islands: Script = load("res://services/content/campaign_islands.gd") as Script
+	if islands != null and islands.load_for(root.get_node("Content")) != null:
+		expected = nav.Screen.HOME
+	if not _require(
+		nav.current_screen() == expected, "Packaged boot must reach its opening screen"
+	):
 		return
 	await _settle_transition(nav)
 	var audio: Node = root.get_node("Audio")

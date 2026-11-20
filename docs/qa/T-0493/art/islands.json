@@ -1,0 +1,29 @@
+{
+  "manifest_sha256": "b834ba25fee1b1277d3ed5eb63692d690fb2f67292bc1c5fd98354c08d8c0269",
+  "islands": [
+    {
+      "last": 2052,
+      "name_key": "home.islands.river",
+      "marker": "island-river.webp",
+      "backgrounds": ["river.webp", "river-watermill.webp", "river-stone-bridge.webp"]
+    },
+    {
+      "last": 4039,
+      "name_key": "home.islands.orchard",
+      "marker": "island-orchard.webp",
+      "backgrounds": ["orchard.webp", "orchard-path.webp", "orchard-stream.webp"]
+    },
+    {
+      "last": 6026,
+      "name_key": "home.islands.lake",
+      "marker": "island-lake.webp",
+      "backgrounds": ["lake.webp", "lake-birches.webp", "lake-headland.webp"]
+    },
+    {
+      "last": 10000,
+      "name_key": "home.islands.foothills",
+      "marker": "island-foothills.webp",
+      "backgrounds": ["foothills.webp", "foothills-refuge.webp", "foothills-meadow.webp"]
+    }
+  ]
+}

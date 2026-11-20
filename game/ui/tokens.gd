@@ -3,6 +3,9 @@ extends RefCounted
 ## @api Ceramic v1 constants; owner-approved T-0205 values, transcribed in T-0206.
 
 const LEVEL_ART_OPACITY: float = 0.56
+const ISLAND_SKY: Color = Color("#D7E8ED")
+const ISLAND_MARKER_HEIGHT: int = 340
+const ISLAND_LOCKED_OPACITY: float = 0.77
 
 static var reduced_motion: bool = false
 

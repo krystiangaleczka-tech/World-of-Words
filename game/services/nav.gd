@@ -58,6 +58,7 @@ var _p2: RefCounted
 var _offline_campaign: RefCounted
 var _settings_host: Control
 var _settings_session: Node
+var _islands: CampaignIslands
 var _debug_tools: RefCounted
 var _continue_service: Node
 var _continue_economy: Node
@@ -118,6 +119,7 @@ func start(host: Node, content_root: String = "res://content") -> Error:
 		_settings_session.free()
 	_screen = Screen.BOOT
 	_level_slot = 0
+	_islands = null
 	if is_instance_valid(_host) and _host.tree_exiting.is_connected(_on_host_exit):
 		_host.tree_exiting.disconnect(_on_host_exit)
 	_host = host
@@ -140,6 +142,8 @@ func start(host: Node, content_root: String = "res://content") -> Error:
 		language = str(_save.get_setting(&"language"))
 		_boot_failure_stage = &"content"
 		error = _content.load_manifest(language, content_root)
+	if error == OK:
+		_islands = CampaignIslands.load_for(_content)
 	if error == OK and campaign != null:
 		# StartupRecovery owns the first write after the player acknowledges a wholly lost save.
 		if _save.migration_state() == "ready" and not _save.last_load_report().corrupted:
@@ -167,7 +171,7 @@ func start(host: Node, content_root: String = "res://content") -> Error:
 		else:
 			_boot_failure_stage = &"route"
 			TranslationServer.set_locale(language)
-			if _p2 != null and home_unlocked():
+			if _p2 != null and can_open_home():
 				error = _p2.route(Screen.HOME, slot)
 			else:
 				error = go_to_level(slot)
@@ -223,7 +227,7 @@ func go_home(recovery: bool = false) -> Error:
 	if _screen == Screen.BOOT:
 		return ERR_UNCONFIGURED
 	if _p2 != null:
-		return ERR_UNAVAILABLE if not home_unlocked() else _p2.route(Screen.HOME, _level_slot)
+		return ERR_UNAVAILABLE if not can_open_home() else _p2.route(Screen.HOME, _level_slot)
 	_enter(Screen.HOME)
 	return OK
 
@@ -278,6 +282,10 @@ func _enter(screen: Screen, reveal_latest: bool = false) -> void:
 			_mounted = _screen_factory.call(screen) as Node
 		elif screen == Screen.SETTINGS and settings_available():
 			_mounted = _settings_session.build_screen()
+		elif screen == Screen.HOME and _islands != null:
+			var map: Node = load("res://features/home/island_home.gd").new()
+			map.configure_islands(_islands, _saved_slot(_content.get_language()), self)
+			_mounted = map
 		elif not path.is_empty() and ResourceLoader.exists(path):
 			_mounted = (load(path) as PackedScene).instantiate()
 		if _mounted != null:
@@ -288,6 +296,8 @@ func _enter(screen: Screen, reveal_latest: bool = false) -> void:
 					_mounted.call("configure_navigation", self)
 				if campaign != null and not _screen_factory.is_valid():
 					_prepare_offline_level(campaign, _mounted, path)
+					if _islands != null:
+						_mounted.set("background", _islands.background_for_slot(_level_slot))
 			elif screen == Screen.POSTCARD and _mounted.has_method("configure"):
 				_mounted.call(
 					"configure", _save, _content, _config, self, _level_slot, reveal_latest
@@ -302,7 +312,7 @@ func _enter(screen: Screen, reveal_latest: bool = false) -> void:
 					_mounted.call("configure_p2_tools", _debug_tools)
 			_host.add_child(_mounted)
 			if screen == Screen.LEVEL and campaign != null:
-				campaign.finish_level_mount(_mounted, settings_available())
+				campaign.finish_level_mount(_mounted, settings_available(), _islands != null)
 			if (
 				screen == Screen.SETTINGS
 				and settings_available()
@@ -408,18 +418,24 @@ func _reload_settings_content(phase: StringName, language: String, content_root:
 		return _save.flush() if error == OK else error
 	var error: Error = _content.load_manifest(language, content_root)
 	if error == OK:
+		_islands = CampaignIslands.load_for(_content)
 		# Keep the source screen and replace previous-language slots with the committed target slot.
 		var source: Screen = Screen.LEVEL
 		if (
 			not _p2.history.is_empty()
 			and _p2.history.back().screen == Screen.HOME
-			and home_unlocked()
+			and can_open_home()
 		):
 			source = Screen.HOME
 		_p2.history.clear()
 		_level_slot = _resume_slot()
 		_p2.history.append({"screen": source, "slot": _level_slot})
 	return error
+
+
+## @api Available main screen. Postcards and Journey still use their normal unlock.
+func can_open_home() -> bool:
+	return _islands != null or home_unlocked()
 
 
 func home_unlocked() -> bool:
