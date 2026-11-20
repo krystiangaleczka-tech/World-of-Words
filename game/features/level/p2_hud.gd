@@ -29,6 +29,7 @@ var reveal: HintButton
 var hint: HintButton
 var shuffle: IconButton
 var _meter_width: float = 0.0
+var _island_home: bool = false
 var _economy: ECONOMY
 var _config: CONFIG
 var _save: SAVE
@@ -137,6 +138,12 @@ func bindings_ready() -> bool:
 	)
 
 
+func enable_island_home() -> void:
+	_island_home = true
+	home.text_key = "home.islands.title"
+	refresh()
+
+
 func refresh() -> void:
 	if not is_instance_valid(bar) or not is_instance_valid(_save):
 		return
@@ -150,7 +157,7 @@ func refresh() -> void:
 	number.text = tr("level.hud.level_n") % _slot
 	var leading: Array[Control] = []
 	var trailing: Array[Control] = []
-	if _unlocked("journey"):
+	if _island_home or _unlocked("journey"):
 		leading.append(home)
 	leading.append(number)
 	if _unlocked("hint"):

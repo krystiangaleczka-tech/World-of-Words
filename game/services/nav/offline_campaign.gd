@@ -80,10 +80,14 @@ func prepare_level(level: LevelScreen, slot: int, clock: Clock) -> Error:
 	return error
 
 
-func finish_level_mount(screen: Node, can_open_settings: bool) -> void:
+func finish_level_mount(
+	screen: Node, can_open_settings: bool, has_island_map: bool = false
+) -> void:
 	var level: LevelScreen = screen as LevelScreen
 	if level != null and level.p2_hud != null:
 		level.p2_hud.settings.disabled = not can_open_settings
+		if has_island_map:
+			level.p2_hud.enable_island_home()
 
 
 func prepare_home(home: Node) -> void:

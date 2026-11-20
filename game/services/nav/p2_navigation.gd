@@ -116,13 +116,13 @@ func back() -> Error:
 	var screen: int = _nav.current_screen()
 	if screen == _nav.Screen.BOOT:
 		return ERR_UNCONFIGURED
-	if screen == _nav.Screen.LEVEL and _nav.home_unlocked():
+	if screen == _nav.Screen.LEVEL and _nav.can_open_home():
 		return _nav.go_home()
 	if screen in [_nav.Screen.LEVEL, _nav.Screen.HOME]:
 		busy = true
 		var error: Error = _nav.call("_prepare_leave")
 		if error == OK:
-			if screen == _nav.Screen.LEVEL and _nav.home_unlocked():
+			if screen == _nav.Screen.LEVEL and _nav.can_open_home():
 				busy = false
 				return _nav.go_home()
 			error = _background.call()
@@ -130,7 +130,7 @@ func back() -> Error:
 		return error
 	if history.is_empty():
 		return (
-			_nav.go_home() if _nav.home_unlocked() else _nav.go_to_level(_nav.call("_resume_slot"))
+			_nav.go_home() if _nav.can_open_home() else _nav.go_to_level(_nav.call("_resume_slot"))
 		)
 	var previous: Dictionary = history.pop_back()
 	var destination: int = previous.screen
