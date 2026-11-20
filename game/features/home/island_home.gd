@@ -78,7 +78,7 @@ func _add_island(grid: GridContainer, island: CampaignIslands.Island) -> void:
 	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	column.size_flags_vertical = Control.SIZE_EXPAND | Control.SIZE_SHRINK_CENTER
 	grid.add_child(column)
-	var marker: TextureRect = CatalogSurface.icon(load(island.marker_path) as Texture2D)
+	var marker: TextureRect = CatalogSurface.icon(island.marker)
 	marker.custom_minimum_size = Vector2(0, Tokens.ISLAND_MARKER_HEIGHT)
 	marker.self_modulate.a = Tokens.ISLAND_LOCKED_OPACITY if _slot < island.first else 1.0
 	column.add_child(marker)
