@@ -1,13 +1,13 @@
 # Floating islands in the ranked Polish campaign
 
-| Slots | Island | Views |
+| First appearance | Island theme | Views |
 | --- | --- | --- |
-| 1–2052 | Rzeczna Dolina | Riverside village, watermill, stone bridge |
-| 2053–4039 | Kwitnący Sad | Orchard path, blossom lane, spring stream |
-| 4040–6026 | Leśne Jezioro | Timber jetty, birch cove, wooded headland |
-| 6027–10000 | Złote Pogórze | Foothills, trail refuge, mountain meadow |
+| 1–25 | Rzeczna Dolina | Riverside village, watermill, stone bridge |
+| 26–50 | Kwitnący Sad | Orchard path, blossom lane, spring stream |
+| 51–75 | Leśne Jezioro | Timber jetty, birch cove, wooded headland |
+| 76–100 | Złote Pogórze | Foothills, trail refuge, mountain meadow |
 
-The preview opens on the map for both new and returning players. Home reads the saved slot and identifies the current island. Play resumes that slot. Each island starts its own three-view sequence which repeats by slot. Returning to a given slot shows the same view.
+The 202-island map advances in blocks of 50 after Level 100, starting with 101–150. Four illustrated themes repeat in order. Home opens the page containing the saved slot. Play resumes that slot while the player browses any map page. Each island starts its own three-view sequence. Returning to a given slot shows the same view.
 
 ## Build and verify
 
@@ -21,7 +21,7 @@ godot --headless --main-pack /path/to/android-debug-content.zip --script docs/qa
 godot --headless --main-pack /path/to/android-debug-content.zip --script docs/qa/T-0493/verify.gd -- resume
 ```
 
-## Runtime screenshots
+## Screenshots of the original map prototype
 
 - [Map on a compact phone layout](screenshots/islands_COMPACT_PL_new.png)
 - [Map on a regular phone layout](screenshots/islands_REGULAR_PL_new.png)
