@@ -5,16 +5,19 @@ extends RefCounted
 const CONTENT_SCRIPT: Script = preload("res://services/content.gd")
 const ART_DIRECTORY: String = "res://assets/art/qa-campaign"
 const CATALOG: String = ART_DIRECTORY + "/islands.json"
-const ISLAND_COUNT: int = 4
 const VIEWS_PER_ISLAND: int = 3
+
+
+class IslandArt:
+	var name_key: String
+	var marker: Texture2D
+	var backgrounds: Array[Texture2D] = []
 
 
 class Island:
 	var first: int
 	var last: int
-	var name_key: String
-	var marker: Texture2D
-	var backgrounds: Array[Texture2D] = []
+	var theme: IslandArt
 
 
 var islands: Array[Island] = []
@@ -26,43 +29,81 @@ static func load_for(content: CONTENT_SCRIPT) -> CampaignIslands:
 	var catalog: Variant = JSON.parse_string(FileAccess.get_file_as_string(CATALOG))
 	if not catalog is Dictionary or catalog.get("manifest_sha256") != content.manifest_hash():
 		return null
-	var rows: Variant = catalog.get("islands")
-	if not rows is Array or rows.size() != ISLAND_COUNT:
+	var rows: Variant = catalog.get("themes")
+	if not rows is Array or rows.size() < 2:
 		return null
-	var result: CampaignIslands = CampaignIslands.new()
-	var next_slot: int = 1
+	var themes: Array[IslandArt] = []
 	var used: Dictionary[String, bool] = {}
 	for row: Variant in rows:
-		var island: Island = _read_island(row, next_slot, content.slot_count(), used)
-		if island == null:
+		var theme: IslandArt = _read_theme(row, used)
+		if theme == null:
 			return null
-		result.islands.append(island)
-		next_slot = island.last + 1
-	return result if next_slot == content.slot_count() + 1 else null
+		themes.append(theme)
+	return _partition(catalog, content.slot_count(), themes)
 
 
 func background_for_slot(slot: int) -> Texture2D:
-	for island: Island in islands:
+	var index: int = index_for_slot(slot)
+	if index == -1:
+		return null
+	var island: Island = islands[index]
+	var backgrounds: Array[Texture2D] = island.theme.backgrounds
+	return backgrounds[(slot - island.first) % backgrounds.size()]
+
+
+func index_for_slot(slot: int) -> int:
+	for index: int in islands.size():
+		var island: Island = islands[index]
 		if slot >= island.first and slot <= island.last:
-			var index: int = (slot - island.first) % island.backgrounds.size()
-			return island.backgrounds[index]
-	return null
+			return index
+	return -1
 
 
-static func _read_island(
-	row: Variant, first: int, slot_count: int, used: Dictionary[String, bool]
-) -> Island:
+static func _partition(
+	catalog: Dictionary, slots: int, themes: Array[IslandArt]
+) -> CampaignIslands:
+	var opening: Variant = catalog.get("opening_ends")
+	var span: Variant = catalog.get("island_span")
+	if not opening is Array or not _is_slot_count(span, slots):
+		return null
+	var result: CampaignIslands = CampaignIslands.new()
+	var first: int = 1
+	for last: Variant in opening:
+		if not _is_slot_count(last, slots) or last < first:
+			return null
+		result._append_island(first, int(last), themes)
+		first = int(last) + 1
+	while first <= slots:
+		var last: int = mini(first + int(span) - 1, slots)
+		result._append_island(first, last, themes)
+		first = last + 1
+	return result
+
+
+func _append_island(first: int, last: int, themes: Array[IslandArt]) -> void:
+	var island: Island = Island.new()
+	island.first = first
+	island.last = last
+	island.theme = themes[islands.size() % themes.size()]
+	islands.append(island)
+
+
+static func _is_slot_count(value: Variant, maximum: int) -> bool:
+	return (
+		(value is float or value is int)
+		and value >= 1
+		and value <= maximum
+		and value == floorf(value)
+	)
+
+
+static func _read_theme(row: Variant, used: Dictionary[String, bool]) -> IslandArt:
 	if not row is Dictionary:
 		return null
-	var last: Variant = row.get("last")
 	var key: Variant = row.get("name_key")
 	var views: Variant = row.get("backgrounds")
 	if (
-		not (last is float or last is int)
-		or last < first
-		or last > slot_count
-		or last != floorf(last)
-		or not key is String
+		not key is String
 		or not key.begins_with("home.islands.")
 		or not views is Array
 		or views.size() != VIEWS_PER_ISLAND
@@ -71,17 +112,15 @@ static func _read_island(
 	var marker: Texture2D = _read_art(row.get("marker"), used)
 	if marker == null:
 		return null
-	var island: Island = Island.new()
-	island.first = first
-	island.last = int(last)
-	island.name_key = key
-	island.marker = marker
+	var theme: IslandArt = IslandArt.new()
+	theme.name_key = key
+	theme.marker = marker
 	for file: Variant in views:
 		var texture: Texture2D = _read_art(file, used)
 		if texture == null:
 			return null
-		island.backgrounds.append(texture)
-	return island
+		theme.backgrounds.append(texture)
+	return theme
 
 
 static func _read_art(file: Variant, used: Dictionary[String, bool]) -> Texture2D:
